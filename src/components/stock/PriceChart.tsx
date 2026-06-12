@@ -84,6 +84,18 @@ export function PriceChart({ symbol, currentPrice, prevClose }: Props) {
           time: b.date.split('T')[0] as `${number}-${number}-${number}`,
           value: (b.adj_close ?? b.close) as number,
         }))
+
+      // Pin the last bar to the live quote so chart tail matches the header price
+      if (currentPrice > 0 && chartData.length > 0) {
+        const today = new Date().toISOString().split('T')[0] as `${number}-${number}-${number}`
+        const last  = chartData[chartData.length - 1]
+        if (last.time === today) {
+          last.value = currentPrice
+        } else {
+          chartData.push({ time: today, value: currentPrice })
+        }
+      }
+
       seriesRef.current.setData(chartData)
       chartApi.current?.timeScale().fitContent()
     }
