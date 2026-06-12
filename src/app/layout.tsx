@@ -8,7 +8,7 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'US Market Hub — Real-Time US Stock Market Data',
+  title: 'Stock Market ROI — Real-Time US Stock Market Data',
   description:
     'Track US stocks, ETFs and indices in real time. Portfolio tracker, screener, dividends and market heatmap.',
 }

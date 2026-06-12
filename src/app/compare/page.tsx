@@ -1,6 +1,6 @@
 import { CompareView } from './CompareView'
 
-export const metadata = { title: 'Compare Stocks — US Market Hub' }
+export const metadata = { title: 'Compare Stocks — Stock Market ROI' }
 
 export default function ComparePage() {
   return (

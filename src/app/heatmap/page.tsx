@@ -1,6 +1,6 @@
 import { HeatmapView } from './HeatmapView'
 
-export const metadata = { title: 'Market Heatmap — US Market Hub' }
+export const metadata = { title: 'Market Heatmap — Stock Market ROI' }
 
 export default function HeatmapPage() {
   return (

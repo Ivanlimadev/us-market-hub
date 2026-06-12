@@ -37,7 +37,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0">
             <TrendingUp className="h-5 w-5 text-emerald-400" />
-            <span>US Market Hub</span>
+            <span>Stock Market ROI</span>
           </Link>
 
           {/* Desktop nav */}

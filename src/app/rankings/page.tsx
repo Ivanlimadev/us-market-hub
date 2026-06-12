@@ -1,6 +1,6 @@
 import { RankingsView } from './RankingsView'
 
-export const metadata = { title: 'Rankings — US Market Hub' }
+export const metadata = { title: 'Rankings — Stock Market ROI' }
 
 export default function RankingsPage() {
   return (

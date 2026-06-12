@@ -71,6 +71,10 @@ export function PriceChart({ symbol, currentPrice, prevClose }: Props) {
         time: b.timestamp as UTCTimestamp,
         value: b.value,
       }))
+      // Pin last bar to the live quote so 1D chart tail matches header price
+      if (currentPrice > 0 && chartData.length > 0) {
+        chartData[chartData.length - 1].value = currentPrice
+      }
       seriesRef.current.setData(chartData)
       chartApi.current?.timeScale().fitContent()
       return
@@ -99,7 +103,7 @@ export function PriceChart({ symbol, currentPrice, prevClose }: Props) {
       seriesRef.current.setData(chartData)
       chartApi.current?.timeScale().fitContent()
     }
-  }, [is1D, intraday, history])
+  }, [is1D, intraday, history, currentPrice])
 
   // Init chart once
   useEffect(() => {

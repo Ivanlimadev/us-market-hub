@@ -1,6 +1,6 @@
 import { ScreenerView } from './ScreenerView'
 
-export const metadata = { title: 'Stock Screener — US Market Hub' }
+export const metadata = { title: 'Stock Screener — Stock Market ROI' }
 
 export default function ScreenerPage() {
   return (
