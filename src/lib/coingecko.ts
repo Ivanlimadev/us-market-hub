@@ -5,7 +5,7 @@ const BASE = 'https://api.coingecko.com/api/v3'
 // Simple in-memory cache to respect CoinGecko's 30 req/min free limit
 const cache = new Map<string, { data: unknown; expires: number }>()
 
-async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
+export async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
   const cached = cache.get(path)
   if (cached && Date.now() < cached.expires) return cached.data as T
 
