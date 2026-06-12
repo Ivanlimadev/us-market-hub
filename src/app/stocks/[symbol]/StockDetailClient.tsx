@@ -147,11 +147,11 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
         </div>
       </div>
 
-      {/* Penultimate: About the company (full-width) */}
-      <CompanyInfo data={data} />
-
-      {/* Last: Related assets */}
+      {/* Penultimate: Related assets */}
       <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
+
+      {/* Last: About the company (full-width) */}
+      <CompanyInfo data={data} />
 
       {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
     </div>
