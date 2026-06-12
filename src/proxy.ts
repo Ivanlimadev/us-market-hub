@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -23,7 +23,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect /portfolio — redirect to login if not authenticated
   if (!user && request.nextUrl.pathname.startsWith('/portfolio')) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
@@ -31,7 +30,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages
   if (user && request.nextUrl.pathname.startsWith('/auth/')) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
