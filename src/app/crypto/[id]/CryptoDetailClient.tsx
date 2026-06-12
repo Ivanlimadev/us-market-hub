@@ -56,7 +56,7 @@ function PriceChart({ bars, isLoading }: { bars: CryptoHistoryBar[]; isLoading: 
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas || isLoading || bars.length === 0) return
+    if (!canvas || isLoading || !Array.isArray(bars) || bars.length === 0) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
@@ -220,7 +220,7 @@ export function CryptoDetailClient({ id }: { id: string }) {
             ))}
           </div>
         </div>
-        <PriceChart bars={history ?? []} isLoading={histLoading} />
+        <PriceChart bars={Array.isArray(history) ? history : []} isLoading={histLoading} />
       </div>
 
       {/* Stats grid */}
