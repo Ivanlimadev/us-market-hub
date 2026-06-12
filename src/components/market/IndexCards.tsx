@@ -1,17 +1,33 @@
 'use client'
-import { useQuotes } from '@/lib/hooks/useQuotes'
+import { useQuery } from '@tanstack/react-query'
 import { ChangeBadge } from '@/components/ui/change-badge'
+import { getPollInterval } from '@/lib/market-hours'
+import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
 const INDICES = [
-  { symbol: 'DJI.INDX', label: 'Dow Jones' },
-  { symbol: 'IXIC.INDX', label: 'Nasdaq' },
-  { symbol: 'RUT.INDX', label: 'Russell 2000' },
-  { symbol: 'VIX.INDX', label: 'VIX' },
+  { symbol: '^DJI',  label: 'Dow Jones'    },
+  { symbol: '^IXIC', label: 'Nasdaq'       },
+  { symbol: '^RUT',  label: 'Russell 2000' },
+  { symbol: '^VIX',  label: 'VIX'          },
 ]
 
+const SYMBOLS = INDICES.map((i) => i.symbol).join(',')
+
+function useIndexQuotes() {
+  return useQuery<YFBatchQuote[]>({
+    queryKey: ['index-quotes'],
+    queryFn: async () => {
+      const r = await fetch(`/api/batch-quotes?symbols=${encodeURIComponent(SYMBOLS)}`)
+      if (!r.ok) throw new Error(`${r.status}`)
+      return r.json()
+    },
+    refetchInterval: getPollInterval,
+    staleTime: 55_000,
+  })
+}
+
 export function IndexCards() {
-  const symbols = INDICES.map((i) => i.symbol)
-  const { data: quotes, isLoading } = useQuotes(symbols)
+  const { data: quotes, isLoading } = useIndexQuotes()
 
   if (isLoading) {
     return (
