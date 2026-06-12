@@ -123,7 +123,7 @@ export function CryptoTable() {
                   const binSym = toBinanceSymbol(coin.symbol)
                   const live   = tickers.get(binSym)
                   const price  = live ? live.price : coin.current_price
-                  const pct24h = live ? live.priceChangePercent : coin.price_change_percentage_24h
+                  const pct24h = live ? live.priceChangePercent : (coin.price_change_percentage_24h ?? 0)
 
                   return (
                     <tr

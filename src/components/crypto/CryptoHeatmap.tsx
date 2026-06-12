@@ -15,7 +15,7 @@ const PERIODS: { label: string; key: CryptoPeriod }[] = [
 function pctForPeriod(coin: CryptoMarket, period: CryptoPeriod): number {
   switch (period) {
     case '1h':  return coin.price_change_percentage_1h_in_currency ?? 0
-    case '24h': return coin.price_change_percentage_24h
+    case '24h': return coin.price_change_percentage_24h ?? 0
     case '7d':  return coin.price_change_percentage_7d_in_currency ?? 0
     case '30d': return coin.price_change_percentage_30d_in_currency ?? 0
     case '1y':  return coin.price_change_percentage_1y_in_currency ?? 0
