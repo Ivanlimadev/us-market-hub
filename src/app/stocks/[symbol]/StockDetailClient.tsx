@@ -138,16 +138,20 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
           <InvestmentSimulator data={data} />
         </div>
 
-        {/* Right col: Fundamentals + Earnings + Fair Value + Buy&Hold + Company + Related */}
+        {/* Right col: Earnings + Fundamentals + Fair Value + Buy&Hold */}
         <div className="space-y-5">
           <EarningsCard data={data} />
           <FundamentalsCard data={data} />
           <FairValueCard data={data} />
           <BuyHoldChecklist data={data} />
-          <CompanyInfo data={data} />
-          <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
         </div>
       </div>
+
+      {/* Penultimate: About the company (full-width) */}
+      <CompanyInfo data={data} />
+
+      {/* Last: Related assets */}
+      <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
 
       {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
     </div>
