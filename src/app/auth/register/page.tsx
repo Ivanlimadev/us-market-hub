@@ -1,8 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Turnstile } from '@marsidev/react-turnstile'
 import { createClient } from '@/lib/supabase/client'
 import { PasswordStrength, isStrongPassword } from '@/components/auth/PasswordStrength'
 import { TrendingUp, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react'
@@ -10,52 +9,33 @@ import { TrendingUp, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react'
 export default function RegisterPage() {
   const router = useRouter()
 
-  const [name, setName]               = useState('')
-  const [email, setEmail]             = useState('')
-  const [emailConfirm, setEmailConfirm] = useState('')
-  const [birthDate, setBirthDate]     = useState('')
-  const [password, setPassword]       = useState('')
-  const [passwordConfirm, setPasswordConfirm] = useState('')
-  const [showPw, setShowPw]           = useState(false)
-  const [showPwC, setShowPwC]         = useState(false)
-  const [error, setError]             = useState('')
-  const [loading, setLoading]         = useState(false)
-  const [done, setDone]               = useState(false)
-  const turnstileToken                = useRef<string | null>(null)
+  const [name, setName]                         = useState('')
+  const [email, setEmail]                       = useState('')
+  const [emailConfirm, setEmailConfirm]         = useState('')
+  const [birthDate, setBirthDate]               = useState('')
+  const [password, setPassword]                 = useState('')
+  const [passwordConfirm, setPasswordConfirm]   = useState('')
+  const [showPw, setShowPw]                     = useState(false)
+  const [showPwC, setShowPwC]                   = useState(false)
+  const [error, setError]                       = useState('')
+  const [loading, setLoading]                   = useState(false)
+  const [done, setDone]                         = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
 
-    // Client-side validations
-    if (email !== emailConfirm) { setError('Emails do not match.'); return }
-    if (password !== passwordConfirm) { setError('Passwords do not match.'); return }
-    if (!isStrongPassword(password)) { setError('Password does not meet all requirements.'); return }
+    if (email !== emailConfirm)          { setError('Emails do not match.'); return }
+    if (password !== passwordConfirm)    { setError('Passwords do not match.'); return }
+    if (!isStrongPassword(password))     { setError('Password does not meet all requirements.'); return }
 
-    // Age check: must be 18+
     const birth = new Date(birthDate)
     const age = (Date.now() - birth.getTime()) / (365.25 * 24 * 3600 * 1000)
     if (age < 18) { setError('You must be at least 18 years old to register.'); return }
 
-    if (!turnstileToken.current) { setError('Please complete the security check.'); return }
-
     setLoading(true)
 
-    // Verify Turnstile
-    const captchaRes = await fetch('/api/auth/verify-turnstile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: turnstileToken.current }),
-    }).then((r) => r.json()) as { success: boolean }
-
-    if (!captchaRes.success) {
-      setError('Security check failed. Please try again.')
-      setLoading(false)
-      return
-    }
-
     const supabase = createClient()
-
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -219,16 +199,6 @@ export default function RegisterPage() {
             {passwordConfirm && password !== passwordConfirm && (
               <p className="text-xs text-red-400">Passwords do not match</p>
             )}
-          </div>
-
-          {/* Turnstile */}
-          <div className="flex justify-center">
-            <Turnstile
-              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-              onSuccess={(token) => { turnstileToken.current = token }}
-              onExpire={() => { turnstileToken.current = null }}
-              options={{ theme: 'dark' }}
-            />
           </div>
 
           {error && (

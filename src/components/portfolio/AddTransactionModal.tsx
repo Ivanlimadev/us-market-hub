@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
-import { usePortfolioStore } from '@/lib/store/portfolio-store'
+import { usePortfolioSync } from '@/lib/hooks/usePortfolioSync'
 import { SymbolSearch } from './SymbolSearch'
 import type { AssetSuggestion } from './SymbolSearch'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
@@ -46,8 +46,8 @@ function SelectedAssetCard({ symbol, name, onClear }: { symbol: string; name: st
 }
 
 export function AddTransactionModal({ onClose, defaultSymbol, defaultName }: Props) {
-  const addTransaction = usePortfolioStore((s) => s.addTransaction)
-  const queryClient    = useQueryClient()
+  const { addTransaction } = usePortfolioSync()
+  const queryClient        = useQueryClient()
 
   const [selectedAsset, setSelectedAsset] = useState<AssetSuggestion | null>(
     defaultSymbol ? { symbol: defaultSymbol, name: defaultName ?? defaultSymbol } : null

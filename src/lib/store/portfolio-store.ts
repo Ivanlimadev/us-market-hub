@@ -5,7 +5,8 @@ import type { Transaction } from '@/types/portfolio'
 
 interface PortfolioStore {
   transactions: Transaction[]
-  addTransaction: (tx: Omit<Transaction, 'id'>) => void
+  setTransactions: (transactions: Transaction[]) => void
+  addTransaction: (tx: Omit<Transaction, 'id'>) => Transaction
   editTransaction: (id: string, tx: Partial<Omit<Transaction, 'id'>>) => void
   removeTransaction: (id: string) => void
   clearAll: () => void
@@ -17,13 +18,13 @@ export const usePortfolioStore = create<PortfolioStore>()(
     (set, get) => ({
       transactions: [],
 
-      addTransaction: (tx) =>
-        set((state) => ({
-          transactions: [
-            ...state.transactions,
-            { ...tx, id: crypto.randomUUID() },
-          ],
-        })),
+      setTransactions: (transactions) => set({ transactions }),
+
+      addTransaction: (tx) => {
+        const newTx = { ...tx, id: crypto.randomUUID() }
+        set((state) => ({ transactions: [...state.transactions, newTx] }))
+        return newTx
+      },
 
       editTransaction: (id, updates) =>
         set((state) => ({

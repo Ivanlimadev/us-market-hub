@@ -1,8 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Turnstile } from '@marsidev/react-turnstile'
 import { createClient } from '@/lib/supabase/client'
 import { TrendingUp, Eye, EyeOff, Loader2 } from 'lucide-react'
 
@@ -16,31 +15,11 @@ export default function LoginPage() {
   const [showPw, setShowPw]     = useState(false)
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
-  const turnstileToken          = useRef<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-
-    if (!turnstileToken.current) {
-      setError('Please complete the security check.')
-      return
-    }
-
     setLoading(true)
-
-    // Verify Turnstile server-side
-    const captchaRes = await fetch('/api/auth/verify-turnstile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: turnstileToken.current }),
-    }).then((r) => r.json()) as { success: boolean }
-
-    if (!captchaRes.success) {
-      setError('Security check failed. Please try again.')
-      setLoading(false)
-      return
-    }
 
     const supabase = createClient()
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
@@ -111,16 +90,6 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-          </div>
-
-          {/* Turnstile */}
-          <div className="flex justify-center">
-            <Turnstile
-              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-              onSuccess={(token) => { turnstileToken.current = token }}
-              onExpire={() => { turnstileToken.current = null }}
-              options={{ theme: 'dark' }}
-            />
           </div>
 
           {error && (

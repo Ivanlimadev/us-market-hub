@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Plus, Wallet, LayoutGrid, List, DollarSign } from 'lucide-react'
 import { usePortfolio } from '@/lib/hooks/usePortfolio'
 import { usePortfolioDividends } from '@/lib/hooks/usePortfolioDividends'
+import { usePortfolioSync } from '@/lib/hooks/usePortfolioSync'
 import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from './AddTransactionModal'
 import { DividendBarChart } from './DividendBarChart'
@@ -161,6 +162,8 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
 export function PortfolioView() {
   const [tab, setTab]           = useState<Tab>('holdings')
   const [showModal, setShowModal] = useState(false)
+
+  usePortfolioSync()
 
   const { summary, isLoading, symbols } = usePortfolio()
   const dividends = usePortfolioDividends()
