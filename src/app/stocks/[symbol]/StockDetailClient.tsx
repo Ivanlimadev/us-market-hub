@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStockDetail } from '@/lib/hooks/useStockDetail'
 import { PriceChart } from '@/components/stock/PriceChart'
 import { PerformanceStrip } from '@/components/stock/PerformanceStrip'
@@ -17,6 +17,7 @@ import { EarningsCard } from '@/components/stock/EarningsCard'
 import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { Plus } from 'lucide-react'
+import { recordView } from '@/lib/recently-viewed'
 
 function fmtLarge(n: number | null): string {
   if (n === null) return ''
@@ -28,6 +29,9 @@ function fmtLarge(n: number | null): string {
 export function StockDetailClient({ symbol }: { symbol: string }) {
   const { data, isLoading, error } = useStockDetail(symbol)
   const [showAddTx, setShowAddTx] = useState(false)
+
+  // Track visit for "Mais Visitadas" on home page
+  useEffect(() => { if (data?.name) recordView(symbol, data.name) }, [symbol, data?.name])
 
   if (isLoading) {
     return (
