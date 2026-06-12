@@ -1,7 +1,9 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useBinanceTicker } from '@/lib/hooks/useBinanceTicker'
 import type { CryptoMarket, CryptoPeriod } from '@/types/crypto'
 
 const PERIODS: { label: string; key: CryptoPeriod }[] = [
@@ -23,23 +25,22 @@ function pctForPeriod(coin: CryptoMarket, period: CryptoPeriod): number {
 }
 
 function heatColor(pct: number) {
-  if (pct <= -10) return 'bg-red-800       text-red-100'
-  if (pct <= -5)  return 'bg-red-700       text-red-100'
-  if (pct <= -2)  return 'bg-red-600/80    text-red-100'
-  if (pct <= -0.5) return 'bg-red-500/50   text-red-200'
-  if (pct <   0.5) return 'bg-zinc-700/80  text-zinc-300'
+  if (pct <= -10)  return 'bg-red-800       text-red-100'
+  if (pct <= -5)   return 'bg-red-700       text-red-100'
+  if (pct <= -2)   return 'bg-red-600/80    text-red-100'
+  if (pct <= -0.5) return 'bg-red-500/50    text-red-200'
+  if (pct <   0.5) return 'bg-zinc-700/80   text-zinc-300'
   if (pct <   2)   return 'bg-emerald-700/60 text-emerald-100'
   if (pct <   5)   return 'bg-emerald-600/80 text-emerald-100'
-  if (pct <   10)  return 'bg-emerald-500   text-white'
-  return                   'bg-emerald-400   text-zinc-900'
+  if (pct <   10)  return 'bg-emerald-500    text-white'
+  return                   'bg-emerald-400    text-zinc-900'
 }
 
-// Tile size based on market cap rank
 function tileSize(rank: number) {
-  if (rank <= 5)  return { width: 110, height: 80 }
-  if (rank <= 15) return { width: 88, height: 66 }
-  if (rank <= 30) return { width: 76, height: 60 }
-  return { width: 60, height: 52 }
+  if (rank <= 5)  return { width: 110, height: 88, logo: 22 }
+  if (rank <= 15) return { width: 88,  height: 72, logo: 18 }
+  if (rank <= 30) return { width: 76,  height: 62, logo: 16 }
+  return                 { width: 62,  height: 54, logo: 14 }
 }
 
 export function CryptoHeatmap() {
@@ -53,6 +54,12 @@ export function CryptoHeatmap() {
   })
 
   const top50 = (data ?? []).slice(0, 50)
+
+  // Live Binance 24h % — only subscribe when 24h period is active
+  const binanceSymbols = period === '24h'
+    ? top50.map((c) => `${c.symbol.toUpperCase()}USDT`)
+    : []
+  const tickers = useBinanceTicker(binanceSymbols)
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
@@ -75,6 +82,12 @@ export function CryptoHeatmap() {
               {label}
             </button>
           ))}
+          {period === '24h' && tickers.size > 0 && (
+            <span className="ml-1 flex items-center gap-1 text-[10px] text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Live
+            </span>
+          )}
         </div>
       </div>
 
@@ -88,19 +101,35 @@ export function CryptoHeatmap() {
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {top50.map((coin) => {
-              const pct = pctForPeriod(coin, period)
+              const binSym = `${coin.symbol.toUpperCase()}USDT`
+              const live   = tickers.get(binSym)
+
+              // Use Binance live % for 24h, CoinGecko otherwise
+              const pct = (period === '24h' && live)
+                ? live.priceChangePercent
+                : pctForPeriod(coin, period)
+
               const cls = heatColor(pct)
-              const { width, height } = tileSize(coin.market_cap_rank)
+              const { width, height, logo } = tileSize(coin.market_cap_rank)
+
               return (
                 <Link
                   key={coin.id}
                   href={`/crypto/${coin.id}`}
                   className={`group flex flex-col items-center justify-center rounded-lg transition-all hover:opacity-90 hover:scale-105 ${cls}`}
-                  style={{ width, height, padding: '4px 6px' }}
+                  style={{ width, height, padding: '4px 5px', gap: 2 }}
                   title={`${coin.name}: ${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`}
                 >
+                  <Image
+                    src={coin.image}
+                    alt={coin.symbol}
+                    width={logo}
+                    height={logo}
+                    className="rounded-full"
+                    unoptimized
+                  />
                   <span className="text-[10px] font-bold leading-none uppercase">{coin.symbol}</span>
-                  <span className="mt-0.5 text-[9px] font-semibold opacity-90 leading-none">
+                  <span className="text-[9px] font-semibold opacity-90 leading-none">
                     {pct >= 0 ? '+' : ''}{pct.toFixed(1)}%
                   </span>
                 </Link>
