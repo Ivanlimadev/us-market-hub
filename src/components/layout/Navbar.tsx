@@ -12,8 +12,7 @@ const NAV_LINKS = [
   { href: '/heatmap', label: 'Heatmap' },
   { href: '/rankings', label: 'Rankings' },
   { href: '/compare', label: 'Compare' },
-  { href: '/calendar/dividends', label: 'Dividends Cal.' },
-  { href: '/calendar/earnings', label: 'Earnings Cal.' },
+  { href: '/calendar', label: 'Calendar' },
   { href: '/portfolio', label: 'Portfolio' },
 ]
 

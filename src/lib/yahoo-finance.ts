@@ -32,6 +32,10 @@ async function getYFSession(): Promise<{ crumb: string; cookie: string }> {
   return { crumb: _crumb, cookie: _cookies }
 }
 
+export async function yfGetPublic(url: string): Promise<Record<string, unknown>> {
+  return yfGet(url)
+}
+
 async function yfGet(url: string): Promise<Record<string, unknown>> {
   const { crumb, cookie } = await getYFSession()
   const fullUrl = `${url}${url.includes('?') ? '&' : '?'}crumb=${encodeURIComponent(crumb)}`
@@ -198,7 +202,7 @@ export interface YFFinancialRow {
   grossProfit: number | null
   operatingIncome: number | null
   netIncome: number | null
-  eps: number | null    // diluted EPS
+  netMargin: number | null  // netIncome / revenue * 100
 }
 
 export interface YFFinancials {
@@ -208,16 +212,31 @@ export interface YFFinancials {
   cagr5yNetIncome: number | null
 }
 
+// YF returns { raw: 0, fmt: null } for unavailable line items — treat as null
+function rawFin(obj: unknown): number | null {
+  const v = raw(obj)
+  return v === null || v === 0 ? null : v
+}
+
 function parseStatements(list: unknown[]): YFFinancialRow[] {
   return (list as Array<Record<string, unknown>>)
-    .map((s) => ({
-      date: (s.endDate as { fmt?: string } | null)?.fmt ?? '',
-      revenue: raw(s.totalRevenue),
-      grossProfit: raw(s.grossProfit),
-      operatingIncome: raw(s.ebit),
-      netIncome: raw(s.netIncome),
-      eps: raw(s.dilutedEps),
-    }))
+    .map((s) => {
+      const revenue    = rawFin(s.totalRevenue)
+      const netIncome  = raw(s.netIncome)     // netIncome can legitimately be negative
+      const grossProfit    = rawFin(s.grossProfit)
+      const operatingIncome = rawFin(s.operatingIncome) ?? rawFin(s.ebit)
+      const netMargin = revenue && revenue > 0 && netIncome !== null
+        ? (netIncome / revenue) * 100
+        : null
+      return {
+        date: (s.endDate as { fmt?: string } | null)?.fmt ?? '',
+        revenue,
+        grossProfit,
+        operatingIncome,
+        netIncome,
+        netMargin,
+      }
+    })
     .filter((r) => r.date)
     .reverse() // oldest → newest
 }
@@ -373,6 +392,7 @@ export interface YFBatchQuote {
   symbol: string
   name: string
   price: number
+  prevClose: number
   changePct: number
   marketCap: number | null
   pe: number | null
@@ -383,10 +403,14 @@ export interface YFBatchQuote {
   beta: number | null
   week52High: number | null
   week52Low: number | null
+  volume: number | null
   avgVolume: number | null
   sector: string | null
   industry: string | null
   eps: number | null
+  // Earnings calendar
+  earningsTimestamp: number | null      // Unix seconds — next earnings date
+  earningsTimestampEnd: number | null   // End of earnings window
 }
 
 function num(v: unknown): number | null {
@@ -396,11 +420,11 @@ function num(v: unknown): number | null {
 export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[]> {
   if (!symbols.length) return []
   const fields = [
-    'regularMarketPrice', 'regularMarketChangePercent', 'marketCap',
+    'regularMarketPrice', 'regularMarketPreviousClose', 'regularMarketChangePercent', 'marketCap',
     'trailingPE', 'forwardPE', 'priceToBook', 'trailingAnnualDividendYield',
     'returnOnEquity', 'beta', 'fiftyTwoWeekHigh', 'fiftyTwoWeekLow',
-    'averageDailyVolume3Month', 'sector', 'industry', 'longName', 'shortName',
-    'epsCurrentYear',
+    'regularMarketVolume', 'averageDailyVolume3Month', 'sector', 'industry', 'longName', 'shortName',
+    'epsCurrentYear', 'earningsTimestamp', 'earningsTimestampEnd',
   ].join(',')
 
   const data = await yfGet(
@@ -414,6 +438,7 @@ export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[
     symbol: String(q.symbol ?? ''),
     name: String(q.longName ?? q.shortName ?? q.symbol ?? ''),
     price: num(q.regularMarketPrice) ?? 0,
+    prevClose: num(q.regularMarketPreviousClose) ?? 0,
     changePct: num(q.regularMarketChangePercent) ?? 0,
     marketCap: num(q.marketCap),
     pe: num(q.trailingPE),
@@ -421,6 +446,7 @@ export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[
     pb: num(q.priceToBook),
     dividendYield: num(q.trailingAnnualDividendYield),
     roe: num(q.returnOnEquity),
+    volume: num(q.regularMarketVolume),
     beta: num(q.beta),
     week52High: num(q.fiftyTwoWeekHigh),
     week52Low: num(q.fiftyTwoWeekLow),
@@ -428,5 +454,47 @@ export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[
     sector: (q.sector as string | null) ?? null,
     industry: (q.industry as string | null) ?? null,
     eps: num(q.epsCurrentYear),
+    earningsTimestamp: num(q.earningsTimestamp),
+    earningsTimestampEnd: num(q.earningsTimestampEnd),
   }))
+}
+
+
+export interface YFCalendarEvents {
+  earningsDate:  string | null
+  earningsCallTime: string | null
+  earningsEpsAvg: number | null
+  earningsRevAvg: number | null
+  exDividendDate: string | null
+  dividendDate:   string | null
+}
+
+export async function getCalendarEvents(symbol: string): Promise<YFCalendarEvents | null> {
+  try {
+    const data = await yfGet(
+      `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=calendarEvents`
+    )
+    const cal = (
+      data as { quoteSummary?: { result?: Array<{ calendarEvents?: Record<string, unknown> }> } }
+    )?.quoteSummary?.result?.[0]?.calendarEvents as Record<string, unknown> | undefined
+
+    if (!cal) return null
+
+    const earnings = cal.earnings as Record<string, unknown> | undefined
+    const dates    = (earnings?.earningsDate as Array<{ fmt?: string }> | undefined) ?? []
+    const earningsDate = dates[0]?.fmt ?? null
+
+    type CallTime = { earningsCallTime?: string }
+    const callTime = (earnings as CallTime | undefined)?.earningsCallTime ?? null
+
+    const epsAvg = raw((earnings as Record<string, unknown> | undefined)?.earningsAverage)
+    const revAvg = raw((earnings as Record<string, unknown> | undefined)?.revenueAverage)
+
+    const exDiv  = fmt(cal.exDividendDate)
+    const divPay = fmt(cal.dividendDate)
+
+    return { earningsDate, earningsCallTime: callTime, earningsEpsAvg: epsAvg, earningsRevAvg: revAvg, exDividendDate: exDiv, dividendDate: divPay }
+  } catch {
+    return null
+  }
 }

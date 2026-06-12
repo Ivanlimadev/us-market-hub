@@ -2,70 +2,66 @@ import { NextResponse } from 'next/server'
 import { getYFBatchQuotes } from '@/lib/yahoo-finance'
 import { ALL_SYMBOLS } from '@/lib/stock-universe'
 
-// Yahoo Finance v7 quote includes nextEarningsDate — we fetch it via batch
-// but the batch endpoint doesn't return earningsDate, so we use a different approach:
-// fetch calendarEvents per stock in parallel (limited set)
+const EXTRA = [
+  'IBM','MMM','GE','F','GM','BA','T','VZ','MO','PM',
+  'BRK-B','JPM','BAC','WFC','C','GS','MS','AXP','BLK',
+  'TSLA','AMZN','GOOGL','META','NFLX','ORCL','CRM','ADBE',
+]
 
-const EARNINGS_STOCKS = ALL_SYMBOLS.slice(0, 60)
+const EARNINGS_STOCKS = [...new Set([...ALL_SYMBOLS, ...EXTRA])]
 
-async function getEarningsDate(symbol: string): Promise<{ symbol: string; date: string | null; time: string | null } | null> {
-  try {
-    const res = await fetch(
-      `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=calendarEvents`,
-      { headers: { 'User-Agent': 'Mozilla/5.0' } }
-    )
-    if (!res.ok) return null
-    const json = await res.json() as {
-      quoteSummary?: {
-        result?: Array<{
-          calendarEvents?: {
-            earnings?: { earningsDate?: Array<{ fmt?: string }>; earningsCallTime?: string }
-          }
-        }>
-      }
-    }
-    const cal = json.quoteSummary?.result?.[0]?.calendarEvents
-    const dates = cal?.earnings?.earningsDate ?? []
-    const date  = dates[0]?.fmt ?? null
-    const time  = (cal?.earnings as { earningsCallTime?: string } | undefined)?.earningsCallTime ?? null
-    return { symbol, date, time }
-  } catch {
-    return null
-  }
+// Determine bmo/amc from Unix timestamp using US Eastern time
+// Eastern is UTC-4 (EDT, summer) / UTC-5 (EST, winter)
+function callTime(ts: number | null): 'bmo' | 'amc' | null {
+  if (!ts) return null
+  // June = EDT (UTC-4)
+  const d = new Date(ts * 1000)
+  const utcHour = d.getUTCHours()
+  if (utcHour < 13) return 'bmo'   // before ~9am ET
+  if (utcHour >= 19) return 'amc'  // after ~3pm ET
+  return null
+}
+
+// Batch getYFBatchQuotes in chunks of 200 to stay within URL limits
+function chunk<T>(arr: T[], n: number): T[][] {
+  const out: T[][] = []
+  for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n))
+  return out
 }
 
 export async function GET() {
   try {
-    const results = await Promise.allSettled(
-      EARNINGS_STOCKS.map((s) => getEarningsDate(s))
-    )
+    const now   = Math.floor(Date.now() / 1000)
+    const cutoff = now + 60 * 24 * 3600  // +60 days
 
-    const today   = new Date().toISOString().split('T')[0]
-    const cutoff  = new Date()
-    cutoff.setDate(cutoff.getDate() + 45)
-    const cutoffStr = cutoff.toISOString().split('T')[0]
+    // Single batch call — orders of magnitude faster than 140 individual v10 requests
+    const batches = chunk(EARNINGS_STOCKS, 200)
+    const allQuotes = (
+      await Promise.all(batches.map(b => getYFBatchQuotes(b)))
+    ).flat()
 
-    const events = results
-      .filter((r): r is PromiseFulfilledResult<{ symbol: string; date: string | null; time: string | null }> =>
-        r.status === 'fulfilled' && r.value !== null && r.value.date !== null
-      )
-      .map((r) => r.value)
-      .filter((e) => e.date! >= today && e.date! <= cutoffStr)
-      .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
+    const events = allQuotes
+      .filter(q => {
+        const ts = q.earningsTimestamp ?? q.earningsTimestampEnd
+        return ts && ts >= now && ts <= cutoff
+      })
+      .map(q => {
+        const ts = q.earningsTimestamp ?? q.earningsTimestampEnd!
+        const date = new Date(ts * 1000).toISOString().split('T')[0]
+        return {
+          symbol:    q.symbol,
+          name:      q.name,
+          date,
+          time:      callTime(q.earningsTimestampEnd ?? q.earningsTimestamp),
+          price:     q.price,
+          changePct: q.changePct,
+          marketCap: q.marketCap,
+          eps:       q.eps,
+        }
+      })
+      .sort((a, b) => a.date.localeCompare(b.date))
 
-    const quotes = await getYFBatchQuotes(events.map((e) => e.symbol))
-    const quoteMap = Object.fromEntries(quotes.map((q) => [q.symbol, q]))
-
-    const enriched = events.map((e) => ({
-      ...e,
-      name: quoteMap[e.symbol]?.name ?? e.symbol,
-      price: quoteMap[e.symbol]?.price ?? null,
-      changePct: quoteMap[e.symbol]?.changePct ?? null,
-      marketCap: quoteMap[e.symbol]?.marketCap ?? null,
-      eps: quoteMap[e.symbol]?.eps ?? null,
-    }))
-
-    return NextResponse.json(enriched, {
+    return NextResponse.json(events, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },
     })
   } catch (err) {

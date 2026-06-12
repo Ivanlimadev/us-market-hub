@@ -1,11 +1,9 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { TrendingUp, TrendingDown, Eye, Award, BarChart3 } from 'lucide-react'
+import { TrendingUp, Award, Flame, Search } from 'lucide-react'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
-import { getTopViewed } from '@/lib/recently-viewed'
 
 function Logo({ sym }: { sym: string }) {
   return (
@@ -76,7 +74,7 @@ function RankCard({ title, icon: Icon, color, items, isLoading, href }: {
             ))
         }
         {!isLoading && !items.length && (
-          <p className="px-4 py-6 text-center text-xs text-zinc-600">Sem dados disponíveis</p>
+          <p className="px-4 py-6 text-center text-xs text-zinc-600">No data available</p>
         )}
       </div>
     </div>
@@ -90,8 +88,11 @@ export function HomeRankings() {
     staleTime: 5 * 60_000,
   })
 
-  const [topViewed, setTopViewed] = useState<{ symbol: string; name: string; count: number }[]>([])
-  useEffect(() => { setTopViewed(getTopViewed(5)) }, [])
+  const { data: trending, isLoading: trendingLoading } = useQuery<YFBatchQuote[]>({
+    queryKey: ['trending'],
+    queryFn:  () => fetch('/api/trending').then((r) => r.json()),
+    staleTime: 5 * 60_000,
+  })
 
   const TOP = 5
 
@@ -106,16 +107,24 @@ export function HomeRankings() {
       subUp: s.changePct >= 0,
     }))
 
-  const topROE: RankItem[] = (data ?? [])
-    .filter((s) => (s.roe ?? 0) > 0)
-    .sort((a, b) => (b.roe ?? 0) - (a.roe ?? 0))
+  const topVolume: RankItem[] = (data ?? [])
+    .filter((s) => (s.volume ?? 0) > 0)
+    .sort((a, b) => (b.volume ?? 0) - (a.volume ?? 0))
     .slice(0, TOP)
-    .map((s) => ({
-      symbol: s.symbol, name: s.name,
-      value: ((s.roe ?? 0) * 100).toFixed(1) + '%',
-      sub: (s.changePct >= 0 ? '+' : '') + s.changePct.toFixed(2) + '%',
-      subUp: s.changePct >= 0,
-    }))
+    .map((s) => {
+      const vol = s.volume ?? 0
+      const fmt = vol >= 1_000_000
+        ? (vol / 1_000_000).toFixed(1) + 'M'
+        : vol >= 1_000
+        ? (vol / 1_000).toFixed(0) + 'K'
+        : vol.toString()
+      return {
+        symbol: s.symbol, name: s.name,
+        value: fmt,
+        sub: (s.changePct >= 0 ? '+' : '') + s.changePct.toFixed(2) + '%',
+        subUp: s.changePct >= 0,
+      }
+    })
 
   const topGainers: RankItem[] = (data ?? [])
     .filter((s) => s.changePct > 0)
@@ -127,29 +136,32 @@ export function HomeRankings() {
       sub: '$' + s.price.toFixed(2),
     }))
 
-  const viewedItems: RankItem[] = topViewed.map((v) => ({
-    symbol: v.symbol, name: v.name,
-    value: v.count + (v.count === 1 ? ' visit' : ' visits'),
-    sub: '',
-  }))
+  const trendingItems: RankItem[] = (Array.isArray(trending) ? trending : [])
+    .slice(0, TOP)
+    .map((s) => ({
+      symbol: s.symbol, name: s.name,
+      value: '$' + s.price.toFixed(2),
+      sub: (s.changePct >= 0 ? '+' : '') + s.changePct.toFixed(2) + '%',
+      subUp: s.changePct >= 0,
+    }))
 
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-base font-bold text-white">Rankings</h2>
         <Link href="/rankings" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-          Ver todos →
+          See all →
         </Link>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <RankCard title="Maior Dividendo" icon={Award} color="text-emerald-400"
+        <RankCard title="Top Dividend Yield" icon={Award} color="text-emerald-400"
           items={topDY} isLoading={isLoading} href="/rankings" />
-        <RankCard title="Maior ROE" icon={BarChart3} color="text-sky-400"
-          items={topROE} isLoading={isLoading} href="/rankings" />
+        <RankCard title="Most Active" icon={Flame} color="text-orange-400"
+          items={topVolume} isLoading={isLoading} href="/rankings" />
         <RankCard title="Top Gainers" icon={TrendingUp} color="text-emerald-400"
           items={topGainers} isLoading={isLoading} href="/rankings" />
-        <RankCard title="Mais Visitadas" icon={Eye} color="text-violet-400"
-          items={viewedItems} isLoading={false} href="/rankings" />
+        <RankCard title="Most Searched" icon={Search} color="text-violet-400"
+          items={trendingItems} isLoading={trendingLoading} href="/rankings" />
       </div>
     </div>
   )

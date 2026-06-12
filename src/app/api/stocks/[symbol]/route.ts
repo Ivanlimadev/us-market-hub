@@ -28,9 +28,9 @@ export async function GET(
       // Latest intraday snapshot
       msGet(`/tickers/${sym}/intraday/latest`),
       // EOD with ticker metadata + last 30 trading days
-      msGet(`/tickers/${sym}/eod`, { limit: 30 }),
+      msGet(`/tickers/${sym}/eod`, { limit: 365 }),
       // Full dividend history
-      msGet(`/tickers/${sym}/dividends`, { limit: 200 }),
+      msGet(`/tickers/${sym}/dividends`, { limit: 1000 }),
       // Split history
       msGet(`/tickers/${sym}/splits`, { limit: 20 }),
       // Yahoo Finance fundamentals + company info

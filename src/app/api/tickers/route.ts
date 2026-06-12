@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   try {
     const data = await getTickers(search, {
       exchange,
-      limit: Math.min(limit, 100),
+      limit: Math.min(limit, 1000),
     })
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=600' },

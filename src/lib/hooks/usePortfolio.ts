@@ -1,9 +1,10 @@
 'use client'
 import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { usePortfolioStore } from '@/lib/store/portfolio-store'
-import { useQuotes } from '@/lib/hooks/useQuotes'
 import { computeHoldings, computeSummary } from '@/lib/portfolio-calc'
 import type { PortfolioSummary } from '@/types/portfolio'
+import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
 export function usePortfolio(): {
   summary: PortfolioSummary | null
@@ -11,12 +12,22 @@ export function usePortfolio(): {
   symbols: string[]
 } {
   const transactions = usePortfolioStore((s) => s.transactions)
-  const symbols = usePortfolioStore((s) => s.getSymbols())
+  const symbols = useMemo(
+    () => [...new Set(transactions.map((t) => t.symbol))],
+    [transactions]
+  )
 
-  const { data: quotes, isLoading } = useQuotes(symbols)
+  const symbolKey = symbols.slice().sort().join(',')
+
+  const { data: quotes, isLoading } = useQuery<YFBatchQuote[]>({
+    queryKey: ['batch-quotes', symbolKey],
+    queryFn: () => fetch(`/api/batch-quotes?symbols=${symbolKey}`).then(r => r.json()),
+    staleTime: 60_000,
+    enabled: symbols.length > 0,
+  })
 
   const summary = useMemo(() => {
-    if (!quotes || !transactions.length) return null
+    if (!quotes?.length || !transactions.length) return null
 
     const quoteMap: Record<string, { name: string; prevClose: number; currentPrice: number }> = {}
     for (const q of quotes) {

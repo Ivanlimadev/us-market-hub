@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const data = await getDividends(symbol, {
       date_from: from,
       date_to: to,
-      limit: Math.min(limit, 100),
+      limit: Math.min(limit, 1000),
     })
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=600' },

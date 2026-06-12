@@ -9,7 +9,7 @@ import type {
 const BASE_URL = 'https://api.marketstack.com/v1'
 const API_KEY = process.env.MARKETSTACK_API_KEY!
 
-// Simple in-memory cache to avoid burning through API quota
+// In-memory cache to reduce redundant requests
 const cache = new Map<string, { data: unknown; expiresAt: number }>()
 
 function getCache<T>(key: string): T | null {

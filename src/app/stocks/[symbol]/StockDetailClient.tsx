@@ -149,7 +149,7 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
         </div>
       </div>
 
-      {showAddTx && <AddTransactionModal onClose={() => setShowAddTx(false)} />}
+      {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
     </div>
   )
 }
