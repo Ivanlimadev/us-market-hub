@@ -19,7 +19,7 @@ export function isMarketOpen(): boolean {
 
 // Returns the poll interval in ms based on market state
 export function getPollInterval(): number {
-  return isMarketOpen() ? 60_000 : 5 * 60_000
+  return isMarketOpen() ? 30_000 : 5 * 60_000
 }
 
 // Rough EDT/EST detection (DST: 2nd Sun Mar → 1st Sun Nov)

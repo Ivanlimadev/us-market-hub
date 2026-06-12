@@ -1,7 +1,8 @@
 'use client'
 import Link from 'next/link'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getPollInterval } from '@/lib/market-hours'
+import { getPollInterval, isMarketOpen } from '@/lib/market-hours'
 import { STOCK_UNIVERSE } from '@/lib/stock-universe'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
@@ -15,19 +16,35 @@ function heatColor(pct: number): string {
   return                   'bg-emerald-700   text-emerald-50'
 }
 
-const ALL = Object.values(STOCK_UNIVERSE).flat()
+function StockLogo({ symbol, size = 24 }: { symbol: string; size?: number }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return null
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`https://assets.parqet.com/logos/symbol/${symbol}?format=png`}
+      alt=""
+      width={size}
+      height={size}
+      className="rounded-full object-contain"
+      onError={() => setFailed(true)}
+      style={{ width: size, height: size, flexShrink: 0 }}
+    />
+  )
+}
 
 export function HeatmapView() {
-  const { data, isLoading } = useQuery<YFBatchQuote[]>({
+  const open = isMarketOpen()
+
+  const { data, isLoading, dataUpdatedAt } = useQuery<YFBatchQuote[]>({
     queryKey:       ['screener'],
     queryFn:        () => fetch('/api/screener').then((r) => r.json()),
-    staleTime:      55_000,
+    staleTime:      25_000,
     refetchInterval: getPollInterval,
   })
 
   const quoteMap = Object.fromEntries((data ?? []).map((q) => [q.symbol, q]))
 
-  // Color legend
   const legend = [
     { label: '< -3%',  cls: 'bg-red-700' },
     { label: '-1.5%',  cls: 'bg-red-600/80' },
@@ -38,17 +55,34 @@ export function HeatmapView() {
     { label: '> +3%',  cls: 'bg-emerald-700' },
   ]
 
+  const lastUpdated = dataUpdatedAt
+    ? new Date(dataUpdatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    : null
+
   return (
     <div className="space-y-6">
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-        <span className="text-zinc-500 mr-1">Scale:</span>
-        {legend.map((l) => (
-          <div key={l.label} className="flex items-center gap-1">
-            <div className={`h-3 w-3 rounded-sm ${l.cls}`} />
-            <span>{l.label}</span>
-          </div>
-        ))}
+      {/* Header row */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+          <span className="text-zinc-500 mr-1">Scale:</span>
+          {legend.map((l) => (
+            <div key={l.label} className="flex items-center gap-1">
+              <div className={`h-3 w-3 rounded-sm ${l.cls}`} />
+              <span>{l.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-3 text-[11px]">
+          {open && (
+            <span className="flex items-center gap-1 text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Live · every 30s
+            </span>
+          )}
+          {lastUpdated && (
+            <span className="text-zinc-600">Updated {lastUpdated}</span>
+          )}
+        </div>
       </div>
 
       {/* Sectors */}
@@ -66,15 +100,16 @@ export function HeatmapView() {
                   key={sym}
                   href={`/stocks/${sym}`}
                   className={`group flex flex-col items-center justify-center rounded-lg p-2 transition-all hover:opacity-90 hover:scale-105 ${cls} ${isLoading ? 'animate-pulse' : ''}`}
-                  style={{ minHeight: 64 }}
+                  style={{ minHeight: 76, gap: 3 }}
                 >
-                  <span className="text-xs font-bold">{sym}</span>
+                  <StockLogo symbol={sym} size={24} />
+                  <span className="text-xs font-bold leading-none">{sym}</span>
                   {q && (
                     <>
-                      <span className="mt-0.5 text-[10px] font-mono opacity-90">
+                      <span className="text-[10px] font-mono opacity-90 leading-none">
                         ${q.price.toFixed(2)}
                       </span>
-                      <span className="text-[10px] font-semibold opacity-80">
+                      <span className="text-[10px] font-semibold opacity-80 leading-none">
                         {pct >= 0 ? '+' : ''}{pct.toFixed(2)}%
                       </span>
                     </>
