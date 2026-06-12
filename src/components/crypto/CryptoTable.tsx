@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
-import { useBinanceTicker } from '@/lib/hooks/useBinanceTicker'
+import { useKrakenTicker } from '@/lib/hooks/useKrakenTicker'
 import type { CryptoMarket } from '@/types/crypto'
 
 type SortKey = 'market_cap_rank' | 'current_price' | 'price_change_percentage_24h' | 'market_cap' | 'total_volume'
@@ -34,11 +34,6 @@ function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
     : <ArrowDown className="h-3 w-3 text-emerald-400" />
 }
 
-// Binance uses BTCUSDT format; map CoinGecko symbol → Binance pair
-function toBinanceSymbol(sym: string) {
-  return `${sym.toUpperCase()}USDT`
-}
-
 export function CryptoTable() {
   const [sortKey, setSortKey]   = useState<SortKey>('market_cap_rank')
   const [sortDir, setSortDir]   = useState<'asc' | 'desc'>('asc')
@@ -52,8 +47,9 @@ export function CryptoTable() {
     refetchInterval: 60_000,
   })
 
-  const symbols = (data ?? []).map((c) => toBinanceSymbol(c.symbol))
-  const tickers = useBinanceTicker(symbols)
+  // Kraken keyed by lowercase CoinGecko symbol (e.g. "btc", "eth")
+  const symbols = (data ?? []).map((c) => c.symbol)
+  const tickers = useKrakenTicker(symbols)
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -86,7 +82,7 @@ export function CryptoTable() {
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
       <div className="border-b border-zinc-800 px-4 py-3">
         <h2 className="text-sm font-semibold text-zinc-200">Top Cryptocurrencies</h2>
-        <p className="text-[11px] text-zinc-500">Live prices via Binance WebSocket · Market data via CoinGecko</p>
+        <p className="text-[11px] text-zinc-500">Live prices via Kraken WebSocket · Market data via CoinGecko</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -120,8 +116,7 @@ export function CryptoTable() {
                   </tr>
                 ))
               : paged.map((coin) => {
-                  const binSym = toBinanceSymbol(coin.symbol)
-                  const live   = tickers.get(binSym)
+                  const live = tickers.get(coin.symbol)
                   const price  = live ? live.price : coin.current_price
                   const pct24h = live ? live.priceChangePercent : (coin.price_change_percentage_24h ?? 0)
 

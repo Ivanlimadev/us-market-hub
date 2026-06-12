@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, ExternalLink, TrendingUp, TrendingDown } from 'lucide-react'
-import { useBinanceTicker } from '@/lib/hooks/useBinanceTicker'
+import { useKrakenTicker } from '@/lib/hooks/useKrakenTicker'
 import type { CryptoDetail, CryptoHistoryBar } from '@/types/crypto'
 
 const PERIODS: { label: string; days: number }[] = [
@@ -134,9 +134,8 @@ export function CryptoDetailClient({ id }: { id: string }) {
     staleTime: 55_000,
   })
 
-  const binSym = coin ? `${coin.symbol.toUpperCase()}USDT` : ''
-  const tickers = useBinanceTicker(binSym ? [binSym] : [])
-  const live = tickers.get(binSym)
+  const tickers = useKrakenTicker(coin ? [coin.symbol] : [])
+  const live = coin ? tickers.get(coin.symbol) : undefined
 
   const price  = live ? live.price  : coin?.market_data.current_price ?? 0
   const pct24h = live ? live.priceChangePercent : coin?.market_data.price_change_percentage_24h

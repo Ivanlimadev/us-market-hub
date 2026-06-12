@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useBinanceTicker } from '@/lib/hooks/useBinanceTicker'
+import { useKrakenTicker } from '@/lib/hooks/useKrakenTicker'
 import type { CryptoMarket, CryptoPeriod } from '@/types/crypto'
 
 const PERIODS: { label: string; key: CryptoPeriod }[] = [
@@ -55,11 +55,9 @@ export function CryptoHeatmap() {
 
   const top50 = (data ?? []).slice(0, 50)
 
-  // Live Binance 24h % — only subscribe when 24h period is active
-  const binanceSymbols = period === '24h'
-    ? top50.map((c) => `${c.symbol.toUpperCase()}USDT`)
-    : []
-  const tickers = useBinanceTicker(binanceSymbols)
+  // Live 24h % via Kraken — only subscribe when 24h period is active
+  const krakenSymbols = period === '24h' ? top50.map((c) => c.symbol) : []
+  const tickers = useKrakenTicker(krakenSymbols)
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
@@ -101,10 +99,9 @@ export function CryptoHeatmap() {
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {top50.map((coin) => {
-              const binSym = `${coin.symbol.toUpperCase()}USDT`
-              const live   = tickers.get(binSym)
+              const live = tickers.get(coin.symbol) // keyed by lowercase symbol
 
-              // Use Binance live % for 24h, CoinGecko otherwise
+              // Use Kraken live % for 24h, CoinGecko otherwise
               const pct = (period === '24h' && live)
                 ? live.priceChangePercent
                 : pctForPeriod(coin, period)
