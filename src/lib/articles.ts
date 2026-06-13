@@ -45,7 +45,10 @@ export function getAllArticles(): ArticleMeta[] {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
 export function getArticle(slug: string): Article | null {
+  if (!SLUG_RE.test(slug)) return null
   const filePath = path.join(POSTS_DIR, `${slug}.mdx`)
   if (!fs.existsSync(filePath)) return null
   const raw = fs.readFileSync(filePath, 'utf-8')

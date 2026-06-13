@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
       headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 502 })
+        return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }

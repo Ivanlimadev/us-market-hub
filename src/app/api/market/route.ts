@@ -28,7 +28,6 @@ export async function GET() {
       }
     )
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 502 })
+        return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }

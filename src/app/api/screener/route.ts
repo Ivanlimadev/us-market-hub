@@ -21,6 +21,6 @@ export async function GET() {
       headers: { 'Cache-Control': 's-maxage=30, stale-while-revalidate=300' },
     })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 502 })
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }

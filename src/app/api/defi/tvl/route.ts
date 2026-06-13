@@ -76,6 +76,6 @@ export async function GET() {
     return NextResponse.json(data)
   } catch (err) {
     if (cache) return NextResponse.json(cache.data)
-    return NextResponse.json({ error: String(err) }, { status: 502 })
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }
