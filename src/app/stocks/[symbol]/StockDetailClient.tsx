@@ -23,6 +23,7 @@ import { recordView } from '@/lib/recently-viewed'
 import { StockNews } from '@/components/stock/StockNews'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
+import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 function fmtLarge(n: number | null): string {
@@ -147,6 +148,10 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
 
       <WidgetBoundary label="Performance">
         <PerformanceStrip symbol={symbol} />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Stock Analysis">
+        <StockAnalysisSummary data={data} />
       </WidgetBoundary>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
