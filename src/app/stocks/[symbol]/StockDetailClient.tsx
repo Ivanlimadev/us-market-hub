@@ -22,6 +22,7 @@ import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
 import { StockNews } from '@/components/stock/StockNews'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
+import { SecFilings } from '@/components/stock/SecFilings'
 
 function fmtLarge(n: number | null): string {
   if (n === null) return ''
@@ -159,6 +160,7 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
         <div className="space-y-5">
           <EarningsCard data={data} />
           <EarningsHistory symbol={symbol} />
+          <SecFilings symbol={symbol} />
           <FundamentalsCard data={data} />
           <FairValueCard data={data} />
           <BuyHoldChecklist data={data} />
