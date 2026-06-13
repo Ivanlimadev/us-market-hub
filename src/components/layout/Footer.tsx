@@ -59,7 +59,7 @@ export function Footer() {
             <p className="text-xs text-zinc-600">
               In compliance with{' '}
               <Link href="/privacy#lgpd" className="text-zinc-500 underline-offset-2 hover:underline hover:text-zinc-300">
-                LGPD (Lei nº 13.709/2018)
+                LGPD (Law No. 13.709/2018)
               </Link>
               .
             </p>
