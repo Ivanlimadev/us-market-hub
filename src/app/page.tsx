@@ -5,6 +5,7 @@ import { MarketTreemap } from '@/components/market/MarketTreemap'
 import { DividendCalendarWidget } from '@/components/market/DividendCalendarWidget'
 import { EarningsCalendarWidget } from '@/components/market/EarningsCalendarWidget'
 import { PortfolioWidget } from '@/components/portfolio/PortfolioWidget'
+import { HomeNewsWidget } from '@/components/market/HomeNewsWidget'
 
 export default function HomePage() {
   return (
@@ -35,6 +36,9 @@ export default function HomePage() {
 
       {/* Sector heatmap */}
       <HomeHeatmap />
+
+      {/* Market news */}
+      <HomeNewsWidget />
     </div>
   )
 }
