@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { ExternalLink, FileText } from 'lucide-react'
 import type { SecFiling } from '@/app/api/stocks/filings/route'
 
-const FORM_COLORS: Record<string, string> = {
-  '10-K':    'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  '10-Q':    'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  '8-K':     'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  'DEF 14A': 'bg-violet-500/20 text-violet-400 border-violet-500/30',
+const FORM_META: Record<string, { badge: string; border: string; label: string }> = {
+  '10-K':    { badge: 'bg-blue-500/20 text-blue-400 border-blue-500/30',    border: 'border-l-blue-500',    label: 'Annual Report' },
+  '10-Q':    { badge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', border: 'border-l-emerald-500', label: 'Quarterly Report' },
+  '8-K':     { badge: 'bg-amber-500/20 text-amber-400 border-amber-500/30',  border: 'border-l-amber-500',   label: 'Material Event' },
+  'DEF 14A': { badge: 'bg-violet-500/20 text-violet-400 border-violet-500/30', border: 'border-l-violet-500', label: 'Proxy Statement' },
 }
 
 const FILTERS = ['All', '10-K', '10-Q', '8-K', 'DEF 14A'] as const
@@ -18,6 +18,37 @@ function formatDate(d: string): string {
   if (!d) return '—'
   const [y, m, day] = d.split('-')
   return `${day}/${m}/${y}`
+}
+
+function FilingCard({ f }: { f: SecFiling }) {
+  const meta = FORM_META[f.form] ?? {
+    badge: 'bg-zinc-700/40 text-zinc-400 border-zinc-700',
+    border: 'border-l-zinc-600',
+    label: f.form,
+  }
+
+  return (
+    <a
+      href={f.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group flex flex-col gap-1.5 rounded-lg border border-zinc-800 border-l-2 ${meta.border} bg-zinc-900/60 p-2 hover:bg-zinc-800/60 transition-colors`}
+    >
+      <div className="flex items-center justify-between gap-1">
+        <span className={`shrink-0 rounded border px-1 py-px text-[9px] font-bold ${meta.badge}`}>
+          {f.form}
+        </span>
+        <ExternalLink className="h-2.5 w-2.5 shrink-0 text-zinc-700 group-hover:text-zinc-400 transition-colors" />
+      </div>
+      <p className="text-[10px] text-zinc-400 leading-snug line-clamp-1 group-hover:text-zinc-200 transition-colors">
+        {f.description && f.description !== f.form ? f.description : meta.label}
+      </p>
+      <span className="text-[9px] text-zinc-600 tabular-nums">
+        {formatDate(f.filingDate)}
+        {f.reportDate && f.reportDate !== f.filingDate && ` · ${formatDate(f.reportDate)}`}
+      </span>
+    </a>
+  )
 }
 
 export function SecFilings({ symbol }: { symbol: string }) {
@@ -54,7 +85,7 @@ export function SecFilings({ symbol }: { symbol: string }) {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-zinc-800 px-4 py-2">
+      <div className="flex gap-1 border-b border-zinc-800 px-4 py-2.5">
         {FILTERS.map(f => (
           <button
             key={f}
@@ -68,46 +99,23 @@ export function SecFilings({ symbol }: { symbol: string }) {
         ))}
       </div>
 
-      {/* Loading */}
+      {/* Loading skeleton */}
       {isLoading && (
-        <div className="p-4 space-y-2 animate-pulse">
-          {[1,2,3,4,5].map(i => <div key={i} className="h-10 rounded bg-zinc-800" />)}
+        <div className="p-4 grid grid-cols-2 gap-2 animate-pulse">
+          {[1,2,3,4,5,6].map(i => <div key={i} className="h-20 rounded-lg bg-zinc-800" />)}
         </div>
       )}
 
-      {/* List */}
+      {/* Cards grid */}
       {!isLoading && (
-        <div className="divide-y divide-zinc-800/60">
-          {filtered.length === 0 && (
-            <p className="px-5 py-6 text-center text-xs text-zinc-500">No {filter} filings found.</p>
+        <div className="p-4">
+          {filtered.length === 0 ? (
+            <p className="py-6 text-center text-xs text-zinc-500">No {filter} filings found.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
+            </div>
           )}
-          {filtered.map((f, i) => (
-            <a
-              key={i}
-              href={f.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-zinc-800/40 transition-colors group"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${FORM_COLORS[f.form] ?? 'bg-zinc-700/40 text-zinc-400 border-zinc-700'}`}>
-                  {f.form}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-xs text-zinc-300 truncate group-hover:text-white transition-colors">
-                    {f.description || f.form}
-                  </p>
-                  {f.reportDate && f.reportDate !== f.filingDate && (
-                    <p className="text-[10px] text-zinc-600 mt-0.5">Period ending {formatDate(f.reportDate)}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[11px] text-zinc-500 tabular-nums">{formatDate(f.filingDate)}</span>
-                <ExternalLink className="h-3 w-3 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
-              </div>
-            </a>
-          ))}
         </div>
       )}
     </div>
