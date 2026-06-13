@@ -9,18 +9,8 @@ import type {
 const BASE_URL = 'https://api.marketstack.com/v1'
 const API_KEY = process.env.MARKETSTACK_API_KEY!
 
-// In-memory cache to reduce redundant requests
+// In-memory cache — expired entries are kept as stale fallback on API failure
 const cache = new Map<string, { data: unknown; expiresAt: number }>()
-
-function getCache<T>(key: string): T | null {
-  const entry = cache.get(key)
-  if (!entry) return null
-  if (Date.now() > entry.expiresAt) {
-    cache.delete(key)
-    return null
-  }
-  return entry.data as T
-}
 
 function setCache(key: string, data: unknown, ttlSeconds: number) {
   cache.set(key, { data, expiresAt: Date.now() + ttlSeconds * 1000 })
@@ -40,19 +30,27 @@ async function msGet<T>(
 
   const cacheKey = url.toString().replace(API_KEY, 'KEY')
 
-  const cached = getCache<T>(cacheKey)
-  if (cached) return cached
+  // Check cache — keep expired entry in map so it can serve as stale fallback
+  const entry = cache.get(cacheKey)
+  if (entry && Date.now() <= entry.expiresAt) return entry.data as T
 
-  const res = await fetch(url.toString(), { next: { revalidate: ttlSeconds } })
-
-  if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`Marketstack ${res.status}: ${body}`)
+  try {
+    const res = await fetch(url.toString(), { next: { revalidate: ttlSeconds } })
+    if (!res.ok) {
+      const body = await res.text()
+      throw new Error(`Marketstack ${res.status}: ${body}`)
+    }
+    const data = (await res.json()) as T
+    setCache(cacheKey, data, ttlSeconds)
+    return data
+  } catch (err) {
+    // API failed — serve stale data if available rather than crashing
+    if (entry) {
+      console.warn(`[Marketstack] stale fallback for ${endpoint}:`, (err as Error).message)
+      return entry.data as T
+    }
+    throw err
   }
-
-  const data = (await res.json()) as T
-  setCache(cacheKey, data, ttlSeconds)
-  return data
 }
 
 // ─── Endpoints ────────────────────────────────────────────────────────────────

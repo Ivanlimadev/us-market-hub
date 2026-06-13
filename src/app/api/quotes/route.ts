@@ -16,13 +16,13 @@ export async function GET(req: NextRequest) {
     if (type === 'intraday') {
       const data = await getLatestIntraday(symbols.split(','), interval)
       return NextResponse.json(data, {
-        headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
+        headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
       })
     }
 
     const data = await getLatestEod(symbols.split(','))
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
+      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error'

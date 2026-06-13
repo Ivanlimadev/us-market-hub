@@ -11,7 +11,7 @@ export async function GET(
   try {
     const data = await cgHistory(id, Math.min(days, 365))
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
+      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 502 })

@@ -24,7 +24,7 @@ export async function GET() {
         blueChips: blueChipsRes.data,
       },
       {
-        headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
+        headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
       }
     )
   } catch (err: unknown) {

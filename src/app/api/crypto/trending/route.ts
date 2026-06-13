@@ -31,7 +31,7 @@ export async function GET() {
       sparkline:     i.data?.sparkline ?? '',
     }))
     return NextResponse.json(coins, {
-      headers: { 'Cache-Control': 's-maxage=600, stale-while-revalidate=120' },
+      headers: { 'Cache-Control': 's-maxage=600, stale-while-revalidate=600' },
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 502 })

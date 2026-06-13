@@ -2,23 +2,32 @@ import type { CryptoMarket, CryptoGlobal, CryptoDetail, CryptoHistoryBar } from 
 
 const BASE = 'https://api.coingecko.com/api/v3'
 
-// Simple in-memory cache to respect CoinGecko's 30 req/min free limit
+// In-memory cache — entry stays after expiry so it can be used as stale fallback
 const cache = new Map<string, { data: unknown; expires: number }>()
 
 export async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
-  const cached = cache.get(path)
-  if (cached && Date.now() < cached.expires) return cached.data as T
+  const entry = cache.get(path)
 
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Accept': 'application/json' },
-    next: { revalidate: Math.floor(ttlMs / 1000) },
-  })
+  // Serve fresh cache
+  if (entry && Date.now() < entry.expires) return entry.data as T
 
-  if (!res.ok) throw new Error(`CoinGecko ${res.status}: ${path}`)
-
-  const data = await res.json() as T
-  cache.set(path, { data, expires: Date.now() + ttlMs })
-  return data
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      headers: { 'Accept': 'application/json' },
+      next: { revalidate: Math.floor(ttlMs / 1000) },
+    })
+    if (!res.ok) throw new Error(`CoinGecko ${res.status}: ${path}`)
+    const data = await res.json() as T
+    cache.set(path, { data, expires: Date.now() + ttlMs })
+    return data
+  } catch (err) {
+    // API failed — serve stale data if we have any rather than crashing
+    if (entry) {
+      console.warn(`[CoinGecko] stale fallback for ${path}:`, (err as Error).message)
+      return entry.data as T
+    }
+    throw err
+  }
 }
 
 export async function cgMarkets(perPage = 100): Promise<CryptoMarket[]> {

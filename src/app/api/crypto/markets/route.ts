@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const data = await cgMarkets(Math.min(perPage, 250))
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
+      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 502 })

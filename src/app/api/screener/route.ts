@@ -18,7 +18,7 @@ export async function GET() {
       sector: q.sector ?? getSector(q.symbol),
     }))
     return NextResponse.json(quotes, {
-      headers: { 'Cache-Control': 's-maxage=30, stale-while-revalidate=15' },
+      headers: { 'Cache-Control': 's-maxage=30, stale-while-revalidate=300' },
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 502 })

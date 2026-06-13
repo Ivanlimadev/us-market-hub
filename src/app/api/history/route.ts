@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       limit: Math.min(limit, 1000),
     })
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=60' },
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
     })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error'

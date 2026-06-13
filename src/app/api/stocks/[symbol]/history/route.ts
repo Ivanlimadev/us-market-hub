@@ -31,7 +31,7 @@ export async function GET(
 
     return NextResponse.json(
       { period, bars, count: bars.length },
-      { headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=60' } }
+      { headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' } }
     )
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
