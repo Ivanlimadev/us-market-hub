@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { TrendingUp, Menu, X, LogIn, LogOut, User, Bell } from 'lucide-react'
+import { GlobalSearch } from './GlobalSearch'
 import { formatMarketStatus, isMarketOpen } from '@/lib/market-hours'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
@@ -85,6 +86,9 @@ export function Navbar() {
 
           {/* Right side */}
           <div className="ml-auto flex items-center gap-3">
+            {/* Global search */}
+            <GlobalSearch />
+
             {/* Watchlist bell */}
             <button
               onClick={() => router.push('/watchlist')}
