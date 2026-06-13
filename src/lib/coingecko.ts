@@ -1,4 +1,5 @@
 import type { CryptoMarket, CryptoGlobal, CryptoDetail, CryptoHistoryBar } from '@/types/crypto'
+import { withRetry, HttpError } from '@/lib/retry'
 
 const BASE = 'https://api.coingecko.com/api/v3'
 
@@ -12,12 +13,14 @@ export async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
   if (entry && Date.now() < entry.expires) return entry.data as T
 
   try {
-    const res = await fetch(`${BASE}${path}`, {
-      headers: { 'Accept': 'application/json' },
-      next: { revalidate: Math.floor(ttlMs / 1000) },
+    const data = await withRetry(async () => {
+      const res = await fetch(`${BASE}${path}`, {
+        headers: { 'Accept': 'application/json' },
+        next: { revalidate: Math.floor(ttlMs / 1000) },
+      })
+      if (!res.ok) throw new HttpError(res.status, `CoinGecko ${res.status}: ${path}`)
+      return res.json() as Promise<T>
     })
-    if (!res.ok) throw new Error(`CoinGecko ${res.status}: ${path}`)
-    const data = await res.json() as T
     cache.set(path, { data, expires: Date.now() + ttlMs })
     return data
   } catch (err) {

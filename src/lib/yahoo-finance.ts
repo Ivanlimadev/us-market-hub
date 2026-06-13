@@ -1,8 +1,50 @@
 // Yahoo Finance unofficial client — crumb-based auth, server-side only
+import { withRetry, HttpError } from '@/lib/retry'
+
 let _crumb: string | null = null
 let _cookies: string | null = null
 let _crumbFetchedAt = 0
 const CRUMB_TTL_MS = 30 * 60 * 1000 // 30 min
+
+// ── Circuit breaker ────────────────────────────────────────────────────────────
+// Opens after FAILURE_THRESHOLD consecutive failures; resets after COOLDOWN_MS.
+// In half-open state one probe request is allowed; success closes, failure re-opens.
+const FAILURE_THRESHOLD = 5
+const COOLDOWN_MS       = 60_000 // 1 min
+
+type CBState = 'closed' | 'open' | 'half-open'
+
+let cbState: CBState  = 'closed'
+let cbFailures        = 0
+let cbOpenedAt        = 0
+
+function cbRecord(success: boolean) {
+  if (success) {
+    cbFailures = 0
+    cbState    = 'closed'
+    return
+  }
+  cbFailures++
+  if (cbFailures >= FAILURE_THRESHOLD) {
+    cbState    = 'open'
+    cbOpenedAt = Date.now()
+    console.warn(`[YF] circuit opened after ${cbFailures} failures`)
+  }
+}
+
+function cbAllow(): boolean {
+  if (cbState === 'closed') return true
+  if (cbState === 'open') {
+    if (Date.now() - cbOpenedAt >= COOLDOWN_MS) {
+      cbState = 'half-open'
+      return true  // allow one probe
+    }
+    return false
+  }
+  // half-open: only one probe at a time — treat as allowed
+  return true
+}
+// ──────────────────────────────────────────────────────────────────────────────
 
 async function getYFSession(): Promise<{ crumb: string; cookie: string }> {
   if (_crumb && _cookies && Date.now() - _crumbFetchedAt < CRUMB_TTL_MS) {
@@ -19,10 +61,7 @@ async function getYFSession(): Promise<{ crumb: string; cookie: string }> {
 
   // Step 2: get crumb
   const crumbRes = await fetch('https://query2.finance.yahoo.com/v1/test/getcrumb', {
-    headers: {
-      'User-Agent': 'Mozilla/5.0',
-      Cookie: cookieHeader,
-    },
+    headers: { 'User-Agent': 'Mozilla/5.0', Cookie: cookieHeader },
   })
   const crumb = await crumbRes.text()
 
@@ -37,13 +76,31 @@ export async function yfGetPublic(url: string): Promise<Record<string, unknown>>
 }
 
 async function yfGet(url: string): Promise<Record<string, unknown>> {
-  const { crumb, cookie } = await getYFSession()
-  const fullUrl = `${url}${url.includes('?') ? '&' : '?'}crumb=${encodeURIComponent(crumb)}`
-  const res = await fetch(fullUrl, {
-    headers: { 'User-Agent': 'Mozilla/5.0', Cookie: cookie },
-  })
-  if (!res.ok) throw new Error(`YF ${res.status}: ${url}`)
-  return res.json()
+  if (!cbAllow()) throw new Error('[YF] circuit open — skipping request')
+
+  try {
+    const result = await withRetry(async () => {
+      const { crumb, cookie } = await getYFSession()
+      const fullUrl = `${url}${url.includes('?') ? '&' : '?'}crumb=${encodeURIComponent(crumb)}`
+      const res = await fetch(fullUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0', Cookie: cookie },
+      })
+      if (!res.ok) {
+        // 401 means crumb expired — invalidate session so next attempt refreshes
+        if (res.status === 401) {
+          _crumb = null
+          _cookies = null
+        }
+        throw new HttpError(res.status, `YF ${res.status}: ${url}`)
+      }
+      return res.json() as Promise<Record<string, unknown>>
+    })
+    cbRecord(true)
+    return result
+  } catch (err) {
+    cbRecord(false)
+    throw err
+  }
 }
 
 function raw(obj: unknown): number | null {

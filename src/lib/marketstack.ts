@@ -5,6 +5,7 @@ import type {
   MSDividendResponse,
   MSSplitResponse,
 } from '@/types/marketstack'
+import { withRetry, HttpError } from '@/lib/retry'
 
 const BASE_URL = 'https://api.marketstack.com/v1'
 const API_KEY = process.env.MARKETSTACK_API_KEY!
@@ -35,12 +36,14 @@ async function msGet<T>(
   if (entry && Date.now() <= entry.expiresAt) return entry.data as T
 
   try {
-    const res = await fetch(url.toString(), { next: { revalidate: ttlSeconds } })
-    if (!res.ok) {
-      const body = await res.text()
-      throw new Error(`Marketstack ${res.status}: ${body}`)
-    }
-    const data = (await res.json()) as T
+    const data = await withRetry(async () => {
+      const res = await fetch(url.toString(), { next: { revalidate: ttlSeconds } })
+      if (!res.ok) {
+        const body = await res.text()
+        throw new HttpError(res.status, `Marketstack ${res.status}: ${body}`)
+      }
+      return res.json() as Promise<T>
+    })
     setCache(cacheKey, data, ttlSeconds)
     return data
   } catch (err) {
