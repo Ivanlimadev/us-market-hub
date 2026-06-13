@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getLatestEod, getLatestIntraday } from '@/lib/marketstack'
 
-const TICKER_RE = /^[A-Z0-9.\-]{1,10}$/
+const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
 const VALID_INTERVALS = new Set(['1min', '5min', '10min', '15min', '30min', '1hour'])
 
 // GET /api/quotes?symbols=AAPL,MSFT,NVDA&type=eod|intraday

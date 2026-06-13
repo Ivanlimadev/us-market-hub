@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getYFBatchQuotes } from '@/lib/yahoo-finance'
 
-const TICKER_RE = /^[A-Z0-9.\-]{1,10}$/
+const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
 
 // GET /api/batch-quotes?symbols=AAPL,MSFT,NVDA
 export async function GET(req: NextRequest) {
