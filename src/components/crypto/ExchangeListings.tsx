@@ -11,7 +11,8 @@ function fmtVol(n: number): string {
   return `$${n.toFixed(0)}`
 }
 
-function TrustDot({ score }: { score: 'green' | 'yellow' | 'red' }) {
+function TrustDot({ score }: { score: 'green' | 'yellow' | 'red' | null }) {
+  if (!score) return <span className="text-[10px] text-zinc-600">N/A</span>
   const cls =
     score === 'green'  ? 'bg-emerald-400' :
     score === 'yellow' ? 'bg-amber-400'   : 'bg-red-400'

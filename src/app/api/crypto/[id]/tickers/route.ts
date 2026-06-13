@@ -20,7 +20,7 @@ export interface ExchangeTicker {
   target: string
   price: number
   volume24h: number
-  trustScore: 'green' | 'yellow' | 'red'
+  trustScore: 'green' | 'yellow' | 'red' | null
   tradeUrl: string | null
 }
 
@@ -59,7 +59,7 @@ export async function GET(
         target:     t.target,
         price:      t.last,
         volume24h:  t.converted_volume.usd ?? 0,
-        trustScore: t.trust_score ?? 'red',
+        trustScore: t.trust_score,
         tradeUrl:   t.trade_url,
       }))
 
