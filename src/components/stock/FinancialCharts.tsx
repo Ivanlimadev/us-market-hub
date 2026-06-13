@@ -38,9 +38,9 @@ function shortDate(date: string, isQuarterly: boolean): string {
 type MetricKey = 'revenue' | 'netIncome' | 'netMargin'
 
 const METRICS: { key: MetricKey; label: string; fmt: (n: number | null) => string }[] = [
-  { key: 'revenue',    label: 'Receita',        fmt: fmtLarge },
-  { key: 'netIncome',  label: 'Lucro Líquido',  fmt: fmtLarge },
-  { key: 'netMargin',  label: 'Margem Líquida', fmt: fmtPct  },
+  { key: 'revenue',    label: 'Revenue',      fmt: fmtLarge },
+  { key: 'netIncome',  label: 'Net Income',   fmt: fmtLarge },
+  { key: 'netMargin',  label: 'Net Margin',   fmt: fmtPct  },
 ]
 
 // ── bar chart ──────────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ export function FinancialCharts({ symbol }: { symbol: string }) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 px-5 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-300">Receita &amp; Resultados</h3>
+          <h3 className="text-sm font-semibold text-zinc-300">Revenue &amp; Results</h3>
           {period === 'annual' && (cagrRevenue !== null || cagrNetIncome !== null) && (
             <p className="mt-0.5 text-xs text-zinc-500">
               CAGR {rows.length > 1 ? `${rows.length - 1}Y` : ''}&nbsp;·&nbsp;
