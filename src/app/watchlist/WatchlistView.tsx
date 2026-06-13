@@ -134,7 +134,7 @@ function AlertRow({
   // Label for the condition badge
   const condLabel = isPct
     ? (isUp ? `▲ +${alert.targetPct?.toFixed(2)}%` : `▼ -${alert.targetPct?.toFixed(2)}%`)
-    : (isUp ? '▲ Acima de' : '▼ Abaixo de')
+    : (isUp ? '▲ Above' : '▼ Below')
 
   // Value shown next to label
   const condValue = isPct
@@ -168,21 +168,21 @@ function AlertRow({
         <div className="flex items-center gap-3 mt-0.5 flex-wrap">
           {currentPrice != null && (
             <span className="text-xs text-zinc-500">
-              Atual: <span className="text-zinc-400">{fmtPrice2(currentPrice)}</span>
+              Current: <span className="text-zinc-400">{fmtPrice2(currentPrice)}</span>
             </span>
           )}
           {livePct != null && (
             <span className={`text-xs font-semibold ${livePct >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-              {livePct >= 0 ? '+' : ''}{livePct.toFixed(2)}% agora
+              {livePct >= 0 ? '+' : ''}{livePct.toFixed(2)}% now
             </span>
           )}
           {alert.triggered ? (
             <span className="rounded-full bg-zinc-700 px-2 py-0.5 text-[10px] font-semibold text-zinc-400">
-              ✓ Ativado
+              ✓ Triggered
             </span>
           ) : (
             <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
-              Ativo
+              Active
             </span>
           )}
         </div>

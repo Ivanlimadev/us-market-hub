@@ -46,8 +46,8 @@ export function TriggeredAlertsToast() {
         const isUp  = alert.condition === 'above' || alert.condition === 'change_up'
         const isPct = alert.condition === 'change_up' || alert.condition === 'change_down'
         const msg   = isPct
-          ? `${isUp ? 'Valorizou' : 'Desvalorizou'} ${alert.targetPct?.toFixed(2)}% (ref. ${fmtPrice(alert.referencePrice ?? alert.targetPrice)})`
-          : `Preço ${isUp ? 'acima de' : 'abaixo de'} ${fmtPrice(alert.targetPrice)}`
+          ? `${isUp ? 'Gained' : 'Dropped'} ${alert.targetPct?.toFixed(2)}% (ref. ${fmtPrice(alert.referencePrice ?? alert.targetPrice)})`
+          : `Price ${isUp ? 'above' : 'below'} ${fmtPrice(alert.targetPrice)}`
         return (
           <div
             key={alert.id}
@@ -60,7 +60,7 @@ export function TriggeredAlertsToast() {
             <Bell className="h-4 w-4 mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold">
-                {alert.symbol} — Alerta Ativado!
+                {alert.symbol} — Alert Triggered!
               </p>
               <p className="text-[11px] opacity-80 mt-0.5">{msg}</p>
             </div>

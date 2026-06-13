@@ -37,7 +37,7 @@ function RankCard({ title, icon: Icon, color, items, isLoading, href }: {
           <h3 className="text-sm font-semibold text-zinc-200">{title}</h3>
         </div>
         <Link href={href} className="text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors">
-          Ver mais →
+          See more →
         </Link>
       </div>
       <div className="divide-y divide-zinc-800/50 flex-1">

@@ -147,7 +147,7 @@ export function AlertModal({
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                 }`}
               >
-                <DollarSign className="h-3.5 w-3.5" /> Preço
+                <DollarSign className="h-3.5 w-3.5" /> Price
               </button>
               <button
                 type="button"
@@ -158,7 +158,7 @@ export function AlertModal({
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                 }`}
               >
-                <Percent className="h-3.5 w-3.5" /> Variação %
+                <Percent className="h-3.5 w-3.5" /> % Change
               </button>
             </div>
 
@@ -179,14 +179,14 @@ export function AlertModal({
                           : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                       }`}
                     >
-                      {c === 'above' ? '▲ Acima de' : '▼ Abaixo de'}
+                      {c === 'above' ? '▲ Above' : '▼ Below'}
                     </button>
                   ))}
                 </div>
 
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Preço alvo ($)
+                    Target Price ($)
                   </label>
                   <input
                     required type="number" min="0.00000001" step="any"
@@ -196,13 +196,13 @@ export function AlertModal({
                     className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30 transition-all"
                   />
                   {currentPrice && (
-                    <p className="mt-1 text-[11px] text-zinc-600">Atual: {fmtPrice(currentPrice)}</p>
+                    <p className="mt-1 text-[11px] text-zinc-600">Current: {fmtPrice(currentPrice)}</p>
                   )}
                 </div>
               </>
             ) : (
               <>
-                {/* Valorizar / Desvalorizar */}
+                {/* Gain / Drop */}
                 <div className="flex rounded-xl border border-zinc-700 p-1 gap-1">
                   <button
                     type="button"
@@ -213,7 +213,7 @@ export function AlertModal({
                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                     }`}
                   >
-                    ▲ Valorizar
+                    ▲ Gain
                   </button>
                   <button
                     type="button"
@@ -224,13 +224,13 @@ export function AlertModal({
                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                     }`}
                   >
-                    ▼ Desvalorizar
+                    ▼ Drop
                   </button>
                 </div>
 
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Variação (%)
+                    Change (%)
                   </label>
                   <div className="relative">
                     <input
@@ -244,7 +244,7 @@ export function AlertModal({
                   </div>
                   {currentPrice && (
                     <p className="mt-1 text-[11px] text-zinc-600">
-                      Referência: {fmtPrice(currentPrice)}
+                      Reference: {fmtPrice(currentPrice)}
                       {pctVal && parseFloat(pctVal) > 0 && (
                         <span className={`ml-1 ${pctDir === 'change_up' ? 'text-emerald-600' : 'text-red-600'}`}>
                           → {fmtPrice(
@@ -264,7 +264,7 @@ export function AlertModal({
               type="submit"
               className="w-full rounded-xl py-2.5 text-sm font-bold text-white transition-all bg-emerald-500 hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
             >
-              Criar Alerta
+              Create Alert
             </button>
           </form>
         </div>
