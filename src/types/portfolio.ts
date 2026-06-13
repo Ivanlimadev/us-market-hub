@@ -1,4 +1,5 @@
 export type TransactionType = 'buy' | 'sell'
+export type AssetType = 'stock' | 'crypto'
 
 export interface Transaction {
   id: string
@@ -8,23 +9,28 @@ export interface Transaction {
   pricePerShare: number
   date: string // ISO date string
   fees: number
+  asset_type?: AssetType
+  coingeckoId?: string
 }
 
 export interface Holding {
   symbol: string
   name: string
   totalShares: number
-  avgCost: number       // weighted average cost per share
-  totalCost: number     // totalShares * avgCost
+  avgCost: number
+  totalCost: number
   currentPrice: number
-  currentValue: number  // totalShares * currentPrice
+  currentValue: number
   unrealizedGain: number
   unrealizedGainPct: number
   prevClose: number
-  dayChange: number     // (currentPrice - prevClose) * totalShares
+  dayChange: number
   dayChangePct: number
   dividendsReceived: number
-  allocationPct: number // % of total portfolio value
+  allocationPct: number
+  asset_type: AssetType
+  coingeckoId?: string
+  image?: string
 }
 
 export interface PortfolioSummary {

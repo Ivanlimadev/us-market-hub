@@ -56,7 +56,14 @@ function Logo({ sym }: { sym: string }) {
 }
 
 // ── types ─────────────────────────────────────────────────────────────────────
-export interface AssetSuggestion { symbol: string; name: string; sector?: string }
+export interface AssetSuggestion {
+  symbol: string
+  name: string
+  sector?: string
+  asset_type?: 'stock' | 'crypto'
+  coingeckoId?: string
+  image?: string
+}
 
 interface Props { onSelect: (asset: AssetSuggestion) => void }
 

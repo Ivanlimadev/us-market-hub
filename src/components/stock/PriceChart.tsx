@@ -84,13 +84,16 @@ export function PriceChart({ symbol, currentPrice, prevClose }: Props) {
     const bars = Array.isArray(history?.bars) ? (history!.bars as EodBar[]) : []
     if (!bars.length) return { area: [], candle: [], vol: [] }
 
-    const candle = bars.map((b) => ({
-      time:  b.date.split('T')[0] as `${number}-${number}-${number}`,
-      open:  b.open,
-      high:  b.high,
-      low:   b.low,
-      close: b.adj_close ?? b.close,
-    }))
+    const candle = bars.map((b) => {
+      const adjFactor = (b.adj_close && b.close > 0) ? b.adj_close / b.close : 1
+      return {
+        time:  b.date.split('T')[0] as `${number}-${number}-${number}`,
+        open:  b.open  * adjFactor,
+        high:  b.high  * adjFactor,
+        low:   b.low   * adjFactor,
+        close: b.adj_close ?? b.close,
+      }
+    })
     const area = bars.map((b) => ({
       time:  b.date.split('T')[0] as `${number}-${number}-${number}`,
       value: b.adj_close ?? b.close,

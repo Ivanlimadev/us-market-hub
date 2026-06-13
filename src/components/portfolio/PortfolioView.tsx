@@ -2,16 +2,17 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, Wallet, LayoutGrid, List, DollarSign } from 'lucide-react'
+import { Plus, Wallet, LayoutGrid, List, DollarSign, BarChart2 } from 'lucide-react'
 import { usePortfolio } from '@/lib/hooks/usePortfolio'
 import { usePortfolioDividends } from '@/lib/hooks/usePortfolioDividends'
 import { usePortfolioSync } from '@/lib/hooks/usePortfolioSync'
 import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from './AddTransactionModal'
 import { DividendBarChart } from './DividendBarChart'
+import { PortfolioHistoryChart } from './PortfolioHistoryChart'
 import type { Holding } from '@/types/portfolio'
 
-type Tab = 'overview' | 'holdings' | 'dividends'
+type Tab = 'overview' | 'holdings' | 'dividends' | 'history'
 
 const ALLOC_COLORS = [
   'bg-sky-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500',
@@ -56,7 +57,7 @@ function AllocationBar({ holdings }: { holdings: Holding[] }) {
         {holdings.slice(0, 10).map((h, i) => (
           <Link
             key={h.symbol}
-            href={`/stocks/${h.symbol}`}
+            href={h.asset_type === 'crypto' ? (h.coingeckoId ? `/crypto/${h.coingeckoId}` : '/crypto') : `/stocks/${h.symbol}`}
             className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
           >
             <div className={`h-2 w-2 shrink-0 rounded-full ${ALLOC_COLORS[i % ALLOC_COLORS.length]}`} />
@@ -80,27 +81,53 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
   divThisMonth: number
   divAllTime: number
 }) {
-  const gainUp = h.unrealizedGain >= 0
+  const gainUp  = h.unrealizedGain >= 0
+  const isCrypto = h.asset_type === 'crypto'
+  const href     = isCrypto ? `/crypto/${h.coingeckoId}` : `/stocks/${h.symbol}`
+
+  function fmtPrice(n: number) {
+    if (n >= 1)    return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    if (n >= 0.01) return `$${n.toFixed(4)}`
+    return `$${n.toFixed(8)}`
+  }
+
+  function fmtAmount(n: number) {
+    if (isCrypto) {
+      if (n >= 1)    return n.toLocaleString('en-US', { maximumFractionDigits: 8 })
+      return n.toFixed(8)
+    }
+    return n.toLocaleString()
+  }
+
   return (
     <Link
-      href={`/stocks/${h.symbol}`}
+      href={href}
       className="flex flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-zinc-600"
     >
       {/* Header: logo + name + allocation badge */}
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-800">
-          <Image
-            src={`https://assets.parqet.com/logos/symbol/${h.symbol}?format=png`}
-            alt={h.symbol} width={44} height={44} className="object-contain" unoptimized
-            onError={(e) => {
-              const t = e.target as HTMLImageElement
-              t.style.display = 'none'
-              t.parentElement!.innerHTML = `<span class="text-sm font-bold text-zinc-400">${h.symbol.slice(0, 2)}</span>`
-            }}
-          />
+          {isCrypto && h.image ? (
+            <Image src={h.image} alt={h.symbol} width={44} height={44} className="rounded-full object-contain" unoptimized />
+          ) : (
+            <Image
+              src={`https://assets.parqet.com/logos/symbol/${h.symbol}?format=png`}
+              alt={h.symbol} width={44} height={44} className="object-contain" unoptimized
+              onError={(e) => {
+                const t = e.target as HTMLImageElement
+                t.style.display = 'none'
+                t.parentElement!.innerHTML = `<span class="text-sm font-bold text-zinc-400">${h.symbol.slice(0, 2)}</span>`
+              }}
+            />
+          )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-white leading-tight">{h.symbol}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="font-bold text-white leading-tight">{h.symbol}</p>
+            {isCrypto && (
+              <span className="rounded-full bg-orange-500/15 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-orange-400">Crypto</span>
+            )}
+          </div>
           <p className="truncate text-xs text-zinc-500">{h.name}</p>
         </div>
         <span className="shrink-0 rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold text-zinc-400">
@@ -112,7 +139,7 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
       <div className="flex items-end justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-zinc-500">Current Price</p>
-          <p className="text-lg font-bold tabular-nums text-white">${h.currentPrice.toFixed(2)}</p>
+          <p className="text-lg font-bold tabular-nums text-white">{fmtPrice(h.currentPrice)}</p>
         </div>
         <ChangeBadge value={h.dayChangePct} />
       </div>
@@ -121,11 +148,11 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
       <div className="grid grid-cols-2 gap-2 border-t border-zinc-800 pt-3">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-zinc-500">Avg Cost</p>
-          <p className="text-sm font-semibold tabular-nums text-zinc-200">${h.avgCost.toFixed(2)}</p>
+          <p className="text-sm font-semibold tabular-nums text-zinc-200">{fmtPrice(h.avgCost)}</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-zinc-500">Shares</p>
-          <p className="text-sm font-semibold tabular-nums text-zinc-200">{h.totalShares.toLocaleString()}</p>
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500">{isCrypto ? 'Amount' : 'Shares'}</p>
+          <p className="text-sm font-semibold tabular-nums text-zinc-200">{fmtAmount(h.totalShares)}</p>
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-wider text-zinc-500">Total Value</p>
@@ -142,17 +169,19 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
         </div>
       </div>
 
-      {/* Dividends row */}
-      <div className="grid grid-cols-2 gap-2 rounded-lg bg-emerald-500/5 border border-emerald-500/10 px-3 py-2">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-emerald-600">Div. This Month</p>
-          <p className="text-sm font-bold tabular-nums text-emerald-400">{fmt(divThisMonth)}</p>
+      {/* Dividends row — stocks only */}
+      {!isCrypto && (
+        <div className="grid grid-cols-2 gap-2 rounded-lg bg-emerald-500/5 border border-emerald-500/10 px-3 py-2">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-emerald-600">Div. This Month</p>
+            <p className="text-sm font-bold tabular-nums text-emerald-400">{fmt(divThisMonth)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-emerald-600">Div. All-Time</p>
+            <p className="text-sm font-bold tabular-nums text-emerald-400">{fmt(divAllTime)}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-emerald-600">Div. All-Time</p>
-          <p className="text-sm font-bold tabular-nums text-emerald-400">{fmt(divAllTime)}</p>
-        </div>
-      </div>
+      )}
     </Link>
   )
 }
@@ -188,6 +217,7 @@ export function PortfolioView() {
   const TABS = [
     { key: 'overview'  as Tab, label: 'Overview',   icon: LayoutGrid },
     { key: 'holdings'  as Tab, label: 'Holdings',   icon: List },
+    { key: 'history'   as Tab, label: 'History',    icon: BarChart2  },
     { key: 'dividends' as Tab, label: 'Dividends',  icon: DollarSign },
   ]
 
@@ -283,6 +313,9 @@ export function PortfolioView() {
             </div>
           )
       )}
+
+      {/* ---- HISTORY ---- */}
+      {tab === 'history' && <PortfolioHistoryChart />}
 
       {/* ---- DIVIDENDS ---- */}
       {tab === 'dividends' && (

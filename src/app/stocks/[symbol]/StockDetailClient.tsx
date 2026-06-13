@@ -16,6 +16,8 @@ import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
 import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
+import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
+import { AlertButton } from '@/components/watchlist/AlertButton'
 import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
 
@@ -109,12 +111,25 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
               </span>
             )}
           </div>
-          <button
-            onClick={() => setShowAddTx(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
-          >
-            <Plus className="h-3.5 w-3.5" /> Add to Portfolio
-          </button>
+          <div className="flex items-center gap-1">
+            <WatchlistButton
+              symbol={symbol}
+              name={data.name}
+              asset_type="stock"
+            />
+            <AlertButton
+              symbol={symbol}
+              name={data.name}
+              asset_type="stock"
+              currentPrice={data.currentPrice}
+            />
+            <button
+              onClick={() => setShowAddTx(true)}
+              className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add to Portfolio
+            </button>
+          </div>
         </div>
       </div>
 

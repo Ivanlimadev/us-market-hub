@@ -1,7 +1,14 @@
-import type { Transaction, Holding, PortfolioSummary } from '@/types/portfolio'
+import type { Transaction, Holding, PortfolioSummary, AssetType } from '@/types/portfolio'
 import type { MSEod } from '@/types/marketstack'
 
-interface TickerMeta { name: string; prevClose: number; currentPrice: number }
+export interface TickerMeta {
+  name: string
+  prevClose: number
+  currentPrice: number
+  asset_type?: AssetType
+  coingeckoId?: string
+  image?: string
+}
 
 // Weighted average cost across all buys (adjusted on sells)
 export function computeHoldings(
@@ -28,9 +35,10 @@ export function computeHoldings(
       pos.totalShares += tx.quantity
     } else {
       // Sell: reduce shares, proportionally reduce cost basis
-      const pct = tx.quantity / pos.totalShares
+      const sellQty = Math.min(tx.quantity, pos.totalShares)
+      const pct = pos.totalShares > 0 ? sellQty / pos.totalShares : 0
       pos.totalCost -= pos.totalCost * pct
-      pos.totalShares -= tx.quantity
+      pos.totalShares -= sellQty
     }
   }
 
@@ -64,7 +72,10 @@ export function computeHoldings(
       dayChange,
       dayChangePct,
       dividendsReceived: dividends[symbol] ?? 0,
-      allocationPct: 0, // filled after loop
+      allocationPct: 0,
+      asset_type: meta?.asset_type ?? 'stock',
+      coingeckoId: meta?.coingeckoId,
+      image: meta?.image,
     })
   }
 

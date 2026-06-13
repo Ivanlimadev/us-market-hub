@@ -23,6 +23,8 @@ export async function GET() {
     pricePerShare: Number(r.price_per_share),
     date:          r.date,
     fees:          Number(r.fees),
+    asset_type:    r.asset_type ?? 'stock',
+    coingeckoId:   r.coingecko_id ?? undefined,
   }))
 
   return NextResponse.json(transactions)
@@ -38,14 +40,16 @@ export async function POST(req: NextRequest) {
   // Bulk insert (migration from localStorage)
   if (body.transactions) {
     const rows = body.transactions.map((tx) => ({
-      id:             tx.id,
-      user_id:        user.id,
-      symbol:         tx.symbol,
-      type:           tx.type,
-      quantity:       tx.quantity,
+      id:              tx.id,
+      user_id:         user.id,
+      symbol:          tx.symbol,
+      type:            tx.type,
+      quantity:        tx.quantity,
       price_per_share: tx.pricePerShare,
-      date:           tx.date,
-      fees:           tx.fees,
+      date:            tx.date,
+      fees:            tx.fees,
+      asset_type:      tx.asset_type ?? 'stock',
+      coingecko_id:    tx.coingeckoId ?? null,
     }))
 
     const { error } = await supabase.from('portfolio_transactions').upsert(rows)
@@ -66,6 +70,8 @@ export async function POST(req: NextRequest) {
     price_per_share: tx.pricePerShare,
     date:            tx.date,
     fees:            tx.fees,
+    asset_type:      tx.asset_type ?? 'stock',
+    coingecko_id:    tx.coingeckoId ?? null,
   })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

@@ -2,10 +2,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { TrendingUp, Menu, X, LogIn, LogOut, User } from 'lucide-react'
+import { TrendingUp, Menu, X, LogIn, LogOut, User, Bell } from 'lucide-react'
 import { formatMarketStatus, isMarketOpen } from '@/lib/market-hours'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
+import { useWatchlistStore } from '@/lib/store/watchlist-store'
+import { useAlertChecker } from '@/lib/hooks/useAlertChecker'
+import { TriggeredAlertsToast } from '@/components/watchlist/TriggeredAlertsToast'
 
 const NAV_LINKS = [
   { href: '/', label: 'Markets' },
@@ -23,10 +26,19 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname        = usePathname()
   const router          = useRouter()
-  const open            = isMarketOpen()
+  const isCryptoPage    = pathname.startsWith('/crypto')
+  const open            = isCryptoPage ? true : isMarketOpen()
   const { user }        = useAuth()
   const [menuOpen, setMenuOpen]     = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+
+  // Alert checker — fires store.triggerAlert when prices cross thresholds
+  useAlertChecker()
+
+  // Bell badge: count triggered alerts
+  const triggeredCount = useWatchlistStore(
+    (s) => s.alerts.filter((a) => a.triggered).length
+  )
 
   useEffect(() => { setMenuOpen(false) }, [pathname])
   useEffect(() => {
@@ -73,12 +85,28 @@ export function Navbar() {
 
           {/* Right side */}
           <div className="ml-auto flex items-center gap-3">
+            {/* Watchlist bell */}
+            <button
+              onClick={() => router.push('/watchlist')}
+              title="Watchlist & Alerts"
+              className="relative flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+            >
+              <Bell className="h-4 w-4" />
+              {triggeredCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+                  {triggeredCount > 9 ? '9+' : triggeredCount}
+                </span>
+              )}
+            </button>
+
             {/* Market status */}
             <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
               open ? 'bg-emerald-500/15 text-emerald-400' : 'bg-zinc-800 text-zinc-400'
             }`}>
               <span className={`h-1.5 w-1.5 rounded-full ${open ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-500'}`} />
-              <span className="hidden sm:inline">{formatMarketStatus()}</span>
+              <span className="hidden sm:inline">
+                {isCryptoPage ? 'Crypto · 24/7' : formatMarketStatus()}
+              </span>
               <span className="sm:hidden">{open ? 'Open' : 'Closed'}</span>
             </span>
 
@@ -153,6 +181,19 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/watchlist"
+              className={`flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                pathname === '/watchlist' ? 'bg-zinc-800 text-white' : 'text-zinc-300 hover:bg-zinc-800/60 hover:text-white'
+              }`}
+            >
+              <Bell className="h-4 w-4" /> Watchlist
+              {triggeredCount > 0 && (
+                <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+                  {triggeredCount}
+                </span>
+              )}
+            </Link>
             <div className="mt-2 border-t border-zinc-800 pt-2">
               {user ? (
                 <>
@@ -177,6 +218,9 @@ export function Navbar() {
           </nav>
         </div>
       )}
+
+      {/* Global triggered alerts toast */}
+      <TriggeredAlertsToast />
     </>
   )
 }

@@ -5,6 +5,8 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store'
 import { computeHoldings, computeSummary } from '@/lib/portfolio-calc'
 import type { PortfolioSummary } from '@/types/portfolio'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
+import type { CryptoMarket } from '@/types/crypto'
+import type { TickerMeta } from '@/lib/portfolio-calc'
 
 export function usePortfolio(): {
   summary: PortfolioSummary | null
@@ -12,35 +14,76 @@ export function usePortfolio(): {
   symbols: string[]
 } {
   const transactions = usePortfolioStore((s) => s.transactions)
-  const symbols = useMemo(
-    () => [...new Set(transactions.map((t) => t.symbol))],
+
+  const stockSymbols = useMemo(
+    () => [...new Set(
+      transactions
+        .filter((t) => (t.asset_type ?? 'stock') === 'stock')
+        .map((t) => t.symbol)
+    )],
     [transactions]
   )
 
-  const symbolKey = symbols.slice().sort().join(',')
+  const hasCrypto = useMemo(
+    () => transactions.some((t) => t.asset_type === 'crypto'),
+    [transactions]
+  )
 
-  const { data: quotes, isLoading } = useQuery<YFBatchQuote[]>({
-    queryKey: ['batch-quotes', symbolKey],
-    queryFn: () => fetch(`/api/batch-quotes?symbols=${symbolKey}`).then(r => r.json()),
+  const stockKey = stockSymbols.slice().sort().join(',')
+
+  const { data: stockQuotes, isLoading: stockLoading, isFetched: stockFetched } = useQuery<YFBatchQuote[]>({
+    queryKey: ['batch-quotes', stockKey],
+    queryFn: () => fetch(`/api/batch-quotes?symbols=${stockKey}`).then((r) => r.json()),
     staleTime: 60_000,
-    enabled: symbols.length > 0,
+    enabled: stockSymbols.length > 0,
   })
 
-  const summary = useMemo(() => {
-    if (!quotes?.length || !transactions.length) return null
+  const { data: cryptoMarkets, isLoading: cryptoLoading, isFetched: cryptoFetched } = useQuery<CryptoMarket[]>({
+    queryKey: ['crypto-markets'],
+    queryFn: () => fetch('/api/crypto/markets?limit=250').then((r) => r.json()),
+    staleTime: 55_000,
+    refetchInterval: 60_000,
+    enabled: hasCrypto,
+  })
 
-    const quoteMap: Record<string, { name: string; prevClose: number; currentPrice: number }> = {}
-    for (const q of quotes) {
+  const isLoading = stockLoading || cryptoLoading
+
+  const summary = useMemo(() => {
+    if (!transactions.length) return null
+    // Wait until the fetch completes (success or error) — don't block on empty results
+    if (stockSymbols.length > 0 && !stockFetched) return null
+    if (hasCrypto && !cryptoFetched) return null
+
+    const quoteMap: Record<string, TickerMeta> = {}
+
+    for (const q of stockQuotes ?? []) {
       quoteMap[q.symbol] = {
         name: q.name,
         prevClose: q.prevClose,
         currentPrice: q.price,
+        asset_type: 'stock',
+      }
+    }
+
+    for (const coin of cryptoMarkets ?? []) {
+      quoteMap[coin.symbol.toUpperCase()] = {
+        name: coin.name,
+        prevClose: coin.current_price - (coin.price_change_24h ?? 0),
+        currentPrice: coin.current_price,
+        asset_type: 'crypto',
+        coingeckoId: coin.id,
+        image: coin.image,
       }
     }
 
     const holdings = computeHoldings(transactions, quoteMap)
     return computeSummary(holdings)
-  }, [quotes, transactions])
+  }, [stockQuotes, cryptoMarkets, transactions, stockSymbols.length, hasCrypto])
+
+  const symbols = useMemo(
+    () => [...new Set(transactions.map((t) => t.symbol))],
+    [transactions]
+  )
 
   return { summary, isLoading, symbols }
 }

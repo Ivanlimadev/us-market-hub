@@ -3,8 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, ExternalLink, TrendingUp, TrendingDown } from 'lucide-react'
+import { ArrowLeft, ExternalLink, TrendingUp, TrendingDown, Plus } from 'lucide-react'
 import { useKrakenTicker } from '@/lib/hooks/useKrakenTicker'
+import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
+import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
+import { AlertButton } from '@/components/watchlist/AlertButton'
 import type { CryptoDetail, CryptoHistoryBar } from '@/types/crypto'
 
 const PERIODS: { label: string; days: number }[] = [
@@ -50,13 +53,53 @@ function StatRow({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
+function PerformanceCell({ label, val }: { label: string; val: number | null | undefined }) {
+  const hasData = val != null
+  const isUp = (val ?? 0) >= 0
+  return (
+    <div className="flex flex-col items-center gap-1 px-2 py-3 text-center">
+      <span className="text-[11px] font-medium text-zinc-500">{label}</span>
+      {hasData ? (
+        <span className={`text-sm font-semibold tabular-nums ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
+          {isUp ? '+' : ''}{val!.toFixed(2)}%
+        </span>
+      ) : (
+        <span className="text-zinc-700 text-xs">—</span>
+      )}
+    </div>
+  )
+}
+
+function CryptoPerformanceStrip({ md }: { md: CryptoDetail['market_data'] }) {
+  const periods = [
+    { label: '24h',  val: md.price_change_percentage_24h  },
+    { label: '7d',   val: md.price_change_percentage_7d   },
+    { label: '14d',  val: md.price_change_percentage_14d  },
+    { label: '30d',  val: md.price_change_percentage_30d  },
+    { label: '60d',  val: md.price_change_percentage_60d  },
+    { label: '1y',   val: md.price_change_percentage_1y   },
+  ]
+  return (
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+      <div className="border-b border-zinc-800 px-4 py-3">
+        <h3 className="text-sm font-semibold text-zinc-300">Performance</h3>
+      </div>
+      <div className="grid grid-cols-3 divide-x divide-zinc-800 sm:grid-cols-6">
+        {periods.map((p) => (
+          <PerformanceCell key={p.label} label={p.label} val={p.val} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // Simple canvas price chart
 function PriceChart({ bars, isLoading }: { bars: CryptoHistoryBar[]; isLoading: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas || isLoading || !Array.isArray(bars) || bars.length === 0) return
+    if (!canvas || isLoading || !Array.isArray(bars) || bars.length < 2) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
@@ -120,7 +163,8 @@ function PriceChart({ bars, isLoading }: { bars: CryptoHistoryBar[]; isLoading: 
 }
 
 export function CryptoDetailClient({ id }: { id: string }) {
-  const [days, setDays] = useState(30)
+  const [days, setDays]           = useState(30)
+  const [showAddTx, setShowAddTx] = useState(false)
 
   const { data: coin, isLoading: coinLoading } = useQuery<CryptoDetail>({
     queryKey: ['crypto-coin', id],
@@ -168,34 +212,62 @@ export function CryptoDetailClient({ id }: { id: string }) {
       </Link>
 
       {/* Header */}
-      <div className="flex flex-wrap items-start gap-4">
-        <Image src={coin.image.large} alt={coin.name} width={64} height={64} className="rounded-full" unoptimized />
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-white">{coin.name}</h1>
-            <span className="rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold uppercase text-zinc-400">
-              {coin.symbol}
-            </span>
-            <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-500">
-              Rank #{md.market_cap_rank}
-            </span>
-            {coin.homepage && (
-              <a
-                href={coin.homepage}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-full border border-zinc-700 px-2.5 py-0.5 text-xs text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
-              >
-                Website <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
+          <Image src={coin.image.large} alt={coin.name} width={56} height={56} className="rounded-full shrink-0" unoptimized />
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl font-bold text-white">{coin.name}</h1>
+              <span className="rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold uppercase text-zinc-400">
+                {coin.symbol}
+              </span>
+              <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-500">
+                Rank #{md.market_cap_rank}
+              </span>
+              {coin.homepage && (
+                <a
+                  href={coin.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-700 px-2.5 py-0.5 text-xs text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                >
+                  Website <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-3">
+        </div>
+
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl font-bold text-white">
               {fmtPrice(price)}
               {live && <span className="ml-1.5 text-sm text-emerald-400 animate-pulse">●</span>}
             </span>
             <PctBadge val={pct24h} />
+          </div>
+          <div className="flex items-center gap-1">
+            <WatchlistButton
+              symbol={coin.symbol.toUpperCase()}
+              name={coin.name}
+              asset_type="crypto"
+              coingeckoId={coin.id}
+              image={coin.image.large}
+            />
+            <AlertButton
+              symbol={coin.symbol.toUpperCase()}
+              name={coin.name}
+              asset_type="crypto"
+              coingeckoId={coin.id}
+              image={coin.image.large}
+              currentPrice={price}
+            />
+            <button
+              onClick={() => setShowAddTx(true)}
+              className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400 transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add to Portfolio
+            </button>
           </div>
         </div>
       </div>
@@ -223,8 +295,11 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <PriceChart bars={Array.isArray(history) ? history : []} isLoading={histLoading} />
       </div>
 
+      {/* Performance strip — below chart, same style as stocks */}
+      <CryptoPerformanceStrip md={md} />
+
       {/* Stats grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Market Stats */}
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Market Stats</h3>
@@ -245,17 +320,6 @@ export function CryptoDetailClient({ id }: { id: string }) {
           <StatRow label="ATL" value={fmtPrice(md.atl)} />
           <StatRow label="ATL Change" value={<PctBadge val={md.atl_change_percentage} />} />
           <StatRow label="ATL Date" value={new Date(md.atl_date).toLocaleDateString()} />
-        </div>
-
-        {/* Performance */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Performance</h3>
-          <StatRow label="24h" value={<PctBadge val={md.price_change_percentage_24h} />} />
-          <StatRow label="7d" value={<PctBadge val={md.price_change_percentage_7d} />} />
-          <StatRow label="14d" value={<PctBadge val={md.price_change_percentage_14d} />} />
-          <StatRow label="30d" value={<PctBadge val={md.price_change_percentage_30d} />} />
-          <StatRow label="60d" value={<PctBadge val={md.price_change_percentage_60d} />} />
-          <StatRow label="1y" value={<PctBadge val={md.price_change_percentage_1y} />} />
         </div>
       </div>
 
@@ -279,6 +343,17 @@ export function CryptoDetailClient({ id }: { id: string }) {
             </span>
           ))}
         </div>
+      )}
+
+      {showAddTx && (
+        <AddTransactionModal
+          defaultSymbol={coin.symbol.toUpperCase()}
+          defaultName={coin.name}
+          defaultAssetType="crypto"
+          defaultCoingeckoId={coin.id}
+          defaultImage={coin.image.large}
+          onClose={() => setShowAddTx(false)}
+        />
       )}
     </main>
   )
