@@ -11,9 +11,9 @@ function fmtCountdown(ms: number): string {
 }
 
 function Sentiment({ ratePct }: { ratePct: number }) {
-  if (ratePct >  0.05) return <span className="text-[10px] font-semibold text-red-400">Overheated</span>
-  if (ratePct >  0.01) return <span className="text-[10px] font-semibold text-amber-400">Long bias</span>
-  if (ratePct > -0.01) return <span className="text-[10px] font-semibold text-zinc-500">Neutral</span>
+  if (ratePct >  0.03) return <span className="text-[10px] font-semibold text-red-400">Overheated</span>
+  if (ratePct >  0.003) return <span className="text-[10px] font-semibold text-amber-400">Long bias</span>
+  if (ratePct >= -0.003) return <span className="text-[10px] font-semibold text-zinc-500">Neutral</span>
   return <span className="text-[10px] font-semibold text-emerald-400">Short bias</span>
 }
 
@@ -127,9 +127,9 @@ export function FundingRates() {
           </div>
           {data.map(item => {
             const rateColor =
-              item.ratePct >  0.05 ? 'text-red-400' :
-              item.ratePct >  0.01 ? 'text-amber-400' :
-              item.ratePct > -0.01 ? 'text-zinc-400' :
+              item.ratePct >  0.03  ? 'text-red-400' :
+              item.ratePct >  0.003 ? 'text-amber-400' :
+              item.ratePct >= -0.003 ? 'text-zinc-400' :
               'text-emerald-400'
 
             return (
