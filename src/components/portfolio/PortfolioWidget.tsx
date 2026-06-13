@@ -83,7 +83,7 @@ export function PortfolioWidget() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="space-y-1">
               <div className="h-2.5 w-14 animate-pulse rounded bg-zinc-800" />

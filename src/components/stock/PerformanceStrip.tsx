@@ -25,7 +25,7 @@ export function PerformanceStrip({ symbol }: { symbol: string }) {
       <div className="border-b border-zinc-800 px-4 py-3">
         <h3 className="text-sm font-semibold text-zinc-300">Performance</h3>
       </div>
-      <div className="grid grid-cols-4 divide-x divide-zinc-800 sm:grid-cols-8">
+      <div className="grid grid-cols-2 divide-x divide-zinc-800 sm:grid-cols-4 lg:grid-cols-8">
         {isLoading
           ? Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex flex-col items-center gap-1.5 px-3 py-3">

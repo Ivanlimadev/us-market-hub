@@ -89,16 +89,16 @@ export function Navbar() {
           </nav>
 
           {/* Right side */}
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2">
             {/* Global search */}
             <GlobalSearch />
 
-            {/* Theme toggle */}
+            {/* Theme toggle — hidden on mobile (available in drawer) */}
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
                 title={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
               >
                 {resolvedTheme === 'dark'
                   ? <Sun className="h-4 w-4" />
@@ -107,11 +107,11 @@ export function Navbar() {
               </button>
             )}
 
-            {/* Watchlist bell */}
+            {/* Watchlist bell — hidden on mobile (available in drawer) */}
             <button
               onClick={() => router.push('/watchlist')}
               title="Watchlist & Alerts"
-              className="relative flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+              className="relative hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
             >
               <Bell className="h-4 w-4" />
               {triggeredCount > 0 && (
@@ -209,13 +209,25 @@ export function Navbar() {
                 pathname === '/watchlist' ? 'bg-zinc-800 text-white' : 'text-zinc-300 hover:bg-zinc-800/60 hover:text-white'
               }`}
             >
-              <Bell className="h-4 w-4" /> Watchlist
+              <Bell className="h-4 w-4" /> Watchlist & Alerts
               {triggeredCount > 0 && (
                 <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
                   {triggeredCount}
                 </span>
               )}
             </Link>
+            <div className="mt-2 border-t border-zinc-800 pt-2">
+              {/* Theme toggle in drawer */}
+              {mounted && (
+                <button
+                  onClick={() => { setTheme(resolvedTheme === 'dark' ? 'light' : 'dark'); setMenuOpen(false) }}
+                  className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800/60"
+                >
+                  {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+                </button>
+              )}
+            </div>
             <div className="mt-2 border-t border-zinc-800 pt-2">
               {user ? (
                 <>

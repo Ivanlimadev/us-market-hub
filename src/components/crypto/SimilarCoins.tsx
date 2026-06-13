@@ -37,7 +37,7 @@ export function SimilarCoins({ coinId, marketCap }: { coinId: string; marketCap:
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
       <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Similar Coins</h3>
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-4 lg:grid-cols-8">
         {similar.map(c => {
           const chg = c.price_change_percentage_24h ?? 0
           const up  = chg >= 0
