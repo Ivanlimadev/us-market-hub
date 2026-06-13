@@ -21,7 +21,7 @@ export default function PrivacyPage() {
 
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
-        <p className="text-sm text-zinc-500">Last updated: June 12, 2026</p>
+        <p className="text-sm text-zinc-500">Last updated: June 14, 2026</p>
         <p className="text-sm text-zinc-400 leading-relaxed">
           This Privacy Policy describes how <strong className="text-zinc-200">Stock Market ROI</strong>{' '}
           (<strong className="text-zinc-200">stockmarketroi.com</strong>) collects, uses and
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           <strong className="text-zinc-200">California Consumer Privacy Act (CCPA)</strong>.
         </p>
         <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-400">
-          We do not sell your personal data. We do not store your portfolio or financial data on our servers.
+          We do not sell your personal data. Without an account, no data leaves your browser. When signed in, only your account email, portfolio transactions, watchlist and price alerts are stored — securely in Supabase — and deleted permanently when you delete your account.
         </div>
       </div>
 
@@ -63,22 +63,37 @@ export default function PrivacyPage() {
             </ul>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
-            <p className="font-medium text-zinc-200">2.2 Stored locally in your browser only</p>
+            <p className="font-medium text-zinc-200">2.2 Stored locally in your browser only (no account required)</p>
             <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-              <li>Portfolio holdings and transactions (<code className="font-mono text-xs">localStorage</code> — never transmitted to us)</li>
               <li>Cookie consent preference</li>
-              <li>UI preferences (selected period, watchlist)</li>
+              <li>UI preferences (selected chart period, theme)</li>
+              <li>Recently viewed assets</li>
             </ul>
             <p className="text-xs text-zinc-600 mt-1">
               This data never leaves your device. Clear it any time via browser settings → Clear site data.
             </p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
-            <p className="font-medium text-zinc-200">2.3 Data we do NOT collect</p>
+            <p className="font-medium text-zinc-200">2.3 Stored in our database when you create an account</p>
+            <p className="text-zinc-500 text-xs">
+              Account features (Portfolio, Watchlist, Price Alerts) require sign-in. When you use them, the following data is stored securely in <strong className="text-zinc-300">Supabase</strong> (our infrastructure provider, hosted on AWS):
+            </p>
             <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-              <li>Name, email or any registration/account information</li>
+              <li><strong className="text-zinc-300">Email address</strong> — used for authentication only, never shared or used for marketing</li>
+              <li><strong className="text-zinc-300">Portfolio transactions</strong> — symbol, quantity, price, date you entered</li>
+              <li><strong className="text-zinc-300">Watchlist items</strong> — assets you chose to follow</li>
+              <li><strong className="text-zinc-300">Price alerts</strong> — target prices you set per asset</li>
+            </ul>
+            <p className="text-xs text-zinc-600 mt-1">
+              All this data is protected by Row-Level Security (RLS) — only you can read or modify your own records. It is permanently deleted when you delete your account via Settings → Delete Account.
+            </p>
+          </div>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
+            <p className="font-medium text-zinc-200">2.4 Data we do NOT collect</p>
+            <ul className="list-disc pl-5 space-y-1 text-zinc-500">
+              <li>Name, phone number or any identifier beyond email (for account holders)</li>
               <li>Payment or financial account credentials</li>
-              <li>Portfolio or investment data (stays in your browser only)</li>
+              <li>Brokerage account data</li>
               <li>Precise geolocation</li>
               <li>Biometric data</li>
             </ul>
@@ -104,9 +119,14 @@ export default function PrivacyPage() {
                 <td className="py-2">Stores your cookie consent choice. No expiry.</td>
               </tr>
               <tr>
-                <td className="py-2 pr-4 font-mono">portfolio-* (localStorage)</td>
+                <td className="py-2 pr-4 font-mono">theme (localStorage)</td>
                 <td className="py-2 pr-4">Functional</td>
-                <td className="py-2">Saves portfolio data in your browser only. Never sent to us.</td>
+                <td className="py-2">Saves light/dark mode preference in your browser.</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 font-mono">Supabase session (cookie)</td>
+                <td className="py-2 pr-4">Functional</td>
+                <td className="py-2">Keeps you signed in across sessions. Set only when you create an account and sign in. Cleared on sign-out.</td>
               </tr>
             </tbody>
           </table>
@@ -146,16 +166,33 @@ export default function PrivacyPage() {
           Market data is fetched from Yahoo Finance and Marketstack via server-side API
           calls. These requests include no personal identifiers from your session.
         </p>
+        <p>
+          Account data (email, portfolio, watchlist, alerts) is stored in{' '}
+          <strong className="text-zinc-200">Supabase</strong> (supabase.com), which acts as
+          our infrastructure sub-processor. Supabase is hosted on AWS and complies with
+          SOC 2 Type II and GDPR. Their privacy policy is available at{' '}
+          <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
+            supabase.com/privacy
+          </a>.
+        </p>
       </Section>
 
       {/* ── 6. Retention ────────────────────────────────────────────────── */}
       <Section id="retention" title="6. Data Retention">
-        <p>
-          Server access logs are retained for a maximum of{' '}
-          <strong className="text-zinc-200">90 days</strong>, after which they are
-          permanently deleted. Browser-stored data (localStorage) is retained until you
-          clear it — we have no access to it and cannot delete it on your behalf.
-        </p>
+        <div className="space-y-2">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
+            <p className="font-medium text-zinc-200">Server access logs</p>
+            <p className="text-zinc-500">Retained for a maximum of <strong className="text-zinc-300">90 days</strong>, then permanently deleted.</p>
+          </div>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
+            <p className="font-medium text-zinc-200">Account data (email, portfolio, watchlist, alerts)</p>
+            <p className="text-zinc-500">Retained for as long as your account is active. When you delete your account via <strong className="text-zinc-300">Settings → Delete Account</strong>, all associated data is permanently deleted from our database within <strong className="text-zinc-300">30 days</strong>.</p>
+          </div>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
+            <p className="font-medium text-zinc-200">Browser-stored data (localStorage)</p>
+            <p className="text-zinc-500">Retained until you clear it via browser settings → Clear site data. We have no access to this data and cannot delete it on your behalf.</p>
+          </div>
+        </div>
       </Section>
 
       {/* ── 7. Security + Breach ────────────────────────────────────────── */}
@@ -165,13 +202,15 @@ export default function PrivacyPage() {
           server hardening and access controls to protect server-side data.
         </p>
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
-          <p className="font-medium text-zinc-200">Breach limitation — why your financial data is safe</p>
+          <p className="font-medium text-zinc-200">What a breach could and could not expose</p>
           <p className="text-zinc-500">
-            Because we do not collect, transmit or store portfolio holdings, investment
-            positions, brokerage credentials or any financial data on our servers, a
-            breach of our infrastructure <strong className="text-zinc-300">cannot expose
-            your financial data</strong>. The only server-side data that could be exposed
-            in a hypothetical breach is anonymized access logs (no names, no financial data).
+            A hypothetical breach of our infrastructure could expose:{' '}
+            <strong className="text-zinc-300">email addresses</strong> and{' '}
+            <strong className="text-zinc-300">portfolio/watchlist/alert records</strong> of registered users.
+            It could <strong className="text-zinc-300">not</strong> expose brokerage credentials, bank accounts,
+            payment data or any financial account access — because we do not collect or store any of those.
+            Row-Level Security (RLS) in Supabase ensures that even a compromised API key
+            cannot read another user&apos;s data.
           </p>
         </div>
         <p>
