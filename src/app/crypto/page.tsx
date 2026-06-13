@@ -7,7 +7,8 @@ import { CryptoTrending } from '@/components/crypto/CryptoTrending'
 import { CryptoGainersLosers } from '@/components/crypto/CryptoGainersLosers'
 import { DominanceChart } from '@/components/crypto/DominanceChart'
 import { DefiTVLWidget } from '@/components/crypto/DefiTVLWidget'
-import { FundingRates } from '@/components/crypto/FundingRates'
+import { FundingRates }    from '@/components/crypto/FundingRates'
+import { LongShortRatio } from '@/components/crypto/LongShortRatio'
 
 export const metadata: Metadata = {
   title: 'Crypto | Stock Market ROI',
@@ -40,8 +41,11 @@ export default function CryptoPage() {
         <DefiTVLWidget />
       </div>
 
-      {/* Funding Rates */}
-      <FundingRates />
+      {/* Funding Rates + Long/Short Ratio */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <FundingRates />
+        <LongShortRatio />
+      </div>
 
       {/* Heatmap */}
       <CryptoHeatmap />

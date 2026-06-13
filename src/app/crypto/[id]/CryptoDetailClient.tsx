@@ -97,7 +97,7 @@ function CryptoPerformanceStrip({ md }: { md: CryptoDetail['market_data'] }) {
   )
 }
 
-// Simple canvas price chart
+// Simple canvas price chart with volume bars
 function PriceChart({ bars, isLoading }: { bars: CryptoHistoryBar[]; isLoading: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -109,42 +109,55 @@ function PriceChart({ bars, isLoading }: { bars: CryptoHistoryBar[]; isLoading: 
 
     const W = canvas.width
     const H = canvas.height
-    const prices = bars.map((b) => b.price)
-    const minP = Math.min(...prices)
-    const maxP = Math.max(...prices)
+
+    // Split canvas: 72% price, 6% gap, 22% volume
+    const PRICE_H = Math.floor(H * 0.72)
+    const VOL_H   = Math.floor(H * 0.22)
+
+    const prices  = bars.map((b) => b.price)
+    const volumes = bars.map((b) => b.volume)
+    const minP  = Math.min(...prices)
+    const maxP  = Math.max(...prices)
     const rangeP = maxP - minP || 1
+    const maxVol = Math.max(...volumes) || 1
 
     const toX = (i: number) => (i / (bars.length - 1)) * W
-    const toY = (p: number) => H - ((p - minP) / rangeP) * (H - 10) - 5
+    const toY = (p: number) => PRICE_H - ((p - minP) / rangeP) * (PRICE_H - 12) - 6
 
     ctx.clearRect(0, 0, W, H)
 
     const isUp = bars[bars.length - 1].price >= bars[0].price
     const color = isUp ? '#10b981' : '#ef4444'
 
-    // Fill gradient
-    const grad = ctx.createLinearGradient(0, 0, 0, H)
+    // Volume bars (bottom section)
+    const barW = Math.max(1, W / bars.length - 0.5)
+    bars.forEach((b, i) => {
+      const x    = toX(i)
+      const bH   = (b.volume / maxVol) * (VOL_H - 4)
+      const up   = i === 0 || b.price >= bars[i - 1].price
+      ctx.fillStyle = up ? 'rgba(16,185,129,0.35)' : 'rgba(239,68,68,0.35)'
+      ctx.fillRect(x - barW / 2, H - bH, barW, bH)
+    })
+
+    // Price gradient fill (price area only)
+    const grad = ctx.createLinearGradient(0, 0, 0, PRICE_H)
     grad.addColorStop(0, isUp ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)')
     grad.addColorStop(1, 'rgba(0,0,0,0)')
 
     ctx.beginPath()
     bars.forEach((b, i) => {
-      const x = toX(i)
-      const y = toY(b.price)
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+      i === 0 ? ctx.moveTo(toX(i), toY(b.price)) : ctx.lineTo(toX(i), toY(b.price))
     })
-    ctx.lineTo(W, H)
-    ctx.lineTo(0, H)
+    ctx.lineTo(W, PRICE_H)
+    ctx.lineTo(0, PRICE_H)
     ctx.closePath()
     ctx.fillStyle = grad
     ctx.fill()
 
-    // Line
+    // Price line
     ctx.beginPath()
     bars.forEach((b, i) => {
-      const x = toX(i)
-      const y = toY(b.price)
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+      i === 0 ? ctx.moveTo(toX(i), toY(b.price)) : ctx.lineTo(toX(i), toY(b.price))
     })
     ctx.strokeStyle = color
     ctx.lineWidth = 2
