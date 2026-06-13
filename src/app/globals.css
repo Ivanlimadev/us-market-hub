@@ -48,22 +48,22 @@ html.light .text-white {
 /* Dark mode prose: override Typography CSS vars so prose works on dark backgrounds
    without needing prose-invert (which uses hardcoded white/slate values).         */
 html.dark .prose {
-  --tw-prose-body:          oklch(70.5% 0.015 286.067);
-  --tw-prose-headings:      oklch(96.7% 0.001 286.375);
-  --tw-prose-lead:          oklch(70.5% 0.015 286.067);
-  --tw-prose-links:         oklch(76.5% 0.177 163.223);
-  --tw-prose-bold:          oklch(92%   0.004 286.32);
-  --tw-prose-counters:      oklch(70.5% 0.015 286.067);
-  --tw-prose-bullets:       oklch(69.6% 0.17  162.48);
-  --tw-prose-hr:            oklch(27.4% 0.006 286.033);
-  --tw-prose-quotes:        oklch(70.5% 0.015 286.067);
+  --tw-prose-body:          oklch(87.1% 0.006 286.286);   /* zinc-300 */
+  --tw-prose-headings:      oklch(96.7% 0.001 286.375);   /* zinc-100 */
+  --tw-prose-lead:          oklch(87.1% 0.006 286.286);
+  --tw-prose-links:         oklch(76.5% 0.177 163.223);   /* emerald-400 */
+  --tw-prose-bold:          oklch(96.7% 0.001 286.375);   /* zinc-100 */
+  --tw-prose-counters:      oklch(87.1% 0.006 286.286);
+  --tw-prose-bullets:       oklch(69.6% 0.17  162.48);    /* emerald-500 */
+  --tw-prose-hr:            oklch(37%   0.013 285.805);   /* zinc-700 */
+  --tw-prose-quotes:        oklch(87.1% 0.006 286.286);
   --tw-prose-quote-borders: oklch(69.6% 0.17  162.48);
-  --tw-prose-captions:      oklch(55.2% 0.016 285.938);
-  --tw-prose-kbd:           oklch(87.1% 0.006 286.286);
-  --tw-prose-code:          oklch(76.5% 0.177 163.223);
+  --tw-prose-captions:      oklch(70.5% 0.015 286.067);   /* zinc-600 */
+  --tw-prose-kbd:           oklch(92%   0.004 286.32);    /* zinc-200 */
+  --tw-prose-code:          oklch(76.5% 0.177 163.223);   /* emerald-400 */
   --tw-prose-pre-code:      oklch(87.1% 0.006 286.286);
-  --tw-prose-pre-bg:        oklch(21%   0.006 285.885);
-  --tw-prose-th-borders:    oklch(37%   0.013 285.805);
-  --tw-prose-td-borders:    oklch(27.4% 0.006 286.033);
+  --tw-prose-pre-bg:        oklch(21%   0.006 285.885);   /* zinc-900 */
+  --tw-prose-th-borders:    oklch(37%   0.013 285.805);   /* zinc-700 */
+  --tw-prose-td-borders:    oklch(37%   0.013 285.805);
   --tw-prose-table-bg:      oklch(24%   0.006 285.885);
 }

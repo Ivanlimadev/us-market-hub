@@ -58,11 +58,11 @@ export default async function ArticlePage(
         <h1 className="text-3xl font-bold leading-tight text-zinc-100">{article.title}</h1>
 
         {article.description && (
-          <p className="text-lg text-zinc-400 leading-relaxed">{article.description}</p>
+          <p className="text-lg text-zinc-300 leading-relaxed">{article.description}</p>
         )}
 
-        <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 border-t border-zinc-800 pt-4">
-          <span className="font-medium text-zinc-300">{article.author}</span>
+        <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-400 border-t border-zinc-700 pt-4">
+          <span className="font-medium text-zinc-200">{article.author}</span>
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />{date}
           </span>
@@ -76,18 +76,18 @@ export default async function ArticlePage(
       <article className="prose prose-zinc max-w-none
         prose-headings:text-zinc-100 prose-headings:font-bold
         prose-h2:text-xl prose-h3:text-lg
-        prose-p:text-zinc-400 prose-p:leading-relaxed
+        prose-p:text-zinc-300 prose-p:leading-relaxed
         prose-a:text-emerald-400 hover:prose-a:text-emerald-300
-        prose-strong:text-zinc-200
+        prose-strong:text-zinc-100
         prose-code:text-emerald-400 prose-code:bg-zinc-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
         prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800
-        prose-blockquote:border-l-emerald-500 prose-blockquote:text-zinc-400
-        prose-ul:text-zinc-400 prose-ol:text-zinc-400
+        prose-blockquote:border-l-emerald-500 prose-blockquote:text-zinc-300
+        prose-ul:text-zinc-300 prose-ol:text-zinc-300
         prose-li:marker:text-emerald-500
-        prose-hr:border-zinc-800
-        prose-table:text-zinc-400
-        prose-th:text-zinc-300 prose-th:border-zinc-700
-        prose-td:border-zinc-800
+        prose-hr:border-zinc-700
+        prose-table:text-zinc-300
+        prose-th:text-zinc-200 prose-th:border-zinc-700
+        prose-td:border-zinc-700
       ">
         <MDXRemote source={article.body} />
       </article>
