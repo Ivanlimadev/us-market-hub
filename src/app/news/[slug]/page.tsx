@@ -55,7 +55,7 @@ export default async function ArticlePage(
           </div>
         )}
 
-        <h1 className="text-3xl font-bold leading-tight text-white">{article.title}</h1>
+        <h1 className="text-3xl font-bold leading-tight text-zinc-100">{article.title}</h1>
 
         {article.description && (
           <p className="text-lg text-zinc-400 leading-relaxed">{article.description}</p>
@@ -72,9 +72,9 @@ export default async function ArticlePage(
         </div>
       </header>
 
-      {/* MDX content */}
-      <article className="prose prose-invert prose-zinc max-w-none
-        prose-headings:text-white prose-headings:font-bold
+      {/* MDX content — no prose-invert; dark mode handled via CSS vars in globals.css */}
+      <article className="prose prose-zinc max-w-none
+        prose-headings:text-zinc-100 prose-headings:font-bold
         prose-h2:text-xl prose-h3:text-lg
         prose-p:text-zinc-400 prose-p:leading-relaxed
         prose-a:text-emerald-400 hover:prose-a:text-emerald-300
@@ -85,6 +85,9 @@ export default async function ArticlePage(
         prose-ul:text-zinc-400 prose-ol:text-zinc-400
         prose-li:marker:text-emerald-500
         prose-hr:border-zinc-800
+        prose-table:text-zinc-400
+        prose-th:text-zinc-300 prose-th:border-zinc-700
+        prose-td:border-zinc-800
       ">
         <MDXRemote source={article.body} />
       </article>
