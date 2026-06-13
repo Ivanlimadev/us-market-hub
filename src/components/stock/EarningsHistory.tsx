@@ -19,7 +19,7 @@ function fmtEps(n: number | null): string {
   return `$${n.toFixed(2)}`
 }
 
-type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet' | 'capitalReturns'
+type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet' | 'capitalReturns' | 'rd'
 
 // ── Balance Sheet ──────────────────────────────────────────────────────────
 
@@ -94,6 +94,94 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
                     {equityUp === true && <TrendingUp className="h-3 w-3" />}
                     {equityUp === false && <TrendingDown className="h-3 w-3" />}
                     {fmtB(b.equity)}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ── R&D Chart ──────────────────────────────────────────────────────────────
+
+function RdChart({ annual }: { annual: EdgarAnnual[] }) {
+  const hasRd = annual.some(a => a.rdExpense != null)
+  if (!hasRd) return (
+    <p className="text-xs text-zinc-500 py-4 text-center">
+      No R&amp;D expense data reported for this company.
+    </p>
+  )
+
+  const max = Math.max(...annual.map(a => a.rdExpense ?? 0), 1)
+
+  return (
+    <div className="space-y-3">
+      {/* Bar chart */}
+      <div className="flex items-end gap-2 h-20">
+        {annual.map((a, i) => {
+          const prev  = annual[i - 1]
+          const grew  = prev?.rdExpense != null && a.rdExpense != null ? a.rdExpense >= prev.rdExpense : true
+          const pct   = a.rdExpense != null ? a.rdExpense / max * 100 : 4
+          const margin = a.rdExpense != null && a.revenue != null
+            ? `${(a.rdExpense / a.revenue * 100).toFixed(1)}%`
+            : null
+          return (
+            <div key={a.year} className="flex flex-col items-center flex-1 gap-1 group relative">
+              <div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:flex whitespace-nowrap rounded bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-200 z-10 border border-zinc-700">
+                {fmtB(a.rdExpense)}{margin ? ` · ${margin} of rev` : ''}
+              </div>
+              <div className="w-full flex items-end justify-center" style={{ height: '64px' }}>
+                <div
+                  className={`w-full rounded-t-sm ${grew ? 'bg-violet-500' : 'bg-violet-500/50'}`}
+                  style={{ height: `${Math.max(pct, 4)}%` }}
+                />
+              </div>
+              <span className="text-[9px] text-zinc-600">{a.label}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Table */}
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
+            <th className="pb-2 text-left font-medium">Year</th>
+            <th className="pb-2 text-right font-medium">R&amp;D Spend</th>
+            <th className="pb-2 text-right font-medium">Revenue</th>
+            <th className="pb-2 text-right font-medium">% of Revenue</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-800/50">
+          {[...annual].reverse().map((a, i, arr) => {
+            const prev   = arr[i + 1]
+            const rdUp   = prev?.rdExpense != null && a.rdExpense != null ? a.rdExpense >= prev.rdExpense : null
+            const margin = a.rdExpense != null && a.revenue != null
+              ? (a.rdExpense / a.revenue * 100)
+              : null
+            const prevMargin = prev?.rdExpense != null && prev?.revenue != null
+              ? (prev.rdExpense / prev.revenue * 100)
+              : null
+            const marginUp = margin != null && prevMargin != null ? margin >= prevMargin : null
+            return (
+              <tr key={a.year} className="hover:bg-zinc-800/30 transition-colors">
+                <td className="py-2.5 font-semibold text-zinc-300">{a.label}</td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={`flex items-center justify-end gap-0.5 text-violet-400 font-semibold`}>
+                    {rdUp === true && <TrendingUp className="h-3 w-3" />}
+                    {rdUp === false && <TrendingDown className="h-3 w-3" />}
+                    {fmtB(a.rdExpense)}
+                  </span>
+                </td>
+                <td className="py-2.5 text-right tabular-nums text-zinc-400">
+                  {fmtB(a.revenue)}
+                </td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={marginUp === true ? 'text-violet-400' : marginUp === false ? 'text-zinc-400' : 'text-zinc-300'}>
+                    {margin != null ? `${margin.toFixed(1)}%` : '—'}
                   </span>
                 </td>
               </tr>
@@ -348,6 +436,7 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
     { key: 'fcf',           label: 'Free Cash Flow' },
     { key: 'balanceSheet',  label: 'Balance Sheet' },
     { key: 'capitalReturns', label: 'Capital Returns' },
+    { key: 'rd',             label: 'R&D' },
   ]
 
   const isQuarterly = tab === 'revenue' || tab === 'netIncome' || tab === 'eps'
@@ -401,6 +490,9 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
               </button>
             ))}
           </div>
+
+          {/* R&D tab */}
+          {tab === 'rd' && <RdChart annual={data.annual ?? []} />}
 
           {/* Capital Returns tab */}
           {tab === 'capitalReturns' && (

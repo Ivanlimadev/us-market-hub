@@ -17,6 +17,8 @@ export interface EdgarAnnual {
   operatingCf: number | null
   capex:       number | null
   fcf:         number | null
+  rdExpense:   number | null
+  revenue:     number | null  // annual, for R&D margin
 }
 
 export interface EdgarBalanceSheet {
@@ -139,6 +141,10 @@ export async function GET(req: Request) {
   const ocfMap   = extractConcept(gaap, YR, 'NetCashProvidedByUsedInOperatingActivities')
   const capexMap = extractConcept(gaap, YR, 'PaymentsToAcquirePropertyPlantAndEquipment')
 
+  // Annual R&D and revenue (for R&D margin)
+  const rdMap    = extractConcept(gaap, YR, 'ResearchAndDevelopmentExpense')
+  const revYrMap = extractConcept(gaap, YR, 'RevenueFromContractWithCustomerExcludingAssessedTax', 'Revenues', 'SalesRevenueNet')
+
   // Annual capital returns (cash flow statement)
   const buybackMap = extractConcept(gaap, YR, 'PaymentsForRepurchaseOfCommonStock')
   const divPaidMap = extractConcept(gaap, YR,
@@ -173,19 +179,23 @@ export async function GET(req: Request) {
       grossProfit: gpMap.get(frame)?.val  ?? null,
     }))
 
-  // Build annual FCF
-  const yFrames = new Set<string>([...ocfMap.keys(), ...capexMap.keys()])
+  // Build annual FCF + R&D
+  const yFrames = new Set<string>([...ocfMap.keys(), ...capexMap.keys(), ...rdMap.keys()])
   const annual: EdgarAnnual[] = [...yFrames]
     .sort().slice(-6)
     .map(frame => {
       const ocf = ocfMap.get(frame)?.val ?? null
       const cx  = capexMap.get(frame)?.val ?? null
+      const rd  = rdMap.get(frame)?.val ?? null
+      const rev = revYrMap.get(frame)?.val ?? null
       return {
         year:        parseInt(frame.replace('CY', '')),
         label:       frame.replace('CY', ''),
         operatingCf: ocf,
         capex:       cx != null ? -cx : null,
         fcf:         ocf != null && cx != null ? ocf - cx : null,
+        rdExpense:   rd,
+        revenue:     rev,
       }
     })
 
