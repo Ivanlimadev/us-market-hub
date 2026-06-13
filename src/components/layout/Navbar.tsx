@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { TrendingUp, Menu, X, LogIn, LogOut, User, Bell } from 'lucide-react'
+import { TrendingUp, Menu, X, LogIn, LogOut, User, Bell, Sun, Moon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { GlobalSearch } from './GlobalSearch'
 import { formatMarketStatus, isMarketOpen } from '@/lib/market-hours'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -32,6 +33,9 @@ export function Navbar() {
   const { user }        = useAuth()
   const [menuOpen, setMenuOpen]     = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { theme, setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   // Alert checker — fires store.triggerAlert when prices cross thresholds
   useAlertChecker()
@@ -88,6 +92,20 @@ export function Navbar() {
           <div className="ml-auto flex items-center gap-3">
             {/* Global search */}
             <GlobalSearch />
+
+            {/* Theme toggle */}
+            {mounted && (
+              <button
+                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                title={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                {resolvedTheme === 'dark'
+                  ? <Sun className="h-4 w-4" />
+                  : <Moon className="h-4 w-4" />
+                }
+              </button>
+            )}
 
             {/* Watchlist bell */}
             <button

@@ -16,3 +16,31 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Light mode: invert the zinc palette so all bg-zinc-* / text-zinc-* ──
+   classes automatically flip without touching any component files.         */
+html.light {
+  color-scheme: light;
+
+  --color-zinc-50:  oklch(14.1% 0.005 285.823);
+  --color-zinc-100: oklch(21%   0.006 285.885);
+  --color-zinc-200: oklch(27.4% 0.006 286.033);
+  --color-zinc-300: oklch(37%   0.013 285.805);
+  --color-zinc-400: oklch(44.2% 0.017 285.786);
+  --color-zinc-500: oklch(55.2% 0.016 285.938);
+  --color-zinc-600: oklch(70.5% 0.015 286.067);
+  --color-zinc-700: oklch(87.1% 0.006 286.286);
+  --color-zinc-800: oklch(92%   0.004 286.32);
+  --color-zinc-900: oklch(96.7% 0.001 286.375);
+  --color-zinc-950: oklch(98.5% 0     0);
+
+  /* Make accent greens/reds darker so they're readable on light backgrounds */
+  --color-emerald-400: oklch(59.6% 0.145 163.225);
+  --color-red-400:     oklch(57.7% 0.245 27.325);
+  --color-blue-400:    oklch(54.6% 0.245 262.881);
+}
+
+/* text-white is invisible on the now-light backgrounds — make it dark */
+html.light .text-white {
+  color: oklch(14.1% 0.005 285.823) !important;
+}
