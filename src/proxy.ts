@@ -1,44 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 
-export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis:     Redis.fromEnv(),
+        limiter:   Ratelimit.slidingWindow(60, '60 s'),
+        analytics: true,
+        prefix:    'smroi',
+      })
+    : null
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (toSet) => {
-          toSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({ request })
-          toSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          )
-        },
-      },
-    },
-  )
+const EXEMPT_PREFIXES = [
+  '/api/auth/',
+  '/api/watchlist',
+  '/api/alerts',
+  '/api/portfolio',
+]
 
-  const { data: { user } } = await supabase.auth.getUser()
+export async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl
 
-  if (!user && request.nextUrl.pathname.startsWith('/portfolio')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+  if (!pathname.startsWith('/api/')) return NextResponse.next()
+  if (EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next()
+
+  if (!ratelimit) {
+    const res = NextResponse.next()
+    res.headers.set('X-RL-Status', 'disabled-no-env')
+    return res
   }
 
-  if (user && request.nextUrl.pathname.startsWith('/auth/')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    req.headers.get('x-real-ip') ??
+    'anonymous'
+
+  const { success, limit, remaining, reset } = await ratelimit.limit(ip)
+
+  const rlHeaders: Record<string, string> = {
+    'X-RateLimit-Limit':     String(limit),
+    'X-RateLimit-Remaining': String(remaining),
+    'X-RateLimit-Reset':     String(reset),
   }
 
-  return supabaseResponse
+  if (!success) {
+    const retryAfter = Math.max(0, Math.ceil((reset - Date.now()) / 1000))
+    return NextResponse.json(
+      { error: 'Too many requests. Please slow down.' },
+      { status: 429, headers: { ...rlHeaders, 'Retry-After': String(retryAfter) } },
+    )
+  }
+
+  const res = NextResponse.next()
+  Object.entries(rlHeaders).forEach(([k, v]) => res.headers.set(k, v))
+  return res
 }
 
 export const config = {
-  matcher: ['/portfolio', '/portfolio/:path*', '/auth/:path*', '/account/:path*'],
+  matcher: '/api/:path*',
 }
