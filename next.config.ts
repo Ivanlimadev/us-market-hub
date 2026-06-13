@@ -7,7 +7,7 @@ const CSP = [
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
-  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com",
+  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi",
   // Fonts: self only
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget only
