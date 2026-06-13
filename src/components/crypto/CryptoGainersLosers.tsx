@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown } from 'lucide-react'
+import { CoinImage } from '@/components/crypto/CoinImage'
 import type { CryptoMarket, CryptoPeriod } from '@/types/crypto'
 
 type Tab = 'gainers' | 'losers'
@@ -114,7 +114,7 @@ export function CryptoGainersLosers() {
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-800/40 transition-colors"
                 >
                   <span className="w-4 text-[11px] text-zinc-600 font-mono shrink-0">{i + 1}</span>
-                  <Image src={coin.image} alt={coin.name} width={28} height={28} className="rounded-full" unoptimized />
+                  <CoinImage src={coin.image} symbol={coin.symbol} size={28} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-zinc-200 truncate leading-none">{coin.name}</p>
                     <p className="text-[10px] text-zinc-500 uppercase mt-0.5">{coin.symbol}</p>

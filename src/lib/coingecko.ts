@@ -138,9 +138,11 @@ export async function cgCoin(id: string): Promise<CryptoDetail> {
 }
 
 export async function cgHistory(id: string, days: number): Promise<CryptoHistoryBar[]> {
-  const interval = days <= 1 ? 'minutely' : days <= 90 ? 'hourly' : 'daily'
+  // Free CoinGecko API auto-detects granularity: 5min for 1d, hourly for 2-90d
+  // Only force daily for >90d to avoid thousands of hourly points
+  const intervalParam = days > 90 ? '&interval=daily' : ''
   const raw = await cgFetch<{ prices: [number, number][]; total_volumes: [number, number][] }>(
-    `/coins/${id}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`,
+    `/coins/${id}/market_chart?vs_currency=usd&days=${days}${intervalParam}`,
     60_000,
   )
 

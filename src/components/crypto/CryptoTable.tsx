@@ -1,10 +1,10 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import { useKrakenTicker } from '@/lib/hooks/useKrakenTicker'
+import { CoinImage } from '@/components/crypto/CoinImage'
 import type { CryptoMarket } from '@/types/crypto'
 
 type SortKey = 'market_cap_rank' | 'current_price' | 'price_change_percentage_24h' | 'market_cap' | 'total_volume'
@@ -130,7 +130,7 @@ export function CryptoTable() {
                       </td>
                       <td className="px-4 py-2.5">
                         <Link href={`/crypto/${coin.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                          <Image src={coin.image} alt={coin.name} width={24} height={24} className="rounded-full" unoptimized />
+                          <CoinImage src={coin.image} symbol={coin.symbol} size={24} />
                           <div>
                             <p className="font-semibold text-zinc-200 leading-none">{coin.name}</p>
                             <p className="text-[10px] text-zinc-500 uppercase">{coin.symbol}</p>

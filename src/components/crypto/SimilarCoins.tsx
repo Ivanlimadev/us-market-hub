@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown } from 'lucide-react'
+import { CoinImage } from '@/components/crypto/CoinImage'
 import type { CryptoMarket } from '@/types/crypto'
 
 function fmtPrice(n: number): string {
@@ -47,7 +48,7 @@ export function SimilarCoins({ coinId, marketCap }: { coinId: string; marketCap:
               className="flex flex-col items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-800/40 px-2 py-3 text-center hover:border-zinc-700 hover:bg-zinc-800 transition-colors"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={c.image} alt={c.name} width={28} height={28} className="h-7 w-7 rounded-full" />
+              <CoinImage src={c.image} symbol={c.symbol} size={28} />
               <span className="text-xs font-bold uppercase text-zinc-200">{c.symbol}</span>
               <span className="text-[11px] tabular-nums text-zinc-400">{fmtPrice(c.current_price)}</span>
               <span

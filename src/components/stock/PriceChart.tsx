@@ -134,6 +134,8 @@ export function PriceChart({ symbol, currentPrice, prevClose }: Props) {
       crosshair: { mode: 1 },
       rightPriceScale: { borderColor: '#3f3f46' },
       timeScale: { borderColor: '#3f3f46', timeVisible: is1D, secondsVisible: false },
+      handleScroll: false,
+      handleScale:  false,
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

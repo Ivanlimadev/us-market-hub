@@ -1,7 +1,6 @@
 import { IndexCards } from '@/components/market/IndexCards'
 import { HomeHeatmap } from '@/components/market/HomeHeatmap'
 import { HomeRankings } from '@/components/market/HomeRankings'
-import { MarketTreemap } from '@/components/market/MarketTreemap'
 import { DividendCalendarWidget } from '@/components/market/DividendCalendarWidget'
 import { EarningsCalendarWidget } from '@/components/market/EarningsCalendarWidget'
 import { PortfolioWidget } from '@/components/portfolio/PortfolioWidget'
@@ -18,9 +17,6 @@ export default function HomePage() {
 
       {/* Portfolio widget — only renders when user has holdings */}
       <PortfolioWidget />
-
-      {/* Binance-style treemap */}
-      <MarketTreemap />
 
       {/* Market index cards */}
       <IndexCards />

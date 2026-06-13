@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#09090b"/>
+      <stop offset="100%" stop-color="#0f1117"/>
+    </linearGradient>
+    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="400" fill="url(#bg)"/>
+
+  <!-- Grid lines -->
+  <g stroke="#27272a" stroke-width="1" opacity="0.6">
+    <line x1="80" y1="60" x2="820" y2="60"/>
+    <line x1="80" y1="120" x2="820" y2="120"/>
+    <line x1="80" y1="180" x2="820" y2="180"/>
+    <line x1="80" y1="240" x2="820" y2="240"/>
+    <line x1="80" y1="300" x2="820" y2="300"/>
+    <line x1="80" y1="60" x2="80" y2="310"/>
+    <line x1="210" y1="60" x2="210" y2="310"/>
+    <line x1="340" y1="60" x2="340" y2="310"/>
+    <line x1="470" y1="60" x2="470" y2="310"/>
+    <line x1="600" y1="60" x2="600" y2="310"/>
+    <line x1="730" y1="60" x2="730" y2="310"/>
+    <line x1="820" y1="60" x2="820" y2="310"/>
+  </g>
+
+  <!-- Area fill under line -->
+  <path d="M90,280 L150,260 L200,240 L260,220 L310,235 L360,200 L420,170 L470,155 L520,140 L580,120 L640,100 L700,90 L760,80 L810,70 L810,310 L90,310 Z" fill="url(#chartGrad)"/>
+
+  <!-- Main price line -->
+  <polyline
+    points="90,280 150,260 200,240 260,220 310,235 360,200 420,170 470,155 520,140 580,120 640,100 700,90 760,80 810,70"
+    fill="none" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Candlesticks (simplified, in the lower half) -->
+  <!-- Green candle 1 -->
+  <rect x="140" y="248" width="14" height="20" rx="1" fill="#10b981" opacity="0.8"/>
+  <line x1="147" y1="243" x2="147" y2="272" stroke="#10b981" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Red candle 1 -->
+  <rect x="190" y="235" width="14" height="18" rx="1" fill="#ef4444" opacity="0.8"/>
+  <line x1="197" y1="230" x2="197" y2="257" stroke="#ef4444" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Green candle 2 -->
+  <rect x="250" y="215" width="14" height="22" rx="1" fill="#10b981" opacity="0.8"/>
+  <line x1="257" y1="210" x2="257" y2="241" stroke="#10b981" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Red candle 2 (doji region) -->
+  <rect x="300" y="228" width="14" height="16" rx="1" fill="#ef4444" opacity="0.8"/>
+  <line x1="307" y1="223" x2="307" y2="248" stroke="#ef4444" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Green candle 3 -->
+  <rect x="350" y="193" width="14" height="24" rx="1" fill="#10b981" opacity="0.8"/>
+  <line x1="357" y1="187" x2="357" y2="221" stroke="#10b981" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Volume bars (very bottom) -->
+  <g opacity="0.35">
+    <rect x="90"  y="325" width="10" height="20" rx="1" fill="#10b981"/>
+    <rect x="108" y="330" width="10" height="15" rx="1" fill="#ef4444"/>
+    <rect x="126" y="320" width="10" height="25" rx="1" fill="#10b981"/>
+    <rect x="144" y="327" width="10" height="18" rx="1" fill="#10b981"/>
+    <rect x="162" y="332" width="10" height="13" rx="1" fill="#ef4444"/>
+    <rect x="180" y="318" width="10" height="27" rx="1" fill="#10b981"/>
+    <rect x="198" y="324" width="10" height="21" rx="1" fill="#10b981"/>
+    <rect x="216" y="331" width="10" height="14" rx="1" fill="#ef4444"/>
+    <rect x="234" y="319" width="10" height="26" rx="1" fill="#10b981"/>
+    <rect x="252" y="322" width="10" height="23" rx="1" fill="#10b981"/>
+    <rect x="270" y="328" width="10" height="17" rx="1" fill="#ef4444"/>
+    <rect x="288" y="315" width="10" height="30" rx="1" fill="#10b981"/>
+    <rect x="306" y="320" width="10" height="25" rx="1" fill="#10b981"/>
+    <rect x="324" y="326" width="10" height="19" rx="1" fill="#ef4444"/>
+    <rect x="342" y="312" width="10" height="33" rx="1" fill="#10b981"/>
+    <rect x="360" y="317" width="10" height="28" rx="1" fill="#10b981"/>
+  </g>
+
+  <!-- MA line (orange) -->
+  <polyline
+    points="120,275 180,258 240,242 300,230 360,218 420,190 480,168 540,152 600,132 660,110 720,95 780,82"
+    fill="none" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>
+
+  <!-- RSI indicator label -->
+  <rect x="620" y="210" width="80" height="28" rx="6" fill="#1c1c1e" stroke="#3f3f46" stroke-width="1"/>
+  <text x="660" y="229" text-anchor="middle" font-family="monospace" font-size="11" fill="#a1a1aa">RSI: 64</text>
+
+  <!-- Moving avg label -->
+  <rect x="490" y="145" width="72" height="22" rx="5" fill="#1c1c1e" stroke="#3f3f46" stroke-width="1"/>
+  <text x="526" y="160" text-anchor="middle" font-family="monospace" font-size="10" fill="#f97316">MA(50)</text>
+
+  <!-- Price annotation -->
+  <circle cx="810" cy="70" r="5" fill="#10b981"/>
+  <rect x="820" y="55" width="60" height="22" rx="5" fill="#10b981" opacity="0.15"/>
+  <text x="850" y="69" text-anchor="middle" font-family="monospace" font-size="11" fill="#10b981">+18.4%</text>
+
+  <!-- Support line -->
+  <line x1="80" y1="240" x2="500" y2="240" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="8,5" opacity="0.5"/>
+  <text x="88" y="236" font-family="sans-serif" font-size="9" fill="#3b82f6" opacity="0.8">Support</text>
+
+  <!-- Title text -->
+  <text x="450" y="370" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#e4e4e7" letter-spacing="0.5">HOW TO READ STOCK CHARTS</text>
+  <text x="450" y="388" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#71717a">Candlesticks · Moving Averages · Volume · RSI</text>
+</svg>

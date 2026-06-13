@@ -1,6 +1,6 @@
 'use client'
-import Image from 'next/image'
 import Link from 'next/link'
+import { CoinImage } from '@/components/crypto/CoinImage'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, ExternalLink, TrendingUp, TrendingDown, Plus } from 'lucide-react'
@@ -232,7 +232,7 @@ export function CryptoDetailClient({ id }: { id: string }) {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-4">
-          <Image src={coin.image.large} alt={coin.name} width={56} height={56} className="rounded-full shrink-0" unoptimized />
+          <CoinImage src={coin.image.large} symbol={coin.symbol} size={56} />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl font-bold text-white">{coin.name}</h1>
