@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import { UNIVERSE_FLAT } from '@/lib/stock-universe'
@@ -48,18 +48,22 @@ interface Result {
 }
 
 function StockLogo({ symbol }: { symbol: string }) {
+  const [failed, setFailed] = useState(false)
   return (
     <div className="h-9 w-9 shrink-0 flex items-center justify-center rounded-xl bg-zinc-800 overflow-hidden">
-      <Image
-        src={`https://assets.parqet.com/logos/symbol/${symbol}?format=png`}
-        alt={symbol} width={36} height={36} className="object-contain" unoptimized
-        onError={(e) => {
-          const t = e.target as HTMLImageElement
-          t.style.display = 'none'
-          if (t.parentElement)
-            t.parentElement.innerHTML = `<span class="text-xs font-bold text-zinc-400">${symbol.slice(0, 2)}</span>`
-        }}
-      />
+      {failed ? (
+        <span className="text-xs font-bold text-zinc-400">{symbol.slice(0, 2)}</span>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`https://assets.parqet.com/logos/symbol/${symbol}?format=png`}
+          alt={symbol}
+          width={36}
+          height={36}
+          className="object-contain"
+          onError={() => setFailed(true)}
+        />
+      )}
     </div>
   )
 }
@@ -67,7 +71,8 @@ function StockLogo({ symbol }: { symbol: string }) {
 function CryptoLogo({ image, symbol }: { image: string; symbol: string }) {
   return (
     <div className="h-9 w-9 shrink-0 flex items-center justify-center rounded-full bg-zinc-800 overflow-hidden">
-      <Image src={image} alt={symbol} width={36} height={36} className="rounded-full object-contain" unoptimized />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={image} alt={symbol} width={36} height={36} className="rounded-full object-contain" />
     </div>
   )
 }
@@ -80,8 +85,15 @@ export function GlobalSearch() {
   const [highlighted, setHighlighted] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const router   = useRouter()
-  const qc       = useQueryClient()
   const debouncedQ = useDebounce(query, 260)
+
+  // Always keep crypto cache warm (used by search on any page)
+  const { data: cryptoCache = [] } = useQuery<CryptoMarket[]>({
+    queryKey: ['crypto-markets'],
+    queryFn: () => fetch('/api/crypto/markets?limit=250').then((r) => r.json()),
+    staleTime: 60_000,
+    refetchInterval: false,
+  })
 
   // Open on Cmd+K / Ctrl+K
   useEffect(() => {
@@ -101,9 +113,6 @@ export function GlobalSearch() {
     if (open) setTimeout(() => inputRef.current?.focus(), 50)
     else { setQuery(''); setApiResults([]) }
   }, [open])
-
-  // Crypto results from TanStack Query cache
-  const cryptoCache = qc.getQueryData<CryptoMarket[]>(['crypto-markets']) ?? []
 
   // Fetch stocks API fallback for queries not in local universe
   useEffect(() => {
