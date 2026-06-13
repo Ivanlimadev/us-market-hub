@@ -8,7 +8,9 @@ import { TrendingUp, Eye, EyeOff, Loader2 } from 'lucide-react'
 function LoginForm() {
   const router       = useRouter()
   const params       = useSearchParams()
-  const redirect     = params.get('redirect') ?? '/'
+  // Only allow internal relative paths to prevent open redirect attacks
+  const raw          = params.get('redirect') ?? '/'
+  const redirect     = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/'
 
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')

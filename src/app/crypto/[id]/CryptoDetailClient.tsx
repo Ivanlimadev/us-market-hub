@@ -356,14 +356,13 @@ export function CryptoDetailClient({ id }: { id: string }) {
       {/* News */}
       <StockNews symbol={coin.symbol.toUpperCase()} />
 
-      {/* Description */}
+      {/* Description — strip HTML tags before rendering to prevent XSS */}
       {coin.description && (
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-200">About {coin.name}</h3>
-          <p
-            className="text-sm text-zinc-400 leading-relaxed line-clamp-6"
-            dangerouslySetInnerHTML={{ __html: coin.description }}
-          />
+          <p className="text-sm text-zinc-400 leading-relaxed line-clamp-6">
+            {coin.description.replace(/<[^>]*>/g, '')}
+          </p>
         </div>
       )}
 

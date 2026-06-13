@@ -19,7 +19,11 @@ export async function GET(req: Request) {
   if (!raw) return NextResponse.json({ error: 'symbol required' }, { status: 400 })
 
   // Support multiple comma-separated tickers: ?symbol=AAPL,MSFT,TSLA
-  const symbol = raw.split(',').map(s => s.trim()).filter(Boolean).sort().join(',')
+  // Validate each ticker: only uppercase letters (1-5 chars) to prevent injection
+  const TICKER_RE = /^[A-Z]{1,5}$/
+  const tickers = raw.split(',').map(s => s.trim()).filter(s => TICKER_RE.test(s))
+  if (!tickers.length) return NextResponse.json({ error: 'invalid symbol' }, { status: 400 })
+  const symbol = tickers.sort().join(',')
   const multi  = symbol.includes(',')
 
   const hit = cache.get(symbol)
