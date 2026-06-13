@@ -19,17 +19,28 @@ export interface EdgarAnnual {
   fcf:         number | null
 }
 
+export interface EdgarBalanceSheet {
+  year:         number
+  label:        string
+  assets:       number | null
+  liabilities:  number | null
+  cash:         number | null
+  longTermDebt: number | null
+  equity:       number | null
+}
+
 export interface EdgarData {
-  symbol:   string
-  cik:      string
-  name:     string
-  quarters: EdgarQuarter[]
-  annual:   EdgarAnnual[]
+  symbol:       string
+  cik:          string
+  name:         string
+  quarters:     EdgarQuarter[]
+  annual:       EdgarAnnual[]
+  balanceSheet: EdgarBalanceSheet[]
 }
 
 const UA = 'StockMarketROI contato@ivanlimadev.com'
-const TTL_CIK  = 24 * 60 * 60_000  // 24h — CIK map changes rarely
-const TTL_DATA =  6 * 60 * 60_000  //  6h — financials change quarterly
+const TTL_CIK  = 24 * 60 * 60_000
+const TTL_DATA =  6 * 60 * 60_000
 
 let cikMap: Record<string, string> | null = null
 let cikMapTs = 0
@@ -54,7 +65,6 @@ async function getCik(symbol: string): Promise<string | null> {
 }
 
 function frameLabel(frame: string): string {
-  // CY2025Q4 -> "Q4 2025"
   const m = frame.match(/CY(\d{4})Q(\d)/)
   if (m) return `Q${m[2]} ${m[1]}`
   return frame
@@ -105,53 +115,76 @@ export async function GET(req: Request) {
   const name: string = factsJson.entityName ?? symbol
   const gaap = factsJson.facts?.['us-gaap'] ?? {}
 
-  const QR = /^CY\d{4}Q\d$/
-  const YR = /^CY\d{4}$/
+  const QR  = /^CY\d{4}Q\d$/       // quarterly duration  e.g. CY2025Q4
+  const YR  = /^CY\d{4}$/           // annual duration     e.g. CY2025
+  const BSI = /^CY\d{4}Q4I$/        // year-end instant    e.g. CY2025Q4I
 
-  // Quarterly
+  // Quarterly income statement
   const epsMap = extractConcept(gaap, QR, 'EarningsPerShareBasic', 'EarningsPerShareDiluted')
   const revMap = extractConcept(gaap, QR, 'RevenueFromContractWithCustomerExcludingAssessedTax', 'Revenues', 'SalesRevenueNet')
   const niMap  = extractConcept(gaap, QR, 'NetIncomeLoss')
   const gpMap  = extractConcept(gaap, QR, 'GrossProfit')
 
-  // Annual (for FCF — cash flows are only meaningful annually)
+  // Annual cash flow (FCF)
   const ocfMap   = extractConcept(gaap, YR, 'NetCashProvidedByUsedInOperatingActivities')
   const capexMap = extractConcept(gaap, YR, 'PaymentsToAcquirePropertyPlantAndEquipment')
+
+  // Year-end balance sheet (instant values at Q4)
+  const assetsMap  = extractConcept(gaap, BSI, 'Assets')
+  const liabMap    = extractConcept(gaap, BSI, 'Liabilities')
+  const cashMap    = extractConcept(gaap, BSI, 'CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsAndShortTermInvestments', 'Cash')
+  const ltDebtMap  = extractConcept(gaap, BSI, 'LongTermDebt', 'LongTermDebtNoncurrent', 'LongTermNotesPayable')
+  const equityMap  = extractConcept(gaap, BSI, 'StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest')
 
   // Build quarters
   const qFrames = new Set<string>([...epsMap.keys(), ...revMap.keys(), ...niMap.keys(), ...gpMap.keys()])
   const quarters: EdgarQuarter[] = [...qFrames]
     .sort().slice(-8)
-    .map(frame => {
-      const eps = epsMap.get(frame)
-      const rev = revMap.get(frame)
-      const ni  = niMap.get(frame)
-      const gp  = gpMap.get(frame)
-      return {
-        frame,
-        label:       frameLabel(frame),
-        periodEnd:   rev?.end ?? ni?.end ?? eps?.end ?? '',
-        filed:       rev?.filed ?? ni?.filed ?? eps?.filed ?? '',
-        eps:         eps?.val ?? null,
-        revenue:     rev?.val ?? null,
-        netIncome:   ni?.val  ?? null,
-        grossProfit: gp?.val  ?? null,
-      }
-    })
+    .map(frame => ({
+      frame,
+      label:       frameLabel(frame),
+      periodEnd:   revMap.get(frame)?.end ?? niMap.get(frame)?.end ?? epsMap.get(frame)?.end ?? '',
+      filed:       revMap.get(frame)?.filed ?? niMap.get(frame)?.filed ?? epsMap.get(frame)?.filed ?? '',
+      eps:         epsMap.get(frame)?.val ?? null,
+      revenue:     revMap.get(frame)?.val ?? null,
+      netIncome:   niMap.get(frame)?.val  ?? null,
+      grossProfit: gpMap.get(frame)?.val  ?? null,
+    }))
 
   // Build annual FCF
   const yFrames = new Set<string>([...ocfMap.keys(), ...capexMap.keys()])
   const annual: EdgarAnnual[] = [...yFrames]
     .sort().slice(-6)
     .map(frame => {
-      const year = parseInt(frame.replace('CY', ''))
-      const ocf  = ocfMap.get(frame)?.val ?? null
-      const cx   = capexMap.get(frame)?.val ?? null
-      const fcf  = ocf !== null && cx !== null ? ocf - cx : null
-      return { year, label: String(year), operatingCf: ocf, capex: cx ? -cx : null, fcf }
+      const ocf = ocfMap.get(frame)?.val ?? null
+      const cx  = capexMap.get(frame)?.val ?? null
+      return {
+        year:        parseInt(frame.replace('CY', '')),
+        label:       frame.replace('CY', ''),
+        operatingCf: ocf,
+        capex:       cx != null ? -cx : null,
+        fcf:         ocf != null && cx != null ? ocf - cx : null,
+      }
     })
 
-  const data: EdgarData = { symbol, cik, name, quarters, annual }
+  // Build balance sheet (year-end snapshots)
+  const bsFrames = new Set<string>([...assetsMap.keys(), ...liabMap.keys()])
+  const balanceSheet: EdgarBalanceSheet[] = [...bsFrames]
+    .sort().slice(-6)
+    .map(frame => {
+      const year = parseInt(frame.match(/CY(\d{4})/)?.[1] ?? '0')
+      return {
+        year,
+        label:        String(year),
+        assets:       assetsMap.get(frame)?.val  ?? null,
+        liabilities:  liabMap.get(frame)?.val    ?? null,
+        cash:         cashMap.get(frame)?.val     ?? null,
+        longTermDebt: ltDebtMap.get(frame)?.val  ?? null,
+        equity:       equityMap.get(frame)?.val   ?? null,
+      }
+    })
+
+  const data: EdgarData = { symbol, cik, name, quarters, annual, balanceSheet }
   dataCache.set(symbol, { data, ts: Date.now() })
   return NextResponse.json(data)
 }
