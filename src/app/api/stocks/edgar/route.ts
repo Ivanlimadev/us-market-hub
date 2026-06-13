@@ -11,11 +11,20 @@ export interface EdgarQuarter {
   grossProfit: number | null
 }
 
+export interface EdgarAnnual {
+  year:        number
+  label:       string   // e.g. "2025"
+  operatingCf: number | null
+  capex:       number | null
+  fcf:         number | null
+}
+
 export interface EdgarData {
   symbol:   string
   cik:      string
   name:     string
   quarters: EdgarQuarter[]
+  annual:   EdgarAnnual[]
 }
 
 const UA = 'StockMarketROI contato@ivanlimadev.com'
@@ -53,6 +62,7 @@ function frameLabel(frame: string): string {
 
 function extractConcept(
   facts: Record<string, { units: Record<string, Array<{ frame?: string; val: number; end: string; filed: string; fp?: string; form?: string }>> }>,
+  pattern: RegExp,
   ...keys: string[]
 ): Map<string, { val: number; end: string; filed: string }> {
   const map = new Map<string, { val: number; end: string; filed: string }>()
@@ -61,15 +71,14 @@ function extractConcept(
     if (!concept) continue
     const entries = concept.units?.['USD'] ?? concept.units?.['USD/shares'] ?? []
     for (const e of entries) {
-      if (!e.frame?.match(/^CY\d{4}Q\d$/)) continue
+      if (!e.frame?.match(pattern)) continue
       if (e.form && !['10-Q', '10-K'].includes(e.form)) continue
-      // Keep most recent filing for each frame
       const existing = map.get(e.frame)
       if (!existing || e.filed > existing.filed) {
         map.set(e.frame, { val: e.val, end: e.end, filed: e.filed })
       }
     }
-    if (map.size > 0) break // use first key that has data
+    if (map.size > 0) break
   }
   return map
 }
@@ -96,32 +105,33 @@ export async function GET(req: Request) {
   const name: string = factsJson.entityName ?? symbol
   const gaap = factsJson.facts?.['us-gaap'] ?? {}
 
-  const epsMap     = extractConcept(gaap, 'EarningsPerShareBasic', 'EarningsPerShareDiluted')
-  const revMap     = extractConcept(gaap, 'RevenueFromContractWithCustomerExcludingAssessedTax', 'Revenues', 'SalesRevenueNet')
-  const niMap      = extractConcept(gaap, 'NetIncomeLoss')
-  const gpMap      = extractConcept(gaap, 'GrossProfit')
+  const QR = /^CY\d{4}Q\d$/
+  const YR = /^CY\d{4}$/
 
-  // Collect all frames that appear in any concept
-  const frames = new Set<string>([
-    ...epsMap.keys(), ...revMap.keys(), ...niMap.keys(), ...gpMap.keys(),
-  ])
+  // Quarterly
+  const epsMap = extractConcept(gaap, QR, 'EarningsPerShareBasic', 'EarningsPerShareDiluted')
+  const revMap = extractConcept(gaap, QR, 'RevenueFromContractWithCustomerExcludingAssessedTax', 'Revenues', 'SalesRevenueNet')
+  const niMap  = extractConcept(gaap, QR, 'NetIncomeLoss')
+  const gpMap  = extractConcept(gaap, QR, 'GrossProfit')
 
-  const quarters: EdgarQuarter[] = [...frames]
-    .filter(f => f.match(/^CY\d{4}Q\d$/))
-    .sort()
-    .slice(-8) // last 8 quarters
+  // Annual (for FCF — cash flows are only meaningful annually)
+  const ocfMap   = extractConcept(gaap, YR, 'NetCashProvidedByUsedInOperatingActivities')
+  const capexMap = extractConcept(gaap, YR, 'PaymentsToAcquirePropertyPlantAndEquipment')
+
+  // Build quarters
+  const qFrames = new Set<string>([...epsMap.keys(), ...revMap.keys(), ...niMap.keys(), ...gpMap.keys()])
+  const quarters: EdgarQuarter[] = [...qFrames]
+    .sort().slice(-8)
     .map(frame => {
-      const eps  = epsMap.get(frame)
-      const rev  = revMap.get(frame)
-      const ni   = niMap.get(frame)
-      const gp   = gpMap.get(frame)
-      const periodEnd = rev?.end ?? ni?.end ?? eps?.end ?? ''
-      const filed     = rev?.filed ?? ni?.filed ?? eps?.filed ?? ''
+      const eps = epsMap.get(frame)
+      const rev = revMap.get(frame)
+      const ni  = niMap.get(frame)
+      const gp  = gpMap.get(frame)
       return {
         frame,
         label:       frameLabel(frame),
-        periodEnd,
-        filed,
+        periodEnd:   rev?.end ?? ni?.end ?? eps?.end ?? '',
+        filed:       rev?.filed ?? ni?.filed ?? eps?.filed ?? '',
         eps:         eps?.val ?? null,
         revenue:     rev?.val ?? null,
         netIncome:   ni?.val  ?? null,
@@ -129,7 +139,19 @@ export async function GET(req: Request) {
       }
     })
 
-  const data: EdgarData = { symbol, cik, name, quarters }
+  // Build annual FCF
+  const yFrames = new Set<string>([...ocfMap.keys(), ...capexMap.keys()])
+  const annual: EdgarAnnual[] = [...yFrames]
+    .sort().slice(-6)
+    .map(frame => {
+      const year = parseInt(frame.replace('CY', ''))
+      const ocf  = ocfMap.get(frame)?.val ?? null
+      const cx   = capexMap.get(frame)?.val ?? null
+      const fcf  = ocf !== null && cx !== null ? ocf - cx : null
+      return { year, label: String(year), operatingCf: ocf, capex: cx ? -cx : null, fcf }
+    })
+
+  const data: EdgarData = { symbol, cik, name, quarters, annual }
   dataCache.set(symbol, { data, ts: Date.now() })
   return NextResponse.json(data)
 }

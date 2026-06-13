@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react'
-import type { EdgarData, EdgarQuarter } from '@/app/api/stocks/edgar/route'
+import type { EdgarData, EdgarQuarter, EdgarAnnual } from '@/app/api/stocks/edgar/route'
 
 function fmtB(n: number | null): string {
   if (n === null) return '—'
@@ -15,7 +15,72 @@ function fmtEps(n: number | null): string {
   return `$${n.toFixed(2)}`
 }
 
-type Metric = 'revenue' | 'netIncome' | 'eps'
+type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf'
+
+function FcfChart({ annual }: { annual: EdgarAnnual[] }) {
+  const max = Math.max(...annual.map(a => Math.abs(a.fcf ?? 0)), 1)
+  return (
+    <div className="space-y-3">
+      <div className="flex items-end gap-2 h-20">
+        {annual.map((a, i) => {
+          const prev  = annual[i - 1]
+          const grew  = prev?.fcf != null && a.fcf != null ? a.fcf >= prev.fcf : true
+          const pct   = a.fcf != null ? Math.abs(a.fcf) / max * 100 : 4
+          return (
+            <div key={a.year} className="flex flex-col items-center flex-1 gap-1 group relative">
+              <div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:flex whitespace-nowrap rounded bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-200 z-10 border border-zinc-700">
+                {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '—'}
+              </div>
+              <div className="w-full flex items-end justify-center" style={{ height: '64px' }}>
+                <div
+                  className={`w-full rounded-t-sm ${grew ? 'bg-emerald-500' : 'bg-red-500'}`}
+                  style={{ height: `${Math.max(pct, 4)}%` }}
+                />
+              </div>
+              <span className="text-[9px] text-zinc-600">{a.label}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* FCF table */}
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
+            <th className="pb-2 text-left font-medium">Year</th>
+            <th className="pb-2 text-right font-medium">Operating CF</th>
+            <th className="pb-2 text-right font-medium">CapEx</th>
+            <th className="pb-2 text-right font-medium">Free Cash Flow</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-800/50">
+          {[...annual].reverse().map((a, i, arr) => {
+            const prev   = arr[i + 1]
+            const fcfUp  = prev?.fcf != null && a.fcf != null ? a.fcf >= prev.fcf : null
+            return (
+              <tr key={a.year} className="hover:bg-zinc-800/30 transition-colors">
+                <td className="py-2.5 font-semibold text-zinc-300">{a.label}</td>
+                <td className="py-2.5 text-right tabular-nums text-zinc-300">
+                  {a.operatingCf != null ? `$${(a.operatingCf/1e9).toFixed(1)}B` : '—'}
+                </td>
+                <td className="py-2.5 text-right tabular-nums text-red-400">
+                  {a.capex != null ? `-$${Math.abs(a.capex/1e9).toFixed(1)}B` : '—'}
+                </td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={`flex items-center justify-end gap-0.5 font-semibold ${fcfUp === true ? 'text-emerald-400' : fcfUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
+                    {fcfUp === true && <TrendingUp className="h-3 w-3" />}
+                    {fcfUp === false && <TrendingDown className="h-3 w-3" />}
+                    {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '—'}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}
 
 function MiniBar({ quarters, metric }: { quarters: EdgarQuarter[]; metric: Metric }) {
   const values = quarters.map(q => q[metric] ?? 0)
@@ -64,6 +129,7 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
     { key: 'revenue',   label: 'Revenue' },
     { key: 'netIncome', label: 'Net Income' },
     { key: 'eps',       label: 'EPS' },
+    { key: 'fcf',       label: 'Free Cash Flow' },
   ]
 
   return (
@@ -118,11 +184,16 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
             ))}
           </div>
 
-          {/* Bar chart */}
-          <MiniBar quarters={data.quarters} metric={tab} />
+          {/* FCF tab — annual data */}
+          {tab === 'fcf' && data.annual?.length > 0 && (
+            <FcfChart annual={data.annual} />
+          )}
 
-          {/* Table */}
-          <div className="overflow-x-auto">
+          {/* Bar chart — quarterly */}
+          {tab !== 'fcf' && <MiniBar quarters={data.quarters} metric={tab} />}
+
+          {/* Table — quarterly (hidden on FCF tab) */}
+          {tab !== 'fcf' && <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
@@ -164,7 +235,7 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
                 })}
               </tbody>
             </table>
-          </div>
+          </div>}
 
           <p className="text-[10px] text-zinc-700 text-right">
             Source: SEC EDGAR official filings · updated quarterly
