@@ -45,8 +45,8 @@ const METRICS: { key: MetricKey; label: string; fmt: (n: number | null) => strin
 
 // ── bar chart ──────────────────────────────────────────────────────────────
 
-const BAR_H  = 64  // max bar height px
-const LABEL_H = 18 // date label height px
+const BAR_H  = 140 // max bar height px
+const LABEL_H = 20 // date label height px
 
 function BarChart({
   rows,
@@ -63,8 +63,11 @@ function BarChart({
   const nums   = values.filter((v): v is number => v !== null)
   const max    = Math.max(...nums.map(Math.abs), 0.001)
 
+  // Bar width scales with number of bars — narrow for many bars, wider for few
+  const barMaxW = rows.length <= 6 ? 48 : rows.length <= 12 ? 36 : 26
+
   return (
-    <div className="flex items-end gap-1.5" style={{ height: BAR_H + LABEL_H }}>
+    <div className="flex items-end justify-center gap-2" style={{ height: BAR_H + LABEL_H }}>
       {rows.map((row, i) => {
         const val  = values[i]
         const isPos = val === null || val >= 0
@@ -74,8 +77,8 @@ function BarChart({
         return (
           <div
             key={row.date}
-            className="group relative flex flex-1 flex-col items-center justify-end"
-            style={{ height: BAR_H + LABEL_H }}
+            className="group relative flex flex-col items-center justify-end shrink-0"
+            style={{ height: BAR_H + LABEL_H, width: barMaxW }}
           >
             {/* tooltip */}
             {val !== null && (
@@ -193,12 +196,12 @@ export function FinancialCharts({ symbol }: { symbol: string }) {
       {/* Chart area */}
       <div className="px-5 py-4">
         {isLoading ? (
-          <div className="flex items-end gap-1.5" style={{ height: BAR_H + LABEL_H }}>
+          <div className="flex items-end justify-center gap-2" style={{ height: BAR_H + LABEL_H }}>
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="flex-1 animate-pulse rounded-t-sm bg-zinc-800"
-                style={{ height: [32, 52, 42, 60][i] }}
+                className="w-12 animate-pulse rounded-t-sm bg-zinc-800"
+                style={{ height: [80, 120, 96, 140][i] }}
               />
             ))}
           </div>
