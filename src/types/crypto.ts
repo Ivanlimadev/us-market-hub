@@ -37,6 +37,7 @@ export interface CryptoGlobal {
   market_cap_change_percentage_24h: number
   btc_dominance: number
   eth_dominance: number
+  top_dominances: { symbol: string; pct: number }[]
 }
 
 export interface CryptoDetail {

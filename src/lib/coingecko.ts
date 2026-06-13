@@ -47,6 +47,15 @@ export async function cgGlobal(): Promise<CryptoGlobal> {
   }>('/global', 5 * 60_000)
 
   const d = raw.data
+
+  // Top 5 coins by dominance + Others
+  const sorted = Object.entries(d.market_cap_percentage)
+    .map(([sym, pct]) => ({ symbol: sym.toUpperCase(), pct }))
+    .sort((a, b) => b.pct - a.pct)
+    .slice(0, 5)
+  const othersSum = Math.max(0, 100 - sorted.reduce((s, e) => s + e.pct, 0))
+  const top_dominances = [...sorted, { symbol: 'Others', pct: othersSum }]
+
   return {
     active_cryptocurrencies: d.active_cryptocurrencies,
     markets: d.markets,
@@ -55,6 +64,7 @@ export async function cgGlobal(): Promise<CryptoGlobal> {
     market_cap_change_percentage_24h: d.market_cap_change_percentage_24h_usd,
     btc_dominance: d.market_cap_percentage.btc ?? 0,
     eth_dominance: d.market_cap_percentage.eth ?? 0,
+    top_dominances,
   }
 }
 

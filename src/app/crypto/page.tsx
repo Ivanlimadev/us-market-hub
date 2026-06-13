@@ -5,6 +5,8 @@ import { CryptoTable } from '@/components/crypto/CryptoTable'
 import { FearGreedGauge } from '@/components/crypto/FearGreedGauge'
 import { CryptoTrending } from '@/components/crypto/CryptoTrending'
 import { CryptoGainersLosers } from '@/components/crypto/CryptoGainersLosers'
+import { DominanceChart } from '@/components/crypto/DominanceChart'
+import { DefiTVLWidget } from '@/components/crypto/DefiTVLWidget'
 
 export const metadata: Metadata = {
   title: 'Crypto | Stock Market ROI',
@@ -17,7 +19,7 @@ export default function CryptoPage() {
       <div>
         <h1 className="text-xl font-bold text-white">Cryptocurrency Market</h1>
         <p className="text-sm text-zinc-500 mt-0.5">
-          Live prices via Kraken · Market data via CoinGecko
+          Live prices via Kraken · Market data via CoinGecko · DeFi via DefiLlama
         </p>
       </div>
 
@@ -29,6 +31,12 @@ export default function CryptoPage() {
         <FearGreedGauge />
         <CryptoTrending />
         <CryptoGainersLosers />
+      </div>
+
+      {/* Dominance chart + DeFi TVL */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <DominanceChart />
+        <DefiTVLWidget />
       </div>
 
       {/* Heatmap */}
