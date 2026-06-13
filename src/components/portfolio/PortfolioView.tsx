@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, Wallet, LayoutGrid, List, DollarSign, BarChart2 } from 'lucide-react'
+import { Plus, Wallet, LayoutGrid, List, DollarSign, BarChart2, Newspaper } from 'lucide-react'
 import { usePortfolio } from '@/lib/hooks/usePortfolio'
 import { usePortfolioDividends } from '@/lib/hooks/usePortfolioDividends'
 import { usePortfolioSync } from '@/lib/hooks/usePortfolioSync'
@@ -10,9 +10,10 @@ import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from './AddTransactionModal'
 import { DividendBarChart } from './DividendBarChart'
 import { PortfolioHistoryChart } from './PortfolioHistoryChart'
+import { PortfolioNews } from './PortfolioNews'
 import type { Holding } from '@/types/portfolio'
 
-type Tab = 'overview' | 'holdings' | 'dividends' | 'history'
+type Tab = 'overview' | 'holdings' | 'dividends' | 'history' | 'news'
 
 const ALLOC_COLORS = [
   'bg-sky-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500',
@@ -219,6 +220,7 @@ export function PortfolioView() {
     { key: 'holdings'  as Tab, label: 'Holdings',   icon: List },
     { key: 'history'   as Tab, label: 'History',    icon: BarChart2  },
     { key: 'dividends' as Tab, label: 'Dividends',  icon: DollarSign },
+    { key: 'news'      as Tab, label: 'News',       icon: Newspaper  },
   ]
 
   return (
@@ -419,6 +421,9 @@ export function PortfolioView() {
           </div>
         </div>
       )}
+
+      {/* ---- NEWS ---- */}
+      {tab === 'news' && <PortfolioNews />}
 
       {showModal && <AddTransactionModal onClose={() => setShowModal(false)} />}
     </div>
