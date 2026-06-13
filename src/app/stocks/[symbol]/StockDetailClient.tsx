@@ -23,6 +23,7 @@ import { recordView } from '@/lib/recently-viewed'
 import { StockNews } from '@/components/stock/StockNews'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
+import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 function fmtLarge(n: number | null): string {
   if (n === null) return ''
@@ -136,45 +137,67 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
         </div>
       </div>
 
-      {/* Chart */}
-      <PriceChart
-        symbol={symbol}
-        currentPrice={data.currentPrice}
-        prevClose={data.prevClose}
-      />
+      <WidgetBoundary label="Price Chart">
+        <PriceChart
+          symbol={symbol}
+          currentPrice={data.currentPrice}
+          prevClose={data.prevClose}
+        />
+      </WidgetBoundary>
 
-      {/* Performance */}
-      <PerformanceStrip symbol={symbol} />
+      <WidgetBoundary label="Performance">
+        <PerformanceStrip symbol={symbol} />
+      </WidgetBoundary>
 
-      {/* Main grid */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        {/* Left col: Financials + Dividends + Magic Number + Simulator */}
         <div className="space-y-5 lg:col-span-2">
-          <FinancialCharts symbol={symbol} />
-          <DividendsSection data={data} />
-          <MagicNumber data={data} />
-          <InvestmentSimulator data={data} />
+          <WidgetBoundary label="Financial Charts">
+            <FinancialCharts symbol={symbol} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Dividends">
+            <DividendsSection data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Magic Number">
+            <MagicNumber data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Investment Simulator">
+            <InvestmentSimulator data={data} />
+          </WidgetBoundary>
         </div>
 
-        {/* Right col: Earnings + Fundamentals + Fair Value + Buy&Hold */}
         <div className="space-y-5">
-          <EarningsCard data={data} />
-          <EarningsHistory symbol={symbol} />
-          <SecFilings symbol={symbol} />
-          <FundamentalsCard data={data} />
-          <FairValueCard data={data} />
-          <BuyHoldChecklist data={data} />
+          <WidgetBoundary label="Earnings">
+            <EarningsCard data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Earnings History">
+            <EarningsHistory symbol={symbol} />
+          </WidgetBoundary>
+          <WidgetBoundary label="SEC Filings">
+            <SecFilings symbol={symbol} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Fundamentals">
+            <FundamentalsCard data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Fair Value">
+            <FairValueCard data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Buy & Hold Checklist">
+            <BuyHoldChecklist data={data} />
+          </WidgetBoundary>
         </div>
       </div>
 
-      {/* News */}
-      <StockNews symbol={symbol} />
+      <WidgetBoundary label="News">
+        <StockNews symbol={symbol} />
+      </WidgetBoundary>
 
-      {/* Penultimate: Related assets */}
-      <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
+      <WidgetBoundary label="Related Assets">
+        <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
+      </WidgetBoundary>
 
-      {/* Last: About the company (full-width) */}
-      <CompanyInfo data={data} />
+      <WidgetBoundary label="Company Info">
+        <CompanyInfo data={data} />
+      </WidgetBoundary>
 
       {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
     </div>

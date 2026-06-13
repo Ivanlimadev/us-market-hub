@@ -9,6 +9,7 @@ import { DominanceChart } from '@/components/crypto/DominanceChart'
 import { DefiTVLWidget } from '@/components/crypto/DefiTVLWidget'
 import { FundingRates }    from '@/components/crypto/FundingRates'
 import { LongShortRatio } from '@/components/crypto/LongShortRatio'
+import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 export const metadata: Metadata = {
   title: 'Crypto | Stock Market ROI',
@@ -25,33 +26,47 @@ export default function CryptoPage() {
         </p>
       </div>
 
-      {/* Global stats */}
-      <GlobalCryptoStats />
+      <WidgetBoundary label="Global Stats">
+        <GlobalCryptoStats />
+      </WidgetBoundary>
 
-      {/* Fear & Greed + Trending + Gainers/Losers */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <FearGreedGauge />
-        <CryptoTrending />
-        <CryptoGainersLosers />
+        <WidgetBoundary label="Fear & Greed">
+          <FearGreedGauge />
+        </WidgetBoundary>
+        <WidgetBoundary label="Trending">
+          <CryptoTrending />
+        </WidgetBoundary>
+        <WidgetBoundary label="Gainers & Losers">
+          <CryptoGainersLosers />
+        </WidgetBoundary>
       </div>
 
-      {/* Dominance chart + DeFi TVL */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <DominanceChart />
-        <DefiTVLWidget />
+        <WidgetBoundary label="Dominance Chart">
+          <DominanceChart />
+        </WidgetBoundary>
+        <WidgetBoundary label="DeFi TVL">
+          <DefiTVLWidget />
+        </WidgetBoundary>
       </div>
 
-      {/* Funding Rates + Long/Short Ratio */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <FundingRates />
-        <LongShortRatio />
+        <WidgetBoundary label="Funding Rates">
+          <FundingRates />
+        </WidgetBoundary>
+        <WidgetBoundary label="Long/Short Ratio">
+          <LongShortRatio />
+        </WidgetBoundary>
       </div>
 
-      {/* Heatmap */}
-      <CryptoHeatmap />
+      <WidgetBoundary label="Crypto Heatmap">
+        <CryptoHeatmap />
+      </WidgetBoundary>
 
-      {/* Full table */}
-      <CryptoTable />
+      <WidgetBoundary label="Crypto Table">
+        <CryptoTable />
+      </WidgetBoundary>
     </main>
   )
 }

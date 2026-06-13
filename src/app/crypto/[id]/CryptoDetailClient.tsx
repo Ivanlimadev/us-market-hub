@@ -14,6 +14,7 @@ import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
 import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
 import { ROICalculator }     from '@/components/crypto/ROICalculator'
 import { StockNews }         from '@/components/stock/StockNews'
+import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -341,20 +342,25 @@ export function CryptoDetailClient({ id }: { id: string }) {
         </div>
       </div>
 
-      {/* Supply */}
-      <SupplyCard coin={coin} />
+      <WidgetBoundary label="Supply">
+        <SupplyCard coin={coin} />
+      </WidgetBoundary>
 
-      {/* ROI Calculator */}
-      <ROICalculator coin={coin} />
+      <WidgetBoundary label="ROI Calculator">
+        <ROICalculator coin={coin} />
+      </WidgetBoundary>
 
-      {/* Where to Buy */}
-      <ExchangeListings coinId={coin.id} />
+      <WidgetBoundary label="Where to Buy">
+        <ExchangeListings coinId={coin.id} />
+      </WidgetBoundary>
 
-      {/* Similar Coins */}
-      <SimilarCoins coinId={coin.id} marketCap={md.market_cap} />
+      <WidgetBoundary label="Similar Coins">
+        <SimilarCoins coinId={coin.id} marketCap={md.market_cap} />
+      </WidgetBoundary>
 
-      {/* News */}
-      <StockNews symbol={coin.symbol.toUpperCase()} />
+      <WidgetBoundary label="News">
+        <StockNews symbol={coin.symbol.toUpperCase()} />
+      </WidgetBoundary>
 
       {/* Description — strip HTML tags before rendering to prevent XSS */}
       {coin.description && (
