@@ -13,6 +13,7 @@ import { SupplyCard }        from '@/components/crypto/SupplyCard'
 import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
 import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
 import { ROICalculator }     from '@/components/crypto/ROICalculator'
+import { StockNews }         from '@/components/stock/StockNews'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -351,6 +352,9 @@ export function CryptoDetailClient({ id }: { id: string }) {
 
       {/* Similar Coins */}
       <SimilarCoins coinId={coin.id} marketCap={md.market_cap} />
+
+      {/* News */}
+      <StockNews symbol={coin.symbol.toUpperCase()} />
 
       {/* Description */}
       {coin.description && (

@@ -44,7 +44,7 @@ export function StockNews({ symbol }: { symbol: string }) {
       <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
         <div>
           <h3 className="text-sm font-semibold text-zinc-200">Latest News</h3>
-          <p className="text-[11px] text-zinc-500 mt-0.5">{symbol} · via StockNewsAPI</p>
+          <p className="text-[11px] text-zinc-500 mt-0.5">{symbol} · powered by StockNewsAPI</p>
         </div>
       </div>
 
