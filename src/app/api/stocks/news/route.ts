@@ -30,7 +30,7 @@ export async function GET(req: Request) {
   const key = process.env.STOCKNEWS_API_KEY
   if (!key) return NextResponse.json({ error: 'API key not configured' }, { status: 500 })
 
-  const items = multi ? 3 : 3
+  const items = multi ? 20 : 10
   const url = `https://stocknewsapi.com/api/v1?tickers=${symbol}&items=${items}&sortby=rank&token=${key}`
   const res = await fetch(url, {
     next: { revalidate: 0 },
