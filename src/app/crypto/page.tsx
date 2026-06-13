@@ -7,6 +7,7 @@ import { CryptoTrending } from '@/components/crypto/CryptoTrending'
 import { CryptoGainersLosers } from '@/components/crypto/CryptoGainersLosers'
 import { DominanceChart } from '@/components/crypto/DominanceChart'
 import { DefiTVLWidget } from '@/components/crypto/DefiTVLWidget'
+import { FundingRates } from '@/components/crypto/FundingRates'
 
 export const metadata: Metadata = {
   title: 'Crypto | Stock Market ROI',
@@ -38,6 +39,9 @@ export default function CryptoPage() {
         <DominanceChart />
         <DefiTVLWidget />
       </div>
+
+      {/* Funding Rates */}
+      <FundingRates />
 
       {/* Heatmap */}
       <CryptoHeatmap />
