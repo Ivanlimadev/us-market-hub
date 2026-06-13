@@ -198,9 +198,9 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
               <thead>
                 <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
                   <th className="pb-2 text-left font-medium">Quarter</th>
-                  <th className="pb-2 text-right font-medium">Revenue</th>
-                  <th className="pb-2 text-right font-medium">Net Income</th>
-                  <th className="pb-2 text-right font-medium">EPS</th>
+                  <th className={`pb-2 text-right font-medium ${tab === 'revenue' ? 'text-zinc-300' : ''}`}>Revenue</th>
+                  <th className={`pb-2 text-right font-medium ${tab === 'netIncome' ? 'text-zinc-300' : ''}`}>Net Income</th>
+                  <th className={`pb-2 text-right font-medium ${tab === 'eps' ? 'text-zinc-300' : ''}`}>EPS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/50">
@@ -213,17 +213,17 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
                   return (
                     <tr key={q.frame} className="hover:bg-zinc-800/30 transition-colors">
                       <td className="py-2.5 text-zinc-300 font-semibold">{q.label}</td>
-                      <td className="py-2.5 text-right tabular-nums">
+                      <td className={`py-2.5 text-right tabular-nums ${tab !== 'revenue' ? 'opacity-40' : ''}`}>
                         <span className={revUp === true ? 'text-emerald-400' : revUp === false ? 'text-red-400' : 'text-zinc-300'}>
                           {fmtB(q.revenue)}
                         </span>
                       </td>
-                      <td className="py-2.5 text-right tabular-nums">
+                      <td className={`py-2.5 text-right tabular-nums ${tab !== 'netIncome' ? 'opacity-40' : ''}`}>
                         <span className={niUp === true ? 'text-emerald-400' : niUp === false ? 'text-red-400' : 'text-zinc-300'}>
                           {fmtB(q.netIncome)}
                         </span>
                       </td>
-                      <td className="py-2.5 text-right tabular-nums">
+                      <td className={`py-2.5 text-right tabular-nums ${tab !== 'eps' ? 'opacity-40' : ''}`}>
                         <span className={`flex items-center justify-end gap-0.5 ${epsUp === true ? 'text-emerald-400' : epsUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
                           {epsUp === true && <TrendingUp className="h-3 w-3" />}
                           {epsUp === false && <TrendingDown className="h-3 w-3" />}
