@@ -96,11 +96,7 @@ export function DividendCalendarWidget() {
             </div>
           )
           : events.length === 0
-          ? (
-            <p className="px-4 py-8 text-center text-xs text-zinc-600">
-              No upcoming dividends found
-            </p>
-          )
+          ? null
           : events.map((e, i) => (
               <Link
                 key={`${e.symbol}-${e.exDate}-${i}`}

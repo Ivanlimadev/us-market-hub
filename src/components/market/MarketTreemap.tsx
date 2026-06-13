@@ -87,22 +87,7 @@ export function MarketTreemap() {
     <div className="rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-        <div>
-          <h2 className="text-sm font-semibold text-zinc-200">Market Heatmap</h2>
-          <p className="text-[11px] text-zinc-500">Size = market cap · Color = day return</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {[
-            { label: '< -3%', color: '#7f1d1d' },
-            { label: '±0',    color: '#27272a' },
-            { label: '> +3%', color: '#15803d' },
-          ].map(l => (
-            <div key={l.label} className="hidden items-center gap-1.5 sm:flex">
-              <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: l.color }} />
-              <span className="text-[10px] text-zinc-500">{l.label}</span>
-            </div>
-          ))}
-        </div>
+        <h2 className="text-sm font-semibold text-zinc-200">Market Heatmap</h2>
       </div>
 
       {/* Treemap */}

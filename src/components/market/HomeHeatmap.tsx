@@ -52,42 +52,23 @@ export function HomeHeatmap() {
   const liveTickers = useYahooTicker(liveSymbols)
   const isLive = open && liveTickers.size > 0
 
-  const legend = [
-    { label: '< -3%', cls: 'bg-red-700' },
-    { label: '-1.5%', cls: 'bg-red-600/80' },
-    { label: '±0',    cls: 'bg-zinc-700' },
-    { label: '+1.5%', cls: 'bg-emerald-600/80' },
-    { label: '> +3%', cls: 'bg-emerald-500' },
-  ]
-
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
       <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-        <div>
-          <h2 className="text-sm font-semibold text-zinc-200">Market Heatmap</h2>
-          <div className="flex items-center gap-2 mt-0.5">
-            <p className="text-[11px] text-zinc-500">Color = day return</p>
-            {isLive ? (
-              <span className="flex items-center gap-1 text-[10px] text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live
-              </span>
-            ) : !open ? (
-              <span className="text-[10px] text-zinc-600">Market closed</span>
-            ) : null}
-          </div>
-        </div>
         <div className="flex items-center gap-2">
-          {legend.map((l) => (
-            <div key={l.label} className="hidden items-center gap-1 sm:flex">
-              <div className={`h-2.5 w-2.5 rounded-sm ${l.cls}`} />
-              <span className="text-[10px] text-zinc-500">{l.label}</span>
-            </div>
-          ))}
-          <Link href="/heatmap" className="ml-2 rounded-md border border-zinc-700 px-2.5 py-1 text-[11px] font-medium text-zinc-400 hover:border-zinc-500 hover:text-zinc-200 transition-colors">
-            Full view
-          </Link>
+          <h2 className="text-sm font-semibold text-zinc-200">Market Heatmap</h2>
+          {isLive ? (
+            <span className="flex items-center gap-1 text-[10px] text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Live
+            </span>
+          ) : !open ? (
+            <span className="text-[10px] text-zinc-600">Market closed</span>
+          ) : null}
         </div>
+        <Link href="/heatmap" className="rounded-md border border-zinc-700 px-2.5 py-1 text-[11px] font-medium text-zinc-400 hover:border-zinc-500 hover:text-zinc-200 transition-colors">
+          Full view
+        </Link>
       </div>
 
       <div className="p-3 space-y-2">
