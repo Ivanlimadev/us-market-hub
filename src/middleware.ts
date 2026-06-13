@@ -30,8 +30,12 @@ export async function middleware(req: NextRequest) {
   // Skip exempt routes
   if (EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next()
 
-  // If Upstash isn't configured yet, pass through (no-op)
-  if (!ratelimit) return NextResponse.next()
+  // If Upstash isn't configured yet, pass through with diagnostic header
+  if (!ratelimit) {
+    const res = NextResponse.next()
+    res.headers.set('X-RL-Status', 'disabled-no-env')
+    return res
+  }
 
   // Use IP as rate limit key; fall back to a static string if IP unavailable
   const ip =
