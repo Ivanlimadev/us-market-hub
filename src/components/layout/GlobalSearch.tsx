@@ -108,10 +108,17 @@ export function GlobalSearch() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Focus input when modal opens
+  // Focus input when modal opens + lock body scroll
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 50)
-    else { setQuery(''); setApiResults([]) }
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 50)
+      document.body.style.overflow = 'hidden'
+    } else {
+      setQuery('')
+      setApiResults([])
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
   }, [open])
 
   // Fetch stocks API fallback for queries not in local universe
@@ -199,11 +206,10 @@ export function GlobalSearch() {
       <button
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-2.5 py-1.5 text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200 transition-colors"
-        title="Search (⌘K)"
+        title="Search (Ctrl+K)"
       >
         <Search className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">Search</span>
-        <kbd className="hidden sm:inline ml-1 rounded border border-zinc-700 bg-zinc-900 px-1 py-px text-[10px] text-zinc-600">⌘K</kbd>
       </button>
 
       {/* Modal overlay */}
@@ -239,9 +245,7 @@ export function GlobalSearch() {
                       <X className="h-4 w-4 text-zinc-500 hover:text-zinc-300 transition-colors" />
                     </button>
                   )
-                  : (
-                    <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-500">Esc</kbd>
-                  )
+                  : null
               }
             </div>
 
@@ -331,11 +335,6 @@ export function GlobalSearch() {
               )}
             </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-between border-t border-zinc-800 px-4 py-2">
-              <p className="text-[10px] text-zinc-600">↑↓ navegar · Enter abrir · Esc fechar</p>
-              <p className="text-[10px] text-zinc-600">{results.length} resultado{results.length !== 1 ? 's' : ''}</p>
-            </div>
           </div>
         </div>
       )}
