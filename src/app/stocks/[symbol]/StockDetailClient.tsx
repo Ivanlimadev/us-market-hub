@@ -20,6 +20,7 @@ import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
 import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
+import { StockNews } from '@/components/stock/StockNews'
 
 function fmtLarge(n: number | null): string {
   if (n === null) return ''
@@ -161,6 +162,9 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
           <BuyHoldChecklist data={data} />
         </div>
       </div>
+
+      {/* News */}
+      <StockNews symbol={symbol} />
 
       {/* Penultimate: Related assets */}
       <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
