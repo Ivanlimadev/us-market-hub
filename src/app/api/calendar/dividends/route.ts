@@ -4,6 +4,10 @@ import { ALL_SYMBOLS } from '@/lib/stock-universe'
 const MS_KEY = process.env.MARKETSTACK_API_KEY!
 const BASE   = 'https://api.marketstack.com/v1'
 
+// In-memory cache — avoids hammering Marketstack on every page load
+let cache: { data: DivEvent[]; ts: number } | null = null
+const CACHE_TTL = 3 * 60 * 60 * 1000 // 3 hours
+
 const EXTRA_DIV = [
   'IBM','MMM','T','VZ','MO','PM','KHC','GIS','CL',
   'O','WPC','STAG','LTC','MAIN','ARCC',
@@ -46,6 +50,13 @@ async function fetchBatch(symbols: string[], dateFrom: string, dateTo: string): 
 
 export async function GET() {
   try {
+    // Serve from cache if fresh
+    if (cache && Date.now() - cache.ts < CACHE_TTL) {
+      return NextResponse.json(cache.data, {
+        headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },
+      })
+    }
+
     const today    = new Date().toISOString().split('T')[0]
     const future   = new Date()
     future.setDate(future.getDate() + 60)
@@ -59,6 +70,9 @@ export async function GET() {
       .filter((r): r is PromiseFulfilledResult<DivEvent[]> => r.status === 'fulfilled')
       .flatMap(r => r.value)
       .sort((a, b) => a.exDate.localeCompare(b.exDate))
+
+    // Only cache non-empty results — don't lock in a Marketstack hiccup for 3 hours
+    if (events.length > 0) cache = { data: events, ts: Date.now() }
 
     return NextResponse.json(events, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },

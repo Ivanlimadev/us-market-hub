@@ -1,6 +1,6 @@
 'use client'
+import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarDays } from 'lucide-react'
 
@@ -12,18 +12,22 @@ interface DivEvent {
 }
 
 function Logo({ sym }: { sym: string }) {
+  const [failed, setFailed] = useState(false)
   return (
     <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-zinc-800 flex items-center justify-center">
-      <Image
-        src={`https://assets.parqet.com/logos/symbol/${sym}?format=png`}
-        alt={sym} width={32} height={32} className="object-contain" unoptimized
-        onError={(e) => {
-          const t = e.target as HTMLImageElement
-          t.style.display = 'none'
-          if (t.parentElement)
-            t.parentElement.innerHTML = `<span class="text-[10px] font-bold text-zinc-400">${sym.slice(0, 2)}</span>`
-        }}
-      />
+      {failed ? (
+        <span className="text-[10px] font-bold text-zinc-400">{sym.slice(0, 2)}</span>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`https://assets.parqet.com/logos/symbol/${sym}?format=png`}
+          alt={sym}
+          width={32}
+          height={32}
+          className="object-contain"
+          onError={() => setFailed(true)}
+        />
+      )}
     </div>
   )
 }
@@ -35,13 +39,14 @@ function fmtDate(iso: string) {
 }
 
 export function DividendCalendarWidget() {
-  const { data, isLoading } = useQuery<DivEvent[]>({
+  const { data, isLoading, isError, refetch } = useQuery<DivEvent[]>({
     queryKey: ['calendar-dividends'],
     queryFn:  () => fetch('/api/calendar/dividends').then(r => {
       if (!r.ok) throw new Error(`${r.status}`)
       return r.json()
     }),
-    staleTime: 15 * 60_000,
+    staleTime: 0,        // always refetch on mount (server cache makes it fast)
+    retry: 2,
   })
 
   const events = Array.isArray(data) ? data.slice(0, 5) : []
@@ -78,6 +83,18 @@ export function DividendCalendarWidget() {
                 </div>
               </div>
             ))
+          : isError
+          ? (
+            <div className="flex flex-col items-center gap-2 px-4 py-6 text-center">
+              <p className="text-xs text-zinc-500">Failed to load dividends</p>
+              <button
+                onClick={() => refetch()}
+                className="text-[11px] text-emerald-400 hover:underline"
+              >
+                Try again
+              </button>
+            </div>
+          )
           : events.length === 0
           ? (
             <p className="px-4 py-8 text-center text-xs text-zinc-600">
