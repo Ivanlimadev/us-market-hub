@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react'
-import type { EdgarData, EdgarQuarter, EdgarAnnual, EdgarBalanceSheet } from '@/app/api/stocks/edgar/route'
+import type { EdgarData, EdgarQuarter, EdgarAnnual, EdgarBalanceSheet, EdgarCapitalReturns } from '@/app/api/stocks/edgar/route'
 
 function fmtB(n: number | null): string {
   if (n === null) return '—'
@@ -19,7 +19,7 @@ function fmtEps(n: number | null): string {
   return `$${n.toFixed(2)}`
 }
 
-type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet'
+type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet' | 'capitalReturns'
 
 // ── Balance Sheet ──────────────────────────────────────────────────────────
 
@@ -94,6 +94,128 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
                     {equityUp === true && <TrendingUp className="h-3 w-3" />}
                     {equityUp === false && <TrendingDown className="h-3 w-3" />}
                     {fmtB(b.equity)}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ── Capital Returns Chart ──────────────────────────────────────────────────
+
+function fmtShares(n: number | null): string {
+  if (n === null) return '—'
+  if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`
+  if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`
+  return n.toLocaleString()
+}
+
+function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
+  const maxTotal = Math.max(...cr.map(c => c.totalReturned ?? 0), 1)
+  const maxShares = Math.max(...cr.map(c => c.sharesOutstanding ?? 0), 1)
+  const minShares = Math.min(...cr.filter(c => c.sharesOutstanding != null).map(c => c.sharesOutstanding!))
+
+  return (
+    <div className="space-y-3">
+      {/* Stacked bar: buybacks (violet) + dividends (emerald) */}
+      <div className="flex items-end gap-2 h-20">
+        {cr.map((c, i) => {
+          const prev     = cr[i - 1]
+          const grew     = prev?.totalReturned != null && c.totalReturned != null ? c.totalReturned >= prev.totalReturned : true
+          const totalPct = c.totalReturned != null ? c.totalReturned / maxTotal * 100 : 4
+          const bbPct    = c.totalReturned && c.buybacks != null ? c.buybacks / c.totalReturned * 100 : 100
+          const divPct   = 100 - bbPct
+          return (
+            <div key={c.year} className="flex flex-col items-center flex-1 gap-1 group relative">
+              <div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:flex whitespace-nowrap rounded bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-200 z-10 border border-zinc-700">
+                {fmtB(c.totalReturned)}
+              </div>
+              <div className="w-full flex items-end justify-center" style={{ height: '64px' }}>
+                <div
+                  className="w-full rounded-t-sm"
+                  style={{
+                    height: `${Math.max(totalPct, 4)}%`,
+                    background: divPct > 1
+                      ? `linear-gradient(to top, #10b981 ${divPct}%, #8b5cf6 ${divPct}%)`
+                      : '#8b5cf6',
+                    opacity: grew ? 1 : 0.65,
+                  }}
+                />
+              </div>
+              <span className="text-[9px] text-zinc-600">{c.label}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex gap-4 text-[10px] text-zinc-500">
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm bg-violet-500" />Buybacks</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm bg-emerald-500" />Dividends</span>
+      </div>
+
+      {/* Shares outstanding mini-trend */}
+      {cr.some(c => c.sharesOutstanding != null) && (
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-zinc-600 mb-1.5">Shares Outstanding</p>
+          <div className="flex items-end gap-1 h-8">
+            {cr.map(c => {
+              const range  = maxShares - minShares || 1
+              const pct    = c.sharesOutstanding != null ? ((c.sharesOutstanding - minShares) / range * 60 + 20) : 4
+              return (
+                <div key={c.year} className="flex flex-col items-center flex-1 gap-0.5 group relative">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 hidden group-hover:flex whitespace-nowrap rounded bg-zinc-800 px-1.5 py-0.5 text-[9px] text-zinc-200 z-10 border border-zinc-700">
+                    {fmtShares(c.sharesOutstanding)}
+                  </div>
+                  <div className="w-full flex items-end justify-center" style={{ height: '28px' }}>
+                    <div className="w-full rounded-t-sm bg-zinc-600" style={{ height: `${pct}%` }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Table */}
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
+            <th className="pb-2 text-left font-medium">Year</th>
+            <th className="pb-2 text-right font-medium">Buybacks</th>
+            <th className="pb-2 text-right font-medium">Dividends</th>
+            <th className="pb-2 text-right font-medium">Total Returned</th>
+            <th className="pb-2 text-right font-medium">Shares</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-800/50">
+          {[...cr].reverse().map((c, i, arr) => {
+            const prev    = arr[i + 1]
+            const totalUp = prev?.totalReturned != null && c.totalReturned != null ? c.totalReturned >= prev.totalReturned : null
+            const sharesDown = prev?.sharesOutstanding != null && c.sharesOutstanding != null ? c.sharesOutstanding < prev.sharesOutstanding : null
+            return (
+              <tr key={c.year} className="hover:bg-zinc-800/30 transition-colors">
+                <td className="py-2.5 font-semibold text-zinc-300">{c.label}</td>
+                <td className="py-2.5 text-right tabular-nums text-violet-400">
+                  {fmtB(c.buybacks)}
+                </td>
+                <td className="py-2.5 text-right tabular-nums text-emerald-400">
+                  {c.dividendsPaid != null ? fmtB(c.dividendsPaid) : '—'}
+                </td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={`flex items-center justify-end gap-0.5 font-semibold ${totalUp === true ? 'text-emerald-400' : totalUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
+                    {totalUp === true && <TrendingUp className="h-3 w-3" />}
+                    {totalUp === false && <TrendingDown className="h-3 w-3" />}
+                    {fmtB(c.totalReturned)}
+                  </span>
+                </td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={sharesDown === true ? 'text-emerald-400' : sharesDown === false ? 'text-red-400' : 'text-zinc-400'}>
+                    {fmtShares(c.sharesOutstanding)}
                   </span>
                 </td>
               </tr>
@@ -223,8 +345,9 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
     { key: 'revenue',      label: 'Revenue' },
     { key: 'netIncome',    label: 'Net Income' },
     { key: 'eps',          label: 'EPS' },
-    { key: 'fcf',          label: 'Free Cash Flow' },
-    { key: 'balanceSheet', label: 'Balance Sheet' },
+    { key: 'fcf',           label: 'Free Cash Flow' },
+    { key: 'balanceSheet',  label: 'Balance Sheet' },
+    { key: 'capitalReturns', label: 'Capital Returns' },
   ]
 
   const isQuarterly = tab === 'revenue' || tab === 'netIncome' || tab === 'eps'
@@ -278,6 +401,13 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
               </button>
             ))}
           </div>
+
+          {/* Capital Returns tab */}
+          {tab === 'capitalReturns' && (
+            data.capitalReturns?.length > 0
+              ? <CapitalReturnsChart cr={data.capitalReturns} />
+              : <p className="text-xs text-zinc-500 py-4 text-center">Capital returns data not available for {symbol}.</p>
+          )}
 
           {/* Balance Sheet tab */}
           {tab === 'balanceSheet' && (

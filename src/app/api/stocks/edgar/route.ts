@@ -29,13 +29,23 @@ export interface EdgarBalanceSheet {
   equity:       number | null
 }
 
+export interface EdgarCapitalReturns {
+  year:              number
+  label:             string
+  buybacks:          number | null  // absolute value (cash outflow)
+  dividendsPaid:     number | null  // absolute value
+  totalReturned:     number | null
+  sharesOutstanding: number | null  // raw share count
+}
+
 export interface EdgarData {
-  symbol:       string
-  cik:          string
-  name:         string
-  quarters:     EdgarQuarter[]
-  annual:       EdgarAnnual[]
-  balanceSheet: EdgarBalanceSheet[]
+  symbol:         string
+  cik:            string
+  name:           string
+  quarters:       EdgarQuarter[]
+  annual:         EdgarAnnual[]
+  balanceSheet:   EdgarBalanceSheet[]
+  capitalReturns: EdgarCapitalReturns[]
 }
 
 const UA = 'StockMarketROI contato@ivanlimadev.com'
@@ -79,7 +89,7 @@ function extractConcept(
   for (const key of keys) {
     const concept = facts[key]
     if (!concept) continue
-    const entries = concept.units?.['USD'] ?? concept.units?.['USD/shares'] ?? []
+    const entries = concept.units?.['USD'] ?? concept.units?.['USD/shares'] ?? concept.units?.['shares'] ?? []
     for (const e of entries) {
       if (!e.frame?.match(pattern)) continue
       if (e.form && !['10-Q', '10-K'].includes(e.form)) continue
@@ -128,6 +138,18 @@ export async function GET(req: Request) {
   // Annual cash flow (FCF)
   const ocfMap   = extractConcept(gaap, YR, 'NetCashProvidedByUsedInOperatingActivities')
   const capexMap = extractConcept(gaap, YR, 'PaymentsToAcquirePropertyPlantAndEquipment')
+
+  // Annual capital returns (cash flow statement)
+  const buybackMap = extractConcept(gaap, YR, 'PaymentsForRepurchaseOfCommonStock')
+  const divPaidMap = extractConcept(gaap, YR,
+    'PaymentsOfDividendsCommonStock',
+    'PaymentsOfDividends',
+    'PaymentOfDividendsCommonStock',
+    'PaymentsOfDividendsAndDividendEquivalentsOnCommonStockAndPreferredStock',
+  )
+
+  // Year-end shares outstanding (instant, "shares" unit)
+  const sharesMap  = extractConcept(gaap, BSI, 'CommonStockSharesOutstanding', 'CommonStockSharesOutstandingBasic')
 
   // Year-end balance sheet (instant values at Q4)
   const assetsMap  = extractConcept(gaap, BSI, 'Assets')
@@ -184,7 +206,28 @@ export async function GET(req: Request) {
       }
     })
 
-  const data: EdgarData = { symbol, cik, name, quarters, annual, balanceSheet }
+  // Build capital returns
+  const crFrames = new Set<string>([...buybackMap.keys(), ...divPaidMap.keys()])
+  const capitalReturns: EdgarCapitalReturns[] = [...crFrames]
+    .sort().slice(-6)
+    .map(frame => {
+      const year    = parseInt(frame.replace('CY', ''))
+      const bb      = buybackMap.get(frame)?.val ?? null
+      const div     = divPaidMap.get(frame)?.val ?? null
+      const bbAbs   = bb  != null ? Math.abs(bb)  : null
+      const divAbs  = div != null ? Math.abs(div) : null
+      const shares  = sharesMap.get(`CY${year}Q4I`)?.val ?? null
+      return {
+        year,
+        label:             String(year),
+        buybacks:          bbAbs,
+        dividendsPaid:     divAbs,
+        totalReturned:     bbAbs != null || divAbs != null ? (bbAbs ?? 0) + (divAbs ?? 0) : null,
+        sharesOutstanding: shares,
+      }
+    })
+
+  const data: EdgarData = { symbol, cik, name, quarters, annual, balanceSheet, capitalReturns }
   dataCache.set(symbol, { data, ts: Date.now() })
   return NextResponse.json(data)
 }
