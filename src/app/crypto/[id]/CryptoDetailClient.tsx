@@ -9,6 +9,10 @@ import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
 import type { CryptoDetail, CryptoHistoryBar } from '@/types/crypto'
+import { SupplyCard }        from '@/components/crypto/SupplyCard'
+import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
+import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
+import { ROICalculator }     from '@/components/crypto/ROICalculator'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -322,6 +326,18 @@ export function CryptoDetailClient({ id }: { id: string }) {
           <StatRow label="ATL Date" value={new Date(md.atl_date).toLocaleDateString()} />
         </div>
       </div>
+
+      {/* Supply */}
+      <SupplyCard coin={coin} />
+
+      {/* ROI Calculator */}
+      <ROICalculator coin={coin} />
+
+      {/* Where to Buy */}
+      <ExchangeListings coinId={coin.id} />
+
+      {/* Similar Coins */}
+      <SimilarCoins coinId={coin.id} marketCap={md.market_cap} />
 
       {/* Description */}
       {coin.description && (
