@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ExternalLink, FileText } from 'lucide-react'
 import type { SecFiling } from '@/app/api/stocks/filings/route'
@@ -10,9 +9,6 @@ const FORM_META: Record<string, { badge: string; border: string; label: string }
   '8-K':     { badge: 'bg-amber-500/20 text-amber-400 border-amber-500/30',  border: 'border-l-amber-500',   label: 'Material Event' },
   'DEF 14A': { badge: 'bg-violet-500/20 text-violet-400 border-violet-500/30', border: 'border-l-violet-500', label: 'Proxy Statement' },
 }
-
-const FILTERS = ['All', '10-K', '10-Q', '8-K', 'DEF 14A'] as const
-type Filter = typeof FILTERS[number]
 
 function formatDate(d: string): string {
   if (!d) return '—'
@@ -52,8 +48,6 @@ function FilingCard({ f }: { f: SecFiling }) {
 }
 
 export function SecFilings({ symbol }: { symbol: string }) {
-  const [filter, setFilter] = useState<Filter>('All')
-
   const { data, isLoading } = useQuery<SecFiling[]>({
     queryKey: ['sec-filings', symbol],
     queryFn:  () => fetch(`/api/stocks/filings?symbol=${symbol}`).then(r => r.json()),
@@ -61,7 +55,7 @@ export function SecFilings({ symbol }: { symbol: string }) {
     retry: 1,
   })
 
-  const filtered = (data ?? []).filter(f => filter === 'All' || f.form === filter)
+  const filtered = (data ?? []).slice(0, 8)
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
@@ -84,25 +78,10 @@ export function SecFilings({ symbol }: { symbol: string }) {
         </a>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-zinc-800 px-4 py-2.5">
-        {FILTERS.map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
-              filter === f ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-
       {/* Loading skeleton */}
       {isLoading && (
         <div className="p-4 grid grid-cols-2 gap-2 animate-pulse">
-          {[1,2,3,4,5,6].map(i => <div key={i} className="h-20 rounded-lg bg-zinc-800" />)}
+          {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-20 rounded-lg bg-zinc-800" />)}
         </div>
       )}
 
@@ -110,7 +89,7 @@ export function SecFilings({ symbol }: { symbol: string }) {
       {!isLoading && (
         <div className="p-4">
           {filtered.length === 0 ? (
-            <p className="py-6 text-center text-xs text-zinc-500">No {filter} filings found.</p>
+            <p className="py-6 text-center text-xs text-zinc-500">No filings found.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
