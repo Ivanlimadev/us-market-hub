@@ -18,11 +18,11 @@ const VERDICT_CONFIG = {
   SELL: { label: 'SELL', icon: TrendingDown,  bg: 'bg-red-500/15',     text: 'text-red-400',     border: 'border-red-500/30' },
 }
 
-export function StockAIInsight({ symbol }: { symbol: string }) {
+export function StockAIInsight({ symbol, apiPath }: { symbol: string; apiPath?: string }) {
   const { data, isLoading, isError } = useQuery<InsightResponse>({
     queryKey: ['stock-ai-insight', symbol],
     queryFn: async () => {
-      const r = await fetch(`/api/stocks/${symbol}/insight`)
+      const r = await fetch(apiPath ?? `/api/stocks/${symbol}/insight`)
       const json = await r.json()
       if (!r.ok || json.error) throw new Error(json.error ?? 'Failed')
       return json

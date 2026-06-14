@@ -1,15 +1,18 @@
 import type { Metadata } from 'next'
 import { CryptoDetailClient } from './CryptoDetailClient'
 
-const TOP_CRYPTO = [
+const ALL_CRYPTO = [
   'bitcoin','ethereum','tether','binancecoin','solana','ripple',
   'usd-coin','cardano','dogecoin','tron','avalanche-2','chainlink',
   'the-open-network','polkadot','polygon','litecoin','shiba-inu',
-  'bitcoin-cash','stellar','near',
+  'bitcoin-cash','stellar','near','monero','ethereum-classic',
+  'uniswap','cosmos','filecoin','hedera-hashgraph','aptos',
+  'arbitrum','optimism','sui','pepe','floki','render-token',
+  'fetch-ai','worldcoin-wld','injective-protocol','sei-network',
 ]
 
 export function generateStaticParams() {
-  return TOP_CRYPTO.map((id) => ({ id }))
+  return ALL_CRYPTO.map((id) => ({ id }))
 }
 
 export async function generateMetadata({

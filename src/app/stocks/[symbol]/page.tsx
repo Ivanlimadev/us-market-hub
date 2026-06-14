@@ -1,15 +1,9 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
-
-const TOP_STOCKS = [
-  'AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','BRK-B','AVGO','JPM',
-  'LLY','V','UNH','XOM','MA','JNJ','PG','HD','COST','ABBV',
-  'NFLX','BAC','KO','CRM','CVX','MRK','AMD','PEP','TMO','ORCL',
-  'ACN','ADBE','WMT','LIN','MCD','CSCO','ABT','TXN','DHR','PM',
-]
+import { ALL_SYMBOLS } from '@/lib/stock-universe'
 
 export function generateStaticParams() {
-  return TOP_STOCKS.map((symbol) => ({ symbol: symbol.toLowerCase() }))
+  return ALL_SYMBOLS.map((symbol) => ({ symbol: symbol.toLowerCase() }))
 }
 
 export async function generateMetadata({
