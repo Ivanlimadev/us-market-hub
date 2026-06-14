@@ -148,5 +148,13 @@ Also provide at the very end, separated by "---META---":
   return NextResponse.json({ success: true, slug: data.slug, title })
 }
 
-export const GET  = (req: NextRequest) => run(req, false) // Vercel cron — no auth needed
-export const POST = (req: NextRequest) => run(req, true)  // manual trigger — requires CRON_SECRET
+async function safe(req: NextRequest, requireAuth: boolean) {
+  try {
+    return await run(req, requireAuth)
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
+}
+
+export const GET  = (req: NextRequest) => safe(req, false)
+export const POST = (req: NextRequest) => safe(req, true)
