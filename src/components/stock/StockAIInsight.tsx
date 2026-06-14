@@ -21,12 +21,17 @@ const VERDICT_CONFIG = {
 export function StockAIInsight({ symbol }: { symbol: string }) {
   const { data, isLoading, isError } = useQuery<InsightResponse>({
     queryKey: ['stock-ai-insight', symbol],
-    queryFn: () => fetch(`/api/stocks/${symbol}/insight`).then((r) => r.json()),
+    queryFn: async () => {
+      const r = await fetch(`/api/stocks/${symbol}/insight`)
+      const json = await r.json()
+      if (!r.ok || json.error) throw new Error(json.error ?? 'Failed')
+      return json
+    },
     staleTime: 1000 * 60 * 60 * 4,
-    retry: 1,
+    retry: 0,
   })
 
-  if (isError) return null
+  if (isError || (!isLoading && !data)) return null
 
   const isStructured = data?.verdict != null
   const cfg = data?.verdict ? VERDICT_CONFIG[data.verdict] : null
