@@ -53,16 +53,18 @@ export async function POST(req: NextRequest) {
           <p style="margin:0 0 8px;color:#a1a1aa;font-size:13px">CONDITION</p>
           <p style="margin:0;font-size:16px;font-weight:600;color:#f4f4f5">${alert.name} ${conditionText}</p>
         </div>
-        <div style="background:#18181b;border-radius:8px;padding:16px;margin-bottom:24px">
+        <div style="background:#18181b;border-radius:8px;padding:16px;margin-bottom:28px">
           <p style="margin:0 0 8px;color:#a1a1aa;font-size:13px">CURRENT PRICE</p>
           <p style="margin:0;font-size:22px;font-weight:700;color:#34d399">$${currentPrice.toFixed(2)}</p>
         </div>
-        <a href="https://stockmarketroi.com/${alert.asset_type === 'crypto' ? 'crypto' : 'stocks'}/${alert.asset_type === 'crypto' ? (alert.coingecko_id ?? alert.symbol.toLowerCase()) : alert.symbol}"
-          style="display:inline-block;background:#059669;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px">
-          View ${alert.symbol} →
-        </a>
-        <p style="margin-top:24px;font-size:11px;color:#52525b">
-          This alert has been marked as triggered. You can create a new alert anytime on Stock Market ROI.<br>
+        <div style="text-align:center;margin-bottom:24px">
+          <a href="https://stockmarketroi.com/${alert.asset_type === 'crypto' ? 'crypto' : 'stocks'}/${alert.asset_type === 'crypto' ? (alert.coingecko_id ?? alert.symbol.toLowerCase()) : alert.symbol}"
+            style="display:inline-block;background:#059669;color:#fff;text-decoration:none;padding:14px 36px;border-radius:10px;font-weight:700;font-size:16px;letter-spacing:0.01em">
+            Ver ${alert.symbol} no site →
+          </a>
+        </div>
+        <p style="margin:0;font-size:11px;color:#52525b;text-align:center">
+          This alert has been marked as triggered. You can create a new alert anytime.<br>
           <a href="https://stockmarketroi.com" style="color:#059669">stockmarketroi.com</a>
         </p>
       </div>
