@@ -10,21 +10,60 @@ function anonClient() {
 }
 
 const TOPICS = [
+  // Investing fundamentals
   { title: 'Best Brokerage Accounts for Beginners in {year}', category: 'Investing' },
   { title: 'How to Invest in S&P 500 Index Funds: A Complete Guide', category: 'Investing' },
   { title: 'Dividend Investing Strategy: Build Passive Income with Stocks', category: 'Investing' },
-  { title: 'Growth vs Value Stocks: Which Should You Buy in {year}?', category: 'Stocks' },
-  { title: 'How the Federal Reserve Affects Your Investments', category: 'Economics' },
-  { title: 'Recession-Proof Stocks: Sectors That Hold Up in Downturns', category: 'Stocks' },
   { title: 'ETF vs Mutual Fund: Which Is Better for Long-Term Investors?', category: 'Investing' },
-  { title: 'AI Stocks to Watch: The Best Artificial Intelligence Investments', category: 'Technology' },
-  { title: 'How to Read a Stock Chart for Beginners', category: 'Stocks' },
-  { title: 'Bitcoin vs Gold: Which Is the Better Inflation Hedge?', category: 'Crypto' },
   { title: 'What Is a P/E Ratio and Why Does It Matter?', category: 'Investing' },
   { title: 'How to Build a $1,000/Month Dividend Portfolio', category: 'Investing' },
-  { title: 'US Stock Market Hours, Holidays and Trading Sessions Explained', category: 'Markets' },
+  { title: 'Dollar-Cost Averaging vs Lump Sum Investing: Which Wins?', category: 'Investing' },
+  { title: 'How to Build a Portfolio With Just 3 ETFs', category: 'Investing' },
+  { title: 'Roth IRA vs 401k: Where to Put Your Money First in {year}', category: 'Investing' },
+  { title: 'What Is an Index Fund and How Does It Work?', category: 'Investing' },
+  { title: 'How to Start Investing with $500', category: 'Investing' },
+  { title: 'Asset Allocation by Age: How to Rebalance Your Portfolio', category: 'Investing' },
+  // Stocks & markets
+  { title: 'Growth vs Value Stocks: Which Should You Buy in {year}?', category: 'Stocks' },
+  { title: 'Recession-Proof Stocks: Sectors That Hold Up in Downturns', category: 'Stocks' },
+  { title: 'How to Read a Stock Chart for Beginners', category: 'Stocks' },
   { title: 'NVIDIA Stock Analysis {year}: Is It Still a Buy?', category: 'Stocks' },
+  { title: 'Apple vs Microsoft: Which Tech Giant Is the Better Investment?', category: 'Stocks' },
+  { title: 'Best Dividend Stocks for Passive Income in {year}', category: 'Stocks' },
+  { title: 'How to Pick Stocks: A Framework for Individual Investors', category: 'Stocks' },
+  { title: 'Small-Cap vs Large-Cap Stocks: Risk and Reward Compared', category: 'Stocks' },
+  { title: 'Defensive Stocks vs Cyclical Stocks Explained', category: 'Stocks' },
+  { title: 'US Stock Market Hours, Holidays and Trading Sessions Explained', category: 'Markets' },
+  { title: 'What Happens to Stocks During a Recession?', category: 'Markets' },
+  { title: 'How to Read an Earnings Report: A Step-by-Step Guide', category: 'Markets' },
+  { title: 'Bull Market vs Bear Market: How to Invest in Both', category: 'Markets' },
+  { title: 'Stock Market Volatility: How to Stay Calm and Profit', category: 'Markets' },
+  // Economics & macro
+  { title: 'How the Federal Reserve Affects Your Investments', category: 'Economics' },
   { title: 'How Interest Rate Changes Impact Stock Prices', category: 'Economics' },
+  { title: 'What Is Inflation and How Does It Affect Stocks?', category: 'Economics' },
+  { title: 'What Is GDP and Why Stock Investors Should Care', category: 'Economics' },
+  { title: 'How to Invest During High Inflation: Stocks, Bonds and Real Assets', category: 'Economics' },
+  { title: 'US Dollar Strength and What It Means for Your Portfolio', category: 'Economics' },
+  // Technology & AI
+  { title: 'AI Stocks to Watch: The Best Artificial Intelligence Investments', category: 'Technology' },
+  { title: 'Semiconductor Stocks: Why Chips Are the New Oil', category: 'Technology' },
+  { title: 'Cloud Computing Stocks: AWS vs Azure vs Google Cloud in {year}', category: 'Technology' },
+  { title: 'How AI Is Changing the Stock Market — and How to Profit From It', category: 'Technology' },
+  { title: 'Best Technology ETFs to Buy in {year}', category: 'Technology' },
+  { title: 'Cybersecurity Stocks: Why This Sector Keeps Growing', category: 'Technology' },
+  // Crypto & digital assets
+  { title: 'Bitcoin vs Gold: Which Is the Better Inflation Hedge?', category: 'Crypto' },
+  { title: 'Bitcoin ETF vs Buying Bitcoin Directly: Pros and Cons', category: 'Crypto' },
+  { title: 'Ethereum vs Bitcoin: Key Differences for Investors', category: 'Crypto' },
+  { title: 'How Much of Your Portfolio Should Be in Crypto?', category: 'Crypto' },
+  { title: 'Crypto vs Stocks: Which Is the Better Long-Term Investment?', category: 'Crypto' },
+  // Finance & personal wealth
+  { title: 'Options Trading for Beginners: Covered Calls Explained', category: 'Finance' },
+  { title: 'How to Use a Health Savings Account (HSA) as an Investment Tool', category: 'Finance' },
+  { title: 'Tax-Loss Harvesting: How to Turn Losing Stocks Into Tax Savings', category: 'Finance' },
+  { title: 'How to Retire Early: The FIRE Strategy Explained', category: 'Finance' },
+  { title: 'Real Estate vs Stocks: Which Builds More Wealth Over Time?', category: 'Finance' },
 ]
 
 function slug(title: string): string {
@@ -142,7 +181,8 @@ Also provide at the very end, separated by "---META---":
     category: topic.category,
     image_url,
     image_alt,
-    status: 'draft',
+    status: 'published',
+    published_at: new Date().toISOString(),
     seo_title: meta.seo_title ?? title,
     seo_description: meta.seo_description ?? meta.excerpt ?? '',
   }).select('id, slug').single()

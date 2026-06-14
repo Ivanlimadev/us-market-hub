@@ -24,6 +24,7 @@ import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
 import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
+import { StockNews } from '@/components/stock/StockNews'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 function fmtLarge(n: number | null): string {
@@ -156,6 +157,10 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
 
       <WidgetBoundary label="AI Insight">
         <StockAIInsight symbol={symbol} />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Latest News">
+        <StockNews symbol={symbol} />
       </WidgetBoundary>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
