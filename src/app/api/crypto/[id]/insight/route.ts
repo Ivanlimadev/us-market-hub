@@ -61,7 +61,7 @@ export async function GET(
     }
   }
 
-  const base = req.nextUrl.origin
+  const base = process.env.INTERNAL_API_URL ?? req.nextUrl.origin
   const coinRes = await fetch(`${base}/api/crypto/${id}`, { cache: 'no-store' })
   if (!coinRes.ok) {
     return NextResponse.json({ error: 'Crypto data unavailable' }, { status: 502 })

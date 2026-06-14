@@ -63,8 +63,8 @@ export async function GET(
     }
   }
 
-  // Fetch stock data
-  const base = req.nextUrl.origin
+  // Fetch stock data — use internal URL to avoid SSL loop on VPS
+  const base = process.env.INTERNAL_API_URL ?? req.nextUrl.origin
   const stockRes = await fetch(`${base}/api/stocks/${upper}`, {
     headers: { 'x-internal': '1' },
     cache: 'no-store',
