@@ -3,6 +3,8 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 import { ALL_SYMBOLS, STOCK_NAMES } from '@/lib/stock-universe'
 
+export const maxDuration = 60
+
 function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
