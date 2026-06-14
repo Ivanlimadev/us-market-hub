@@ -111,9 +111,9 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
     (recent ?? []).flatMap((r: { tickers?: string[] }) => r.tickers ?? [])
   )
 
-  // 65% chance: write about a specific stock with real data
-  // 35% chance: write a macro/educational post
-  const doStockPost = Math.random() < 0.65
+  // ?type=stock forces a stock post, ?type=macro forces macro, otherwise 65/35 random
+  const typeParam = req.nextUrl.searchParams.get('type')
+  const doStockPost = typeParam === 'stock' ? true : typeParam === 'macro' ? false : Math.random() < 0.65
 
   let title = ''
   let category = ''
