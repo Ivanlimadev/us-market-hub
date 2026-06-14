@@ -61,9 +61,11 @@ export async function proxy(req: NextRequest) {
     const res = NextResponse.next()
     Object.entries(rlHeaders).forEach(([k, v]) => res.headers.set(k, v))
     return res
-  } catch {
+  } catch (err) {
+    const msg = String(err).slice(0, 120)
     const res = NextResponse.next()
     res.headers.set('X-RL-Status', 'error-redis-unavailable')
+    res.headers.set('X-RL-Error', msg)
     return res
   }
 }
