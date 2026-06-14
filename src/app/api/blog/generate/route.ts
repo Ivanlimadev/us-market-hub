@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-function serviceClient() {
+function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 }
 
@@ -50,7 +50,7 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 
-  const supabase = serviceClient()
+  const supabase = anonClient()
   const year = new Date().getFullYear()
 
   // Pick a topic not yet published this month
