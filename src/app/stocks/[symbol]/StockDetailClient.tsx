@@ -20,7 +20,6 @@ import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
 import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
-import { StockNews } from '@/components/stock/StockNews'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
 import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
@@ -197,9 +196,6 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
         </div>
       </div>
 
-      <WidgetBoundary label="News">
-        <StockNews symbol={symbol} />
-      </WidgetBoundary>
 
       <WidgetBoundary label="Related Assets">
         <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />

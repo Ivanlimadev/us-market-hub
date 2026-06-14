@@ -13,7 +13,6 @@ import { SupplyCard }        from '@/components/crypto/SupplyCard'
 import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
 import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
 import { ROICalculator }     from '@/components/crypto/ROICalculator'
-import { StockNews }         from '@/components/stock/StockNews'
 import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 
 const PERIODS: { label: string; days: number }[] = [
@@ -358,9 +357,6 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <SimilarCoins coinId={coin.id} marketCap={md.market_cap} />
       </WidgetBoundary>
 
-      <WidgetBoundary label="News">
-        <StockNews symbol={coin.symbol.toUpperCase()} />
-      </WidgetBoundary>
 
       {/* Description — strip HTML tags before rendering to prevent XSS */}
       {coin.description && (
