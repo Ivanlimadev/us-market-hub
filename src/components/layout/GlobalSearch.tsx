@@ -253,7 +253,8 @@ export function GlobalSearch() {
                 value={query}
                 onChange={e => setQuery(e.target.value.toUpperCase())}
                 onKeyDown={onKeyDown}
-                className="flex-1 bg-transparent text-sm font-medium text-white placeholder-zinc-500 focus:outline-none"
+                className="flex-1 bg-transparent font-medium text-white placeholder-zinc-500 focus:outline-none"
+                style={{ fontSize: '16px' }}
                 autoComplete="off"
                 spellCheck={false}
               />
