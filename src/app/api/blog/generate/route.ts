@@ -37,12 +37,17 @@ function slug(title: string): string {
 }
 
 async function run(req: NextRequest): Promise<NextResponse> {
-  // Vercel cron sends Authorization: Bearer <CRON_SECRET>
-  // Manual POST sends x-cron-secret header
-  const auth = req.headers.get('authorization') ?? ''
-  const secret = req.headers.get('x-cron-secret') ?? auth.replace('Bearer ', '')
-  if (secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const cronSecret = process.env.CRON_SECRET
+  if (cronSecret) {
+    const auth = req.headers.get('authorization') ?? ''
+    const header = req.headers.get('x-cron-secret') ?? ''
+    const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : auth
+    if (header !== cronSecret && bearer !== cronSecret) {
+      return NextResponse.json(
+        { error: 'Unauthorized', hint: !!header, bearer: !!bearer },
+        { status: 401 },
+      )
+    }
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {
