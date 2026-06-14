@@ -32,7 +32,14 @@ export async function proxy(req: NextRequest) {
 
   if (!ratelimit) {
     const res = NextResponse.next()
-    res.headers.set('X-RL-Status', 'disabled-no-env')
+    // Debug: show which vars were found (temp)
+    const found = [
+      process.env.KV_REST_API_URL       ? 'KV_REST_API_URL'       : '',
+      process.env.KV_REST_API_TOKEN     ? 'KV_REST_API_TOKEN'     : '',
+      process.env.UPSTASH_REDIS_REST_URL   ? 'UPSTASH_REDIS_REST_URL'   : '',
+      process.env.UPSTASH_REDIS_REST_TOKEN ? 'UPSTASH_REDIS_REST_TOKEN' : '',
+    ].filter(Boolean).join(',') || 'none'
+    res.headers.set('X-RL-Status', `disabled:${found}`)
     return res
   }
 
