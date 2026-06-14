@@ -1,8 +1,10 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useQuotes } from '@/lib/hooks/useQuotes'
+import { useQuery } from '@tanstack/react-query'
+import { getPollInterval } from '@/lib/market-hours'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
 const SECTOR_PEERS: Record<string, string[]> = {
   Technology: ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'META', 'AVGO', 'AMD', 'CRM'],
@@ -54,7 +56,13 @@ export function RelatedAssets({ symbol, sector }: Props) {
   const pool = sector ? (SECTOR_PEERS[sector] ?? DEFAULT_PEERS) : DEFAULT_PEERS
   const related = pool.filter((s) => s !== symbol).slice(0, 6)
 
-  const { data: quotes, isLoading } = useQuotes(related)
+  const { data: quotes, isLoading } = useQuery<YFBatchQuote[]>({
+    queryKey: ['related-assets', related.join(',')],
+    queryFn: () => fetch(`/api/batch-quotes?symbols=${related.join(',')}`).then(r => r.json()),
+    staleTime: 55_000,
+    refetchInterval: getPollInterval,
+    enabled: related.length > 0,
+  })
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
@@ -79,8 +87,9 @@ export function RelatedAssets({ symbol, sector }: Props) {
               </div>
             ))
           : (quotes ?? []).map((q) => {
-              const isUp = q.changePct > 0
-              const isDown = q.changePct < 0
+              const pct = q.changePct ?? 0
+              const isUp = pct > 0
+              const isDown = pct < 0
               const Icon = isUp ? TrendingUp : isDown ? TrendingDown : Minus
               const color = isUp ? 'text-emerald-400' : isDown ? 'text-red-400' : 'text-zinc-500'
 
@@ -94,16 +103,16 @@ export function RelatedAssets({ symbol, sector }: Props) {
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white">{q.symbol}</p>
-                    <p className="truncate text-xs text-zinc-500">{q.name}</p>
+                    <p className="truncate text-xs text-zinc-500">{q.name ?? q.symbol}</p>
                   </div>
 
                   <div className="text-right shrink-0">
                     <p className="font-mono text-sm font-semibold text-white">
-                      ${q.price.toFixed(2)}
+                      ${(q.price ?? 0).toFixed(2)}
                     </p>
                     <p className={`flex items-center justify-end gap-0.5 text-xs font-medium ${color}`}>
                       <Icon className="h-3 w-3" />
-                      {q.changePct >= 0 ? '+' : ''}{q.changePct.toFixed(2)}%
+                      {pct >= 0 ? '+' : ''}{pct.toFixed(2)}%
                     </p>
                   </div>
                 </Link>
