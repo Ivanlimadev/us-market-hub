@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('slug, title, excerpt, category, image_url, image_alt, published_at')
+    .select('slug, title, excerpt, content, category, image_url, image_alt, published_at')
     .eq('status', 'published')
     .contains('tickers', [ticker])
     .order('published_at', { ascending: false })

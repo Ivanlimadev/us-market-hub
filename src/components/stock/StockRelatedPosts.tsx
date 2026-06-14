@@ -9,10 +9,30 @@ interface Post {
   slug: string
   title: string
   excerpt: string | null
+  content: string | null
   category: string
   image_url: string | null
   image_alt: string | null
   published_at: string | null
+}
+
+function buildSummary(post: Post): string {
+  // Use first real paragraph from content (strip markdown), fallback to excerpt
+  if (post.content) {
+    const paragraph = post.content
+      .split('\n')
+      .map(l => l.trim())
+      .find(l => l.length > 60 && !l.startsWith('#') && !l.startsWith('!') && !l.startsWith('|'))
+    if (paragraph) {
+      return paragraph
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
+        .slice(0, 420)
+    }
+  }
+  return post.excerpt ?? ''
 }
 
 function timeAgo(iso: string | null): string {
@@ -116,9 +136,9 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
                 {post.title}
               </h3>
 
-              {post.excerpt && (
-                <p className="text-xs leading-relaxed text-zinc-400 line-clamp-3">
-                  {post.excerpt}
+              {buildSummary(post) && (
+                <p className="text-xs leading-relaxed text-zinc-400 line-clamp-5">
+                  {buildSummary(post)}
                 </p>
               )}
 
