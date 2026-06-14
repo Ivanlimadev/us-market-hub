@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
-import { kv } from '@vercel/kv'
+import { Redis } from '@upstash/redis'
 
-// @vercel/kv reads KV_REST_API_URL + KV_REST_API_TOKEN automatically (Vercel Storage integration)
-const ratelimit = new Ratelimit({
-  redis:     kv,
-  limiter:   Ratelimit.slidingWindow(60, '60 s'),
-  analytics: true,
-  prefix:    'smroi',
-})
+const REDIS_CONFIGURED =
+  !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN
+
+const ratelimit = REDIS_CONFIGURED
+  ? new Ratelimit({
+      redis: new Redis({
+        url:   process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      }),
+      limiter:   Ratelimit.slidingWindow(60, '60 s'),
+      analytics: true,
+      prefix:    'smroi',
+    })
+  : null
 
 const EXEMPT_PREFIXES = [
   '/api/auth/',
@@ -27,6 +34,12 @@ export async function proxy(req: NextRequest) {
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     req.headers.get('x-real-ip') ??
     'anonymous'
+
+  if (!ratelimit) {
+    const res = NextResponse.next()
+    res.headers.set('X-RL-Status', 'disabled-no-env')
+    return res
+  }
 
   try {
     const { success, limit, remaining, reset } = await ratelimit.limit(ip)
@@ -49,9 +62,8 @@ export async function proxy(req: NextRequest) {
     Object.entries(rlHeaders).forEach(([k, v]) => res.headers.set(k, v))
     return res
   } catch {
-    // If KV isn't configured or fails, pass through without rate limiting
     const res = NextResponse.next()
-    res.headers.set('X-RL-Status', 'error-kv-unavailable')
+    res.headers.set('X-RL-Status', 'error-redis-unavailable')
     return res
   }
 }
