@@ -7,7 +7,7 @@ const CSP = [
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
-  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi",
+  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi https://images.pexels.com https://www.pexels.com",
   // Fonts: self only
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget only
@@ -20,6 +20,17 @@ const CSP = [
 ].join('; ')
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.pexels.com' },
+      { protocol: 'https', hostname: 'coin-images.coingecko.com' },
+      { protocol: 'https', hostname: 'assets.coingecko.com' },
+      { protocol: 'https', hostname: 'assets.parqet.com' },
+      { protocol: 'https', hostname: 'logo.clearbit.com' },
+      { protocol: 'https', hostname: 'cdn.snapi.dev' },
+      { protocol: 'https', hostname: 's.yimg.com' },
+    ],
+  },
   async headers() {
     return [
       {
