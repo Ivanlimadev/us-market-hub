@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 const CACHE_HOURS = 24
 
+function serviceClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { cookies: { getAll: () => [], setAll: () => {} } },
+  )
+}
+
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> },
 ) {
   const { symbol } = await params
   const upper = symbol.toUpperCase()
-  const supabase = await createClient()
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
+  }
+
+  const supabase = serviceClient()
 
   // Check cache
   const { data: cached } = await supabase
@@ -27,31 +39,33 @@ export async function GET(
     }
   }
 
-  // Fetch stock data to build the prompt
-  const base = _req.nextUrl.origin
-  const stockRes = await fetch(`${base}/api/stocks/${upper}`, { cache: 'no-store' })
+  // Fetch stock data
+  const base = req.nextUrl.origin
+  const stockRes = await fetch(`${base}/api/stocks/${upper}`, {
+    headers: { 'x-internal': '1' },
+    cache: 'no-store',
+  })
   if (!stockRes.ok) {
     return NextResponse.json({ error: 'Stock data unavailable' }, { status: 502 })
   }
   const stock = await stockRes.json()
   const info = stock.info ?? {}
 
-  const prompt = `You are a concise financial analyst. Write a single paragraph (3-4 sentences) about ${upper} (${stock.name ?? upper}) stock for an investor researching whether to buy.
+  const fmt = (n: number | null, mult = 1, suffix = '%') =>
+    n != null ? `${(n * mult).toFixed(1)}${suffix}` : 'N/A'
 
-Key data:
-- Sector: ${info.sector ?? 'N/A'}, Industry: ${info.industry ?? 'N/A'}
-- P/E: ${info.pe ?? 'N/A'}, Forward P/E: ${info.forwardPE ?? 'N/A'}, PEG: ${info.pegRatio ?? 'N/A'}
-- Revenue Growth: ${info.revenueGrowth != null ? (info.revenueGrowth * 100).toFixed(1) + '%' : 'N/A'}
-- Earnings Growth: ${info.earningsGrowth != null ? (info.earningsGrowth * 100).toFixed(1) + '%' : 'N/A'}
-- Profit Margin: ${info.profitMargin != null ? (info.profitMargin * 100).toFixed(1) + '%' : 'N/A'}
-- ROE: ${info.roe != null ? (info.roe * 100).toFixed(1) + '%' : 'N/A'}
-- Debt/Equity: ${info.debtToEquity ?? 'N/A'}
-- Beta: ${info.beta ?? 'N/A'}
-- Dividend Yield: ${info.dividendYield != null ? (info.dividendYield * 100).toFixed(2) + '%' : 'none'}
-- 52-week range: $${info.week52Low ?? 'N/A'} – $${info.week52High ?? 'N/A'}, current: $${stock.currentPrice ?? 'N/A'}
+  const prompt = `You are a concise financial analyst. Write a single paragraph (3-4 sentences) about ${upper} (${stock.name ?? upper}) for an investor researching the stock. Use only the data below.
 
-Write in third person, fact-based, no buy/sell recommendation. Do not use bullet points. Plain paragraph only.`
+Sector: ${info.sector ?? 'N/A'} | Industry: ${info.industry ?? 'N/A'}
+P/E: ${info.pe ?? 'N/A'} | Forward P/E: ${info.forwardPE ?? 'N/A'} | PEG: ${info.pegRatio ?? 'N/A'}
+Revenue Growth: ${fmt(info.revenueGrowth)} | Earnings Growth: ${fmt(info.earningsGrowth)}
+Profit Margin: ${fmt(info.profitMargin)} | ROE: ${fmt(info.roe)} | Debt/Equity: ${info.debtToEquity ?? 'N/A'}
+Beta: ${info.beta ?? 'N/A'} | Dividend Yield: ${info.dividendYield != null ? fmt(info.dividendYield) : 'none'}
+52w range: $${info.week52Low ?? 'N/A'}–$${info.week52High ?? 'N/A'} | Current: $${stock.currentPrice ?? 'N/A'}
 
+Write in third person. Fact-based. No buy/sell recommendation. Plain paragraph, no bullets.`
+
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 256,
@@ -60,7 +74,6 @@ Write in third person, fact-based, no buy/sell recommendation. Do not use bullet
 
   const insight = (message.content[0] as { type: string; text: string }).text.trim()
 
-  // Upsert cache
   await supabase.from('ai_insights').upsert(
     { symbol: upper, insight, updated_at: new Date().toISOString() },
     { onConflict: 'symbol' },
