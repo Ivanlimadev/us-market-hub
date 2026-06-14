@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { TrendingUp, ArrowRight } from 'lucide-react'
+import { CompareTable } from './CompareTable'
 
 interface ComparisonPair {
   aSymbol: string
@@ -240,37 +241,7 @@ export default async function ComparisonPairPage({
       </div>
 
       {/* Comparison table */}
-      <div className="mb-8 rounded-xl border border-zinc-800 overflow-hidden">
-        <div className="grid grid-cols-[1fr_auto_auto_auto] bg-zinc-900 border-b border-zinc-800">
-          <div className="p-3 text-xs font-semibold text-zinc-500 uppercase tracking-widest">Metric</div>
-          <div className="p-3 text-xs font-semibold text-zinc-200 text-center min-w-[90px]">{data.aSymbol}</div>
-          <div className="p-3 text-xs font-semibold text-zinc-200 text-center min-w-[90px]">{data.bSymbol}</div>
-          <div className="p-3 text-xs font-semibold text-zinc-500 uppercase tracking-widest text-center min-w-[70px]">Edge</div>
-        </div>
-        {data.dimensions.map((dim, i) => (
-          <div key={dim.label} className={`grid grid-cols-[1fr_auto_auto_auto] border-b border-zinc-800 last:border-0 ${i % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/40'}`}>
-            <div className="p-3">
-              <p className="text-sm font-medium text-zinc-300">{dim.label}</p>
-              <p className="text-xs text-zinc-600 mt-0.5">{dim.note}</p>
-            </div>
-            <div className={`p-3 flex items-center justify-center min-w-[90px] ${dim.winner === 'a' ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}`}>
-              <span className="text-sm text-center">{dim.aValue}</span>
-            </div>
-            <div className={`p-3 flex items-center justify-center min-w-[90px] ${dim.winner === 'b' ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}`}>
-              <span className="text-sm text-center">{dim.bValue}</span>
-            </div>
-            <div className="p-3 flex items-center justify-center min-w-[70px]">
-              {dim.winner === 'tie' ? (
-                <span className="text-xs text-zinc-600">Tie</span>
-              ) : (
-                <span className="text-xs font-semibold text-emerald-400">
-                  {dim.winner === 'a' ? data.aSymbol : data.bSymbol}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <CompareTable dimensions={data.dimensions} aSymbol={data.aSymbol} bSymbol={data.bSymbol} />
 
       {/* Verdict */}
       <div className="mb-6 rounded-xl border border-zinc-700 bg-zinc-900 p-5">
