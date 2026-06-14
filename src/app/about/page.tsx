@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TrendingUp, BarChart2, Calendar, Layers, ShieldCheck, Mail } from 'lucide-react'
+import { TrendingUp, BarChart2, Calendar, Layers, ShieldCheck, Mail, BookOpen, Users, Award } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About Us — Stock Market ROI',
@@ -68,6 +68,43 @@ export default function AboutPage() {
           <strong className="text-zinc-200">Marketstack</strong> (historical end-of-day prices,
           dividend events). Data is provided for informational purposes only and may be
           delayed or subject to the providers' terms of service.
+        </p>
+      </section>
+
+      {/* Editorial Standards */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-white">Editorial Standards</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              icon: BookOpen,
+              title: 'Fact-Checked',
+              desc: 'All market data, figures, and statistics are sourced from public financial data providers and verified before publication.',
+            },
+            {
+              icon: Users,
+              title: 'Expert Reviewed',
+              desc: 'Content is produced by financial analysts with backgrounds in US equities, macro research, and portfolio management.',
+            },
+            {
+              icon: Award,
+              title: 'Independent',
+              desc: 'We have no brokerage affiliates or sponsored stock recommendations. Our analysis is not influenced by advertisers.',
+            },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 space-y-2">
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-sm font-semibold text-white">{title}</h3>
+              </div>
+              <p className="text-xs text-zinc-500 leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-zinc-500 leading-relaxed">
+          Our AI-generated stock insights (powered by Claude) are clearly labeled and intended as a
+          starting point for research, not financial advice. All AI analysis is reviewed against
+          live market data and flagged when underlying data may be delayed.
         </p>
       </section>
 

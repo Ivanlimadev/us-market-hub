@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import Image from 'next/image'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import { UNIVERSE_FLAT } from '@/lib/stock-universe'
 import type { CryptoMarket } from '@/types/crypto'
@@ -79,6 +79,7 @@ function CryptoLogo({ image, symbol }: { image: string; symbol: string }) {
 
 export function GlobalSearch() {
   const [open, setOpen]             = useState(false)
+  const [mounted, setMounted]       = useState(false)
   const [query, setQuery]           = useState('')
   const [apiResults, setApiResults] = useState<Result[]>([])
   const [fetching, setFetching]     = useState(false)
@@ -86,6 +87,8 @@ export function GlobalSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const router   = useRouter()
   const debouncedQ = useDebounce(query, 260)
+
+  useEffect(() => { setMounted(true) }, [])
 
   // Always keep crypto cache warm (used by search on any page)
   const { data: cryptoCache = [] } = useQuery<CryptoMarket[]>({
@@ -108,17 +111,14 @@ export function GlobalSearch() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Focus input when modal opens + lock body scroll
+  // Focus input when modal opens
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 50)
-      document.body.style.overflow = 'hidden'
     } else {
       setQuery('')
       setApiResults([])
-      document.body.style.overflow = ''
     }
-    return () => { document.body.style.overflow = '' }
   }, [open])
 
   // Fetch stocks API fallback for queries not in local universe
@@ -212,13 +212,15 @@ export function GlobalSearch() {
         <span className="hidden sm:inline">Search</span>
       </button>
 
-      {/* Modal overlay */}
-      {open && (
-        <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[12vh] px-4">
+      {/* Modal overlay — rendered via portal so backdrop-filter on Navbar header doesn't trap fixed positioning */}
+      {mounted && open && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-start justify-center pt-4 sm:pt-[12vh] px-4">
           {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          <button
+            className="absolute inset-0 bg-black/60 cursor-default"
             onClick={() => setOpen(false)}
+            aria-label="Close search"
+            tabIndex={-1}
           />
 
           {/* Panel */}
@@ -237,16 +239,26 @@ export function GlobalSearch() {
                 autoComplete="off"
                 spellCheck={false}
               />
-              {fetching
-                ? <Loader2 className="h-4 w-4 animate-spin text-zinc-500 shrink-0" />
-                : query
-                  ? (
-                    <button onClick={() => setQuery('')}>
-                      <X className="h-4 w-4 text-zinc-500 hover:text-zinc-300 transition-colors" />
-                    </button>
-                  )
-                  : null
-              }
+              {fetching ? (
+                <Loader2 className="h-4 w-4 animate-spin text-zinc-500 shrink-0" />
+              ) : (
+                <button
+                  onClick={() => setOpen(false)}
+                  className="shrink-0 rounded-md px-2 py-1 text-xs text-zinc-500 hover:text-zinc-200 transition-colors sm:hidden"
+                  aria-label="Close"
+                >
+                  Cancel
+                </button>
+              )}
+              {!fetching && (
+                <button
+                  onClick={() => query ? setQuery('') : setOpen(false)}
+                  className="shrink-0 hidden sm:block"
+                  aria-label="Clear or close"
+                >
+                  <X className="h-4 w-4 text-zinc-500 hover:text-zinc-300 transition-colors" />
+                </button>
+              )}
             </div>
 
             {/* Results */}
@@ -336,7 +348,8 @@ export function GlobalSearch() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

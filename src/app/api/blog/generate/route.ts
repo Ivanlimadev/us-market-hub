@@ -79,20 +79,23 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
     messages: [
       {
         role: 'user',
-        content: `You are an expert American financial journalist writing for stockmarketroi.com, a US-focused investing and markets site.
+        content: `You are a senior financial analyst and editor at stockmarketroi.com, a US-focused investing and markets publication. Your readers are serious investors — they want your opinion, not just facts they can find anywhere.
 
 Write a complete, SEO-optimized blog post in English with the title: "${title}"
 
 Requirements:
-- Length: 900–1,100 words
+- Length: 1,000–1,200 words
 - Use H2 and H3 headers (Markdown format)
-- Write for a US audience, use USD, reference US brokers/exchanges when relevant
-- Include specific data points and examples where possible
-- Natural, human tone — avoid AI clichés like "In today's fast-paced digital world" or "In conclusion"
-- End with a short, natural call-to-action paragraph (no hard sell)
+- **Take a clear position.** Don't hedge everything. If dividend investing is good for retirees, say so. If a strategy has a serious flaw, name it. Your readers trust your judgment.
+- Open with a hook that frames *why this matters now* — a recent data point, a common mistake investors make, or a counterintuitive insight.
+- Include specific numbers: P/E ratios, yields, historical returns, dates, company names. Vague generalities destroy credibility.
+- Compare and contrast: give readers a framework to decide for themselves (e.g., "growth investors should prefer X, income investors should prefer Y")
+- Write for a US audience — USD, US tax context (401k, Roth IRA where relevant), US brokers/exchanges
+- Natural, authoritative tone — avoid AI clichés ("In today's fast-paced digital world", "In conclusion", "navigating the landscape")
+- End with a "Bottom Line" H2 section: a direct 2-3 sentence verdict on what the reader should take away and do next
 - DO NOT include the title as an H1 — start directly with an intro paragraph
 - Format: plain Markdown only
-- When mentioning specific US stocks (e.g. Apple, NVIDIA, Microsoft), link to their page using Markdown: [Apple (AAPL)](https://stockmarketroi.com/stocks/AAPL). Use the stock ticker in the URL. Only link each stock once per article.
+- When mentioning specific US stocks (e.g. Apple, NVIDIA, Microsoft), link to their page: [Apple (AAPL)](https://stockmarketroi.com/stocks/AAPL). Only link each stock once.
 - When mentioning Bitcoin or other major crypto, link to their page: [Bitcoin](https://stockmarketroi.com/crypto/bitcoin). Only link each crypto once.
 
 Also provide at the very end, separated by "---META---":

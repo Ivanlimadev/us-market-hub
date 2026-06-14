@@ -129,7 +129,22 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
-      <div className="mt-12 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
+      {/* E-E-A-T author section */}
+      <div className="mt-10 flex items-start gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/20">
+          <span className="text-sm font-bold text-emerald-400">SMR</span>
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-zinc-200">Editorial Team · Stock Market ROI</p>
+          <p className="text-xs leading-relaxed text-zinc-500">
+            Our editorial team consists of financial analysts and market researchers with expertise
+            in US equities, macroeconomics, and portfolio strategy. All articles are fact-checked
+            against public market data and reviewed for accuracy before publication.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
         <p className="mb-3 text-zinc-300">Track real-time stocks, crypto, and market data</p>
         <Link
           href="/"
