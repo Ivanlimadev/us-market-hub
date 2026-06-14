@@ -82,7 +82,12 @@ export function StockNews({ symbol }: { symbol: string }) {
                     <p className="text-sm font-medium leading-snug text-zinc-200 group-hover:text-white line-clamp-2">
                       {item.title}
                     </p>
-                    <div className="mt-1 flex items-center gap-2 text-[11px] text-zinc-500">
+                    {item.summary && (
+                      <p className="mt-1 text-xs leading-relaxed text-zinc-500 line-clamp-2">
+                        {item.summary}
+                      </p>
+                    )}
+                    <div className="mt-1.5 flex items-center gap-2 text-[11px] text-zinc-600">
                       <span className="font-medium text-zinc-400">{item.source}</span>
                       <span>·</span>
                       <span>{timeAgo(item.publishedAt)}</span>
