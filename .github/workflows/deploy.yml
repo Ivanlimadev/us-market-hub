@@ -21,4 +21,4 @@ jobs:
             npm ci --legacy-peer-deps
             npm run build
             pm2 restart us-market-hub
-            echo "Deploy OK: $(date)"
+            echo "Deploy OK: $(date)" && pm2 list
