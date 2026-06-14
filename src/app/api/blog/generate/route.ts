@@ -92,12 +92,14 @@ Requirements:
 - End with a short, natural call-to-action paragraph (no hard sell)
 - DO NOT include the title as an H1 — start directly with an intro paragraph
 - Format: plain Markdown only
+- When mentioning specific US stocks (e.g. Apple, NVIDIA, Microsoft), link to their page using Markdown: [Apple (AAPL)](https://stockmarketroi.com/stocks/AAPL). Use the stock ticker in the URL. Only link each stock once per article.
+- When mentioning Bitcoin or other major crypto, link to their page: [Bitcoin](https://stockmarketroi.com/crypto/bitcoin). Only link each crypto once.
 
 Also provide at the very end, separated by "---META---":
 - excerpt: one sentence (max 160 chars) summarizing the post
 - seo_title: SEO-optimized title (max 60 chars)
 - seo_description: meta description (max 155 chars)
-- image_query: 2-3 word Unsplash search term for a relevant photo`,
+- image_query: 2-3 word Pexels search term for a relevant photo`,
       },
     ],
   })

@@ -1,6 +1,10 @@
 import { CompareView } from './CompareView'
 
-export const metadata = { title: 'Compare Stocks — Stock Market ROI' }
+export const metadata = {
+  title: 'Compare Stocks Side by Side — Fundamentals & Performance | Stock Market ROI',
+  description: 'Compare up to 5 US stocks side by side. Analyze P/E, market cap, revenue, profit margin, dividend yield and price performance to make better investment decisions.',
+  alternates: { canonical: 'https://stockmarketroi.com/compare' },
+}
 
 export default function ComparePage() {
   return (

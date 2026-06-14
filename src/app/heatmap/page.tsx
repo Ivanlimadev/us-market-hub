@@ -1,6 +1,10 @@
 import { HeatmapView } from './HeatmapView'
 
-export const metadata = { title: 'Market Heatmap — Stock Market ROI' }
+export const metadata = {
+  title: 'Market Heatmap — US Stock Performance at a Glance | Stock Market ROI',
+  description: 'Visual heatmap of the top US stocks showing real-time price performance. Instantly identify the market\'s biggest gainers and losers by sector.',
+  alternates: { canonical: 'https://stockmarketroi.com/heatmap' },
+}
 
 export default function HeatmapPage() {
   return (

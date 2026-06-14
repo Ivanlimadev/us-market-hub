@@ -1,6 +1,10 @@
 import { RankingsView } from './RankingsView'
 
-export const metadata = { title: 'Rankings — Stock Market ROI' }
+export const metadata = {
+  title: 'Stock Rankings — Top US Stocks by Performance & Metrics | Stock Market ROI',
+  description: 'Rank US stocks by daily performance, market cap, dividend yield, P/E ratio, revenue growth and more. Find the best and worst performing stocks today.',
+  alternates: { canonical: 'https://stockmarketroi.com/rankings' },
+}
 
 export default function RankingsPage() {
   return (

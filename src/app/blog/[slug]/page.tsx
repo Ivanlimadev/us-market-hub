@@ -38,9 +38,10 @@ export async function generateMetadata(
 
   if (!data) return {}
   return {
-    title: data.seo_title ?? data.title,
+    title:      data.seo_title ?? data.title,
     description: data.seo_description,
-    openGraph: { images: data.image_url ? [data.image_url] : [] },
+    alternates: { canonical: `https://stockmarketroi.com/blog/${slug}` },
+    openGraph:  { images: data.image_url ? [data.image_url] : [] },
   }
 }
 
@@ -72,8 +73,33 @@ export default async function BlogPostPage({
 
   const html = markdownToHtml(post.content)
 
+  const jsonLd = {
+    '@context':        'https://schema.org',
+    '@type':           'Article',
+    headline:          post.title,
+    description:       post.excerpt,
+    image:             post.image_url ?? undefined,
+    datePublished:     post.published_at,
+    dateModified:      post.published_at,
+    author:            { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
+    publisher:         { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
+    mainEntityOfPage:  { '@type': 'WebPage', '@id': `https://stockmarketroi.com/blog/${post.slug}` },
+  }
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type':    'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://stockmarketroi.com' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://stockmarketroi.com/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://stockmarketroi.com/blog/${post.slug}` },
+    ],
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Link href="/blog" className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300">
         ← Blog
       </Link>

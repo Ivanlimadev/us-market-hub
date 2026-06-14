@@ -1,4 +1,11 @@
+import type { Metadata } from 'next'
 import { IndexCards } from '@/components/market/IndexCards'
+
+export const metadata: Metadata = {
+  title: 'Stock Market ROI — Real-Time US Stock Market Data & Analysis',
+  description: 'Free real-time US stock market data: live quotes, interactive charts, portfolio tracker, stock screener, earnings calendar, dividends, market heatmap and AI-powered analysis.',
+  alternates: { canonical: 'https://stockmarketroi.com' },
+}
 import { HomeHeatmap } from '@/components/market/HomeHeatmap'
 import { HomeRankings } from '@/components/market/HomeRankings'
 import { DividendCalendarWidget } from '@/components/market/DividendCalendarWidget'
