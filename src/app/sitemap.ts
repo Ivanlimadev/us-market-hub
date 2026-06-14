@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { ALL_SYMBOLS } from '@/lib/stock-universe'
 
 const BASE = 'https://stockmarketroi.com'
 
@@ -29,18 +30,14 @@ const STATIC_ROUTES = [
   { url: '/terms',                       priority: 0.3,  changeFrequency: 'monthly' },
 ] as const
 
-const TOP_STOCKS = [
-  'AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','BRK-B','AVGO','JPM',
-  'LLY','V','UNH','XOM','MA','JNJ','PG','HD','COST','ABBV',
-  'NFLX','BAC','KO','CRM','CVX','MRK','AMD','PEP','TMO','ORCL',
-  'ACN','ADBE','WMT','LIN','MCD','CSCO','ABT','TXN','DHR','PM',
-]
-
 const TOP_CRYPTO = [
   'bitcoin','ethereum','tether','binancecoin','solana','ripple',
   'usd-coin','cardano','dogecoin','tron','avalanche-2','chainlink',
   'the-open-network','polkadot','polygon','litecoin','shiba-inu',
-  'bitcoin-cash','stellar','near',
+  'bitcoin-cash','stellar','near','monero','ethereum-classic',
+  'uniswap','cosmos','filecoin','hedera-hashgraph','aptos',
+  'arbitrum','optimism','sui','pepe','floki','render-token',
+  'fetch-ai','worldcoin-wld','injective-protocol','sei-network',
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -53,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }))
 
-  const stockUrls: MetadataRoute.Sitemap = TOP_STOCKS.map((symbol) => ({
+  const stockUrls: MetadataRoute.Sitemap = ALL_SYMBOLS.map((symbol) => ({
     url: `${BASE}/stocks/${symbol}`,
     lastModified: now,
     changeFrequency: 'daily',
