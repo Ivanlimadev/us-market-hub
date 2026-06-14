@@ -37,7 +37,7 @@ export async function GET(req: Request) {
   const items = multi ? 20 : 10
   const url = `https://stocknewsapi.com/api/v1?tickers=${symbol}&items=${items}&sortby=rank&token=${key}`
   const res = await fetch(url, {
-    next: { revalidate: 0 },
+    next: { revalidate: 300 },
     headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StockMarketROI/1.0)' },
   })
 

@@ -26,7 +26,8 @@ export function useAlertChecker(): { justTriggered: PriceAlert[] } {
       fetch(`/api/batch-quotes?symbols=${symbolKey}`).then((r) => r.json()),
     enabled: stockSymbols.length > 0,
     refetchInterval: 30_000,
-    staleTime: 25_000,
+    refetchIntervalInBackground: false,
+    staleTime: 29_000,
   })
 
   useEffect(() => {

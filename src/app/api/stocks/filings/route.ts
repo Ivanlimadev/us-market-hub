@@ -21,7 +21,7 @@ async function getCik(symbol: string): Promise<string | null> {
   if (!cikMap || Date.now() - cikMapTs > TTL_CIK) {
     const res = await fetch('https://www.sec.gov/files/company_tickers.json', {
       headers: { 'User-Agent': UA },
-      next: { revalidate: 0 },
+      next: { revalidate: 300 },
     })
     if (!res.ok) return null
     const raw: Record<string, { cik_str: number; ticker: string }> = await res.json()

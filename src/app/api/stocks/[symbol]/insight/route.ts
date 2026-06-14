@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 const CACHE_HOURS = 24
 
@@ -35,6 +36,11 @@ export async function GET(
 ) {
   const { symbol } = await params
   const upper = symbol.toUpperCase()
+
+  // 10 req/hour per IP (cached responses don't count against this)
+  if (!rateLimit(getIp(req), 10, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
