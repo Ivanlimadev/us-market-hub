@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { href: '/', label: 'Markets' },
   { href: '/stocks', label: 'Stocks' },
   { href: '/screener', label: 'Screener' },
-  { href: '/heatmap', label: 'Heatmap' },
+  { href: '/heatmap', label: 'Top 20' },
   { href: '/rankings', label: 'Rankings' },
   { href: '/compare', label: 'Compare' },
   { href: '/calendar', label: 'Calendar' },

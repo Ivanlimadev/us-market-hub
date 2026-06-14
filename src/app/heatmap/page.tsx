@@ -10,8 +10,8 @@ export default function HeatmapPage() {
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-white">Market Heatmap</h1>
-        <p className="text-sm text-zinc-400">Top 20 por market cap · atualiza automaticamente</p>
+        <h1 className="text-2xl font-bold text-white">Top 20 Stocks</h1>
+        <p className="text-sm text-zinc-400">Maiores empresas por market cap · atualiza automaticamente</p>
       </div>
       <HeatmapView />
     </div>
