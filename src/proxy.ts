@@ -2,10 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
+// Vercel KV (via Storage tab) uses KV_REST_API_* names
+// Direct Upstash uses UPSTASH_REDIS_REST_* names — support both
+const redisUrl   = process.env.KV_REST_API_URL   ?? process.env.UPSTASH_REDIS_REST_URL
+const redisToken = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN
+
 const ratelimit =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  redisUrl && redisToken
     ? new Ratelimit({
-        redis:     Redis.fromEnv(),
+        redis:     new Redis({ url: redisUrl, token: redisToken }),
         limiter:   Ratelimit.slidingWindow(60, '60 s'),
         analytics: true,
         prefix:    'smroi',
