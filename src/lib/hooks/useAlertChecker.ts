@@ -67,6 +67,11 @@ export function useAlertChecker(): { justTriggered: PriceAlert[] } {
       if (triggered) {
         store.triggerAlert(alert.id)
         newlyTriggered.push(alert)
+        fetch('/api/alerts/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ alertId: alert.id, currentPrice }),
+        }).catch(() => null)
       }
     }
 
