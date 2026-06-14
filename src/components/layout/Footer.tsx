@@ -73,11 +73,11 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <Link
-              href="mailto:contato@ivanlimadev.com"
+              href="mailto:contact@stockmarketroi.com"
               className="flex items-center gap-1 text-xs text-zinc-600 transition-colors hover:text-zinc-400"
             >
               <ExternalLink className="h-3 w-3" />
-              contato@ivanlimadev.com
+              contact@stockmarketroi.com
             </Link>
           </div>
         </div>

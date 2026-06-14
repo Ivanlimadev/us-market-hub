@@ -78,11 +78,11 @@ export default function AboutPage() {
           Questions, feedback or data corrections? Reach us at:
         </p>
         <a
-          href="mailto:contato@ivanlimadev.com"
+          href="mailto:contact@stockmarketroi.com"
           className="inline-flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
         >
           <Mail className="h-4 w-4" />
-          contato@ivanlimadev.com
+          contact@stockmarketroi.com
         </a>
       </section>
 

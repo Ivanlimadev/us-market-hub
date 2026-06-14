@@ -216,8 +216,8 @@ export default function TermsPage() {
           platform infringes your copyright under the{' '}
           <strong className="text-zinc-200">Digital Millennium Copyright Act (DMCA)</strong>,
           please send a written notice to{' '}
-          <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-            contato@ivanlimadev.com
+          <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+            contact@stockmarketroi.com
           </a>{' '}
           containing:
         </p>
@@ -258,8 +258,8 @@ export default function TermsPage() {
           <p className="font-semibold text-zinc-200">12.3 Informal Resolution First</p>
           <p>
             Before initiating arbitration, you agree to contact us at{' '}
-            <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-              contato@ivanlimadev.com
+            <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+              contact@stockmarketroi.com
             </a>{' '}
             and attempt to resolve the dispute informally for at least 30 days.
           </p>
@@ -327,8 +327,8 @@ export default function TermsPage() {
 
       <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-sm text-zinc-400">
         Questions about these terms?{' '}
-        <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-          contato@ivanlimadev.com
+        <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+          contact@stockmarketroi.com
         </a>
         {' '}· See also our{' '}
         <Link href="/privacy" className="text-emerald-400 hover:text-emerald-300">Privacy Policy</Link>.

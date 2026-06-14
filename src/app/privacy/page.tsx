@@ -41,8 +41,8 @@ export default function PrivacyPage() {
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
           <p><span className="text-zinc-300 font-medium">Name:</span> Ivan Lima</p>
           <p><span className="text-zinc-300 font-medium">Email:</span>{' '}
-            <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-              contato@ivanlimadev.com
+            <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+              contact@stockmarketroi.com
             </a>
           </p>
           <p><span className="text-zinc-300 font-medium">Site:</span> stockmarketroi.com</p>
@@ -242,8 +242,8 @@ export default function PrivacyPage() {
         </div>
         <p>
           Contact us at{' '}
-          <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-            contato@ivanlimadev.com
+          <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+            contact@stockmarketroi.com
           </a>. We will respond within <strong className="text-zinc-200">15 business days</strong>.
           You may also file a complaint with the{' '}
           <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
@@ -302,8 +302,8 @@ export default function PrivacyPage() {
         </div>
         <p>
           To exercise your CCPA rights, email{' '}
-          <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-            contato@ivanlimadev.com
+          <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+            contact@stockmarketroi.com
           </a>{' '}
           with the subject line &quot;CCPA Request&quot;. We will respond within{' '}
           <strong className="text-zinc-200">45 days</strong> as required by law.
@@ -342,8 +342,8 @@ export default function PrivacyPage() {
 
       <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-sm text-zinc-400">
         Questions about this policy?{' '}
-        <a href="mailto:contato@ivanlimadev.com" className="text-emerald-400 hover:text-emerald-300">
-          contato@ivanlimadev.com
+        <a href="mailto:contact@stockmarketroi.com" className="text-emerald-400 hover:text-emerald-300">
+          contact@stockmarketroi.com
         </a>
         {' '}· See also our{' '}
         <Link href="/terms" className="text-emerald-400 hover:text-emerald-300">Terms of Use</Link>.
