@@ -21,8 +21,7 @@ function timeAgo(iso: string | null): string {
   if (days === 0) return 'Today'
   if (days === 1) return 'Yesterday'
   if (days < 30) return `${days}d ago`
-  const months = Math.floor(days / 30)
-  return `${months}mo ago`
+  return `${Math.floor(days / 30)}mo ago`
 }
 
 export function StockRelatedPosts({ symbol }: { symbol: string }) {
@@ -44,13 +43,14 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
           <BookOpen className="h-4 w-4 text-violet-400" />
           <h2 className="text-sm font-semibold text-zinc-200">Related Articles</h2>
         </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="flex gap-3 animate-pulse">
-              <div className="h-14 w-14 rounded-lg bg-zinc-800 shrink-0" />
-              <div className="flex-1 space-y-2 py-1">
-                <div className="h-3 w-full rounded bg-zinc-800" />
+        <div className="space-y-4">
+          {[1, 2].map(i => (
+            <div key={i} className="animate-pulse rounded-xl border border-zinc-800 overflow-hidden">
+              <div className="h-36 w-full bg-zinc-800" />
+              <div className="p-4 space-y-2">
                 <div className="h-3 w-3/4 rounded bg-zinc-800" />
+                <div className="h-3 w-full rounded bg-zinc-700" />
+                <div className="h-3 w-5/6 rounded bg-zinc-700" />
               </div>
             </div>
           ))}
@@ -76,41 +76,58 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
 
       <ul className="space-y-4">
         {posts.map(post => (
-          <li key={post.slug}>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="group flex gap-3 hover:opacity-80 transition-opacity"
-            >
-              {post.image_url ? (
-                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
-                  <Image
-                    src={post.image_url}
-                    alt={post.image_alt ?? post.title}
-                    fill
-                    className="object-cover"
-                    sizes="56px"
-                  />
-                </div>
-              ) : (
-                <div className="h-14 w-14 shrink-0 rounded-lg bg-zinc-800 flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-zinc-600" />
-                </div>
-              )}
+          <li key={post.slug} className="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900 hover:border-zinc-700 transition-colors">
+            {/* Image */}
+            {post.image_url ? (
+              <div className="relative h-40 w-full">
+                <Image
+                  src={post.image_url}
+                  alt={post.image_alt ?? post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 600px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 to-transparent" />
+                <span className="absolute bottom-2 left-3 rounded-full bg-violet-500/80 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                  {post.category}
+                </span>
+              </div>
+            ) : (
+              <div className="flex h-32 w-full items-center justify-center bg-zinc-800">
+                <BookOpen className="h-8 w-8 text-zinc-600" />
+              </div>
+            )}
 
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium leading-snug text-zinc-200 line-clamp-2 group-hover:text-white transition-colors">
-                  {post.title}
-                </p>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-400">
+            {/* Content */}
+            <div className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                {!post.image_url && (
+                  <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-semibold text-violet-400">
                     {post.category}
                   </span>
-                  {post.published_at && (
-                    <span className="text-[11px] text-zinc-500">{timeAgo(post.published_at)}</span>
-                  )}
-                </div>
+                )}
+                {post.published_at && (
+                  <span className="text-[11px] text-zinc-500">{timeAgo(post.published_at)}</span>
+                )}
               </div>
-            </Link>
+
+              <h3 className="text-sm font-semibold leading-snug text-zinc-100 line-clamp-2">
+                {post.title}
+              </h3>
+
+              {post.excerpt && (
+                <p className="text-xs leading-relaxed text-zinc-400 line-clamp-3">
+                  {post.excerpt}
+                </p>
+              )}
+
+              <Link
+                href={`/blog/${post.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 px-3 py-1.5 text-xs font-semibold text-violet-400 hover:bg-violet-500/20 hover:text-violet-300 transition-colors"
+              >
+                Read full article <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
           </li>
         ))}
       </ul>
