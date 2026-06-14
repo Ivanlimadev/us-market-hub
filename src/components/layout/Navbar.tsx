@@ -66,9 +66,9 @@ export function Navbar() {
       <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-screen-xl items-center gap-4 px-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0">
+          <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0" translate="no">
             <TrendingUp className="h-5 w-5 text-emerald-400" />
-            <span>Stock Market ROI</span>
+            <span className="truncate max-w-[160px] sm:max-w-none">Stock Market ROI</span>
           </Link>
 
           {/* Desktop nav */}
