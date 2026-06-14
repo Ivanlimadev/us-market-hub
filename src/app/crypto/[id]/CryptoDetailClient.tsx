@@ -14,8 +14,8 @@ import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
 import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
 import { ROICalculator }     from '@/components/crypto/ROICalculator'
 import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
-import { StockAIInsight }    from '@/components/stock/StockAIInsight'
-import { StockNews }         from '@/components/stock/StockNews'
+import { StockAIInsight }      from '@/components/stock/StockAIInsight'
+import { StockRelatedPosts }   from '@/components/stock/StockRelatedPosts'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -322,8 +322,8 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <StockAIInsight symbol={coin.id} apiPath={`/api/crypto/${coin.id}/insight`} />
       </WidgetBoundary>
 
-      <WidgetBoundary label="Latest News">
-        <StockNews symbol={coin.symbol.toUpperCase()} />
+      <WidgetBoundary label="Related Articles">
+        <StockRelatedPosts symbol={coin.symbol.toUpperCase()} />
       </WidgetBoundary>
 
       {/* Stats grid */}

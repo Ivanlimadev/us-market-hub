@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { ALL_SYMBOLS, STOCK_NAMES } from '@/lib/stock-universe'
 
 function anonClient() {
   return createClient(
@@ -9,61 +10,59 @@ function anonClient() {
   )
 }
 
-const TOPICS = [
-  // Investing fundamentals
-  { title: 'Best Brokerage Accounts for Beginners in {year}', category: 'Investing' },
-  { title: 'How to Invest in S&P 500 Index Funds: A Complete Guide', category: 'Investing' },
-  { title: 'Dividend Investing Strategy: Build Passive Income with Stocks', category: 'Investing' },
-  { title: 'ETF vs Mutual Fund: Which Is Better for Long-Term Investors?', category: 'Investing' },
-  { title: 'What Is a P/E Ratio and Why Does It Matter?', category: 'Investing' },
-  { title: 'How to Build a $1,000/Month Dividend Portfolio', category: 'Investing' },
-  { title: 'Dollar-Cost Averaging vs Lump Sum Investing: Which Wins?', category: 'Investing' },
-  { title: 'How to Build a Portfolio With Just 3 ETFs', category: 'Investing' },
-  { title: 'Roth IRA vs 401k: Where to Put Your Money First in {year}', category: 'Investing' },
-  { title: 'What Is an Index Fund and How Does It Work?', category: 'Investing' },
-  { title: 'How to Start Investing with $500', category: 'Investing' },
-  { title: 'Asset Allocation by Age: How to Rebalance Your Portfolio', category: 'Investing' },
-  // Stocks & markets
-  { title: 'Growth vs Value Stocks: Which Should You Buy in {year}?', category: 'Stocks' },
-  { title: 'Recession-Proof Stocks: Sectors That Hold Up in Downturns', category: 'Stocks' },
-  { title: 'How to Read a Stock Chart for Beginners', category: 'Stocks' },
-  { title: 'NVIDIA Stock Analysis {year}: Is It Still a Buy?', category: 'Stocks' },
-  { title: 'Apple vs Microsoft: Which Tech Giant Is the Better Investment?', category: 'Stocks' },
-  { title: 'Best Dividend Stocks for Passive Income in {year}', category: 'Stocks' },
-  { title: 'How to Pick Stocks: A Framework for Individual Investors', category: 'Stocks' },
-  { title: 'Small-Cap vs Large-Cap Stocks: Risk and Reward Compared', category: 'Stocks' },
-  { title: 'Defensive Stocks vs Cyclical Stocks Explained', category: 'Stocks' },
-  { title: 'US Stock Market Hours, Holidays and Trading Sessions Explained', category: 'Markets' },
-  { title: 'What Happens to Stocks During a Recession?', category: 'Markets' },
-  { title: 'How to Read an Earnings Report: A Step-by-Step Guide', category: 'Markets' },
-  { title: 'Bull Market vs Bear Market: How to Invest in Both', category: 'Markets' },
-  { title: 'Stock Market Volatility: How to Stay Calm and Profit', category: 'Markets' },
-  // Economics & macro
-  { title: 'How the Federal Reserve Affects Your Investments', category: 'Economics' },
-  { title: 'How Interest Rate Changes Impact Stock Prices', category: 'Economics' },
-  { title: 'What Is Inflation and How Does It Affect Stocks?', category: 'Economics' },
-  { title: 'What Is GDP and Why Stock Investors Should Care', category: 'Economics' },
-  { title: 'How to Invest During High Inflation: Stocks, Bonds and Real Assets', category: 'Economics' },
-  { title: 'US Dollar Strength and What It Means for Your Portfolio', category: 'Economics' },
-  // Technology & AI
-  { title: 'AI Stocks to Watch: The Best Artificial Intelligence Investments', category: 'Technology' },
-  { title: 'Semiconductor Stocks: Why Chips Are the New Oil', category: 'Technology' },
-  { title: 'Cloud Computing Stocks: AWS vs Azure vs Google Cloud in {year}', category: 'Technology' },
-  { title: 'How AI Is Changing the Stock Market — and How to Profit From It', category: 'Technology' },
-  { title: 'Best Technology ETFs to Buy in {year}', category: 'Technology' },
-  { title: 'Cybersecurity Stocks: Why This Sector Keeps Growing', category: 'Technology' },
-  // Crypto & digital assets
-  { title: 'Bitcoin vs Gold: Which Is the Better Inflation Hedge?', category: 'Crypto' },
-  { title: 'Bitcoin ETF vs Buying Bitcoin Directly: Pros and Cons', category: 'Crypto' },
-  { title: 'Ethereum vs Bitcoin: Key Differences for Investors', category: 'Crypto' },
-  { title: 'How Much of Your Portfolio Should Be in Crypto?', category: 'Crypto' },
-  { title: 'Crypto vs Stocks: Which Is the Better Long-Term Investment?', category: 'Crypto' },
-  // Finance & personal wealth
-  { title: 'Options Trading for Beginners: Covered Calls Explained', category: 'Finance' },
-  { title: 'How to Use a Health Savings Account (HSA) as an Investment Tool', category: 'Finance' },
-  { title: 'Tax-Loss Harvesting: How to Turn Losing Stocks Into Tax Savings', category: 'Finance' },
-  { title: 'How to Retire Early: The FIRE Strategy Explained', category: 'Finance' },
-  { title: 'Real Estate vs Stocks: Which Builds More Wealth Over Time?', category: 'Finance' },
+// Stock-specific topic templates — robot picks a stock and writes about it with real data
+const STOCK_TEMPLATES = [
+  { t: '{name} Stock Analysis {year}: Buy, Hold, or Sell?', cat: 'Stocks' },
+  { t: 'Is {name} ({symbol}) Overvalued? A Deep Dive Into the Numbers', cat: 'Stocks' },
+  { t: '{name} Fair Value {year}: Bull Case vs. Bear Case', cat: 'Stocks' },
+  { t: 'Why {name} Could Be the Best {sector} Stock to Buy in {year}', cat: 'Stocks' },
+  { t: 'The Bull Case for {name} in {year} — and Why Bears Are Wrong', cat: 'Stocks' },
+  { t: 'The Bear Case for {name}: Red Flags Every Investor Should Know', cat: 'Stocks' },
+  { t: '{name} Earnings Preview: What the Numbers Say About {symbol}', cat: 'Stocks' },
+  { t: '{name} Dividend Analysis: Is {symbol} Worth Buying for Income?', cat: 'Investing' },
+  { t: '{name} vs the S&P 500: Has {symbol} Been Worth the Risk?', cat: 'Stocks' },
+  { t: '{name} Growth Story: Can {symbol} Keep Delivering in {year}?', cat: 'Stocks' },
+  { t: 'Should You Buy {name} Stock Right Now? An Honest Look', cat: 'Stocks' },
+  { t: '{name} Price Target {year}: Where Analysts Think {symbol} Is Headed', cat: 'Stocks' },
+  { t: 'What Insiders Are Saying About {name} ({symbol}) in {year}', cat: 'Stocks' },
+  { t: '{name} in a Recession: How {symbol} Holds Up When Markets Fall', cat: 'Stocks' },
+  { t: '{name} ({symbol}): Hidden Risks Most Investors Are Ignoring', cat: 'Stocks' },
+]
+
+// Macro/sector topics that may reference multiple stocks
+const MACRO_TOPICS = [
+  { title: 'How the Federal Reserve Affects Your Investments', category: 'Economics', tickers: [] },
+  { title: 'How Interest Rate Changes Impact Stock Prices', category: 'Economics', tickers: [] },
+  { title: 'ETF vs Mutual Fund: Which Is Better for Long-Term Investors?', category: 'Investing', tickers: [] },
+  { title: 'Dollar-Cost Averaging vs Lump Sum Investing: Which Wins?', category: 'Investing', tickers: [] },
+  { title: 'Roth IRA vs 401k: Where to Put Your Money First in {year}', category: 'Investing', tickers: [] },
+  { title: 'AI Stocks to Watch: The Best Artificial Intelligence Investments', category: 'Technology', tickers: ['NVDA', 'MSFT', 'GOOGL', 'META', 'PLTR'] },
+  { title: 'Semiconductor Stocks: Why Chips Are the New Oil', category: 'Technology', tickers: ['NVDA', 'AMD', 'INTC', 'AVGO', 'QCOM'] },
+  { title: 'Best Dividend Stocks for Passive Income in {year}', category: 'Investing', tickers: ['JNJ', 'KO', 'PG', 'VZ', 'T'] },
+  { title: 'Bitcoin vs Gold: Which Is the Better Inflation Hedge?', category: 'Crypto', tickers: ['GLD'] },
+  { title: 'How to Build a Portfolio With Just 3 ETFs', category: 'Investing', tickers: ['SPY', 'QQQ', 'VTI'] },
+  { title: 'What Is Inflation and How Does It Affect Stocks?', category: 'Economics', tickers: [] },
+  { title: 'US Dollar Strength and What It Means for Your Portfolio', category: 'Economics', tickers: [] },
+  { title: 'How to Retire Early: The FIRE Strategy Explained', category: 'Finance', tickers: [] },
+  { title: 'Stock Market Volatility: How to Stay Calm and Profit', category: 'Markets', tickers: [] },
+  { title: 'Tax-Loss Harvesting: How to Turn Losing Stocks Into Tax Savings', category: 'Finance', tickers: [] },
+  { title: 'Cloud Computing Stocks: AWS vs Azure vs Google Cloud', category: 'Technology', tickers: ['AMZN', 'MSFT', 'GOOGL'] },
+  { title: 'Cybersecurity Stocks: Why This Sector Keeps Growing', category: 'Technology', tickers: ['CRWD', 'PANW', 'FTNT', 'ZS'] },
+  { title: 'How to Pick Stocks: A Framework for Individual Investors', category: 'Stocks', tickers: [] },
+  { title: 'Bull Market vs Bear Market: How to Invest in Both', category: 'Markets', tickers: [] },
+  { title: 'Options Trading for Beginners: Covered Calls Explained', category: 'Finance', tickers: [] },
+]
+
+// Top stocks to prioritize for stock-specific posts (by relevance/search volume)
+const PRIORITY_STOCKS = [
+  'AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','JPM','V','MA',
+  'AMD','PLTR','COIN','HOOD','UBER','ABNB','CRWD','SNOW','NET','DDOG',
+  'LLY','UNH','JNJ','PFE','MRNA','ABBV','MRK',
+  'XOM','CVX','COP','MPC','VLO',
+  'JPM','BAC','GS','MS','SCHW','COF','SPGI',
+  'GE','CAT','HON','BA','LMT','RTX',
+  'NEE','DUK','SO',
+  'SPY','QQQ','ARKK','SOXX',
 ]
 
 function slug(title: string): string {
@@ -74,10 +73,18 @@ function slug(title: string): string {
     .replace(/^-|-$/g, '')
 }
 
+function fillTemplate(t: string, symbol: string, name: string, sector: string, year: number): string {
+  return t
+    .replace(/\{symbol\}/g, symbol)
+    .replace(/\{name\}/g, name)
+    .replace(/\{sector\}/g, sector)
+    .replace(/\{year\}/g, String(year))
+}
+
 async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse> {
   if (requireAuth) {
     const cronSecret = process.env.CRON_SECRET
-    const auth = req.headers.get('authorization') ?? ''
+    const auth   = req.headers.get('authorization') ?? ''
     const header = req.headers.get('x-cron-secret') ?? ''
     const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : auth
     if (!cronSecret || (header !== cronSecret && bearer !== cronSecret)) {
@@ -91,24 +98,105 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
 
   const supabase = anonClient()
   const year = new Date().getFullYear()
+  const base = req.nextUrl.origin
 
-  // Pick a topic not yet published this month
+  // Check recently published titles (last 45 days)
   const { data: recent } = await supabase
     .from('blog_posts')
-    .select('title')
-    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+    .select('title, tickers')
+    .gte('created_at', new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString())
 
   const usedTitles = new Set((recent ?? []).map((r: { title: string }) => r.title))
-  const available = TOPICS.filter(
-    (t) => !usedTitles.has(t.title.replace('{year}', String(year))),
+  const recentTickers = new Set(
+    (recent ?? []).flatMap((r: { tickers?: string[] }) => r.tickers ?? [])
   )
-  if (!available.length) {
-    return NextResponse.json({ message: 'No new topics available' })
+
+  // 65% chance: write about a specific stock with real data
+  // 35% chance: write a macro/educational post
+  const doStockPost = Math.random() < 0.65
+
+  let title = ''
+  let category = ''
+  let tickers: string[] = []
+  let stockData: Record<string, unknown> | null = null
+  let stockInfo: Record<string, unknown> = {}
+  let chosenSymbol = ''
+  let chosenName = ''
+  let chosenSector = ''
+
+  if (doStockPost) {
+    // Pick a stock not recently covered, prioritising popular ones
+    const candidates = [
+      ...PRIORITY_STOCKS.filter(s => !recentTickers.has(s)),
+      ...ALL_SYMBOLS.filter(s => !recentTickers.has(s) && !PRIORITY_STOCKS.includes(s)),
+    ]
+    if (!candidates.length) {
+      // All stocks covered recently — fall back to macro
+      return NextResponse.json({ message: 'All stocks covered recently, try macro topics' })
+    }
+    chosenSymbol = candidates[Math.floor(Math.random() * Math.min(candidates.length, 20))]
+    chosenName   = STOCK_NAMES[chosenSymbol] ?? chosenSymbol
+
+    // Fetch real stock data
+    try {
+      const stockRes = await fetch(`${base}/api/stocks/${chosenSymbol}`, {
+        headers: { 'x-internal': '1' },
+        cache: 'no-store',
+      })
+      if (stockRes.ok) {
+        stockData = await stockRes.json()
+        stockInfo = (stockData?.info as Record<string, unknown>) ?? {}
+        chosenSector = (stockInfo.sector as string) ?? 'Markets'
+      }
+    } catch {}
+
+    // Pick a template not recently used for this stock
+    const availableTemplates = STOCK_TEMPLATES.filter(tmpl => {
+      const t = fillTemplate(tmpl.t, chosenSymbol, chosenName, chosenSector, year)
+      return !usedTitles.has(t)
+    })
+    if (!availableTemplates.length) {
+      return NextResponse.json({ message: `All templates used for ${chosenSymbol}` })
+    }
+    const tmpl = availableTemplates[Math.floor(Math.random() * availableTemplates.length)]
+    title    = fillTemplate(tmpl.t, chosenSymbol, chosenName, chosenSector, year)
+    category = tmpl.cat
+    tickers  = [chosenSymbol]
+
+  } else {
+    // Macro post
+    const available = MACRO_TOPICS.filter(t => !usedTitles.has(t.title.replace('{year}', String(year))))
+    if (!available.length) {
+      return NextResponse.json({ message: 'No new macro topics available' })
+    }
+    const topic = available[Math.floor(Math.random() * available.length)]
+    title    = topic.title.replace('{year}', String(year))
+    category = topic.category
+    tickers  = topic.tickers
   }
 
-  const topic = available[Math.floor(Math.random() * available.length)]
-  const title = topic.title.replace('{year}', String(year))
-  const postSlug = slug(topic.title)
+  const postSlug = slug(title)
+
+  // Build real data context for the prompt
+  const fmt = (n: unknown, mult = 1, suffix = '%') =>
+    n != null && typeof n === 'number' ? `${(n * mult).toFixed(1)}${suffix}` : 'N/A'
+
+  const realDataBlock = stockData && chosenSymbol ? `
+REAL MARKET DATA FOR ${chosenSymbol} (use these exact numbers — do not invent others):
+Company: ${chosenName}
+Sector: ${(stockInfo.sector as string) ?? 'N/A'} | Industry: ${(stockInfo.industry as string) ?? 'N/A'}
+Current Price: $${(stockData.currentPrice as number)?.toFixed(2) ?? 'N/A'}
+52-Week Range: $${(stockInfo.week52Low as number) ?? 'N/A'} – $${(stockInfo.week52High as number) ?? 'N/A'}
+Market Cap: ${stockInfo.marketCap ? `$${((stockInfo.marketCap as number) / 1e9).toFixed(1)}B` : 'N/A'}
+P/E Ratio: ${stockInfo.pe ?? 'N/A'} | Forward P/E: ${stockInfo.forwardPE ?? 'N/A'} | PEG: ${stockInfo.pegRatio ?? 'N/A'}
+Revenue Growth (YoY): ${fmt(stockInfo.revenueGrowth)}
+Earnings Growth (YoY): ${fmt(stockInfo.earningsGrowth)}
+Profit Margin: ${fmt(stockInfo.profitMargin)}
+ROE: ${fmt(stockInfo.roe)}
+Debt/Equity: ${stockInfo.debtToEquity ?? 'N/A'}
+Beta: ${stockInfo.beta ?? 'N/A'}
+Dividend Yield: ${stockInfo.dividendYield != null ? fmt(stockInfo.dividendYield) : 'None'}
+` : ''
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -118,30 +206,29 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
     messages: [
       {
         role: 'user',
-        content: `You are a senior financial analyst and editor at stockmarketroi.com, a US-focused investing and markets publication. Your readers are serious investors — they want your opinion, not just facts they can find anywhere.
+        content: `You are a senior financial analyst at stockmarketroi.com, a US-focused investing publication. Write a complete, SEO-optimized blog post in English.
 
-Write a complete, SEO-optimized blog post in English with the title: "${title}"
-
-Requirements:
+Title: "${title}"
+${realDataBlock}
+CRITICAL RULES:
+- If real market data is provided above, use ONLY those exact numbers. Never invent prices, P/E ratios, revenue figures, or percentages that aren't in the data block.
+- If a metric shows "N/A", acknowledge it's not available rather than inventing a number.
+- Take a clear, opinionated position — don't hedge everything.
 - Length: 1,000–1,200 words
-- Use H2 and H3 headers (Markdown format)
-- **Take a clear position.** Don't hedge everything. If dividend investing is good for retirees, say so. If a strategy has a serious flaw, name it. Your readers trust your judgment.
-- Open with a hook that frames *why this matters now* — a recent data point, a common mistake investors make, or a counterintuitive insight.
-- Include specific numbers: P/E ratios, yields, historical returns, dates, company names. Vague generalities destroy credibility.
-- Compare and contrast: give readers a framework to decide for themselves (e.g., "growth investors should prefer X, income investors should prefer Y")
-- Write for a US audience — USD, US tax context (401k, Roth IRA where relevant), US brokers/exchanges
-- Natural, authoritative tone — avoid AI clichés ("In today's fast-paced digital world", "In conclusion", "navigating the landscape")
-- End with a "Bottom Line" H2 section: a direct 2-3 sentence verdict on what the reader should take away and do next
-- DO NOT include the title as an H1 — start directly with an intro paragraph
+- Use H2 and H3 headers (Markdown)
+- Open with a hook: a specific data point, counterintuitive insight, or current event angle
+- Include a "Bottom Line" H2 at the end: a direct 2-3 sentence verdict
+- When mentioning ${chosenSymbol || 'stocks'}, link to the page: [${chosenName || 'stock name'}](https://stockmarketroi.com/stocks/${chosenSymbol || 'SYMBOL'}). Only link each stock once.
+- Write for US investors (USD, 401k/Roth IRA context where relevant)
+- Avoid AI clichés ("In today's fast-paced world", "navigating the landscape", "In conclusion")
+- DO NOT include the title as H1 — start directly with the intro paragraph
 - Format: plain Markdown only
-- When mentioning specific US stocks (e.g. Apple, NVIDIA, Microsoft), link to their page: [Apple (AAPL)](https://stockmarketroi.com/stocks/AAPL). Only link each stock once.
-- When mentioning Bitcoin or other major crypto, link to their page: [Bitcoin](https://stockmarketroi.com/crypto/bitcoin). Only link each crypto once.
 
-Also provide at the very end, separated by "---META---":
-- excerpt: one sentence (max 160 chars) summarizing the post
-- seo_title: SEO-optimized title (max 60 chars)
+At the very end, separated by "---META---":
+- excerpt: one sentence (max 160 chars)
+- seo_title: SEO title (max 60 chars)
 - seo_description: meta description (max 155 chars)
-- image_query: 2-3 word Pexels search term for a relevant photo`,
+- image_query: 2-3 word Pexels search term`,
       },
     ],
   })
@@ -176,20 +263,21 @@ Also provide at the very end, separated by "---META---":
   const { data, error } = await supabase.from('blog_posts').insert({
     slug: postSlug,
     title,
-    excerpt: meta.excerpt ?? content.slice(0, 155),
+    excerpt:         meta.excerpt ?? content.slice(0, 155),
     content,
-    category: topic.category,
+    category,
     image_url,
     image_alt,
-    status: 'published',
-    published_at: new Date().toISOString(),
-    seo_title: meta.seo_title ?? title,
+    status:          'published',
+    published_at:    new Date().toISOString(),
+    seo_title:       meta.seo_title ?? title,
     seo_description: meta.seo_description ?? meta.excerpt ?? '',
+    tickers,
   }).select('id, slug').single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ success: true, slug: data.slug, title })
+  return NextResponse.json({ success: true, slug: data.slug, title, tickers })
 }
 
 async function safe(req: NextRequest, requireAuth: boolean) {
