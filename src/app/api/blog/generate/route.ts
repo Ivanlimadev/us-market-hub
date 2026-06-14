@@ -111,18 +111,20 @@ Also provide at the very end, separated by "---META---":
     if (m) meta[m[1]] = m[2].trim()
   }
 
-  // Fetch image from Unsplash
+  // Fetch image from Pexels
   let image_url: string | null = null
   let image_alt: string | null = null
-  const unsplashKey = process.env.UNSPLASH_ACCESS_KEY
-  if (unsplashKey && meta.image_query) {
+  const pexelsKey = process.env.PEXELS_API_KEY
+  if (pexelsKey && meta.image_query) {
     const imgRes = await fetch(
-      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(meta.image_query)}&orientation=landscape&client_id=${unsplashKey}`,
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(meta.image_query)}&orientation=landscape&per_page=5`,
+      { headers: { Authorization: pexelsKey } },
     )
     if (imgRes.ok) {
-      const img = await imgRes.json()
-      image_url = img.urls?.regular ?? null
-      image_alt = img.alt_description ?? meta.image_query
+      const data = await imgRes.json()
+      const photo = data.photos?.[0]
+      image_url = photo?.src?.large ?? null
+      image_alt = photo?.alt ?? meta.image_query
     }
   }
 
