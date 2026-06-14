@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@/lib/supabase/server'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 function formatCondition(alert: {
   condition: string
@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
     </div>
   `
 
+  if (!resend) return NextResponse.json({ error: 'Email not configured' }, { status: 503 })
   const { error } = await resend.emails.send({
     from:    'Stock Market ROI <alerts@stockmarketroi.com>',
     to:      user.email,
