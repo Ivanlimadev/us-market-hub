@@ -63,12 +63,13 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md overflow-hidden" translate="no">
         <div className="mx-auto flex h-14 max-w-screen-xl items-center gap-4 px-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0" translate="no">
-            <TrendingUp className="h-5 w-5 text-emerald-400" />
-            <span className="truncate max-w-[160px] sm:max-w-none">Stock Market ROI</span>
+          <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0">
+            <TrendingUp className="h-5 w-5 text-emerald-400 shrink-0" />
+            <span className="hidden sm:block">Stock Market ROI</span>
+            <span className="sm:hidden text-sm">SMR</span>
           </Link>
 
           {/* Desktop nav */}
