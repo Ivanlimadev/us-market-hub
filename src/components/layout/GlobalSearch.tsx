@@ -84,8 +84,9 @@ export function GlobalSearch() {
   const [apiResults, setApiResults] = useState<Result[]>([])
   const [fetching, setFetching]     = useState(false)
   const [highlighted, setHighlighted] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const router   = useRouter()
+  const inputRef  = useRef<HTMLInputElement>(null)
+  const scrollRef = useRef(0)
+  const router    = useRouter()
   const debouncedQ = useDebounce(query, 260)
 
   useEffect(() => { setMounted(true) }, [])
@@ -111,13 +112,30 @@ export function GlobalSearch() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Focus input when modal opens
+  // Focus input + scroll lock when modal opens
+  // Uses position:fixed (not overflow:hidden) — the only technique that works on iOS Safari
   useEffect(() => {
     if (open) {
+      scrollRef.current = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollRef.current}px`
+      document.body.style.width = '100%'
+      document.body.style.overflowY = 'scroll'
       setTimeout(() => inputRef.current?.focus(), 50)
     } else {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflowY = ''
+      window.scrollTo(0, scrollRef.current)
       setQuery('')
       setApiResults([])
+    }
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflowY = ''
     }
   }, [open])
 
