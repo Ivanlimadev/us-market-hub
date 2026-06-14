@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const CSP = [
   "default-src 'self'",
-  // Scripts: self + inline (Next.js hydration) + Cloudflare Turnstile
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
+  // Scripts: self + inline (Next.js hydration) + Cloudflare Turnstile + Google Analytics
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
@@ -12,8 +12,8 @@ const CSP = [
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget only
   "frame-src https://challenges.cloudflare.com",
-  // Connections: self + all external APIs used
-  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com wss://stream.binance.com",
+  // Connections: self + all external APIs used + Google Analytics
+  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com wss://stream.binance.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
