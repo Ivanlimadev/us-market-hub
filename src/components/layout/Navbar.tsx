@@ -194,7 +194,7 @@ export function Navbar() {
       {menuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-          <nav className="absolute left-0 right-0 top-14 border-b border-zinc-800 bg-zinc-950 px-4 py-3 shadow-xl">
+          <nav className="absolute left-0 right-0 top-14 border-b border-zinc-800 bg-zinc-950 px-4 py-3 shadow-xl overflow-y-auto max-h-[calc(100vh-3.5rem)]">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
