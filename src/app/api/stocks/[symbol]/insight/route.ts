@@ -20,9 +20,10 @@ function serviceClient() {
 }
 
 function parseInsight(raw: string): InsightData | null {
-  if (!raw.startsWith('{')) return null
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+  if (!cleaned.startsWith('{')) return null
   try {
-    const parsed = JSON.parse(raw) as InsightData
+    const parsed = JSON.parse(cleaned) as InsightData
     if (parsed.verdict && parsed.summary) return parsed
   } catch {}
   return null
@@ -97,7 +98,8 @@ Return this exact JSON structure:
     messages: [{ role: 'user', content: prompt }],
   })
 
-  const insight = (message.content[0] as { type: string; text: string }).text.trim()
+  const raw = (message.content[0] as { type: string; text: string }).text.trim()
+  const insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   const structured = parseInsight(insight)
 
   await supabase.from('ai_insights').upsert(
