@@ -68,8 +68,10 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-white shrink-0">
             <TrendingUp className="h-5 w-5 text-emerald-400 shrink-0" />
-            <span className="hidden sm:block">Stock Market ROI</span>
-            <span className="sm:hidden text-sm">SMR</span>
+            <span className="flex flex-col leading-none">
+              <span className="text-sm font-bold text-white">Stock Market</span>
+              <span className="text-[10px] font-semibold text-amber-400 tracking-widest uppercase">ROI</span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
