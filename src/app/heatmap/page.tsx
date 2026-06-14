@@ -11,7 +11,7 @@ export default function HeatmapPage() {
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-white">Market Heatmap</h1>
-        <p className="text-sm text-zinc-400">Top 20 ações em tempo real · Atualiza a cada 60s</p>
+        <p className="text-sm text-zinc-400">Top 25 ações por market cap · Atualiza a cada 60s</p>
       </div>
       <HeatmapView />
     </div>
