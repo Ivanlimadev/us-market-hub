@@ -36,17 +36,14 @@ function slug(title: string): string {
     .replace(/^-|-$/g, '')
 }
 
-async function run(req: NextRequest): Promise<NextResponse> {
-  const cronSecret = process.env.CRON_SECRET
-  if (cronSecret) {
+async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse> {
+  if (requireAuth) {
+    const cronSecret = process.env.CRON_SECRET
     const auth = req.headers.get('authorization') ?? ''
     const header = req.headers.get('x-cron-secret') ?? ''
     const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : auth
-    if (header !== cronSecret && bearer !== cronSecret) {
-      return NextResponse.json(
-        { error: 'Unauthorized', hint: !!header, bearer: !!bearer },
-        { status: 401 },
-      )
+    if (!cronSecret || (header !== cronSecret && bearer !== cronSecret)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }
 
@@ -151,5 +148,5 @@ Also provide at the very end, separated by "---META---":
   return NextResponse.json({ success: true, slug: data.slug, title })
 }
 
-export const GET  = (req: NextRequest) => run(req)
-export const POST = (req: NextRequest) => run(req)
+export const GET  = (req: NextRequest) => run(req, false) // Vercel cron — no auth needed
+export const POST = (req: NextRequest) => run(req, true)  // manual trigger — requires CRON_SECRET
