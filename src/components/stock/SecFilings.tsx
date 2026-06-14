@@ -1,6 +1,7 @@
 'use client'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ExternalLink, FileText } from 'lucide-react'
+import { ExternalLink, FileText, ChevronDown, ChevronUp } from 'lucide-react'
 import type { SecFiling } from '@/app/api/stocks/filings/route'
 
 const FORM_META: Record<string, { badge: string; border: string; label: string }> = {
@@ -48,6 +49,8 @@ function FilingCard({ f }: { f: SecFiling }) {
 }
 
 export function SecFilings({ symbol }: { symbol: string }) {
+  const [expanded, setExpanded] = useState(false)
+
   const { data, isLoading } = useQuery<SecFiling[]>({
     queryKey: ['sec-filings', symbol],
     queryFn:  () => fetch(`/api/stocks/filings?symbol=${symbol}`).then(r => r.json()),
@@ -55,7 +58,9 @@ export function SecFilings({ symbol }: { symbol: string }) {
     retry: 1,
   })
 
-  const filtered = (data ?? []).slice(0, 8)
+  const all = data ?? []
+  const filtered = expanded ? all : all.slice(0, 8)
+  const hasMore = all.length > 8
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
@@ -91,9 +96,22 @@ export function SecFilings({ symbol }: { symbol: string }) {
           {filtered.length === 0 ? (
             <p className="py-6 text-center text-xs text-zinc-500">No filings found.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
+              </div>
+              {hasMore && (
+                <button
+                  onClick={() => setExpanded(v => !v)}
+                  className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-800 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+                >
+                  {expanded
+                    ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</>
+                    : <><ChevronDown className="h-3.5 w-3.5" /> Show all {all.length} filings</>
+                  }
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
