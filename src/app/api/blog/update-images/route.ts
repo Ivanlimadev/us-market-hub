@@ -34,12 +34,7 @@ function queryFromTitle(title: string): string {
   return 'stock market investing'
 }
 
-export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-cron-secret')
-  if (secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
+export async function GET(_req: NextRequest) {
   const pexelsKey = process.env.PEXELS_API_KEY
   if (!pexelsKey) {
     return NextResponse.json({ error: 'PEXELS_API_KEY not set' }, { status: 503 })
