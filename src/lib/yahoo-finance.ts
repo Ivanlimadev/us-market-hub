@@ -416,6 +416,39 @@ export async function getYFChart(
   return bars
 }
 
+// ── Dividend history ────────────────────────────────────────────────────────
+
+export interface YFDividend {
+  date: string      // 'YYYY-MM-DD'
+  dividend: number
+  symbol: string
+}
+
+export async function getYFDividends(symbol: string): Promise<YFDividend[]> {
+  const url =
+    `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}` +
+    `?interval=1mo&range=15y&events=dividends`
+
+  const data = await yfGet(url)
+
+  const result = (
+    (data as { chart?: { result?: unknown[] } }).chart?.result?.[0]
+  ) as Record<string, unknown> | undefined
+
+  if (!result) return []
+
+  const events = (result.events as Record<string, unknown> | undefined)
+  const divMap = (events?.dividends ?? {}) as Record<string, { amount: number; date: number }>
+
+  return Object.values(divMap)
+    .map((d) => ({
+      date: new Date(d.date * 1000).toISOString().split('T')[0],
+      dividend: d.amount,
+      symbol,
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date)) // newest first
+}
+
 // ── Intraday bars (5m/15m interval, today only) ────────────────────────────
 
 export interface YFIntradayBar {

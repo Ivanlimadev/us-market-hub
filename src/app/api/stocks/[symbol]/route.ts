@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getLatestIntraday } from '@/lib/marketstack'
-import { getYFSummary } from '@/lib/yahoo-finance'
+import { getYFSummary, getYFDividends } from '@/lib/yahoo-finance'
 
 const MS_KEY = process.env.MARKETSTACK_API_KEY!
 const BASE = 'https://api.marketstack.com/v1'
@@ -29,8 +29,8 @@ export async function GET(
       msGet(`/tickers/${sym}/intraday/latest`),
       // EOD with ticker metadata + last 30 trading days
       msGet(`/tickers/${sym}/eod`, { limit: 365 }),
-      // Full dividend history
-      msGet(`/tickers/${sym}/dividends`, { limit: 1000 }),
+      // Full dividend history from Yahoo Finance (free, Marketstack free tier lacks this)
+      getYFDividends(sym),
       // Split history
       msGet(`/tickers/${sym}/splits`, { limit: 20 }),
       // Yahoo Finance fundamentals + company info
@@ -79,7 +79,7 @@ export async function GET(
         recentEod: eodData?.eod ?? [],
         dividends:
           dividends.status === 'fulfilled'
-            ? (dividends.value as { data?: unknown[] })?.data ?? []
+            ? dividends.value
             : [],
         splits:
           splits.status === 'fulfilled'
