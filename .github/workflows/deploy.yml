@@ -6,19 +6,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: root
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            set -e
-            cd /var/www/us-market-hub
-            git pull origin main
-            npm ci --legacy-peer-deps
-            npm run build
-            pm2 restart us-market-hub
-            echo "Deploy OK: $(date)" && pm2 list
+      - name: Deploy
+        run: |
+          set -e
+          cd /var/www/us-market-hub
+          git pull origin main
+          npm ci --legacy-peer-deps
+          npm run build
+          pm2 restart us-market-hub
+          echo "Deploy OK: $(date)" && pm2 list
