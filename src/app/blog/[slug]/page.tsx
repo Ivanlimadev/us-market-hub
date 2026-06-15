@@ -145,15 +145,13 @@ export default async function BlogPostPage({
       <div className="mt-10 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
         <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Written by</p>
         <div className="flex items-start gap-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-emerald-500/30">
-            <Image
-              src="/ivan-lima.jpg"
-              alt="Ivan Lima"
-              fill
-              className="object-cover"
-              sizes="64px"
-            />
-          </div>
+          <img
+            src="/ivan-lima.jpg"
+            alt="Ivan Lima"
+            width={64}
+            height={64}
+            className="h-16 w-16 shrink-0 rounded-full object-cover border-2 border-emerald-500/30"
+          />
           <div className="space-y-1.5">
             <p className="font-semibold text-zinc-100">Ivan Lima</p>
             <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
