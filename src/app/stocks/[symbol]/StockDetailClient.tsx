@@ -18,6 +18,8 @@ import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
+import { AuthRequiredModal } from '@/components/auth/AuthRequiredModal'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
@@ -36,7 +38,9 @@ function fmtLarge(n: number | null): string {
 
 export function StockDetailClient({ symbol }: { symbol: string }) {
   const { data, isLoading, error } = useStockDetail(symbol)
+  const { user } = useAuth()
   const [showAddTx, setShowAddTx] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   // Track visit for "Mais Visitadas" on home page
   useEffect(() => { if (data?.name) recordView(symbol, data.name) }, [symbol, data?.name])
@@ -130,7 +134,7 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
               currentPrice={data.currentPrice}
             />
             <button
-              onClick={() => setShowAddTx(true)}
+              onClick={() => user ? setShowAddTx(true) : setShowAuthModal(true)}
               className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
             >
               <Plus className="h-3.5 w-3.5" /> Add to Portfolio
@@ -211,6 +215,7 @@ export function StockDetailClient({ symbol }: { symbol: string }) {
       </WidgetBoundary>
 
       {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
+      {showAuthModal && <AuthRequiredModal feature="portfolio" onClose={() => setShowAuthModal(false)} />}
     </div>
   )
 }

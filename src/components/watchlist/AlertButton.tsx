@@ -2,7 +2,9 @@
 import { useState } from 'react'
 import { Bell } from 'lucide-react'
 import { useWatchlistStore } from '@/lib/store/watchlist-store'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { AlertModal } from './AlertModal'
+import { AuthRequiredModal } from '@/components/auth/AuthRequiredModal'
 
 interface Props {
   symbol: string
@@ -25,17 +27,26 @@ export function AlertButton({
   size = 'md',
   className = '',
 }: Props) {
+  const { user } = useAuth()
   const [open, setOpen] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const getAlertsForSymbol = useWatchlistStore((s) => s.getAlertsForSymbol)
   const activeCount = getAlertsForSymbol(symbol, asset_type).filter((a) => !a.triggered).length
 
   const iconSize = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4'
-  const btnSize  = size === 'sm' ? 'p-1'         : 'p-1.5'
+  const btnSize  = size === 'sm' ? 'p-1'          : 'p-1.5'
+
+  function handleClick(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!user) { setShowAuthModal(true); return }
+    setOpen(true)
+  }
 
   return (
     <>
       <button
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(true) }}
+        onClick={handleClick}
         title="Price alerts"
         className={`relative rounded-lg transition-colors ${btnSize} ${
           activeCount > 0
@@ -61,6 +72,10 @@ export function AlertButton({
           currentPrice={currentPrice}
           onClose={() => setOpen(false)}
         />
+      )}
+
+      {showAuthModal && (
+        <AuthRequiredModal feature="alert" onClose={() => setShowAuthModal(false)} />
       )}
     </>
   )
