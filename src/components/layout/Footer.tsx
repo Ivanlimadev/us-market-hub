@@ -17,10 +17,10 @@ export function Footer() {
           <div className="space-y-3">
             <Link href="/" className="inline-flex items-center gap-2 font-bold text-white">
               <TrendingUp className="h-5 w-5 text-emerald-400" />
-              <span>Stock Market ROI</span>
+              <span translate="no">Stock Market ROI</span>
             </Link>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
-              Real-time US stock market data — quotes, charts, earnings, dividends,
+              US stock market data — quotes, charts, earnings, dividends,
               portfolio tracker and market screener.
             </p>
             <p className="text-xs text-zinc-600">

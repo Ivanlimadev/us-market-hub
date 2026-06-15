@@ -145,7 +145,7 @@ export default async function BlogPostPage({
       </div>
 
       <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
-        <p className="mb-3 text-zinc-300">Track real-time stocks, crypto, and market data</p>
+        <p className="mb-3 text-zinc-300">Track US stocks, crypto, and market data</p>
         <Link
           href="/"
           className="inline-block rounded-lg bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors"

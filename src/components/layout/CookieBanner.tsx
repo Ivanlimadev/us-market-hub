@@ -21,7 +21,7 @@ export function CookieBanner() {
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800 bg-zinc-950/95 backdrop-blur-sm">
       <div className="mx-auto flex max-w-screen-xl items-center gap-3 px-4 py-2.5">
         <p className="flex-1 text-xs text-zinc-400 leading-snug">
-          Usamos cookies para salvar preferências.{' '}
+          We use cookies to save your preferences.{' '}
           <Link href="/privacy" className="text-zinc-300 hover:text-white underline-offset-2 hover:underline">
             Privacy Policy
           </Link>
@@ -32,7 +32,7 @@ export function CookieBanner() {
         >
           OK
         </button>
-        <button onClick={dismiss} aria-label="Fechar" className="shrink-0 text-zinc-600 hover:text-zinc-300 transition-colors">
+        <button onClick={dismiss} aria-label="Close" className="shrink-0 text-zinc-600 hover:text-zinc-300 transition-colors">
           <X className="h-3.5 w-3.5" />
         </button>
       </div>

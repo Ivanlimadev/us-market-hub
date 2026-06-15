@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { IndexCards } from '@/components/market/IndexCards'
 
 export const metadata: Metadata = {
-  title: 'Stock Market ROI — Real-Time US Stock Market Data & Analysis',
-  description: 'Free real-time US stock market data: live quotes, interactive charts, portfolio tracker, stock screener, earnings calendar, dividends, market heatmap and AI-powered analysis.',
+  title: 'Stock Market ROI — US Stock Market Data & Analysis',
+  description: 'Free US stock market data: quotes, interactive charts, portfolio tracker, stock screener, earnings calendar, dividends, market heatmap and AI-powered analysis.',
   alternates: { canonical: 'https://stockmarketroi.com' },
 }
 import { HomeHeatmap } from '@/components/market/HomeHeatmap'
@@ -19,7 +19,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-white">US Markets</h1>
-        <p className="text-sm text-zinc-400">Real-time data · Updates every 60s during market hours</p>
+        <p className="text-sm text-zinc-400">Updates every 60s during market hours</p>
       </div>
 
       <WidgetBoundary label="Portfolio">

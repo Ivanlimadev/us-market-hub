@@ -16,24 +16,24 @@ const SITE_URL = 'https://stockmarketroi.com'
 
 export const metadata: Metadata = {
   title: {
-    default:  'Stock Market ROI — Real-Time US Stock Market Data',
+    default:  'Stock Market ROI — US Stock Market Data & Analysis',
     template: '%s | Stock Market ROI',
   },
   description:
-    'Track US stocks, ETFs and indices in real time. Portfolio tracker, screener, dividends and market heatmap.',
+    'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   metadataBase: new URL(SITE_URL),
   openGraph: {
     siteName:    'Stock Market ROI',
     locale:      'en_US',
     type:        'website',
     url:         SITE_URL,
-    title:       'Stock Market ROI — Real-Time US Stock Market Data',
-    description: 'Track US stocks, ETFs and indices in real time. Portfolio tracker, screener, dividends and market heatmap.',
+    title:       'Stock Market ROI — US Stock Market Data & Analysis',
+    description: 'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Stock Market ROI — Real-Time US Stock Market Data',
-    description: 'Track US stocks, ETFs and indices in real time. Portfolio tracker, screener, dividends and market heatmap.',
+    title:       'Stock Market ROI — US Stock Market Data & Analysis',
+    description: 'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   },
 }
 
