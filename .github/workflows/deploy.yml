@@ -15,5 +15,6 @@ jobs:
           git pull origin main
           npm ci --legacy-peer-deps
           npm run build
-          pm2 restart us-market-hub
+          pm2 stop us-market-hub || true
+          pm2 start us-market-hub
           echo "Deploy OK: $(date)" && pm2 list
