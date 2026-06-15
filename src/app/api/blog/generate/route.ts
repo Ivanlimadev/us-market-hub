@@ -179,6 +179,42 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
 
   const postSlug = slug(title)
 
+  // Fetch recent news from Tavily
+  async function searchTavily(query: string): Promise<string> {
+    const key = process.env.TAVILY_API_KEY
+    if (!key) return ''
+    try {
+      const res = await fetch('https://api.tavily.com/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          api_key: key,
+          query,
+          search_depth: 'basic',
+          max_results: 5,
+          include_answer: false,
+        }),
+      })
+      if (!res.ok) return ''
+      const data = await res.json()
+      const results = (data.results ?? []) as Array<{ title: string; content: string; url: string; published_date?: string }>
+      if (!results.length) return ''
+      return results
+        .map((r, i) => `${i + 1}. ${r.title}\n   ${r.content.slice(0, 200).replace(/\n/g, ' ')}`)
+        .join('\n')
+    } catch { return '' }
+  }
+
+  const searchQuery = chosenSymbol
+    ? `${chosenName} ${chosenSymbol} stock news 2026`
+    : title
+
+  const newsResults = await searchTavily(searchQuery)
+  const newsBlock = newsResults ? `
+RECENT NEWS (use these to make the article timely and specific — cite facts from here):
+${newsResults}
+` : ''
+
   // Build real data context for the prompt
   const fmt = (n: unknown, mult = 1, suffix = '%') =>
     n != null && typeof n === 'number' ? `${(n * mult).toFixed(1)}${suffix}` : 'N/A'
@@ -211,10 +247,11 @@ Dividend Yield: ${stockInfo.dividendYield != null ? fmt(stockInfo.dividendYield)
         content: `You are a senior financial analyst at stockmarketroi.com, a US-focused investing publication. Write a complete, SEO-optimized blog post in English.
 
 Title: "${title}"
-${realDataBlock}
+${realDataBlock}${newsBlock}
 CRITICAL RULES:
 - If real market data is provided above, use ONLY those exact numbers. Never invent prices, P/E ratios, revenue figures, or percentages that aren't in the data block.
 - If a metric shows "N/A", acknowledge it's not available rather than inventing a number.
+- If recent news is provided above, reference specific facts from it to make the article timely. Mention the event naturally in context — do not list news items as bullet points.
 - Take a clear, opinionated position — don't hedge everything.
 - Length: 1,000–1,200 words
 - Use H2 and H3 headers (Markdown)
