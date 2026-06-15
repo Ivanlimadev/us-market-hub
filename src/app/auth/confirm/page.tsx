@@ -15,15 +15,16 @@ export default function ConfirmPage() {
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         setStatus('success')
-        setTimeout(() => router.push('/'), 2500)
+        setTimeout(() => router.push('/?welcome=1'), 2500)
       } else if (event === 'TOKEN_REFRESHED') {
         setStatus('success')
       }
     })
-    // If already signed in via the magic link
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setStatus('success')
-      else setTimeout(() => setStatus('error'), 3000)
+      if (data.user) {
+        setStatus('success')
+        setTimeout(() => router.push('/?welcome=1'), 2500)
+      } else setTimeout(() => setStatus('error'), 3000)
     })
   }, [router])
 
@@ -38,9 +39,13 @@ export default function ConfirmPage() {
         )}
         {status === 'success' && (
           <>
-            <CheckCircle className="mx-auto h-12 w-12 text-emerald-400" />
-            <h2 className="text-xl font-bold text-white">Email confirmed!</h2>
-            <p className="text-sm text-zinc-400">Redirecting you to the home page…</p>
+            <div className="flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+                <CheckCircle className="h-9 w-9 text-emerald-400" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-white">Email confirmed!</h2>
+            <p className="text-sm text-zinc-400">Your account is active. Taking you to the home page…</p>
           </>
         )}
         {status === 'error' && (
