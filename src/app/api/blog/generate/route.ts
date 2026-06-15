@@ -227,8 +227,8 @@ Current Price: $${(stockData.currentPrice as number)?.toFixed(2) ?? 'N/A'}
 52-Week Range: $${(stockInfo.week52Low as number) ?? 'N/A'} – $${(stockInfo.week52High as number) ?? 'N/A'}
 Market Cap: ${stockInfo.marketCap ? `$${((stockInfo.marketCap as number) / 1e9).toFixed(1)}B` : 'N/A'}
 P/E Ratio: ${stockInfo.pe ?? 'N/A'} | Forward P/E: ${stockInfo.forwardPE ?? 'N/A'} | PEG: ${stockInfo.pegRatio ?? 'N/A'}
-Revenue Growth (YoY): ${fmt(stockInfo.revenueGrowth)}
-Earnings Growth (YoY): ${fmt(stockInfo.earningsGrowth)}
+Revenue Growth (annual): ${fmt(stockInfo.revenueGrowth)}
+Earnings Growth (annual): ${fmt(stockInfo.earningsGrowth)}
 Profit Margin: ${fmt(stockInfo.profitMargin)}
 ROE: ${fmt(stockInfo.roe)}
 Debt/Equity: ${stockInfo.debtToEquity ?? 'N/A'}
@@ -250,24 +250,43 @@ Price Target: Mean $${(stockInfo.targetMeanPrice as number)?.toFixed(2) ?? 'N/A'
 
 Title: "${title}"
 ${realDataBlock}${newsBlock}
-CRITICAL RULES:
-- If real market data is provided above, use ONLY those exact numbers. Never invent prices, P/E ratios, revenue figures, or percentages that aren't in the data block.
-- If a metric shows "N/A", acknowledge it's not available rather than inventing a number.
-- If recent news is provided above, reference specific facts from it to make the article timely. Mention the event naturally in context — do not list news items as bullet points.
-- Take a clear, opinionated position — don't hedge everything.
+━━━ LAYER 1 — DATA INTEGRITY ━━━
+- Use ONLY the exact numbers from the real market data block. Never invent prices, ratios, or percentages.
+- If a metric shows "N/A", say it's not available — never fabricate a number.
+- When citing numbers from the data block, attribute naturally: "according to Yahoo Finance data", "per SEC filings", "analysts tracked by Yahoo Finance". Only attribute when data came from the block above.
+- Reference specific facts from recent news to make the article timely. Weave them into narrative — never list news as bullets.
+
+━━━ LAYER 2 — SEO STRUCTURE ━━━
+- Identify the primary keyword from the title (the most searched form, e.g. "Apple stock forecast 2026" or "Is AAPL a buy right now").
+- Place the primary keyword naturally in: the opening paragraph, at least one H2, and the seo_title.
+- H2 subheadings must be keyword-rich, not just editorial labels. Instead of "The AI Problem", write "Apple AI Strategy 2026: Real Concern or Overreaction?".
+- Use 3–4 secondary keywords in H2/H3 titles (e.g. "${chosenSymbol} valuation", "${chosenSymbol} analyst target", "${chosenName} earnings ${year}").
+
+━━━ LAYER 3 — INTERNAL CTAs (mandatory, 2 total) ━━━
+- Mid-article (after the second H2), insert one contextual CTA as a Markdown link:
+  [Track ${chosenName || 'this stock'} live on Stock Market ROI →](https://stockmarketroi.com/stocks/${chosenSymbol || 'SYMBOL'})
+- Near the end (just before the Bottom Line H2), insert one tool CTA:
+  [Compare top stocks with our free screener →](https://stockmarketroi.com/screener)
+- These are REQUIRED and are in addition to any other stock links in the body.
+
+━━━ LAYER 4 — STRONG OPINION (no hedging) ━━━
+- Take a clear, opinionated position. Don't present both sides without a verdict.
+- The "## Bottom Line" section (mandatory, at the end) must include ALL THREE:
+  1. A clear verdict: **BUY**, **HOLD**, or **AVOID**
+  2. One specific 12-month prediction with a price level or % range and reasoning
+  3. One risk scenario that would invalidate the thesis ("If X happens, the thesis breaks")
+
+━━━ FORMATTING ━━━
 - Length: 1,000–1,200 words
-- Use H2 and H3 headers (Markdown)
 - Open with a hook: a specific data point, counterintuitive insight, or current event angle
-- Include a "Bottom Line" H2 at the end: a direct 2-3 sentence verdict
-- When mentioning ${chosenSymbol || 'stocks'}, link to the page: [${chosenName || 'stock name'}](https://stockmarketroi.com/stocks/${chosenSymbol || 'SYMBOL'}). Only link each stock once.
-- Write for US investors (USD, 401k/Roth IRA context where relevant)
-- Avoid AI clichés ("In today's fast-paced world", "navigating the landscape", "In conclusion")
+- Write for US investors (USD, ${year} context)
+- Avoid AI clichés: "In today's fast-paced world", "navigating the landscape", "In conclusion", "the picture is nuanced", "it's worth noting"
 - DO NOT include the title as H1 — start directly with the intro paragraph
 - Format: plain Markdown only
 
 At the very end, separated by "---META---":
 - excerpt: one sentence (max 160 chars)
-- seo_title: SEO title (max 60 chars)
+- seo_title: SEO title with primary keyword (max 60 chars)
 - seo_description: meta description (max 155 chars)
 - image_query: 2-3 word Pexels search term`,
       },
