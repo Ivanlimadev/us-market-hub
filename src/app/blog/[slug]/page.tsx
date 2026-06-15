@@ -87,7 +87,13 @@ export default async function BlogPostPage({
     image:             post.image_url ?? undefined,
     datePublished:     post.published_at,
     dateModified:      post.published_at,
-    author:            { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
+    author: {
+      '@type': 'Person',
+      name: 'Ivan Lima',
+      url: 'https://stockmarketroi.com/about',
+      image: 'https://stockmarketroi.com/ivan-lima.jpg',
+      description: 'Systems Analysis & Development student and active US stock market investor since 2018. Founder of Stock Market ROI.',
+    },
     publisher:         { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
     mainEntityOfPage:  { '@type': 'WebPage', '@id': `https://stockmarketroi.com/blog/${post.slug}` },
   }
@@ -136,17 +142,29 @@ export default async function BlogPostPage({
       />
 
       {/* E-E-A-T author section */}
-      <div className="mt-10 flex items-start gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/20">
-          <span className="text-sm font-bold text-emerald-400">SMR</span>
-        </div>
-        <div className="space-y-1">
-          <p className="text-sm font-semibold text-zinc-200">Editorial Team · Stock Market ROI</p>
-          <p className="text-xs leading-relaxed text-zinc-500">
-            Our editorial team consists of financial analysts and market researchers with expertise
-            in US equities, macroeconomics, and portfolio strategy. All articles are fact-checked
-            against public market data and reviewed for accuracy before publication.
-          </p>
+      <div className="mt-10 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Written by</p>
+        <div className="flex items-start gap-4">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-emerald-500/30">
+            <Image
+              src="/ivan-lima.jpg"
+              alt="Ivan Lima"
+              fill
+              className="object-cover"
+              sizes="64px"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <p className="font-semibold text-zinc-100">Ivan Lima</p>
+            <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
+            <p className="text-sm leading-relaxed text-zinc-400">
+              Systems Analysis &amp; Development student and active US stock market investor since 2018.
+              Ivan built Stock Market ROI to give retail investors direct access to the same data and
+              analytical tools he wished existed when he started. Every article on this site is written
+              from the perspective of someone with real skin in the game — tracking earnings, reading
+              SEC filings, and following market cycles for over eight years.
+            </p>
+          </div>
         </div>
       </div>
 
