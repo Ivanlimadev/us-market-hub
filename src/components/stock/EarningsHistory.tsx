@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react'
+import { TrendingUp, TrendingDown, ExternalLink, DollarSign, BarChart2, Wallet, Layers, Gift, FlaskConical, LineChart, type LucideIcon } from 'lucide-react'
 import type { EdgarData, EdgarQuarter, EdgarAnnual, EdgarBalanceSheet, EdgarCapitalReturns } from '@/app/api/stocks/edgar/route'
 
 function fmtB(n: number | null): string {
@@ -429,16 +429,17 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
     retry: 1,
   })
 
-  const TABS: { key: Metric; label: string }[] = [
-    { key: 'revenue',      label: 'Revenue' },
-    { key: 'netIncome',    label: 'Net Income' },
-    { key: 'eps',          label: 'EPS' },
-    { key: 'fcf',           label: 'Free Cash Flow' },
-    { key: 'balanceSheet',  label: 'Balance Sheet' },
-    { key: 'capitalReturns', label: 'Capital Returns' },
-    { key: 'rd',             label: 'R&D' },
+  const TABS: { key: Metric; label: string; short: string; icon: LucideIcon }[] = [
+    { key: 'revenue',        label: 'Revenue',        short: 'Revenue',  icon: DollarSign },
+    { key: 'netIncome',      label: 'Net Income',     short: 'Net Inc.', icon: LineChart },
+    { key: 'eps',            label: 'EPS',            short: 'EPS',      icon: BarChart2 },
+    { key: 'fcf',            label: 'Free Cash Flow', short: 'FCF',      icon: Wallet },
+    { key: 'balanceSheet',   label: 'Balance Sheet',  short: 'Balance',  icon: Layers },
+    { key: 'capitalReturns', label: 'Capital Returns',short: 'Returns',  icon: Gift },
+    { key: 'rd',             label: 'R&D Spending',   short: 'R&D',      icon: FlaskConical },
   ]
 
+  const activeTab = TABS.find(t => t.key === tab)!
   const isQuarterly = tab === 'revenue' || tab === 'netIncome' || tab === 'eps'
 
   return (
@@ -476,19 +477,38 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
 
       {!isLoading && !isError && data?.quarters.length ? (
         <div className="p-5 space-y-4">
-          {/* Metric tabs */}
-          <div className="flex flex-wrap gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1 w-fit">
-            {TABS.map(t => (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-                  tab === t.key ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
+          {/* View selector — scrollable pills on mobile */}
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-zinc-600 mb-2">Select view</p>
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+              {TABS.map(t => {
+                const Icon = t.icon
+                const active = tab === t.key
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setTab(t.key)}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                      active
+                        ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400'
+                        : 'border-zinc-700 bg-zinc-800/60 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200'
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">{t.label}</span>
+                    <span className="sm:hidden">{t.short}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Active view label */}
+          <div className="flex items-center gap-2">
+            {(() => { const Icon = activeTab.icon; return <Icon className="h-4 w-4 text-emerald-400" /> })()}
+            <p className="text-sm font-semibold text-zinc-200">{activeTab.label}</p>
+            {isQuarterly && <span className="text-[10px] text-zinc-600 ml-1">quarterly</span>}
+            {!isQuarterly && <span className="text-[10px] text-zinc-600 ml-1">annual</span>}
           </div>
 
           {/* R&D tab */}
