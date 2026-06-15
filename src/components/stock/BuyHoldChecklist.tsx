@@ -102,50 +102,50 @@ export function BuyHoldChecklist({ data }: { data: StockDetailData }) {
         value: divYears > 0 ? `${divYears} yrs` : undefined,
       },
       {
-        label: 'ROE > 10%',
+        label: 'ROE above 10%',
         detail: 'Return on equity — measures how efficiently capital is used',
         status: check(roe, 10),
         value: roe !== null ? `${roe.toFixed(1)}%` : undefined,
       },
       {
         label: 'Positive profit margin',
-        detail: 'Company must be consistently profitable',
+        detail: 'Net profit margin must be positive — company earns more than it spends',
         status: check(margin, 0),
         value: margin !== null ? `${margin.toFixed(1)}%` : undefined,
       },
       {
-        label: 'Revenue growth (YoY)',
-        detail: 'Year-over-year revenue must be increasing',
+        label: 'Revenue growth (annual)',
+        detail: 'Annual revenue must be growing compared to the prior year',
         status: check(revGrowth, 0),
         value: revGrowth !== null ? `${revGrowth >= 0 ? '+' : ''}${revGrowth.toFixed(1)}%` : undefined,
       },
       {
-        label: 'Earnings growth (YoY)',
-        detail: 'Year-over-year earnings must be increasing',
+        label: 'Earnings growth (annual)',
+        detail: 'Annual earnings must be growing compared to the prior year',
         status: check(epsGrowth, 0),
         value: epsGrowth !== null ? `${epsGrowth >= 0 ? '+' : ''}${epsGrowth.toFixed(1)}%` : undefined,
       },
       {
-        label: 'Debt/Equity < 2×',
-        detail: 'Low leverage reduces financial risk',
+        label: 'Debt/Equity below 2×',
+        detail: 'Low financial leverage reduces risk of distress',
         status: de === null ? 'na' : de <= 2 ? 'pass' : 'fail',
         value: de !== null ? `${de.toFixed(2)}×` : undefined,
       },
       {
-        label: 'Current ratio > 1',
+        label: 'Current ratio above 1',
         detail: 'Short-term assets must cover short-term liabilities',
         status: check(cr, 1),
         value: cr !== null ? `${cr.toFixed(2)}×` : undefined,
       },
       {
-        label: 'Daily liquidity > $5M',
+        label: 'Daily liquidity above $5M',
         detail: 'High trading volume ensures easy entry and exit',
         status: liquidityStatus,
         value: liquidityLabel,
       },
       {
-        label: 'Dividend yield > 0%',
-        detail: 'Asset must reward shareholders with income',
+        label: 'Dividend yield above 0%',
+        detail: 'Stock must distribute income to shareholders',
         status: check(dy, 0.01),
         value: dy !== null ? `${dy.toFixed(2)}%` : undefined,
       },
@@ -153,8 +153,9 @@ export function BuyHoldChecklist({ data }: { data: StockDetailData }) {
   }, [data])
 
   const passed = criteria.filter((c) => c.status === 'pass').length
-  const total  = criteria.filter((c) => c.status !== 'na').length
-  const score  = total > 0 ? Math.round((passed / total) * 100) : 0
+  const total  = criteria.length  // always 10
+  const applicable = criteria.filter((c) => c.status !== 'na').length
+  const score  = applicable > 0 ? Math.round((passed / applicable) * 100) : 0
 
   const scoreColor =
     score >= 70 ? 'text-emerald-400' :
@@ -182,8 +183,13 @@ export function BuyHoldChecklist({ data }: { data: StockDetailData }) {
         />
       </div>
 
-      <div className="px-5 py-1">
-        {criteria.map((c, i) => <CriterionRow key={i} c={c} />)}
+      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/60">
+        <div className="px-5 py-1">
+          {criteria.slice(0, 5).map((c, i) => <CriterionRow key={i} c={c} />)}
+        </div>
+        <div className="px-5 py-1">
+          {criteria.slice(5).map((c, i) => <CriterionRow key={i + 5} c={c} />)}
+        </div>
       </div>
     </div>
   )
