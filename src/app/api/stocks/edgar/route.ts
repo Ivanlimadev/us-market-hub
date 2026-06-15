@@ -82,12 +82,15 @@ function frameLabel(frame: string): string {
   return frame
 }
 
+type FactEntry = { frame?: string; val: number; end: string; filed: string; fp?: string; form?: string }
+type FactMap = Map<string, { val: number; end: string; filed: string }>
+
 function extractConcept(
-  facts: Record<string, { units: Record<string, Array<{ frame?: string; val: number; end: string; filed: string; fp?: string; form?: string }>> }>,
+  facts: Record<string, { units: Record<string, Array<FactEntry>> }>,
   pattern: RegExp,
   ...keys: string[]
-): Map<string, { val: number; end: string; filed: string }> {
-  const map = new Map<string, { val: number; end: string; filed: string }>()
+): FactMap {
+  const map: FactMap = new Map()
   for (const key of keys) {
     const concept = facts[key]
     if (!concept) continue
@@ -101,6 +104,31 @@ function extractConcept(
       }
     }
     if (map.size > 0) break
+  }
+  return map
+}
+
+// Like extractConcept but merges ALL keys instead of stopping at the first match.
+// Needed for concepts where companies change XBRL tag names over the years
+// (e.g. Apple switched from PaymentsOfDividendsCommonStock → PaymentsOfDividends after 2017).
+function extractConceptMerge(
+  facts: Record<string, { units: Record<string, Array<FactEntry>> }>,
+  pattern: RegExp,
+  ...keys: string[]
+): FactMap {
+  const map: FactMap = new Map()
+  for (const key of keys) {
+    const concept = facts[key]
+    if (!concept) continue
+    const entries = concept.units?.['USD'] ?? concept.units?.['USD/shares'] ?? concept.units?.['shares'] ?? []
+    for (const e of entries) {
+      if (!e.frame?.match(pattern)) continue
+      if (e.form && !['10-Q', '10-K'].includes(e.form)) continue
+      const existing = map.get(e.frame)
+      if (!existing || e.filed > existing.filed) {
+        map.set(e.frame, { val: e.val, end: e.end, filed: e.filed })
+      }
+    }
   }
   return map
 }
@@ -147,7 +175,7 @@ export async function GET(req: Request) {
 
   // Annual capital returns (cash flow statement)
   const buybackMap = extractConcept(gaap, YR, 'PaymentsForRepurchaseOfCommonStock')
-  const divPaidMap = extractConcept(gaap, YR,
+  const divPaidMap = extractConceptMerge(gaap, YR,
     'PaymentsOfDividendsCommonStock',
     'PaymentsOfDividends',
     'PaymentOfDividendsCommonStock',
