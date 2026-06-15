@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Instagram, Linkedin, Mail } from 'lucide-react'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 
@@ -152,7 +153,7 @@ export default async function BlogPostPage({
             height={64}
             className="h-16 w-16 shrink-0 rounded-full object-cover border-2 border-emerald-500/30"
           />
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <p className="font-semibold text-zinc-100">Ivan Lima</p>
             <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
             <p className="text-sm leading-relaxed text-zinc-400">
@@ -162,6 +163,36 @@ export default async function BlogPostPage({
               from the perspective of someone with real skin in the game — tracking earnings, reading
               SEC filings, and following market cycles for over eight years.
             </p>
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="https://www.instagram.com/ivan_lima_dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <Instagram className="h-3.5 w-3.5" />
+                @ivan_lima_dev
+              </a>
+              <a
+                href="https://www.linkedin.com/in/ivanlimadev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="flex items-center gap-1.5 rounded-lg bg-[#0A66C2] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <Linkedin className="h-3.5 w-3.5" />
+                LinkedIn
+              </a>
+              <a
+                href="mailto:contato@ivanlimadev.com"
+                aria-label="Email"
+                className="flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                Email
+              </a>
+            </div>
           </div>
         </div>
       </div>
