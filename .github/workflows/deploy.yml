@@ -14,7 +14,8 @@ jobs:
           cd /var/www/us-market-hub
           git pull origin main
           npm ci --legacy-peer-deps
+          rm -rf .next
           npm run build
-          pm2 stop us-market-hub || true
-          pm2 start us-market-hub
+          pm2 delete us-market-hub || true
+          pm2 start ecosystem.config.js
           echo "Deploy OK: $(date)" && pm2 list
