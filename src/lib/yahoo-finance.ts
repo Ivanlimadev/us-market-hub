@@ -162,6 +162,12 @@ export interface YFSummary {
   debtToEquity: number | null
   currentRatio: number | null
   freeCashflow: number | null
+  // Analyst consensus
+  recommendationKey: string | null
+  targetMeanPrice: number | null
+  targetHighPrice: number | null
+  targetLowPrice: number | null
+  numberOfAnalystOpinions: number | null
 }
 
 export async function getYFSummary(symbol: string): Promise<YFSummary> {
@@ -233,6 +239,11 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     debtToEquity: raw(fin.debtToEquity),
     currentRatio: raw(fin.currentRatio),
     freeCashflow: raw(fin.freeCashflow),
+    recommendationKey: (fin.recommendationKey as string) ?? null,
+    targetMeanPrice: raw(fin.targetMeanPrice),
+    targetHighPrice: raw(fin.targetHighPrice),
+    targetLowPrice: raw(fin.targetLowPrice),
+    numberOfAnalystOpinions: raw(fin.numberOfAnalystOpinions),
   }
 }
 
@@ -248,6 +259,7 @@ function emptyYFSummary(): YFSummary {
     profitMargin: null, operatingMargin: null, roe: null, roa: null,
     revenueGrowth: null, earningsGrowth: null, totalRevenue: null,
     totalDebt: null, debtToEquity: null, currentRatio: null, freeCashflow: null,
+    recommendationKey: null, targetMeanPrice: null, targetHighPrice: null, targetLowPrice: null, numberOfAnalystOpinions: null,
   }
 }
 

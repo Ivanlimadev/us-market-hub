@@ -234,6 +234,8 @@ ROE: ${fmt(stockInfo.roe)}
 Debt/Equity: ${stockInfo.debtToEquity ?? 'N/A'}
 Beta: ${stockInfo.beta ?? 'N/A'}
 Dividend Yield: ${stockInfo.dividendYield != null ? fmt(stockInfo.dividendYield) : 'None'}
+Analyst Consensus: ${stockInfo.recommendationKey ? (stockInfo.recommendationKey as string).toUpperCase() : 'N/A'} (${stockInfo.numberOfAnalystOpinions ?? 'N/A'} analysts)
+Price Target: Mean $${(stockInfo.targetMeanPrice as number)?.toFixed(2) ?? 'N/A'} · Low $${(stockInfo.targetLowPrice as number)?.toFixed(2) ?? 'N/A'} · High $${(stockInfo.targetHighPrice as number)?.toFixed(2) ?? 'N/A'}
 ` : ''
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
