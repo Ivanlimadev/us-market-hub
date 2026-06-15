@@ -420,7 +420,7 @@ function MiniBar({ quarters, metric }: { quarters: EdgarQuarter[]; metric: Quart
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export function EarningsHistory({ symbol }: { symbol: string }) {
-  const [tab, setTab] = useState<Metric>('revenue')
+  const [tab, setTab] = useState<Metric>('capitalReturns')
 
   const { data, isLoading, isError } = useQuery<EdgarData>({
     queryKey: ['edgar', symbol],
@@ -430,13 +430,13 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
   })
 
   const TABS: { key: Metric; label: string; short: string; icon: LucideIcon }[] = [
-    { key: 'revenue',        label: 'Revenue',        short: 'Revenue',  icon: DollarSign },
-    { key: 'netIncome',      label: 'Net Income',     short: 'Net Inc.', icon: LineChart },
-    { key: 'eps',            label: 'EPS',            short: 'EPS',      icon: BarChart2 },
-    { key: 'fcf',            label: 'Free Cash Flow', short: 'FCF',      icon: Wallet },
-    { key: 'balanceSheet',   label: 'Balance Sheet',  short: 'Balance',  icon: Layers },
-    { key: 'capitalReturns', label: 'Capital Returns',short: 'Returns',  icon: Gift },
-    { key: 'rd',             label: 'R&D Spending',   short: 'R&D',      icon: FlaskConical },
+    { key: 'capitalReturns', label: 'Capital Returns', short: 'Returns',  icon: Gift },
+    { key: 'revenue',        label: 'Revenue',         short: 'Revenue',  icon: DollarSign },
+    { key: 'netIncome',      label: 'Net Income',      short: 'Net Inc.', icon: LineChart },
+    { key: 'eps',            label: 'EPS',             short: 'EPS',      icon: BarChart2 },
+    { key: 'fcf',            label: 'Free Cash Flow',  short: 'FCF',      icon: Wallet },
+    { key: 'balanceSheet',   label: 'Balance Sheet',   short: 'Balance',  icon: Layers },
+    { key: 'rd',             label: 'R&D Spending',    short: 'R&D',      icon: FlaskConical },
   ]
 
   const activeTab = TABS.find(t => t.key === tab)!
