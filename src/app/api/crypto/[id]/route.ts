@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cgCoin } from '@/lib/coingecko'
+import { parseCryptoId, badRequest } from '@/lib/validate'
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params
+  const { id: raw } = await params
+  const { value: id, error } = parseCryptoId(raw)
+  if (error) return badRequest(error)
   try {
     const data = await cgCoin(id)
     return NextResponse.json(data, {

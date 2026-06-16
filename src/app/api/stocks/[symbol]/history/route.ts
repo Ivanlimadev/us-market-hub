@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getYFChart } from '@/lib/yahoo-finance'
+import { parseSymbol, badRequest } from '@/lib/validate'
 
 // Map our period labels → Yahoo Finance range + interval
 const PERIOD_MAP: Record<string, { range: string; interval: string }> = {
@@ -21,8 +22,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
-  const { symbol } = await params
-  const sym = symbol.toUpperCase()
+  const { symbol: raw } = await params
+  const { value: sym, error } = parseSymbol(raw)
+  if (error) return badRequest(error)
   const period = req.nextUrl.searchParams.get('period') ?? '1y'
   const { range, interval } = PERIOD_MAP[period] ?? PERIOD_MAP['1y']
 
