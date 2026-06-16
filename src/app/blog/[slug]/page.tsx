@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Instagram, Linkedin, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 
@@ -171,7 +171,11 @@ export default async function BlogPostPage({
                 aria-label="Instagram"
                 className="flex items-center gap-1.5 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               >
-                <Instagram className="h-3.5 w-3.5" />
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                </svg>
                 @ivan_lima_dev
               </a>
               <a
@@ -181,7 +185,11 @@ export default async function BlogPostPage({
                 aria-label="LinkedIn"
                 className="flex items-center gap-1.5 rounded-lg bg-[#0A66C2] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               >
-                <Linkedin className="h-3.5 w-3.5" />
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/>
+                  <rect x="2" y="9" width="4" height="12"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
                 LinkedIn
               </a>
               <a
