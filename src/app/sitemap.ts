@@ -31,13 +31,62 @@ const STATIC_ROUTES = [
 ] as const
 
 const TOP_CRYPTO = [
+  // Top 10
   'bitcoin','ethereum','tether','binancecoin','solana','ripple',
-  'usd-coin','cardano','dogecoin','tron','avalanche-2','chainlink',
-  'the-open-network','polkadot','polygon','litecoin','shiba-inu',
-  'bitcoin-cash','stellar','near','monero','ethereum-classic',
-  'uniswap','cosmos','filecoin','hedera-hashgraph','aptos',
-  'arbitrum','optimism','sui','pepe','floki','render-token',
-  'fetch-ai','worldcoin-wld','injective-protocol','sei-network',
+  'usd-coin','cardano','dogecoin','tron',
+  // 11-50
+  'avalanche-2','chainlink','the-open-network','polkadot','polygon',
+  'litecoin','shiba-inu','bitcoin-cash','stellar','near',
+  'monero','ethereum-classic','uniswap','cosmos','filecoin',
+  'hedera-hashgraph','aptos','arbitrum','optimism','sui',
+  'pepe','floki','render-token','fetch-ai','worldcoin-wld',
+  'injective-protocol','sei-network','celestia','stacks',
+  'mantle','kaspa','immutable-x','blur','bonk',
+  'jupiter-exchange-solana','jito-governance-token','pyth-network',
+  'wormhole','ethena','ondo-finance',
+  // 51-100
+  'algorand','eos','decentraland','the-sandbox','axie-infinity',
+  'gala','illuvium','stepn','gods-unchained','immutable-x',
+  'vechain','iota','neo','qtum','icon',
+  'waves','zilliqa','harmony','celo','band-protocol',
+  'ocean-protocol','the-graph','livepeer','radicle','arweave',
+  'helium','theta-token','ankr','api3','band-protocol',
+  'compound-governance-token','aave','maker','curve-dao-token','yearn-finance',
+  'convex-finance','frax-share','synthetix-network-token','uma','sushi',
+  'balancer','1inch','dydx','gmx','gains-network',
+  'lido-dao','rocket-pool','frax-ether','stakewise','stafi',
+  // 101-150
+  'bitcoin-sv','bitcoin-gold','dash','zcash','horizen',
+  'decred','ravencoin','digibyte','vertcoin','namecoin',
+  'fantom','cronos','kucoin-shares','gate','mexc-token',
+  'okb','huobi-token','bitkub-coin','woo-network','dexe',
+  'flow','chiliz','enjincoin','ultra','myneighboralice',
+  'smooth-love-potion','darkquest','merit-circle','yield-guild-games','planetix',
+  'chaingpt','cookie3','aioz-network','singularitynet','numeraire',
+  'oasis-network','secret','nucypher','keep-network','alchemy-pay',
+  'wax','hive','steem','golem','basic-attention-token',
+  'civic','selfkey','bloom','power-ledger','energi',
+  // 151-200
+  'nervos-network','icon','ontology','nuls','aelf',
+  'wanchain','ark','lisk','stratis','komodo',
+  'terra-luna-classic','terra-luna-2-0','mirror-protocol','anchor-protocol','astroport',
+  'osmosis','evmos','axelar','stride','quickswap',
+  'pancakeswap-token','baby-doge-coin','safepal','biswap','alpaca-finance',
+  'belt-finance','autofarm','bunny-token','ellipsis','acryptos',
+  'manta-network','scroll','linea','base','zksync',
+  'polygon-ecosystem-token','matic-network','hermez-network','loopring','starknet',
+  'fuel-network','taiko','blast-bridged-eth-blast','mode','zeta-chain',
+  // 201-250
+  'ren','tornado-cash','railgun','aztec','dusk-network',
+  'pivx','beam','firo','grin','mimblewimble-coin',
+  'oasis-network','platon-network','aleph-zero','phala-network','ternoa',
+  'nomic','persistence','umee','mars-protocol','nolus',
+  'thorchain','terra-luna-classic','kujira','white-whale','comdex',
+  'creditcoin-2','moonbeam','astar','phala-network','interlay',
+  'calamari-network','karura','bifrost-native-coin','zeitgeist','mangata-x',
+  'acala','subsocial','centrifuge','kilt-protocol','t3rn',
+  'dogwifcoin','book-of-meme','cat-in-a-dogs-world','mog-coin','brett',
+  'mother-iggy','andy-on-base','toshi','degen-base','normie',
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

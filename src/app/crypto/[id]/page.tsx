@@ -9,6 +9,22 @@ const ALL_CRYPTO = [
   'uniswap','cosmos','filecoin','hedera-hashgraph','aptos',
   'arbitrum','optimism','sui','pepe','floki','render-token',
   'fetch-ai','worldcoin-wld','injective-protocol','sei-network',
+  'celestia','stacks','mantle','kaspa','immutable-x','blur','bonk',
+  'jupiter-exchange-solana','jito-governance-token','pyth-network',
+  'wormhole','ethena','ondo-finance',
+  'algorand','vechain','iota','neo','waves','zilliqa','harmony','celo',
+  'the-graph','arweave','helium','theta-token','ankr',
+  'aave','maker','curve-dao-token','yearn-finance','compound-governance-token',
+  'synthetix-network-token','sushi','balancer','1inch','dydx','gmx',
+  'lido-dao','rocket-pool','frax-share',
+  'fantom','cronos','kucoin-shares','okb','flow','chiliz','enjincoin',
+  'basic-attention-token','decentraland','the-sandbox','axie-infinity','gala',
+  'stepn','thorchain','kujira',
+  'manta-network','scroll','linea','starknet','zksync',
+  'dogwifcoin','book-of-meme','brett','mog-coin',
+  'oasis-network','nervos-network','ontology','wax','hive',
+  'ocean-protocol','livepeer','radicle','golem',
+  'bitcoin-sv','dash','zcash','decred','ravencoin',
 ]
 
 export function generateStaticParams() {
