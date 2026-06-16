@@ -57,9 +57,9 @@ export function Footer() {
               qualified financial advisor before making investment decisions.
             </p>
             <p className="text-xs text-zinc-600">
-              In compliance with{' '}
-              <Link href="/privacy#lgpd" className="text-zinc-500 underline-offset-2 hover:underline hover:text-zinc-300">
-                LGPD (Law No. 13.709/2018)
+              We collect minimal data and never sell it.{' '}
+              <Link href="/privacy" className="text-zinc-500 underline-offset-2 hover:underline hover:text-zinc-300">
+                Privacy Policy
               </Link>
               .
             </p>

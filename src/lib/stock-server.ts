@@ -56,7 +56,7 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
 
     return {
       symbol: sym,
-      name: eodData?.name ?? sym,
+      name: eodData?.name ?? yfPrice?.longName ?? sym,
       currentPrice,
       prevClose,
       change: prevClose > 0 ? currentPrice - prevClose : 0,
@@ -74,7 +74,7 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
       splits: (splits.status === 'fulfilled'
         ? (splits.value as { data?: unknown[] })?.data ?? [] : []) as any[],
       info: yfInfo.status === 'fulfilled' ? yfInfo.value : null,
-      exchange: eodData?.stock_exchange?.acronym ?? null,
+      exchange: eodData?.stock_exchange?.acronym ?? yfPrice?.exchangeName ?? null,
     }
   } catch {
     return null

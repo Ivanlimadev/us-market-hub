@@ -119,6 +119,8 @@ export interface YFSummary {
   regularMarketPreviousClose: number | null
   regularMarketChangePercent: number | null
   // Identity
+  longName: string | null
+  exchangeName: string | null
   sector: string | null
   industry: string | null
   description: string | null
@@ -203,6 +205,8 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     regularMarketPrice: raw(priceModule.regularMarketPrice),
     regularMarketPreviousClose: raw(priceModule.regularMarketPreviousClose),
     regularMarketChangePercent: raw(priceModule.regularMarketChangePercent),
+    longName: (priceModule.longName as string) ?? (priceModule.shortName as string) ?? null,
+    exchangeName: (priceModule.exchangeName as string) ?? (priceModule.fullExchangeName as string) ?? null,
     sector: (profile.sector as string) ?? null,
     industry: (profile.industry as string) ?? null,
     description: (profile.longBusinessSummary as string) ?? null,
@@ -250,6 +254,7 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
 function emptyYFSummary(): YFSummary {
   return {
     regularMarketPrice: null, regularMarketPreviousClose: null, regularMarketChangePercent: null,
+    longName: null, exchangeName: null,
     sector: null, industry: null, description: null, website: null,
     employees: null, country: null, city: null, marketCap: null,
     pe: null, eps: null, priceToBook: null, forwardPE: null, pegRatio: null,
