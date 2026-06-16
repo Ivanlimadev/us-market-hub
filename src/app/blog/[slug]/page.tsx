@@ -38,11 +38,15 @@ export async function generateMetadata(
     .single()
 
   if (!data) return {}
+  const title       = data.seo_title ?? data.title
+  const description = data.seo_description ?? undefined
+  const images      = data.image_url ? [data.image_url] : []
   return {
-    title:      data.seo_title ?? data.title,
-    description: data.seo_description,
+    title,
+    description,
     alternates: { canonical: `https://stockmarketroi.com/blog/${slug}` },
-    openGraph:  { images: data.image_url ? [data.image_url] : [] },
+    openGraph:  { title, description, images, type: 'article' },
+    twitter:    { card: 'summary_large_image', title, description, images },
   }
 }
 

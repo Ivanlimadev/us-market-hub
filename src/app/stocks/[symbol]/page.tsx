@@ -17,8 +17,13 @@ export async function generateMetadata({
   return {
     title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued? | Stock Market ROI`,
     description: `In-depth ${upper} stock analysis for ${year}. Bull case, bear case, fair value estimates, key financials, and our verdict — updated daily.`,
-    alternates:  { canonical: `https://stockmarketroi.com/stocks/${upper}` },
+    alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
     openGraph: {
+      title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
+      description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
+    },
+    twitter: {
+      card:        'summary_large_image',
       title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
     },

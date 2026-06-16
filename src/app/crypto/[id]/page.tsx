@@ -32,6 +32,11 @@ export async function generateMetadata({
       title:       `${name} (${symbol}) Crypto Analysis ${year}`,
       description: `Live ${name} price, market stats, historical ROI and exchange listings.`,
     },
+    twitter: {
+      card:        'summary_large_image',
+      title:       `${name} (${symbol}) Crypto Analysis ${year}`,
+      description: `Live ${name} price, market stats, historical ROI and exchange listings.`,
+    },
   }
 }
 
