@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { useStockDetail } from '@/lib/hooks/useStockDetail'
+import { useStockDetail, type StockDetailData } from '@/lib/hooks/useStockDetail'
 import { PriceChart } from '@/components/stock/PriceChart'
 import { PerformanceStrip } from '@/components/stock/PerformanceStrip'
 import { FundamentalsCard } from '@/components/stock/FundamentalsCard'
@@ -36,8 +36,8 @@ function fmtLarge(n: number | null): string {
   return `$${n.toLocaleString()}`
 }
 
-export function StockDetailClient({ symbol }: { symbol: string }) {
-  const { data, isLoading, error } = useStockDetail(symbol)
+export function StockDetailClient({ symbol, initialData }: { symbol: string; initialData?: StockDetailData }) {
+  const { data, isLoading, error } = useStockDetail(symbol, initialData)
   const { user } = useAuth()
   const [showAddTx, setShowAddTx] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)

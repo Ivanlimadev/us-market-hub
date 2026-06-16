@@ -45,13 +45,16 @@ export interface HistoryData {
   count: number
 }
 
-export function useStockDetail(symbol: string) {
+export function useStockDetail(symbol: string, initialData?: StockDetailData) {
   return useQuery<StockDetailData>({
     queryKey: ['stock-detail', symbol],
     queryFn: () => fetch(`/api/stocks/${symbol}`).then((r) => r.json()),
     refetchInterval: getPollInterval,
     staleTime: 55_000,
     enabled: !!symbol,
+    initialData,
+    // treat SSR data as 55 s old so client refetches on mount without flash
+    initialDataUpdatedAt: initialData ? Date.now() - 55_000 : undefined,
   })
 }
 

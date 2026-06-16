@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { ALL_SYMBOLS } from '@/lib/stock-universe'
+import { fetchStockData } from '@/lib/stock-server'
+
+// ISR: revalidate every 60 seconds
+export const revalidate = 60
 
 export function generateStaticParams() {
   return ALL_SYMBOLS.map((symbol) => ({ symbol: symbol.toLowerCase() }))
@@ -39,6 +43,9 @@ export default async function StockPage({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
 
+  // Fetch server-side for SSR — passes as initialData to React Query on client
+  const initialData = await fetchStockData(upper)
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -51,7 +58,7 @@ export default async function StockPage({
         isPartOf: { '@id': 'https://stockmarketroi.com' },
       },
       {
-        '@type':           'BreadcrumbList',
+        '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home',   item: 'https://stockmarketroi.com' },
           { '@type': 'ListItem', position: 2, name: 'Stocks', item: 'https://stockmarketroi.com/stocks' },
@@ -67,7 +74,7 @@ export default async function StockPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <StockDetailClient symbol={upper} />
+      <StockDetailClient symbol={upper} initialData={initialData ?? undefined} />
     </>
   )
 }

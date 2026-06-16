@@ -102,6 +102,18 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
   const year = new Date().getFullYear()
   const base = req.nextUrl.origin
 
+  // Enforce max 3 posts per calendar day (UTC) — prevents AdSense spam signals
+  const MAX_PER_DAY = 3
+  const todayStart = new Date()
+  todayStart.setUTCHours(0, 0, 0, 0)
+  const { count: todayCount } = await supabase
+    .from('blog_posts')
+    .select('id', { count: 'exact', head: true })
+    .gte('created_at', todayStart.toISOString())
+  if ((todayCount ?? 0) >= MAX_PER_DAY) {
+    return NextResponse.json({ message: `Daily limit reached (${MAX_PER_DAY} posts/day)` })
+  }
+
   // Check recently published titles (last 45 days)
   const { data: recent } = await supabase
     .from('blog_posts')

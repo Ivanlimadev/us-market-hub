@@ -1,0 +1,37 @@
+name: Blog Auto-Publish
+
+on:
+  schedule:
+    # 3 posts per day, spread across the day (UTC):
+    # 09:00 UTC = 06:00 BRT (morning)
+    - cron: '0 9 * * *'
+    # 14:00 UTC = 11:00 BRT (midday)
+    - cron: '0 14 * * *'
+    # 20:00 UTC = 17:00 BRT (afternoon)
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Post type (stock or macro)'
+        required: false
+        default: 'stock'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate blog post
+        run: |
+          TYPE="${{ github.event.inputs.type || 'stock' }}"
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            "https://stockmarketroi.com/api/blog/generate?type=${TYPE}")
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          STATUS=$(echo "$RESPONSE" | tail -n 1)
+          echo "Status: $STATUS"
+          echo "Response: $BODY"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::API returned $STATUS"
+            exit 1
+          fi
