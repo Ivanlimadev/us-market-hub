@@ -1,14 +1,10 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
-import { ALL_SYMBOLS } from '@/lib/stock-universe'
 import { fetchStockData } from '@/lib/stock-server'
 
-// ISR: revalidate every 60 seconds
+// ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
-
-export function generateStaticParams() {
-  return ALL_SYMBOLS.map((symbol) => ({ symbol: symbol.toLowerCase() }))
-}
+export const dynamicParams = true
 
 export async function generateMetadata({
   params,
