@@ -37,15 +37,22 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
     const intradayBar = intraday.status === 'fulfilled' ? intraday.value : null
     const yfPrice     = yfInfo.status === 'fulfilled' ? yfInfo.value : null
 
-    const currentPrice =
+    const toNum = (v: unknown): number => {
+      const n = Number(v)
+      return isFinite(n) ? n : 0
+    }
+
+    const currentPrice = toNum(
       yfPrice?.regularMarketPrice ??
       (intradayBar as { last?: number; close?: number } | null)?.last ??
       (intradayBar as { last?: number; close?: number } | null)?.close ??
-      (latestEod as { close?: number } | null)?.close ?? 0
+      (latestEod as { close?: number } | null)?.close
+    )
 
-    const prevClose =
+    const prevClose = toNum(
       yfPrice?.regularMarketPreviousClose ??
-      (prevEod as { close?: number } | null)?.close ?? 0
+      (prevEod as { close?: number } | null)?.close
+    )
 
     return {
       symbol: sym,

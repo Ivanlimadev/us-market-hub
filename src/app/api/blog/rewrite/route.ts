@@ -38,6 +38,14 @@ async function searchTavily(query: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET
+  const auth   = req.headers.get('authorization') ?? ''
+  const header = req.headers.get('x-cron-secret') ?? ''
+  const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : auth
+  if (!cronSecret || (header !== cronSecret && bearer !== cronSecret)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const id = req.nextUrl.searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'AI not configured' }, { status: 503 })

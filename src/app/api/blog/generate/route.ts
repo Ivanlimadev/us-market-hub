@@ -360,5 +360,5 @@ async function safe(req: NextRequest, requireAuth: boolean) {
   }
 }
 
-export const GET  = (req: NextRequest) => safe(req, false)
+export const GET  = (req: NextRequest) => safe(req, true)
 export const POST = (req: NextRequest) => safe(req, true)
