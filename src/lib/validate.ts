@@ -32,18 +32,26 @@ export const intervalSchema = z
 
 export const searchSchema = z.string().min(1).max(100).optional()
 
-// ── Helper ────────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+type ParseOk<T> = { ok: true; value: T }
+type ParseErr   = { ok: false; error: string }
+export type ParseResult<T> = ParseOk<T> | ParseErr
 
 export function badRequest(message: string) {
   return NextResponse.json({ error: message }, { status: 400 })
 }
 
-export function parseSymbol(raw: string | null) {
+export function parseSymbol(raw: string | null): ParseResult<string> {
   const result = symbolSchema.safeParse(raw?.toUpperCase())
-  return result.success ? { value: result.data, error: null } : { value: null, error: result.error.issues[0].message }
+  return result.success
+    ? { ok: true, value: result.data }
+    : { ok: false, error: result.error.issues[0].message }
 }
 
-export function parseCryptoId(raw: string | null) {
+export function parseCryptoId(raw: string | null): ParseResult<string> {
   const result = cryptoIdSchema.safeParse(raw)
-  return result.success ? { value: result.data, error: null } : { value: null, error: result.error.issues[0].message }
+  return result.success
+    ? { ok: true, value: result.data }
+    : { ok: false, error: result.error.issues[0].message }
 }

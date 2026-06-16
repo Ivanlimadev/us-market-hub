@@ -6,8 +6,9 @@ import { parseSymbol, badRequest, dateSchema, limitSchema } from '@/lib/validate
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
 
-  const { value: symbol, error } = parseSymbol(searchParams.get('symbol'))
-  if (error) return badRequest(error)
+  const r = parseSymbol(searchParams.get('symbol'))
+  if (!r.ok) return badRequest(r.error)
+  const symbol = r.value
 
   const fromParsed = dateSchema.safeParse(searchParams.get('from') ?? undefined)
   const toParsed   = dateSchema.safeParse(searchParams.get('to') ?? undefined)

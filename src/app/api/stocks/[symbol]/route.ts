@@ -9,8 +9,9 @@ export async function GET(
   { params }: { params: Promise<{ symbol: string }> }
 ) {
   const { symbol: raw } = await params
-  const { value: symbol, error } = parseSymbol(raw)
-  if (error) return badRequest(error)
+  const r = parseSymbol(raw)
+  if (!r.ok) return badRequest(r.error)
+  const symbol = r.value
 
   const data = await fetchStockData(symbol)
 

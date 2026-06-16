@@ -8,8 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ symbol: string }> }
 ) {
   const { symbol: rawSym } = await params
-  const { value: sym, error } = parseSymbol(rawSym)
-  if (error) return badRequest(error)
+  const r = parseSymbol(rawSym)
+  if (!r.ok) return badRequest(r.error)
+  const sym = r.value
 
   // Accept "5min" (old Marketstack style) or "5m" (YF style)
   const raw = req.nextUrl.searchParams.get('interval') ?? '5m'

@@ -7,8 +7,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: raw } = await params
-  const { value: id, error } = parseCryptoId(raw)
-  if (error) return badRequest(error)
+  const r = parseCryptoId(raw)
+  if (!r.ok) return badRequest(r.error)
+  const id = r.value
   const days = Math.min(Math.max(1, Number(req.nextUrl.searchParams.get('days') ?? 30) || 30), 365)
 
   try {

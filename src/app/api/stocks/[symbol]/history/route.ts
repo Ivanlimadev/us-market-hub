@@ -23,8 +23,9 @@ export async function GET(
   { params }: { params: Promise<{ symbol: string }> }
 ) {
   const { symbol: raw } = await params
-  const { value: sym, error } = parseSymbol(raw)
-  if (error) return badRequest(error)
+  const r = parseSymbol(raw)
+  if (!r.ok) return badRequest(r.error)
+  const sym = r.value
   const period = req.nextUrl.searchParams.get('period') ?? '1y'
   const { range, interval } = PERIOD_MAP[period] ?? PERIOD_MAP['1y']
 

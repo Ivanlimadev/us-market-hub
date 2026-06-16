@@ -39,7 +39,7 @@ function bucket(ip: string, pathname: string): string {
   return `${ip}|${prefix}`
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (!pathname.startsWith('/api/')) return NextResponse.next()
