@@ -90,14 +90,18 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-white">{symbol}</h1>
+              <h1 className="text-xl font-bold text-white">
+                {symbol}
+                {data.name && data.name !== symbol && (
+                  <span className="ml-2 text-base font-normal text-zinc-400">— {data.name}</span>
+                )}
+              </h1>
               {data.exchange && (
                 <span className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
                   {data.exchange}
                 </span>
               )}
             </div>
-            <p className="text-sm text-zinc-400">{data.name}</p>
             {(data.info?.sector || data.info?.industry) && (
               <p className="text-xs text-zinc-500">
                 {[data.info.sector, data.info.industry].filter(Boolean).join(' · ')}
