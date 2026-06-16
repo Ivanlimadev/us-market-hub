@@ -13,7 +13,7 @@ const CSP = [
   // Frames: Cloudflare Turnstile widget only
   "frame-src https://challenges.cloudflare.com",
   // Connections: self + all external APIs used + Google Analytics
-  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com wss://stream.binance.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
