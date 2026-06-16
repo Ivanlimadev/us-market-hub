@@ -1,7 +1,7 @@
 import { PortfolioView } from '@/components/portfolio/PortfolioView'
 
 export const metadata = {
-  title: 'My Portfolio — Stock Market ROI',
+  title: 'My Portfolio',
   description: 'Track your US stock portfolio with real-time prices and P&L calculations.',
   robots: { index: false, follow: false },
 }

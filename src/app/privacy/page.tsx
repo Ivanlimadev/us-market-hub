@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — Stock Market ROI',
+  title: 'Privacy Policy',
   description: 'Privacy Policy for Stock Market ROI — how we collect, use and protect your data. Compliant with GDPR, CCPA and Brazilian data protection law.',
 }
 

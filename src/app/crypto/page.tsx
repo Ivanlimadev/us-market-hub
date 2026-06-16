@@ -12,7 +12,7 @@ import { LongShortRatio } from '@/components/crypto/LongShortRatio'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 export const metadata: Metadata = {
-  title: 'Crypto | Stock Market ROI',
+  title: 'Crypto — Live Prices, Market Cap & Analysis',
   description: 'Live cryptocurrency prices, heatmap, and market data powered by CoinGecko and Kraken.',
 }
 

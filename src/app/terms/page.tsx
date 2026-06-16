@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Terms of Use — Stock Market ROI',
+  title: 'Terms of Use',
   description: 'Terms of Use for Stock Market ROI.',
 }
 

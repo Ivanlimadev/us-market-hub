@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Mail, TrendingUp, BarChart2, Calendar, Layers, ShieldCheck, BookOpen, Award } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About Ivan Lima — Stock Market ROI',
+  title: 'About — Ivan Lima, Founder',
   description: 'Ivan Lima is the founder of Stock Market ROI. Systems Analysis & Development student and active US stock market investor since 2018.',
   alternates: { canonical: 'https://stockmarketroi.com/about' },
 }
