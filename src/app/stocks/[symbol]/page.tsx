@@ -19,8 +19,8 @@ export async function generateMetadata({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
   return {
-    title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued? | Stock Market ROI`,
-    description: `In-depth ${upper} stock analysis for ${year}. Bull case, bear case, fair value estimates, key financials, and our verdict — updated daily.`,
+    title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
+    description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict — updated daily.`,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
     openGraph: {
       title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
