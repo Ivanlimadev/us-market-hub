@@ -297,7 +297,7 @@ export default function TermsPage() {
             Privacy Policy
           </Link>
           , which is incorporated by reference into these Terms. The Privacy Policy covers
-          compliance with LGPD (Brazil), GDPR (EU) and CCPA (California).
+          compliance with Brazilian data protection law (LGPD), GDPR (EU) and CCPA (California).
         </p>
       </Section>
 
@@ -310,9 +310,9 @@ export default function TermsPage() {
           any non-waivable consumer rights you may have under your local law.
         </p>
         <p>
-          Applicable Brazilian statutes include: LGPD (Lei nº 13.709/2018), Consumer
-          Protection Code (CDC — Lei nº 8.078/1990) and the Marco Civil da Internet
-          (Lei nº 12.965/2014).
+          Applicable Brazilian statutes include: Brazilian Data Protection Law (LGPD — Law No. 13,709/2018),
+          Brazilian Consumer Protection Code (Law No. 8,078/1990) and the Brazilian Internet Civil Framework
+          (Law No. 12,965/2014).
         </p>
       </Section>
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Stock Market ROI',
-  description: 'Privacy Policy — LGPD, GDPR and CCPA compliance for Stock Market ROI.',
+  description: 'Privacy Policy for Stock Market ROI — how we collect, use and protect your data. Compliant with GDPR, CCPA and Brazilian data protection law.',
 }
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
@@ -26,9 +26,9 @@ export default function PrivacyPage() {
           This Privacy Policy describes how <strong className="text-zinc-200">Stock Market ROI</strong>{' '}
           (<strong className="text-zinc-200">stockmarketroi.com</strong>) collects, uses and
           protects information when you use our platform. We comply with the{' '}
-          <strong className="text-zinc-200">LGPD (Lei nº 13.709/2018)</strong>,{' '}
-          <strong className="text-zinc-200">GDPR (EU Regulation 2016/679)</strong> and the{' '}
-          <strong className="text-zinc-200">California Consumer Privacy Act (CCPA)</strong>.
+          <strong className="text-zinc-200">GDPR (EU Regulation 2016/679)</strong>,{' '}
+          <strong className="text-zinc-200">CCPA (California Consumer Privacy Act)</strong> and{' '}
+          <strong className="text-zinc-200">Brazilian Data Protection Law (LGPD — Law No. 13,709/2018)</strong>.
         </p>
         <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-400">
           We do not sell your personal data. Without an account, no data leaves your browser. When signed in, only your account email, portfolio transactions, watchlist and price alerts are stored — securely in Supabase — and deleted permanently when you delete your account.
@@ -141,11 +141,11 @@ export default function PrivacyPage() {
       <Section id="purpose" title="4. Purpose and Legal Basis">
         <div className="space-y-2">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
-            <p className="font-medium text-zinc-200">Legitimate Interest — LGPD Art. 7, IX / GDPR Art. 6(1)(f)</p>
+            <p className="font-medium text-zinc-200">Legitimate Interest — LGPD Art. 7(IX) / GDPR Art. 6(1)(f)</p>
             <p className="text-zinc-500">Operating the platform, providing market data, preventing abuse and fraud, maintaining security logs.</p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
-            <p className="font-medium text-zinc-200">Consent — LGPD Art. 7, I / GDPR Art. 6(1)(a)</p>
+            <p className="font-medium text-zinc-200">Consent — LGPD Art. 7(I) / GDPR Art. 6(1)(a)</p>
             <p className="text-zinc-500">Non-essential cookies and analytics, only when explicitly accepted via the cookie banner. Freely withdrawable at any time.</p>
           </div>
         </div>
@@ -216,13 +216,13 @@ export default function PrivacyPage() {
         <p>
           In the event of a data breach involving personal data, we will notify affected
           users and the relevant data protection authority within the timeframe required
-          by applicable law (LGPD Art. 48 — 72 hours to ANPD; GDPR Art. 33 — 72 hours to supervisory authority).
+          by applicable law (LGPD Art. 48 — 72 hours to Brazil's ANPD; GDPR Art. 33 — 72 hours to EU supervisory authority).
         </p>
       </Section>
 
       {/* ── 8. LGPD ─────────────────────────────────────────────────────── */}
-      <Section id="lgpd" title="8. Your Rights Under LGPD — Lei nº 13.709/2018 (Brazil)">
-        <p>As a data subject under LGPD Art. 18, you have the right to:</p>
+      <Section id="lgpd" title="8. Your Rights Under Brazilian Data Protection Law (LGPD)">
+        <p>As a data subject under Brazilian Law No. 13,709/2018 (LGPD), Art. 18, you have the right to:</p>
         <div className="grid gap-2 sm:grid-cols-2">
           {[
             ['Confirmation',     'Know whether we process your personal data.'],
@@ -247,7 +247,7 @@ export default function PrivacyPage() {
           </a>. We will respond within <strong className="text-zinc-200">15 business days</strong>.
           You may also file a complaint with the{' '}
           <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
-            ANPD — Autoridade Nacional de Proteção de Dados
+            ANPD — Brazil's National Data Protection Authority
           </a>.
         </p>
       </Section>
