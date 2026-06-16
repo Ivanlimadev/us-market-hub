@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from '@sentry/nextjs'
 
 const CSP = [
   "default-src 'self'",
@@ -12,8 +13,8 @@ const CSP = [
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget only
   "frame-src https://challenges.cloudflare.com",
-  // Connections: self + all external APIs used + Google Analytics
-  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+  // Connections: self + all external APIs used + Google Analytics + Sentry
+  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -48,4 +49,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: 'stockmarketroi',
+  project: 'javascript-nextjs',
+
+  // Don't upload source maps (avoids needing SENTRY_AUTH_TOKEN on VPS)
+  sourcemaps: { disable: true },
+
+  // Suppress noisy build output
+  silent: true,
+
+  // Disable telemetry
+  telemetry: false,
+})
