@@ -26,6 +26,10 @@ export default function HomePage() {
         <PortfolioWidget />
       </WidgetBoundary>
 
+      <WidgetBoundary label="Market Heatmap">
+        <HomeHeatmap />
+      </WidgetBoundary>
+
       <WidgetBoundary label="Market Indices">
         <IndexCards />
       </WidgetBoundary>
@@ -42,10 +46,6 @@ export default function HomePage() {
           <EarningsCalendarWidget />
         </WidgetBoundary>
       </div>
-
-      <WidgetBoundary label="Market Heatmap">
-        <HomeHeatmap />
-      </WidgetBoundary>
 
       <WidgetBoundary label="Market News">
         <HomeNewsWidget />
