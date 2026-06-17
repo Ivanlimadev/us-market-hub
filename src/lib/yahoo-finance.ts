@@ -605,3 +605,56 @@ export async function getCalendarEvents(symbol: string): Promise<YFCalendarEvent
     return null
   }
 }
+
+export interface YFDivEvent {
+  symbol:  string
+  name:    string
+  exDate:  string   // YYYY-MM-DD
+  payDate: string   // YYYY-MM-DD
+  amount:  number
+}
+
+/** Fetch upcoming ex-dividend dates for a batch of symbols via YF quote fields */
+export async function getYFDividendCalendar(symbols: string[]): Promise<YFDivEvent[]> {
+  if (!symbols.length) return []
+  const fields = [
+    'symbol', 'longName', 'shortName',
+    'exDividendDate', 'dividendDate',
+    'trailingAnnualDividendRate',
+  ].join(',')
+
+  const data = await yfGet(
+    `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}&fields=${fields}`
+  )
+  const results = (
+    (data as { quoteResponse?: { result?: unknown[] } }).quoteResponse?.result ?? []
+  ) as Array<Record<string, unknown>>
+
+  const today = Date.now()
+  const cutoff = today + 90 * 24 * 60 * 60 * 1000  // 90 days ahead
+
+  const events: YFDivEvent[] = []
+  for (const q of results) {
+    const exTs  = (q.exDividendDate as number | undefined)
+    const payTs = (q.dividendDate   as number | undefined)
+    const amount = (q.trailingAnnualDividendRate as number | undefined) ?? 0
+
+    if (!exTs || amount <= 0) continue
+
+    const exMs = exTs * 1000
+    // Only include dividends whose ex-date is in the future (within 90 days)
+    if (exMs < today - 86_400_000 || exMs > cutoff) continue
+
+    const fmtDate = (ms: number) => new Date(ms).toISOString().split('T')[0]
+
+    events.push({
+      symbol:  String(q.symbol ?? ''),
+      name:    String(q.longName ?? q.shortName ?? q.symbol ?? ''),
+      exDate:  fmtDate(exMs),
+      payDate: payTs ? fmtDate(payTs * 1000) : '',
+      amount:  Math.round((amount / 4) * 100) / 100,  // quarterly estimate
+    })
+  }
+
+  return events.sort((a, b) => a.exDate.localeCompare(b.exDate))
+}

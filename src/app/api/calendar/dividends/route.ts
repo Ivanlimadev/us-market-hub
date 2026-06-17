@@ -1,26 +1,21 @@
 import { NextResponse } from 'next/server'
+import { getYFDividendCalendar, type YFDivEvent } from '@/lib/yahoo-finance'
 import { ALL_SYMBOLS } from '@/lib/stock-universe'
 
-const MS_KEY = process.env.MARKETSTACK_API_KEY!
-const BASE   = 'https://api.marketstack.com/v1'
-
-// In-memory cache — avoids hammering Marketstack on every page load
-let cache: { data: DivEvent[]; ts: number } | null = null
-const CACHE_TTL = 3 * 60 * 60 * 1000 // 3 hours
-
+// High-yield / income-focused symbols not already in the screener universe
 const EXTRA_DIV = [
   'IBM','MMM','T','VZ','MO','PM','KHC','GIS','CL',
   'O','WPC','STAG','LTC','MAIN','ARCC',
   'EPD','ET','MPLX','KMI','WMB',
-  'BX','KKR','APO',
-  'BTI','AGNC','NLY',
-  'PEG','FE','PPL',
-  'CINF','AFL','MET','PRU',
+  'BX','KKR','APO','BTI','AGNC','NLY',
+  'PEG','FE','PPL','CINF','AFL','MET','PRU',
 ]
 
 const DIV_STOCKS = [...new Set([...ALL_SYMBOLS, ...EXTRA_DIV])]
 
-interface DivEvent { symbol: string; exDate: string; payDate: string; amount: number }
+// In-memory cache — 3 hours (dividend calendars don't change frequently)
+let cache: { data: YFDivEvent[]; ts: number } | null = null
+const CACHE_TTL = 3 * 60 * 60 * 1000
 
 function chunk<T>(arr: T[], n: number): T[][] {
   const out: T[][] = []
@@ -28,56 +23,34 @@ function chunk<T>(arr: T[], n: number): T[][] {
   return out
 }
 
-async function fetchBatch(symbols: string[], dateFrom: string, dateTo: string): Promise<DivEvent[]> {
-  const url = new URL(`${BASE}/dividends`)
-  url.searchParams.set('access_key', MS_KEY)
-  url.searchParams.set('symbols',    symbols.join(','))
-  url.searchParams.set('date_from',  dateFrom)
-  url.searchParams.set('date_to',    dateTo)
-  url.searchParams.set('limit',      '1000')
-
-  const res  = await fetch(url.toString())
-  if (!res.ok) return []
-  const json = await res.json() as { data?: Array<{ symbol: string; date: string; dividend: number }> }
-
-  return (json.data ?? []).map(d => {
-    const ex  = d.date.split('T')[0]
-    const pay = new Date(ex + 'T12:00:00')
-    pay.setDate(pay.getDate() + 14)
-    return { symbol: d.symbol, exDate: ex, payDate: pay.toISOString().split('T')[0], amount: d.dividend }
-  })
-}
-
 export async function GET() {
   try {
-    // Serve from cache if fresh
     if (cache && Date.now() - cache.ts < CACHE_TTL) {
       return NextResponse.json(cache.data, {
         headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },
       })
     }
 
-    const today    = new Date().toISOString().split('T')[0]
-    const future   = new Date()
-    future.setDate(future.getDate() + 60)
-    const dateTo   = future.toISOString().split('T')[0]
+    // YF batch quotes accept ~100 symbols per request safely
+    const batches = chunk(DIV_STOCKS, 100)
+    const results = await Promise.allSettled(batches.map((b) => getYFDividendCalendar(b)))
 
-    // Batch into groups of 50 to avoid URL length limits
-    const batches  = chunk(DIV_STOCKS, 50)
-    const results  = await Promise.allSettled(batches.map(b => fetchBatch(b, today, dateTo)))
-
-    const events: DivEvent[] = results
-      .filter((r): r is PromiseFulfilledResult<DivEvent[]> => r.status === 'fulfilled')
-      .flatMap(r => r.value)
+    const events: YFDivEvent[] = results
+      .filter((r): r is PromiseFulfilledResult<YFDivEvent[]> => r.status === 'fulfilled')
+      .flatMap((r) => r.value)
+      // dedupe by symbol (keep earliest ex-date per symbol)
+      .reduce<YFDivEvent[]>((acc, ev) => {
+        if (!acc.find((e) => e.symbol === ev.symbol)) acc.push(ev)
+        return acc
+      }, [])
       .sort((a, b) => a.exDate.localeCompare(b.exDate))
 
-    // Only cache non-empty results — don't lock in a Marketstack hiccup for 3 hours
     if (events.length > 0) cache = { data: events, ts: Date.now() }
 
     return NextResponse.json(events, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },
     })
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }
