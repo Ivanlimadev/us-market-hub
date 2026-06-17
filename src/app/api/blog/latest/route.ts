@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 
 export async function GET(req: NextRequest) {
   const category = req.nextUrl.searchParams.get('category') ?? undefined
-  const limit    = Math.min(parseInt(req.nextUrl.searchParams.get('limit') ?? '1', 10), 10)
+  const limit    = Math.min(parseInt(req.nextUrl.searchParams.get('limit') ?? '20', 10), 60)
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
