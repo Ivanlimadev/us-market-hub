@@ -175,19 +175,19 @@ export function PortfolioHistoryChart() {
 
       {/* Legend */}
       {!isLoading && data.length > 1 && (
-        <div className="flex items-center gap-4 px-4 pb-3 pt-1">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 pb-3 pt-1">
           <div className="flex items-center gap-1.5">
-            <div className="h-0.5 w-4 rounded bg-emerald-400" />
+            <div className="h-0.5 w-4 shrink-0 rounded bg-emerald-400" />
             <span className="text-[11px] text-zinc-500">Portfolio Value</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="h-px w-4 border-t border-dashed border-zinc-600" />
+            <div className="h-px w-4 shrink-0 border-t border-dashed border-zinc-600" />
             <span className="text-[11px] text-zinc-500">Cost Basis</span>
           </div>
           {last && (
-            <div className="ml-auto text-[11px] text-zinc-500">
-              Current: <span className="font-semibold text-zinc-200">{fmt(last.value)}</span>
-              {' '}· Invested: <span className="font-semibold text-zinc-200">{fmt(last.cost)}</span>
+            <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 sm:ml-auto">
+              <span>Current: <span className="font-semibold text-zinc-200">{fmt(last.value)}</span></span>
+              <span>· Invested: <span className="font-semibold text-zinc-200">{fmt(last.cost)}</span></span>
             </div>
           )}
         </div>

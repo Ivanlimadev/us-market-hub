@@ -21,8 +21,7 @@ export default function AccountPage() {
   async function handleLogout() {
     setLoggingOut(true)
     await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+    router.replace('/')
   }
 
   async function handleDeleteAccount() {
@@ -30,7 +29,6 @@ export default function AccountPage() {
     setDeleting(true)
     setError('')
 
-    // Call server API to delete the user (requires service role key)
     const res = await fetch('/api/auth/delete-account', { method: 'DELETE' })
     if (!res.ok) {
       const body = await res.json() as { error?: string }
@@ -40,8 +38,10 @@ export default function AccountPage() {
     }
 
     await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+    // Clear localStorage so data doesn't bleed into a new account created with the same email
+    localStorage.removeItem('us-market-portfolio')
+    localStorage.removeItem('us-market-watchlist')
+    router.replace('/')
   }
 
   if (loading) {

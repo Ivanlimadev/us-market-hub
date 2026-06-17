@@ -13,7 +13,9 @@ export default function RegisterPage() {
   const [name, setName]                         = useState('')
   const [email, setEmail]                       = useState('')
   const [emailConfirm, setEmailConfirm]         = useState('')
-  const [birthDate, setBirthDate]               = useState('')
+  const [birthMonth, setBirthMonth]             = useState('')
+  const [birthDay, setBirthDay]                 = useState('')
+  const [birthYear, setBirthYear]               = useState('')
   const [password, setPassword]                 = useState('')
   const [passwordConfirm, setPasswordConfirm]   = useState('')
   const [showPw, setShowPw]                     = useState(false)
@@ -30,7 +32,14 @@ export default function RegisterPage() {
     if (password !== passwordConfirm)    { setError('Passwords do not match.'); return }
     if (!isStrongPassword(password))     { setError('Password does not meet all requirements.'); return }
 
-    const birth = new Date(birthDate)
+    const m = parseInt(birthMonth, 10)
+    const d = parseInt(birthDay, 10)
+    const y = parseInt(birthYear, 10)
+    if (!m || !d || !y || m < 1 || m > 12 || d < 1 || d > 31 || y < 1900 || y > new Date().getFullYear()) {
+      setError('Please enter a valid date of birth.'); return
+    }
+    const birthDateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+    const birth = new Date(birthDateStr)
     const age = (Date.now() - birth.getTime()) / (365.25 * 24 * 3600 * 1000)
     if (age < 18) { setError('You must be at least 18 years old to register.'); return }
 
@@ -41,7 +50,7 @@ export default function RegisterPage() {
       email,
       password,
       options: {
-        data: { name, birth_date: birthDate },
+        data: { name, birth_date: birthDateStr },
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
       },
     })
@@ -52,13 +61,12 @@ export default function RegisterPage() {
       return
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' })
     setDone(true)
   }
 
   if (done) {
     return (
-      <div className="flex min-h-[calc(100vh-56px)] items-start justify-center px-4 pt-20 pb-12">
+      <div className="flex min-h-[calc(100vh-56px)] items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm space-y-5 text-center">
           <div className="flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
@@ -162,14 +170,57 @@ export default function RegisterPage() {
           {/* Birth date */}
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-zinc-300">Date of Birth</label>
-            <input
-              type="date"
-              required
-              max={new Date(Date.now() - 18 * 365.25 * 24 * 3600 * 1000).toISOString().split('T')[0]}
-              value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 [color-scheme:dark]"
-            />
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-1">
+                <span className="block text-[10px] text-zinc-500">Month</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="MM"
+                  maxLength={2}
+                  value={birthMonth}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, '')
+                    setBirthMonth(v)
+                    if (v.length === 2) document.getElementById('birth-day')?.focus()
+                  }}
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-center text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                />
+              </div>
+              <div className="space-y-1">
+                <span className="block text-[10px] text-zinc-500">Day</span>
+                <input
+                  id="birth-day"
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="DD"
+                  maxLength={2}
+                  value={birthDay}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, '')
+                    setBirthDay(v)
+                    if (v.length === 2) document.getElementById('birth-year')?.focus()
+                  }}
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-center text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                />
+              </div>
+              <div className="space-y-1">
+                <span className="block text-[10px] text-zinc-500">Year</span>
+                <input
+                  id="birth-year"
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="YYYY"
+                  maxLength={4}
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value.replace(/\D/g, ''))}
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-center text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
             <p className="text-xs text-zinc-600">You must be at least 18 years old.</p>
           </div>
 

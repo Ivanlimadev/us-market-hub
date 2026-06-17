@@ -226,28 +226,34 @@ export function PortfolioView() {
   return (
     <div className="space-y-5">
       {/* Tab bar + action */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex rounded-lg border border-zinc-800 bg-zinc-900 p-1 gap-1">
-          {TABS.map(t => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                tab === t.key
-                  ? 'bg-zinc-700 text-white'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              <t.icon className="h-3.5 w-3.5" />
-              {t.label}
-            </button>
-          ))}
+      <div className="flex items-center gap-2">
+        {/* Scrollable tab strip — swipe horizontally on mobile */}
+        <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+          <div className="flex w-max rounded-lg border border-zinc-800 bg-zinc-900 p-1 gap-1">
+            {TABS.map(t => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors whitespace-nowrap ${
+                  tab === t.key
+                    ? 'bg-zinc-700 text-white'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <t.icon className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden sm:inline">{t.label}</span>
+                <span className="sm:hidden text-[11px]">{t.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
+        {/* Add Asset always visible on the right */}
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400"
+          className="shrink-0 flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400"
         >
-          <Plus className="h-4 w-4" /> Add Asset
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Add Asset</span>
         </button>
       </div>
 
