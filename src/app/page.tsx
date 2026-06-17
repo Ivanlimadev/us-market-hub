@@ -12,6 +12,7 @@ import { DividendCalendarWidget } from '@/components/market/DividendCalendarWidg
 import { EarningsCalendarWidget } from '@/components/market/EarningsCalendarWidget'
 import { PortfolioWidget } from '@/components/portfolio/PortfolioWidget'
 import { HomeNewsWidget } from '@/components/market/HomeNewsWidget'
+import { CryptoHomeWidget } from '@/components/crypto/CryptoHomeWidget'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 export default function HomePage() {
@@ -49,6 +50,10 @@ export default function HomePage() {
 
       <WidgetBoundary label="Market News">
         <HomeNewsWidget />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Mundo Cripto">
+        <CryptoHomeWidget />
       </WidgetBoundary>
     </div>
   )
