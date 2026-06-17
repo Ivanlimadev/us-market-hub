@@ -37,10 +37,9 @@ function heatColor(pct: number) {
 }
 
 function tileSize(rank: number) {
-  if (rank <= 5)  return { width: 110, height: 88, logo: 22 }
-  if (rank <= 15) return { width: 88,  height: 72, logo: 18 }
-  if (rank <= 30) return { width: 76,  height: 62, logo: 16 }
-  return                 { width: 62,  height: 54, logo: 14 }
+  if (rank <= 3)  return { width: 128, height: 104, logo: 28 }
+  if (rank <= 10) return { width: 104, height: 86,  logo: 22 }
+  return                 { width: 88,  height: 72,  logo: 18 }
 }
 
 export function CryptoHeatmap() {
@@ -48,15 +47,15 @@ export function CryptoHeatmap() {
 
   const { data, isLoading } = useQuery<CryptoMarket[]>({
     queryKey: ['crypto-markets'],
-    queryFn: () => fetch('/api/crypto/markets?limit=100').then((r) => r.json()),
+    queryFn: () => fetch('/api/crypto/markets?limit=20').then((r) => r.json()),
     staleTime: 55_000,
     refetchInterval: 60_000,
   })
 
-  const top50 = (data ?? []).slice(0, 50)
+  const top20 = (data ?? []).slice(0, 20)
 
   // Live 24h % via Kraken — only subscribe when 24h period is active
-  const krakenSymbols = period === '24h' ? top50.map((c) => c.symbol) : []
+  const krakenSymbols = period === '24h' ? top20.map((c) => c.symbol) : []
   const tickers = useKrakenTicker(krakenSymbols)
 
   return (
@@ -64,7 +63,7 @@ export function CryptoHeatmap() {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3">
         <div>
           <h2 className="text-sm font-semibold text-zinc-200">Crypto Heatmap</h2>
-          <p className="text-[11px] text-zinc-500">Top 50 by market cap</p>
+          <p className="text-[11px] text-zinc-500">Top 20 by market cap</p>
         </div>
         <div className="flex items-center gap-1">
           {PERIODS.map(({ label, key }) => (
@@ -92,13 +91,13 @@ export function CryptoHeatmap() {
       <div className="p-3">
         {isLoading ? (
           <div className="flex flex-wrap gap-1.5 animate-pulse">
-            {Array.from({ length: 50 }).map((_, i) => (
-              <div key={i} className="rounded-lg bg-zinc-800/50" style={{ width: 72, height: 56 }} />
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div key={i} className="rounded-lg bg-zinc-800/50" style={{ width: 88, height: 72 }} />
             ))}
           </div>
         ) : (
           <div className="flex flex-wrap gap-1.5">
-            {top50.map((coin) => {
+            {top20.map((coin) => {
               const live = tickers.get(coin.symbol) // keyed by lowercase symbol
 
               // Use Kraken live % for 24h, CoinGecko otherwise

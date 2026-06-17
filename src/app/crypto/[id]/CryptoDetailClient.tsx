@@ -16,6 +16,7 @@ import { ROICalculator }     from '@/components/crypto/ROICalculator'
 import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 import { StockAIInsight }      from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts }   from '@/components/stock/StockRelatedPosts'
+import { CryptoBlogPosts }     from '@/components/crypto/CryptoBlogPosts'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -324,6 +325,10 @@ export function CryptoDetailClient({ id }: { id: string }) {
 
       <WidgetBoundary label="Related Articles">
         <StockRelatedPosts symbol={coin.symbol.toUpperCase()} />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Latest Crypto Analysis">
+        <CryptoBlogPosts />
       </WidgetBoundary>
 
       {/* Stats grid */}
