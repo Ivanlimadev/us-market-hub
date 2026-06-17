@@ -149,7 +149,7 @@ export default async function BlogPostPage({
       {/* E-E-A-T author section */}
       <div className="mt-10 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
         <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Written by</p>
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
           <img
             src="/ivan-lima.jpg"
             alt="Ivan Lima"
@@ -157,7 +157,7 @@ export default async function BlogPostPage({
             height={64}
             className="h-16 w-16 shrink-0 rounded-full object-cover border-2 border-emerald-500/30"
           />
-          <div className="min-w-0 space-y-2">
+          <div className="min-w-0 w-full space-y-2 text-center sm:text-left">
             <p className="font-semibold text-zinc-100">Ivan Lima</p>
             <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
             <p className="text-sm leading-relaxed text-zinc-400">
@@ -167,42 +167,42 @@ export default async function BlogPostPage({
               from the perspective of someone with real skin in the game — tracking earnings, reading
               SEC filings, and following market cycles for over eight years.
             </p>
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
               <a
                 href="https://www.instagram.com/ivan_lima_dev"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-2.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               >
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
                 </svg>
-                @ivan_lima_dev
+                <span className="hidden sm:inline">@ivan_lima_dev</span>
               </a>
               <a
                 href="https://www.linkedin.com/in/ivanlimadev/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="flex items-center gap-1.5 rounded-lg bg-[#0A66C2] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-lg bg-[#0A66C2] px-2.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               >
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/>
                   <rect x="2" y="9" width="4" height="12"/>
                   <circle cx="4" cy="4" r="2"/>
                 </svg>
-                LinkedIn
+                <span className="hidden sm:inline">LinkedIn</span>
               </a>
               <a
                 href="mailto:contato@ivanlimadev.com"
                 aria-label="Email"
-                className="flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+                className="flex items-center gap-1.5 rounded-lg border border-zinc-700 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
               >
-                <Mail className="h-3.5 w-3.5" />
-                Email
+                <Mail className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden sm:inline">Email</span>
               </a>
             </div>
           </div>
