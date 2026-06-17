@@ -139,16 +139,23 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
   let chosenSector = ''
 
   if (doStockPost) {
-    // Pick a stock not recently covered, prioritising popular ones
-    const candidates = [
-      ...PRIORITY_STOCKS.filter(s => !recentTickers.has(s)),
-      ...ALL_SYMBOLS.filter(s => !recentTickers.has(s) && !PRIORITY_STOCKS.includes(s)),
-    ]
-    if (!candidates.length) {
-      // All stocks covered recently — fall back to macro
-      return NextResponse.json({ message: 'All stocks covered recently, try macro topics' })
+    // ?symbol=AAPL forces a specific stock
+    const symbolParam = req.nextUrl.searchParams.get('symbol')?.toUpperCase()
+
+    if (symbolParam && (ALL_SYMBOLS.includes(symbolParam) || PRIORITY_STOCKS.includes(symbolParam))) {
+      chosenSymbol = symbolParam
+    } else {
+      // Pick a stock not recently covered, prioritising popular ones
+      const candidates = [
+        ...PRIORITY_STOCKS.filter(s => !recentTickers.has(s)),
+        ...ALL_SYMBOLS.filter(s => !recentTickers.has(s) && !PRIORITY_STOCKS.includes(s)),
+      ]
+      if (!candidates.length) {
+        // All stocks covered recently — fall back to macro
+        return NextResponse.json({ message: 'All stocks covered recently, try macro topics' })
+      }
+      chosenSymbol = candidates[Math.floor(Math.random() * Math.min(candidates.length, 20))]
     }
-    chosenSymbol = candidates[Math.floor(Math.random() * Math.min(candidates.length, 20))]
     chosenName   = STOCK_NAMES[chosenSymbol] ?? chosenSymbol
 
     // Fetch real stock data
