@@ -55,6 +55,7 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
       </div>
 
       {/* Balance sheet table */}
+      <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
@@ -101,6 +102,7 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
@@ -146,6 +148,7 @@ function RdChart({ annual }: { annual: EdgarAnnual[] }) {
       </div>
 
       {/* Table */}
+      <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
@@ -189,6 +192,7 @@ function RdChart({ annual }: { annual: EdgarAnnual[] }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
@@ -270,6 +274,7 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
       )}
 
       {/* Table */}
+      <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
@@ -311,6 +316,7 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
@@ -343,6 +349,7 @@ function FcfChart({ annual }: { annual: EdgarAnnual[] }) {
         })}
       </div>
 
+      <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
@@ -377,6 +384,7 @@ function FcfChart({ annual }: { annual: EdgarAnnual[] }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

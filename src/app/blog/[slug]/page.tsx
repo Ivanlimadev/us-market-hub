@@ -157,7 +157,7 @@ export default async function BlogPostPage({
             height={64}
             className="h-16 w-16 shrink-0 rounded-full object-cover border-2 border-emerald-500/30"
           />
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <p className="font-semibold text-zinc-100">Ivan Lima</p>
             <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
             <p className="text-sm leading-relaxed text-zinc-400">
@@ -167,7 +167,7 @@ export default async function BlogPostPage({
               from the perspective of someone with real skin in the game — tracking earnings, reading
               SEC filings, and following market cycles for over eight years.
             </p>
-            <div className="flex items-center gap-3 pt-1">
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <a
                 href="https://www.instagram.com/ivan_lima_dev"
                 target="_blank"
