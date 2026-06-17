@@ -5,7 +5,7 @@ import type { Transaction } from '@/types/portfolio'
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json([], { status: 200 })
+  if (!user) return NextResponse.json([], { status: 401 })
 
   const { data, error } = await supabase
     .from('portfolio_transactions')
