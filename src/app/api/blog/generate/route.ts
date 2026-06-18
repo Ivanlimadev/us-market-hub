@@ -67,6 +67,62 @@ const PRIORITY_STOCKS = [
   'SPY','QQQ','ARKK','SOXX',
 ]
 
+// Company-specific Pexels queries — product/brand imagery is far more engaging than generic "stock market"
+const COMPANY_IMAGE_QUERIES: Record<string, string[]> = {
+  AAPL: ['Apple iPhone MacBook desk', 'Apple store interior'],
+  MSFT: ['Microsoft Surface laptop office', 'Windows computer workspace'],
+  NVDA: ['Nvidia GPU graphics card', 'AI chip semiconductor circuit'],
+  AMZN: ['Amazon warehouse delivery logistics', 'Amazon package boxes'],
+  GOOGL: ['Google headquarters campus', 'Google search technology'],
+  GOOG:  ['Google headquarters campus', 'Google search technology'],
+  META:  ['virtual reality headset metaverse', 'social media smartphone app'],
+  TSLA:  ['Tesla electric car charging', 'Tesla Model 3 road'],
+  JPM:   ['JPMorgan Chase bank building', 'Wall Street financial district'],
+  V:     ['Visa card contactless payment', 'digital payment terminal'],
+  MA:    ['Mastercard credit card payment', 'contactless payment checkout'],
+  AMD:   ['AMD Ryzen processor chip', 'CPU computer hardware'],
+  PLTR:  ['big data analytics screen', 'data visualization dashboard'],
+  COIN:  ['Bitcoin cryptocurrency trading', 'crypto coin exchange chart'],
+  HOOD:  ['stock trading smartphone app', 'retail investor mobile'],
+  UBER:  ['Uber rideshare city car', 'ride hailing urban transport'],
+  ABNB:  ['Airbnb cozy vacation rental', 'travel accommodation home'],
+  CRWD:  ['cybersecurity data protection', 'network security shield server'],
+  SNOW:  ['cloud computing data center', 'snowflake data warehouse server'],
+  NET:   ['internet network server room', 'cloud infrastructure cables'],
+  DDOG:  ['DevOps monitoring dashboard', 'software engineering code screen'],
+  LLY:   ['pharmaceutical laboratory research', 'drug discovery scientist'],
+  UNH:   ['hospital healthcare medical', 'health insurance doctor'],
+  JNJ:   ['medicine pharmaceutical pills', 'medical research laboratory'],
+  PFE:   ['Pfizer vaccine pharmaceutical lab', 'medicine drug research'],
+  MRNA:  ['mRNA biotech vaccine research', 'laboratory scientist microscope'],
+  ABBV:  ['pharmaceutical biotech research', 'drug laboratory medicine'],
+  MRK:   ['Merck pharmaceutical medicine', 'medical drug laboratory'],
+  XOM:   ['oil refinery petroleum production', 'ExxonMobil energy plant'],
+  CVX:   ['Chevron oil gas refinery', 'petroleum energy production'],
+  COP:   ['oil drilling energy production', 'petroleum refinery plant'],
+  MPC:   ['oil refinery fuel energy', 'petroleum processing plant'],
+  VLO:   ['Valero oil refinery energy', 'fuel petroleum production'],
+  BAC:   ['Bank of America branch building', 'banking finance office'],
+  GS:    ['Goldman Sachs trading floor', 'Wall Street investment bank'],
+  MS:    ['Morgan Stanley investment bank', 'financial trading office'],
+  SCHW:  ['Charles Schwab brokerage investing', 'financial advisor office'],
+  COF:   ['Capital One credit card bank', 'financial services'],
+  SPGI:  ['S&P Global ratings finance', 'financial analytics data'],
+  GE:    ['General Electric industrial turbine', 'manufacturing aerospace engine'],
+  CAT:   ['Caterpillar excavator construction site', 'heavy yellow machinery'],
+  HON:   ['Honeywell industrial manufacturing', 'aerospace technology plant'],
+  BA:    ['Boeing commercial airplane aircraft', 'jet aviation factory'],
+  LMT:   ['Lockheed Martin F-35 fighter jet', 'military aircraft defense'],
+  RTX:   ['Raytheon defense aerospace missile', 'military technology aircraft'],
+  NEE:   ['wind turbine renewable energy farm', 'solar panel electricity'],
+  DUK:   ['power plant electricity grid utility', 'energy infrastructure'],
+  SO:    ['Southern Company power plant', 'electricity utility energy'],
+  SPY:   ['stock market bull trading floor', 'S&P 500 investment growth'],
+  QQQ:   ['Nasdaq technology stock growth', 'tech stocks bull market'],
+  ARKK:  ['innovation technology startup', 'disruptive tech future'],
+  SOXX:  ['semiconductor chip factory clean room', 'microchip circuit wafer'],
+}
+
 function slug(title: string): string {
   return title
     .toLowerCase()
@@ -307,7 +363,7 @@ At the very end, separated by "---META---":
 - excerpt: one sentence (max 160 chars)
 - seo_title: SEO title with primary keyword (max 60 chars)
 - seo_description: meta description (max 155 chars)
-- image_query: 2-3 word Pexels search term`,
+- image_query: 4-6 word Pexels photo search. MUST be specific to the company/topic — include the company name, product, or industry. Examples: "Apple iPhone MacBook desk", "Tesla electric car charging", "Goldman Sachs trading floor", "pharmaceutical laboratory scientist", "oil refinery petroleum plant". NEVER use generic phrases like "stock market", "financial growth", "business meeting".`,
       },
     ],
   })
@@ -322,20 +378,33 @@ At the very end, separated by "---META---":
     if (m) meta[m[1]] = m[2].trim()
   }
 
-  // Fetch image from Pexels
+  // Fetch image from Pexels — try company-specific queries first, then Claude's suggestion
   let image_url: string | null = null
   let image_alt: string | null = null
   const pexelsKey = process.env.PEXELS_API_KEY
-  if (pexelsKey && meta.image_query) {
-    const imgRes = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(meta.image_query)}&orientation=landscape&per_page=5`,
-      { headers: { Authorization: pexelsKey } },
-    )
-    if (imgRes.ok) {
+  if (pexelsKey) {
+    // Build query priority list: branded lookup → Claude's suggestion → sector → fallback
+    const queryList: string[] = []
+    if (chosenSymbol && COMPANY_IMAGE_QUERIES[chosenSymbol]) {
+      queryList.push(...COMPANY_IMAGE_QUERIES[chosenSymbol])
+    }
+    if (meta.image_query) queryList.push(meta.image_query)
+    if (chosenSector && chosenSector !== 'Markets') queryList.push(chosenSector)
+    queryList.push('investing finance stock market')
+
+    for (const q of queryList) {
+      const imgRes = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&orientation=landscape&per_page=10`,
+        { headers: { Authorization: pexelsKey } },
+      )
+      if (!imgRes.ok) continue
       const data = await imgRes.json()
       const photo = data.photos?.[0]
-      image_url = photo?.src?.large ?? null
-      image_alt = photo?.alt ?? meta.image_query
+      if (photo) {
+        image_url = photo.src?.large ?? null
+        image_alt = photo.alt ?? q
+        break
+      }
     }
   }
 
