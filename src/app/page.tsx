@@ -11,7 +11,7 @@ import { HomeRankings } from '@/components/market/HomeRankings'
 import { DividendCalendarWidget } from '@/components/market/DividendCalendarWidget'
 import { EarningsCalendarWidget } from '@/components/market/EarningsCalendarWidget'
 import { PortfolioWidget } from '@/components/portfolio/PortfolioWidget'
-import { HomeNewsWidget } from '@/components/market/HomeNewsWidget'
+import { HomeBlogWidget } from '@/components/market/HomeBlogWidget'
 import { CryptoHomeWidget } from '@/components/crypto/CryptoHomeWidget'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
@@ -48,8 +48,8 @@ export default function HomePage() {
         </WidgetBoundary>
       </div>
 
-      <WidgetBoundary label="Market News">
-        <HomeNewsWidget />
+      <WidgetBoundary label="Nosso Blog">
+        <HomeBlogWidget />
       </WidgetBoundary>
 
       <WidgetBoundary label="Mundo Cripto">

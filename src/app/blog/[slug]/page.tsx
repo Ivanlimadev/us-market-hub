@@ -168,41 +168,41 @@ export default async function BlogPostPage({
               SEC filings, and following market cycles for over eight years.
             </p>
             <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+              {/* Instagram — logo only */}
               <a
                 href="https://www.instagram.com/ivan_lima_dev"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-2.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                aria-label="Instagram @ivan_lima_dev"
+                className="flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white transition-opacity hover:opacity-80"
               >
-                <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
                 </svg>
-                <span className="hidden sm:inline">@ivan_lima_dev</span>
               </a>
+              {/* LinkedIn — logo only */}
               <a
                 href="https://www.linkedin.com/in/ivanlimadev/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="flex items-center gap-1.5 rounded-lg bg-[#0A66C2] px-2.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#0A66C2] text-white transition-opacity hover:opacity-80"
               >
-                <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/>
                   <rect x="2" y="9" width="4" height="12"/>
                   <circle cx="4" cy="4" r="2"/>
                 </svg>
-                <span className="hidden sm:inline">LinkedIn</span>
               </a>
+              {/* Email — logo only */}
               <a
                 href="mailto:contato@ivanlimadev.com"
                 aria-label="Email"
-                className="flex items-center gap-1.5 rounded-lg border border-zinc-700 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+                className="flex items-center justify-center h-8 w-8 rounded-lg border border-zinc-700 text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
               >
-                <Mail className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden sm:inline">Email</span>
+                <Mail className="h-4 w-4" />
               </a>
             </div>
           </div>
