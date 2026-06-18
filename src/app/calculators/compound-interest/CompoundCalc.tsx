@@ -22,6 +22,13 @@ interface CalcResult {
 const usd = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n)
 
+const RATE_PRESETS: { label: string; desc: string; value: string; mode: RateMode }[] = [
+  { label: 'S&P 500',      desc: 'Historical avg', value: '10', mode: 'annual' },
+  { label: 'Growth',       desc: 'Balanced mix',   value: '7',  mode: 'annual' },
+  { label: 'HYSA',         desc: 'High-yield sav', value: '5',  mode: 'annual' },
+  { label: 'Bonds',        desc: 'Conservative',   value: '4',  mode: 'annual' },
+]
+
 function calcCompound(
   principal: number,
   rate:      number,
@@ -143,6 +150,9 @@ export function CompoundCalc() {
     ? (result.totalInterest / result.finalValue) * 100
     : 0
 
+  // Active preset detection
+  const activePreset = RATE_PRESETS.find(p => p.value === rate && p.mode === rateMode)?.label ?? null
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <nav className="mb-6 text-xs text-zinc-500">
@@ -153,8 +163,8 @@ export function CompoundCalc() {
 
       <h1 className="mb-2 text-3xl font-bold text-zinc-100">Compound Interest Calculator</h1>
       <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
-        See how your investments grow exponentially over time. This calculator includes initial
-        capital, monthly contributions, and a full year-by-year breakdown.
+        See how your investments grow exponentially over time. Includes initial capital, monthly
+        contributions, and a full year-by-year breakdown.
       </p>
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
@@ -166,7 +176,7 @@ export function CompoundCalc() {
           <NumInput label="Monthly contribution ($)" value={pmt} onChange={setPmt} step={50} pre="$" />
 
           {/* Rate with toggle */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-zinc-400">Interest rate</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -180,6 +190,25 @@ export function CompoundCalc() {
                 options={[{ label: 'Annual', value: 'annual' as RateMode }, { label: 'Monthly', value: 'monthly' as RateMode }]}
                 value={rateMode} onChange={setRateMode}
               />
+            </div>
+
+            {/* ── Rate presets ── */}
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {RATE_PRESETS.map(p => (
+                <button
+                  key={p.label}
+                  type="button"
+                  onClick={() => { setRate(p.value); setRateMode(p.mode) }}
+                  title={p.desc}
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                    activePreset === p.label
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+                  }`}
+                >
+                  {p.label} {p.value}%
+                </button>
+              ))}
             </div>
           </div>
 
@@ -295,10 +324,18 @@ export function CompoundCalc() {
           so in the next period you earn interest on a larger base. This creates exponential growth:
           the longer your time horizon, the more dramatic the effect.
         </p>
+        <h2 className="text-base font-bold text-zinc-200">Which rate should I use?</h2>
+        <p>
+          The <strong className="text-zinc-300">S&P 500</strong> has historically returned ~10%/year
+          before inflation over long periods — use this for an all-equity US index fund scenario.
+          A <strong className="text-zinc-300">balanced growth</strong> portfolio (stocks + bonds) is
+          closer to 7%. <strong className="text-zinc-300">High-yield savings accounts (HYSA)</strong> are
+          currently paying around 4–5% with FDIC insurance and zero market risk.
+          <strong className="text-zinc-300"> Bonds</strong> historically return ~4% annualized.
+        </p>
         <h2 className="text-base font-bold text-zinc-200">Formula used</h2>
         <p>
-          For investments with monthly contributions, the final value is calculated as:
-          <code className="mx-1 rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-emerald-300">
+          <code className="mr-1 rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-emerald-300">
             FV = PV × (1+r)^n + PMT × ((1+r)^n − 1) / r
           </code>
           where <strong className="text-zinc-300">r</strong> is the monthly rate,
@@ -311,8 +348,7 @@ export function CompoundCalc() {
           </code>.
         </p>
         <p className="text-xs text-zinc-600">
-          This calculator is for educational purposes only and does not constitute financial advice.
-          Past returns do not guarantee future results.
+          For educational purposes only. Not financial advice. Past returns do not guarantee future results.
         </p>
       </section>
     </div>
