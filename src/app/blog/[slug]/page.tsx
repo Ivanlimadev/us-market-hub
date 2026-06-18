@@ -18,6 +18,15 @@ interface Post {
   seo_description: string | null
 }
 
+interface RelatedPost {
+  slug: string
+  title: string
+  excerpt: string | null
+  image_url: string | null
+  image_alt: string | null
+  category: string
+}
+
 function supabase() {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -83,6 +92,30 @@ export default async function BlogPostPage({
   if (!post) notFound()
 
   const html = markdownToHtml(post.content)
+
+  // Related posts: same category first, fill with latest if needed
+  const { data: sameCat } = await supabase()
+    .from('blog_posts')
+    .select('slug, title, excerpt, image_url, image_alt, category')
+    .eq('status', 'published')
+    .eq('category', post.category)
+    .neq('slug', slug)
+    .order('published_at', { ascending: false })
+    .limit(4)
+
+  let related: RelatedPost[] = (sameCat ?? []) as RelatedPost[]
+
+  if (related.length < 4) {
+    const { data: latest } = await supabase()
+      .from('blog_posts')
+      .select('slug, title, excerpt, image_url, image_alt, category')
+      .eq('status', 'published')
+      .neq('slug', slug)
+      .not('slug', 'in', `(${related.map(p => `"${p.slug}"`).join(',')})`)
+      .order('published_at', { ascending: false })
+      .limit(4 - related.length)
+    related = [...related, ...((latest ?? []) as RelatedPost[])]
+  }
 
   const jsonLd = {
     '@context':        'https://schema.org',
@@ -208,6 +241,82 @@ export default async function BlogPostPage({
           </div>
         </div>
       </div>
+
+      {/* Related posts */}
+      {related.length > 0 && (
+        <div className="mt-10">
+          <h2 className="mb-5 text-lg font-bold text-zinc-100">Leia também</h2>
+
+          {/* Featured post — imagem grande + título + resumo */}
+          {(() => {
+            const featured = related[0]
+            return (
+              <Link
+                href={`/blog/${featured.slug}`}
+                className="group mb-4 block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 hover:border-zinc-700 transition-colors"
+              >
+                {featured.image_url && (
+                  <div className="relative h-48 w-full overflow-hidden bg-zinc-800">
+                    <Image
+                      src={featured.image_url}
+                      alt={featured.image_alt ?? featured.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div className="p-5">
+                  <span className="mb-2 inline-block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                    {featured.category}
+                  </span>
+                  <h3 className="mb-2 text-base font-bold leading-snug text-zinc-100 group-hover:text-white transition-colors line-clamp-2">
+                    {featured.title}
+                  </h3>
+                  {featured.excerpt && (
+                    <p className="text-sm leading-relaxed text-zinc-400 line-clamp-3">
+                      {featured.excerpt}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            )
+          })()}
+
+          {/* 3 smaller posts — thumbnail + título */}
+          {related.length > 1 && (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {related.slice(1, 4).map((p) => (
+                <Link
+                  key={p.slug}
+                  href={`/blog/${p.slug}`}
+                  className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 hover:border-zinc-700 transition-colors"
+                >
+                  {p.image_url ? (
+                    <div className="relative h-28 w-full overflow-hidden bg-zinc-800">
+                      <Image
+                        src={p.image_url}
+                        alt={p.image_alt ?? p.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-28 w-full bg-zinc-800" />
+                  )}
+                  <div className="p-3">
+                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                      {p.category}
+                    </span>
+                    <h3 className="text-sm font-semibold leading-snug text-zinc-200 group-hover:text-white transition-colors line-clamp-3">
+                      {p.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
         <p className="mb-3 text-zinc-300">Track US stocks, crypto, and market data</p>
