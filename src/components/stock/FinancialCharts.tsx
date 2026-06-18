@@ -207,7 +207,7 @@ export function FinancialCharts({ symbol }: { symbol: string }) {
           </div>
         ) : !hasData ? (
           <div className="flex items-center justify-center text-sm text-zinc-500" style={{ height: BAR_H + LABEL_H }}>
-            Dados financeiros não disponíveis
+            Financial data not available
           </div>
         ) : (
           <BarChart

@@ -42,14 +42,14 @@ export function CryptoHomeWidget() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-200">Mundo Cripto</h3>
-          <p className="text-[11px] text-zinc-500 mt-0.5">Top 5 criptomoedas agora</p>
+          <h3 className="text-sm font-semibold text-zinc-200">Crypto Markets</h3>
+          <p className="text-[11px] text-zinc-500 mt-0.5">Top 5 coins right now</p>
         </div>
         <Link
           href="/crypto"
           className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
         >
-          Ver mais <ArrowRight className="h-3.5 w-3.5" />
+          See more <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 
@@ -109,7 +109,7 @@ export function CryptoHomeWidget() {
       {/* Latest crypto blog post */}
       {latestPost && (
         <div className="border-t border-zinc-800 px-5 py-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-600 mb-3">Última análise</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-600 mb-3">Latest analysis</p>
           <Link href={`/blog/${latestPost.slug}`} className="group flex gap-3 items-start hover:opacity-80 transition-opacity">
             {latestPost.image_url && (
               // eslint-disable-next-line @next/next/no-img-element

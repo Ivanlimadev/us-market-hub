@@ -182,7 +182,7 @@ export default async function BlogPostPage({
       {/* Related posts — antes do autor para capturar atenção do leitor */}
       {related.length > 0 && (
         <div className="mt-10">
-          <h2 className="mb-5 text-lg font-bold text-zinc-100">Leia também</h2>
+          <h2 className="mb-5 text-lg font-bold text-zinc-100">You might also like</h2>
 
           {/* Featured post — imagem grande + título + resumo */}
           {(() => {

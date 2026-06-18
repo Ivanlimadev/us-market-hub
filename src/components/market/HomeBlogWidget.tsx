@@ -45,14 +45,14 @@ export function HomeBlogWidget() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-200">Nosso Blog</h3>
-          <p className="text-[11px] text-zinc-500 mt-0.5">Análises e insights recentes</p>
+          <h3 className="text-sm font-semibold text-zinc-200">Our Blog</h3>
+          <p className="text-[11px] text-zinc-500 mt-0.5">Latest analysis & insights</p>
         </div>
         <Link
           href="/blog"
           className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
         >
-          Ver todos <ArrowRight className="h-3.5 w-3.5" />
+          See all <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 
@@ -118,7 +118,7 @@ export function HomeBlogWidget() {
       {/* Empty */}
       {!isLoading && (!data || data.length === 0) && (
         <div className="px-5 py-8 text-center text-sm text-zinc-600">
-          Nenhum artigo encontrado.
+          No articles found.
         </div>
       )}
     </div>

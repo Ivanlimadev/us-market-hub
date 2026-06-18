@@ -48,11 +48,11 @@ export default function HomePage() {
         </WidgetBoundary>
       </div>
 
-      <WidgetBoundary label="Nosso Blog">
+      <WidgetBoundary label="Our Blog">
         <HomeBlogWidget />
       </WidgetBoundary>
 
-      <WidgetBoundary label="Mundo Cripto">
+      <WidgetBoundary label="Crypto Markets">
         <CryptoHomeWidget />
       </WidgetBoundary>
     </div>
