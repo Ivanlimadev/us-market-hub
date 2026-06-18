@@ -124,7 +124,7 @@ export function CryptoHomeWidget() {
               <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-snug group-hover:text-white transition-colors">
                 {latestPost.title}
               </p>
-              <p className="mt-1 text-[11px] text-zinc-500 line-clamp-1">{latestPost.excerpt}</p>
+              <p className="mt-1 text-[11px] text-zinc-500 line-clamp-2">{latestPost.excerpt}</p>
             </div>
           </Link>
         </div>

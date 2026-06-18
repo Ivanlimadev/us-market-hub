@@ -98,7 +98,7 @@ export default async function BlogPage({
                 <h2 className="mb-2 text-base font-semibold leading-snug text-zinc-100 group-hover:text-emerald-400 transition-colors">
                   {post.title}
                 </h2>
-                <p className="line-clamp-2 text-sm text-zinc-400">{post.excerpt}</p>
+                <p className="line-clamp-3 text-sm text-zinc-400">{post.excerpt}</p>
                 <span className="mt-auto pt-4 text-xs text-zinc-600">
                   {new Date(post.published_at).toLocaleDateString('en-US', {
                     month: 'short', day: 'numeric', year: 'numeric',

@@ -100,7 +100,7 @@ export function CryptoBlogPosts() {
                   {post.title}
                 </p>
                 {post.excerpt && (
-                  <p className="mt-1 text-xs text-zinc-500 line-clamp-1">{post.excerpt}</p>
+                  <p className="mt-1 text-xs text-zinc-500 line-clamp-2">{post.excerpt}</p>
                 )}
                 <p className="mt-1.5 text-[10px] text-zinc-600">{timeAgo(post.published_at)}</p>
               </div>

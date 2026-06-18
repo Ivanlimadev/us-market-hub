@@ -161,10 +161,10 @@ ${realDataBlock}${newsBlock}
 - Format: plain Markdown only
 
 At the very end, separated by "---META---":
-- excerpt: one sentence (max 160 chars)
+- excerpt: 2-3 sentences that hook the reader — open with a specific data point or tension, state the core argument, tease the verdict. Between 220–340 chars. Example: "Lockheed Martin has surged 30% in 2026 on record defense budgets and a $160B backlog. The bull case rests on F-35 production ramp-up and NATO rearmament cycles — but there are two risks every investor must watch. Here's our verdict."
 - seo_title: SEO title with primary keyword (max 60 chars)
 - seo_description: meta description (max 155 chars)
-- image_query: 2-3 word Pexels search term`,
+- image_query: 4-6 word Pexels photo search. MUST be specific to the company/topic — include the company name, product, or industry. NEVER use generic phrases like "stock market", "financial growth", "business meeting".`,
     }],
   })
 

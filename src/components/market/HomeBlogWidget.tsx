@@ -100,6 +100,9 @@ export function HomeBlogWidget() {
                   <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-snug group-hover:text-white transition-colors">
                     {post.title}
                   </p>
+                  {post.excerpt && (
+                    <p className="mt-1 text-xs text-zinc-500 line-clamp-2 leading-snug">{post.excerpt}</p>
+                  )}
                   <div className="mt-1 flex items-center gap-1.5">
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${catCls}`}>
                       {post.category}
