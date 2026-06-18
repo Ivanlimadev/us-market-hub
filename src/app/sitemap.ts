@@ -29,6 +29,7 @@ const STATIC_ROUTES = [
   { url: '/calculators',                        priority: 0.75, changeFrequency: 'monthly' },
   { url: '/calculators/compound-interest',      priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/calculators/dca',                    priority: 0.8,  changeFrequency: 'monthly' },
+  { url: '/calculators/roi',                    priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/calculators/first-million',          priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/calculators/simple-interest',        priority: 0.75, changeFrequency: 'monthly' },
   { url: '/calculators/percentage',             priority: 0.75, changeFrequency: 'monthly' },

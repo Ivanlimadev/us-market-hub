@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TrendingUp, Percent, Target, BarChart2, RefreshCw } from 'lucide-react'
+import { TrendingUp, Percent, Target, BarChart2, RefreshCw, ArrowUpRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Free Investment Calculators — Stock Market ROI',
@@ -31,6 +31,15 @@ const CALCULATORS = [
     title: 'DCA Calculator',
     description: 'Simulate Dollar-Cost Averaging with weekly, bi-weekly, or monthly contributions. Compares DCA vs lump sum so you can see the difference in final value.',
     badge: 'Trending',
+  },
+  {
+    href: '/calculators/roi',
+    icon: ArrowUpRight,
+    color: 'text-orange-400',
+    bg: 'bg-orange-400/10',
+    title: 'ROI Calculator',
+    description: 'Calculate total ROI and annualized CAGR for any investment or stock trade. Includes S&P 500 benchmark comparison and break-even recovery analysis.',
+    badge: null,
   },
   {
     href: '/calculators/first-million',
