@@ -25,7 +25,13 @@ const STATIC_ROUTES = [
   { url: '/compare/jpm-vs-bac',          priority: 0.75, changeFrequency: 'monthly' },
   { url: '/compare/bitcoin-vs-ethereum', priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/compare/bitcoin-vs-gold',     priority: 0.8,  changeFrequency: 'monthly' },
-  { url: '/about',                       priority: 0.4,  changeFrequency: 'monthly' },
+  // Calculators
+  { url: '/calculators',                        priority: 0.75, changeFrequency: 'monthly' },
+  { url: '/calculators/compound-interest',      priority: 0.8,  changeFrequency: 'monthly' },
+  { url: '/calculators/simple-interest',        priority: 0.75, changeFrequency: 'monthly' },
+  { url: '/calculators/first-million',          priority: 0.8,  changeFrequency: 'monthly' },
+  { url: '/calculators/percentage',             priority: 0.75, changeFrequency: 'monthly' },
+  { url: '/about',                              priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/privacy',                     priority: 0.3,  changeFrequency: 'monthly' },
   { url: '/terms',                       priority: 0.3,  changeFrequency: 'monthly' },
 ] as const

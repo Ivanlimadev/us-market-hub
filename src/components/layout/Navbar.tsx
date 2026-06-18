@@ -22,6 +22,7 @@ const NAV_LINKS = [
   { href: '/calendar', label: 'Calendar' },
   { href: '/crypto', label: 'Crypto' },
   { href: '/blog', label: 'Blog' },
+  { href: '/calculators', label: 'Calculators' },
   { href: '/portfolio', label: 'Portfolio' },
 ]
 
