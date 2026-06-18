@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TrendingUp, Percent, Target, BarChart2 } from 'lucide-react'
+import { TrendingUp, Percent, Target, BarChart2, RefreshCw } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Free Investment Calculators — Stock Market ROI',
-  description: 'Free financial calculators for investors: compound interest, simple interest, first million, and percentage. Plan your investments and see how your money grows.',
+  description: 'Free financial calculators for US investors: compound interest, DCA, simple interest, first million, and percentage. Plan your investments and see how your money grows.',
   alternates: { canonical: 'https://stockmarketroi.com/calculators' },
   openGraph: {
     title: 'Free Investment Calculators — Stock Market ROI',
-    description: 'Free financial calculators for investors: compound interest, simple interest, first million, and percentage.',
+    description: 'Free financial calculators for investors: compound interest, DCA, simple interest, first million, and percentage.',
     type: 'website',
   },
 }
@@ -24,13 +24,13 @@ const CALCULATORS = [
     badge: 'Most popular',
   },
   {
-    href: '/calculators/simple-interest',
-    icon: BarChart2,
-    color: 'text-blue-400',
-    bg: 'bg-blue-400/10',
-    title: 'Simple Interest',
-    description: 'Calculate returns on linear-growth investments. Interest is applied only to the original principal — no compounding effect.',
-    badge: null,
+    href: '/calculators/dca',
+    icon: RefreshCw,
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-400/10',
+    title: 'DCA Calculator',
+    description: 'Simulate Dollar-Cost Averaging with weekly, bi-weekly, or monthly contributions. Compares DCA vs lump sum so you can see the difference in final value.',
+    badge: 'Trending',
   },
   {
     href: '/calculators/first-million',
@@ -38,8 +38,17 @@ const CALCULATORS = [
     color: 'text-amber-400',
     bg: 'bg-amber-400/10',
     title: 'First Million',
-    description: 'How long to reach $1,000,000? Enter your savings rate and monthly contribution to see your timeline — or find out how much you need to invest.',
+    description: 'Find out at what age you\'ll reach $1,000,000 — or how much you need to invest monthly to get there by your target date.',
     badge: 'Goal-based',
+  },
+  {
+    href: '/calculators/simple-interest',
+    icon: BarChart2,
+    color: 'text-blue-400',
+    bg: 'bg-blue-400/10',
+    title: 'Simple Interest',
+    description: 'Calculate returns on fixed-income investments where interest is applied only to the original principal — no compounding effect.',
+    badge: null,
   },
   {
     href: '/calculators/percentage',
