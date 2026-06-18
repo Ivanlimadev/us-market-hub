@@ -18,7 +18,7 @@ interface Post {
   published_at: string
 }
 
-const CATEGORIES = ['All', 'Markets', 'Stocks', 'Investing', 'Economics', 'Crypto', 'Technology']
+const CATEGORIES = ['All', 'Markets', 'Stocks', 'Investing', 'Finance', 'Economics', 'Crypto', 'Technology']
 
 function supabase() {
   return createServerClient(

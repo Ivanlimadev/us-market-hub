@@ -16,6 +16,7 @@ const CAT_COLORS: Record<string, string> = {
   Stocks:     'text-emerald-400 bg-emerald-400/10',
   Investing:  'text-amber-400 bg-amber-400/10',
   Markets:    'text-indigo-400 bg-indigo-400/10',
+  Finance:    'text-violet-400 bg-violet-400/10',
   Economics:  'text-red-400 bg-red-400/10',
   Crypto:     'text-orange-400 bg-orange-400/10',
   Technology: 'text-blue-400 bg-blue-400/10',
