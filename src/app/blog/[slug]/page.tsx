@@ -423,7 +423,8 @@ export default async function BlogPostPage({
       </div>
 
       <p className="mt-6 text-center text-xs text-zinc-600">
-        This article is for informational purposes only and does not constitute financial advice.
+        This article was written with AI assistance based on real market data and reviewed for accuracy.
+        It is for informational purposes only and does not constitute financial advice.
       </p>
     </main>
   )
