@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Mail } from 'lucide-react'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
+import { fetchStockData } from '@/lib/stock-server'
+import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 interface Post {
   slug: string
@@ -16,6 +18,7 @@ interface Post {
   published_at: string
   seo_title: string | null
   seo_description: string | null
+  tickers: string[] | null
 }
 
 interface RelatedPost {
@@ -92,6 +95,21 @@ export default async function BlogPostPage({
   if (!post) notFound()
 
   const html = markdownToHtml(post.content)
+
+  // Fetch stock data for the first ticker if post has one
+  const primaryTicker = post.tickers?.[0] ?? null
+  let stockData: StockDetailData | null = null
+  if (primaryTicker) {
+    stockData = await fetchStockData(primaryTicker)
+  }
+
+  // Calculate 12M price change from EOD history (bars are newest-first)
+  let change12m: number | null = null
+  if (stockData && stockData.recentEod.length >= 2) {
+    const newest = stockData.recentEod[0].close
+    const oldest = stockData.recentEod[stockData.recentEod.length - 1].close
+    if (oldest > 0) change12m = ((newest - oldest) / oldest) * 100
+  }
 
   // Related posts: same category first, fill with latest if needed
   const { data: sameCat } = await supabase()
@@ -178,6 +196,93 @@ export default async function BlogPostPage({
         className="prose prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+
+      {/* Ticker card — shown when post has a related stock */}
+      {stockData && primaryTicker && (
+        <div className="mt-10 overflow-hidden rounded-2xl border border-zinc-700">
+          {/* Header: logo + ticker + name */}
+          <div className="flex items-center gap-4 bg-zinc-900 px-5 py-4">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white p-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://assets.parqet.com/logos/symbol/${primaryTicker}?format=png`}
+                alt={stockData.name}
+                width={56}
+                height={56}
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div>
+              <p className="text-xl font-extrabold text-zinc-100">{primaryTicker}</p>
+              <p className="text-sm text-zinc-400 truncate max-w-xs">{stockData.name}</p>
+            </div>
+          </div>
+
+          {/* Metrics grid */}
+          <div className="bg-[#0F1923] px-5 py-6">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+              {/* Price */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">Price</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  ${stockData.currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              </div>
+              {/* 12M Change */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">Chg (12M)</p>
+                <p className={`mt-1 text-2xl font-bold flex items-center gap-1 ${change12m == null ? 'text-white' : change12m >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {change12m != null ? (
+                    <>
+                      {change12m >= 0 ? '▲' : '▼'}
+                      {Math.abs(change12m).toFixed(2)}%
+                    </>
+                  ) : '--'}
+                </p>
+              </div>
+              {/* Net Margin */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">Net Margin</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  {stockData.info?.profitMargin != null
+                    ? `${(stockData.info.profitMargin * 100).toFixed(2)}%`
+                    : '--'}
+                </p>
+              </div>
+              {/* Dividend Yield */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">Div. Yield</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  {stockData.info?.dividendYield != null
+                    ? `${(stockData.info.dividendYield * 100).toFixed(2)}%`
+                    : '--'}
+                </p>
+              </div>
+              {/* P/E */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">P/E</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  {stockData.info?.pe != null ? stockData.info.pe.toFixed(2) : '--'}
+                </p>
+              </div>
+              {/* P/B */}
+              <div>
+                <p className="text-[11px] text-[#6B8BA4]">P/B</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  {stockData.info?.priceToBook != null ? stockData.info.priceToBook.toFixed(2) : '--'}
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href={`/stocks/${primaryTicker.toLowerCase()}`}
+              className="mt-6 block w-full rounded-lg border border-zinc-600 py-3 text-center text-sm font-semibold text-zinc-300 transition-colors hover:border-zinc-400 hover:text-white"
+            >
+              View all indicators ({primaryTicker})
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Related posts — antes do autor para capturar atenção do leitor */}
       {related.length > 0 && (
