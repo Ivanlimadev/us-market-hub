@@ -6,6 +6,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
+import { RelatedTabs } from './related-tabs'
 
 interface Post {
   slug: string
@@ -71,12 +72,19 @@ function markdownToHtml(md: string): string {
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, text, href) => {
       const isInternal = href.includes('stockmarketroi.com')
       return isInternal
-        ? `<a href="${href}" class="font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">${text}</a>`
+        ? `<a href="${href}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
         : `<a href="${href}" target="_blank" rel="noopener noreferrer" class="text-zinc-300 hover:text-white underline underline-offset-2 transition-colors">${text}</a>`
+    })
+    .replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, (_, text, href) => {
+      return `<a href="${href}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
     })
     .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-zinc-300">$1</li>')
     .replace(/(<li[\s\S]+?<\/li>)/g, '<ul class="my-4 space-y-1">$1</ul>')
     .replace(/^(?!<[hul])(.*\S.*)$/gm, '<p class="text-zinc-300 leading-relaxed my-4">$1</p>')
+}
+
+function readingTime(content: string): number {
+  return Math.max(1, Math.ceil(content.trim().split(/\s+/).length / 200))
 }
 
 export default async function BlogPostPage({
@@ -135,6 +143,15 @@ export default async function BlogPostPage({
     related = [...related, ...((latest ?? []) as RelatedPost[])]
   }
 
+  const { data: latestData } = await supabase()
+    .from('blog_posts')
+    .select('slug, title, excerpt, image_url, image_alt, category')
+    .eq('status', 'published')
+    .neq('slug', slug)
+    .order('published_at', { ascending: false })
+    .limit(4)
+  const latestPosts: RelatedPost[] = (latestData ?? []) as RelatedPost[]
+
   const jsonLd = {
     '@context':        'https://schema.org',
     '@type':           'Article',
@@ -174,11 +191,16 @@ export default async function BlogPostPage({
 
       <span className="mb-3 block text-sm font-medium text-emerald-400">{post.category}</span>
       <h1 className="mb-4 text-3xl font-bold leading-tight text-zinc-100">{post.title}</h1>
-      <p className="mb-6 text-zinc-500">
-        {new Date(post.published_at).toLocaleDateString('en-US', {
+      {post.excerpt && (
+        <p className="mb-5 text-lg italic leading-relaxed text-zinc-400">{post.excerpt}</p>
+      )}
+      <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
+        <span>{new Date(post.published_at).toLocaleDateString('en-US', {
           month: 'long', day: 'numeric', year: 'numeric',
-        })}
-      </p>
+        })}</span>
+        <span>·</span>
+        <span>{readingTime(post.content)} min read</span>
+      </div>
 
       {post.image_url && (
         <div className="relative mb-8 h-64 w-full overflow-hidden rounded-xl bg-zinc-800 sm:h-80">
@@ -196,6 +218,42 @@ export default async function BlogPostPage({
         className="prose prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+
+      {/* Share buttons */}
+      {(() => {
+        const pageUrl = `https://stockmarketroi.com/blog/${post.slug}`
+        const shareTitle = encodeURIComponent(post.title)
+        const shareUrl = encodeURIComponent(pageUrl)
+        return (
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <span className="text-sm font-semibold text-zinc-400">Share:</span>
+            <a href={`https://wa.me/?text=${encodeURIComponent(`${post.title} ${pageUrl}`)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-xs font-semibold text-[#25D366] hover:border-[#25D366]/60 transition-colors">
+              WhatsApp
+            </a>
+            <a href={`https://t.me/share/url?url=${shareUrl}&text=${shareTitle}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#0088CC]/30 bg-[#0088CC]/10 px-4 py-2 text-xs font-semibold text-[#0088CC] hover:border-[#0088CC]/60 transition-colors">
+              Telegram
+            </a>
+            <a href={`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-zinc-600 bg-zinc-800/50 px-4 py-2 text-xs font-semibold text-zinc-300 hover:border-zinc-400 transition-colors">
+              𝕏 Twitter
+            </a>
+            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#0077B5]/30 bg-[#0077B5]/10 px-4 py-2 text-xs font-semibold text-[#0077B5] hover:border-[#0077B5]/60 transition-colors">
+              LinkedIn
+            </a>
+          </div>
+        )
+      })()}
+
+      {/* Tags */}
+      <div className="mt-5 flex flex-wrap gap-2">
+        <span className="rounded-full border border-zinc-700 bg-zinc-800/50 px-3 py-1 text-xs font-semibold text-zinc-400">
+          #{post.category}
+        </span>
+        {(post.tickers ?? []).map((t) => (
+          <Link key={t} href={`/stocks/${t.toLowerCase()}`} className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-400 hover:border-amber-400 transition-colors">
+            ${t}
+          </Link>
+        ))}
+      </div>
 
       {/* Ticker card — shown when post has a related stock */}
       {stockData && primaryTicker && (
@@ -284,81 +342,8 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* Related posts — antes do autor para capturar atenção do leitor */}
-      {related.length > 0 && (
-        <div className="mt-10">
-          <h2 className="mb-5 text-lg font-bold text-zinc-100">You might also like</h2>
-
-          {/* Featured post — imagem grande + título + resumo */}
-          {(() => {
-            const featured = related[0]
-            return (
-              <Link
-                href={`/blog/${featured.slug}`}
-                className="group mb-4 block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 hover:border-zinc-700 transition-colors"
-              >
-                {featured.image_url && (
-                  <div className="relative h-48 w-full overflow-hidden bg-zinc-800">
-                    <Image
-                      src={featured.image_url}
-                      alt={featured.image_alt ?? featured.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                )}
-                <div className="p-5">
-                  <span className="mb-2 inline-block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                    {featured.category}
-                  </span>
-                  <h3 className="mb-2 text-base font-bold leading-snug text-zinc-100 group-hover:text-white transition-colors line-clamp-2">
-                    {featured.title}
-                  </h3>
-                  {featured.excerpt && (
-                    <p className="text-sm leading-relaxed text-zinc-400 line-clamp-3">
-                      {featured.excerpt}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            )
-          })()}
-
-          {/* 3 cards menores — thumbnail + título */}
-          {related.length > 1 && (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {related.slice(1, 4).map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/blog/${p.slug}`}
-                  className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 hover:border-zinc-700 transition-colors"
-                >
-                  {p.image_url ? (
-                    <div className="relative h-28 w-full overflow-hidden bg-zinc-800">
-                      <Image
-                        src={p.image_url}
-                        alt={p.image_alt ?? p.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-28 w-full bg-zinc-800" />
-                  )}
-                  <div className="p-3">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
-                      {p.category}
-                    </span>
-                    <h3 className="text-sm font-semibold leading-snug text-zinc-200 group-hover:text-white transition-colors line-clamp-3">
-                      {p.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* Related posts com abas Related / Latest */}
+      <RelatedTabs related={related} latest={latestPosts} />
 
       {/* E-E-A-T author section */}
       <div className="mt-10 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
