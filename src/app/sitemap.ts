@@ -34,6 +34,7 @@ const STATIC_ROUTES = [
   { url: '/calculators/simple-interest',        priority: 0.75, changeFrequency: 'monthly' },
   { url: '/calculators/percentage',             priority: 0.75, changeFrequency: 'monthly' },
   { url: '/about',                              priority: 0.4,  changeFrequency: 'monthly' },
+  { url: '/contact',                            priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/privacy',                     priority: 0.3,  changeFrequency: 'monthly' },
   { url: '/terms',                       priority: 0.3,  changeFrequency: 'monthly' },
 ] as const

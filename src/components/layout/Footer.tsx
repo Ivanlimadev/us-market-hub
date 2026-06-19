@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { TrendingUp, Shield, FileText, Info, ExternalLink } from 'lucide-react'
+import { TrendingUp, Shield, FileText, Info, ExternalLink, Mail } from 'lucide-react'
 
 const LEGAL_LINKS = [
   { href: '/about',   label: 'About Us',       icon: Info },
+  { href: '/contact', label: 'Contact',         icon: Mail },
   { href: '/privacy', label: 'Privacy Policy',  icon: Shield },
   { href: '/terms',   label: 'Terms of Use',    icon: FileText },
 ]
