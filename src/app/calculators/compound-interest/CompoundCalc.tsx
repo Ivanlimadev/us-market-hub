@@ -169,7 +169,7 @@ export function CompoundCalc() {
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         {/* ── Inputs ── */}
-        <div className="space-y-5 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="space-y-5 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
           <h2 className="text-sm font-semibold text-zinc-300">Parameters</h2>
 
           <NumInput label="Initial investment ($)" value={principal} onChange={setPrincipal} step={100} pre="$" />
@@ -179,7 +179,7 @@ export function CompoundCalc() {
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-zinc-400">Interest rate</label>
             <div className="flex gap-2">
-              <div className="relative flex-1">
+              <div className="relative min-w-0 flex-1">
                 <input type="number" value={rate} onChange={e => setRate(e.target.value)}
                   min={0} step={0.1}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2.5 pl-3 pr-8 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none transition-colors"
@@ -229,19 +229,19 @@ export function CompoundCalc() {
         </div>
 
         {/* ── Results ── */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {result ? (
             <>
               {/* KPI cards */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 {[
                   { label: 'Final value',    value: result.finalValue,    cls: 'text-emerald-400' },
                   { label: 'Total invested', value: result.totalInvested, cls: 'text-zinc-200' },
                   { label: 'Total interest', value: result.totalInterest, cls: 'text-amber-400' },
                 ].map(c => (
-                  <div key={c.label} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">{c.label}</p>
-                    <p className={`mt-1 text-lg font-bold leading-tight ${c.cls}`}>{usd(c.value)}</p>
+                  <div key={c.label} className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                    <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">{c.label}</p>
+                    <p className={`mt-1 truncate text-sm font-bold leading-tight tabular-nums sm:text-lg ${c.cls}`}>{usd(c.value)}</p>
                   </div>
                 ))}
               </div>
@@ -281,26 +281,26 @@ export function CompoundCalc() {
 
               {/* Breakdown table */}
               <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
-                <div className="border-b border-zinc-800 px-5 py-3">
+                <div className="border-b border-zinc-800 px-4 py-3 sm:px-5">
                   <p className="text-sm font-semibold text-zinc-300">Period breakdown</p>
                 </div>
-                <div className="max-h-72 overflow-y-auto overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="max-h-72 overflow-x-auto overflow-y-auto">
+                  <table className="w-full min-w-[320px] text-sm">
                     <thead className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-900/95">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
-                        <th className="px-5 py-2">Period</th>
-                        <th className="px-5 py-2 text-right">Balance</th>
-                        <th className="px-5 py-2 text-right">Invested</th>
-                        <th className="px-5 py-2 text-right">Interest</th>
+                        <th className="px-3 py-2 sm:px-5">Period</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Balance</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Invested</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Interest</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/50">
                       {result.rows.map((row, i) => (
                         <tr key={i} className="transition-colors hover:bg-zinc-800/30">
-                          <td className="px-5 py-2 text-zinc-400">{row.label}</td>
-                          <td className="px-5 py-2 text-right font-medium text-zinc-200">{usd(row.balance)}</td>
-                          <td className="px-5 py-2 text-right text-zinc-400">{usd(row.invested)}</td>
-                          <td className="px-5 py-2 text-right text-emerald-400">{usd(row.interest)}</td>
+                          <td className="px-3 py-2 text-zinc-400 sm:px-5">{row.label}</td>
+                          <td className="px-3 py-2 text-right font-medium tabular-nums text-zinc-200 sm:px-5">{usd(row.balance)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-zinc-400 sm:px-5">{usd(row.invested)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-emerald-400 sm:px-5">{usd(row.interest)}</td>
                         </tr>
                       ))}
                     </tbody>

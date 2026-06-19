@@ -273,31 +273,31 @@ export function DCACalc() {
         </div>
 
         {/* ── Results ── */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {result ? (
             <>
               {/* KPI cards */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Final value</p>
-                  <p className="mt-1 text-lg font-bold leading-tight text-cyan-400">{usd(result.finalValue)}</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">Final value</p>
+                  <p className="mt-1 truncate text-sm font-bold leading-tight tabular-nums text-cyan-400 sm:text-lg">{usd(result.finalValue)}</p>
                   {(parseInt(age) || 0) > 0 && (
                     <p className="mt-0.5 text-[10px] text-zinc-600">at age {targetAge}</p>
                   )}
                 </div>
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Total invested</p>
-                  <p className="mt-1 text-lg font-bold leading-tight text-zinc-200">{usd(result.totalInvested)}</p>
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">Total invested</p>
+                  <p className="mt-1 truncate text-sm font-bold leading-tight tabular-nums text-zinc-200 sm:text-lg">{usd(result.totalInvested)}</p>
                   <p className="mt-0.5 text-[10px] text-zinc-600">
                     {usd2(parseFloat(contribution) || 0)} {freqInfo.unit}
                   </p>
                 </div>
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Total return</p>
-                  <p className="mt-1 text-lg font-bold leading-tight text-amber-400">
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">Total return</p>
+                  <p className="mt-1 text-sm font-bold leading-tight tabular-nums text-amber-400 sm:text-lg">
                     +{result.returnPct.toFixed(1)}%
                   </p>
-                  <p className="mt-0.5 text-[10px] text-zinc-600">{usd(result.totalReturn)} gain</p>
+                  <p className="mt-0.5 truncate text-[10px] text-zinc-600">{usd(result.totalReturn)} gain</p>
                 </div>
               </div>
 
@@ -384,26 +384,26 @@ export function DCACalc() {
 
               {/* Year-by-year table */}
               <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
-                <div className="border-b border-zinc-800 px-5 py-3">
+                <div className="border-b border-zinc-800 px-4 py-3 sm:px-5">
                   <p className="text-sm font-semibold text-zinc-300">Year-by-year breakdown</p>
                 </div>
-                <div className="max-h-72 overflow-y-auto overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="max-h-72 overflow-x-auto overflow-y-auto">
+                  <table className="w-full min-w-[320px] text-sm">
                     <thead className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-900/95">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
-                        <th className="px-5 py-2">Year</th>
-                        <th className="px-5 py-2 text-right">Balance</th>
-                        <th className="px-5 py-2 text-right">Invested</th>
-                        <th className="px-5 py-2 text-right">Return</th>
+                        <th className="px-3 py-2 sm:px-5">Year</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Balance</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Invested</th>
+                        <th className="px-3 py-2 text-right sm:px-5">Return</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/50">
                       {result.rows.filter(r => r.year > 0).map((row, i) => (
                         <tr key={i} className="transition-colors hover:bg-zinc-800/30">
-                          <td className="px-5 py-2 text-zinc-400">Year {row.year}</td>
-                          <td className="px-5 py-2 text-right font-medium text-zinc-200">{usd(row.balance)}</td>
-                          <td className="px-5 py-2 text-right text-zinc-400">{usd(row.invested)}</td>
-                          <td className="px-5 py-2 text-right text-cyan-400">+{row.returnPct.toFixed(1)}%</td>
+                          <td className="px-3 py-2 text-zinc-400 sm:px-5">Year {row.year}</td>
+                          <td className="px-3 py-2 text-right font-medium tabular-nums text-zinc-200 sm:px-5">{usd(row.balance)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-zinc-400 sm:px-5">{usd(row.invested)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-cyan-400 sm:px-5">+{row.returnPct.toFixed(1)}%</td>
                         </tr>
                       ))}
                     </tbody>

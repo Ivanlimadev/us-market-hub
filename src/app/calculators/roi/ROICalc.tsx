@@ -256,7 +256,7 @@ export function ROICalc() {
         </div>
 
         {/* ── Results ── */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {result ? (
             <>
               {/* Hero ROI */}
@@ -278,31 +278,31 @@ export function ROICalc() {
               </div>
 
               {/* KPI row */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">
                     {result.totalGain >= 0 ? 'Total gain' : 'Total loss'}
                   </p>
-                  <p className={`mt-1 text-lg font-bold leading-tight ${gainColor}`}>
+                  <p className={`mt-1 truncate text-sm font-bold leading-tight tabular-nums sm:text-lg ${gainColor}`}>
                     {result.totalGain >= 0 ? '+' : ''}{usd(result.totalGain)}
                   </p>
                 </div>
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Money multiple</p>
-                  <p className={`mt-1 text-lg font-bold leading-tight ${isPositive ? 'text-zinc-200' : 'text-red-400'}`}>
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">Money multiple</p>
+                  <p className={`mt-1 text-sm font-bold leading-tight tabular-nums sm:text-lg ${isPositive ? 'text-zinc-200' : 'text-red-400'}`}>
                     {result.multiple.toFixed(2)}x
                   </p>
-                  <p className="mt-0.5 text-[10px] text-zinc-600">
+                  <p className="mt-0.5 truncate text-[10px] text-zinc-600">
                     {usd(result.initialValue)} → {usd(result.finalValue)}
                   </p>
                 </div>
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                <div className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+                  <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">
                     {result.cagr !== null ? 'CAGR' : 'Period'}
                   </p>
                   {result.cagr !== null ? (
                     <>
-                      <p className={`mt-1 text-lg font-bold leading-tight ${roiColor}`}>
+                      <p className={`mt-1 text-sm font-bold leading-tight tabular-nums sm:text-lg ${roiColor}`}>
                         {pctFmt(result.cagr, 2)}
                       </p>
                       <p className="mt-0.5 text-[10px] text-zinc-600">per year</p>
