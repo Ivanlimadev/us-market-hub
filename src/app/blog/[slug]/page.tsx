@@ -257,10 +257,10 @@ export default async function BlogPostPage({
 
       {/* Ticker card — shown when post has a related stock */}
       {stockData && primaryTicker && (
-        <div className="mt-10 overflow-hidden rounded-2xl border border-zinc-700">
+        <div className="mt-10 overflow-hidden rounded-2xl border border-emerald-500/40 bg-zinc-900">
           {/* Header: logo + ticker + name */}
-          <div className="flex items-center gap-4 bg-zinc-900 px-5 py-4">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white p-1">
+          <div className="flex items-center gap-4 border-b border-zinc-700/60 px-5 py-4">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white p-1 shadow-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://assets.parqet.com/logos/symbol/${primaryTicker}?format=png`}
@@ -270,73 +270,77 @@ export default async function BlogPostPage({
                 className="h-full w-full object-contain"
               />
             </div>
-            <div>
-              <p className="text-xl font-extrabold text-zinc-100">{primaryTicker}</p>
-              <p className="text-sm text-zinc-400 truncate max-w-xs">{stockData.name}</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-extrabold text-white">{primaryTicker}</p>
+              <p className="truncate text-sm text-zinc-400">{stockData.name}</p>
             </div>
+            <span className="ml-auto shrink-0 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
+              Live Data
+            </span>
           </div>
 
           {/* Metrics grid */}
-          <div className="bg-[#0F1923] px-5 py-6">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-5">
-              {/* Price */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">Price</p>
-                <p className="mt-1 text-2xl font-bold text-white">
-                  ${stockData.currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+          <div className="grid grid-cols-3 divide-x divide-zinc-700/60 border-b border-zinc-700/60">
+            {[
+              {
+                label: 'Price',
+                value: `$${stockData.currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                cls: 'text-white',
+              },
+              {
+                label: 'Div. Yield',
+                value: stockData.info?.dividendYield != null
+                  ? `${(stockData.info.dividendYield * 100).toFixed(2)}%`
+                  : '--',
+                cls: 'text-amber-400',
+              },
+              {
+                label: 'P/E',
+                value: stockData.info?.pe != null ? stockData.info.pe.toFixed(2) : '--',
+                cls: 'text-zinc-200',
+              },
+            ].map(({ label, value, cls }) => (
+              <div key={label} className="px-4 py-4 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{label}</p>
+                <p className={`mt-1.5 text-xl font-bold tabular-nums ${cls}`}>{value}</p>
               </div>
-              {/* 12M Change */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">Chg (12M)</p>
-                <p className={`mt-1 text-2xl font-bold flex items-center gap-1 ${change12m == null ? 'text-white' : change12m >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {change12m != null ? (
-                    <>
-                      {change12m >= 0 ? '▲' : '▼'}
-                      {Math.abs(change12m).toFixed(2)}%
-                    </>
-                  ) : '--'}
-                </p>
-              </div>
-              {/* Net Margin */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">Net Margin</p>
-                <p className="mt-1 text-2xl font-bold text-white">
-                  {stockData.info?.profitMargin != null
-                    ? `${(stockData.info.profitMargin * 100).toFixed(2)}%`
-                    : '--'}
-                </p>
-              </div>
-              {/* Dividend Yield */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">Div. Yield</p>
-                <p className="mt-1 text-2xl font-bold text-white">
-                  {stockData.info?.dividendYield != null
-                    ? `${(stockData.info.dividendYield * 100).toFixed(2)}%`
-                    : '--'}
-                </p>
-              </div>
-              {/* P/E */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">P/E</p>
-                <p className="mt-1 text-2xl font-bold text-white">
-                  {stockData.info?.pe != null ? stockData.info.pe.toFixed(2) : '--'}
-                </p>
-              </div>
-              {/* P/B */}
-              <div>
-                <p className="text-[11px] text-[#6B8BA4]">P/B</p>
-                <p className="mt-1 text-2xl font-bold text-white">
-                  {stockData.info?.priceToBook != null ? stockData.info.priceToBook.toFixed(2) : '--'}
-                </p>
-              </div>
-            </div>
+            ))}
+          </div>
 
+          <div className="grid grid-cols-3 divide-x divide-zinc-700/60">
+            {[
+              {
+                label: 'Chg (12M)',
+                value: change12m != null ? `${change12m >= 0 ? '+' : ''}${change12m.toFixed(2)}%` : '--',
+                cls: change12m == null ? 'text-zinc-400' : change12m >= 0 ? 'text-emerald-400' : 'text-red-400',
+              },
+              {
+                label: 'Net Margin',
+                value: stockData.info?.profitMargin != null
+                  ? `${(stockData.info.profitMargin * 100).toFixed(2)}%`
+                  : '--',
+                cls: 'text-zinc-200',
+              },
+              {
+                label: 'P/B',
+                value: stockData.info?.priceToBook != null ? stockData.info.priceToBook.toFixed(2) : '--',
+                cls: 'text-zinc-200',
+              },
+            ].map(({ label, value, cls }) => (
+              <div key={label} className="px-4 py-4 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{label}</p>
+                <p className={`mt-1.5 text-xl font-bold tabular-nums ${cls}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA button */}
+          <div className="px-5 py-4">
             <Link
               href={`/stocks/${primaryTicker.toLowerCase()}`}
-              className="mt-6 block w-full rounded-lg border border-zinc-600 py-3 text-center text-sm font-semibold text-zinc-300 transition-colors hover:border-zinc-400 hover:text-white"
+              className="block w-full rounded-xl bg-emerald-500 py-3 text-center text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-400"
             >
-              View all indicators ({primaryTicker})
+              View all {primaryTicker} indicators →
             </Link>
           </div>
         </div>
