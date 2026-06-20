@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getYFBatchQuotes } from '@/lib/yahoo-finance'
 import { ALL_SYMBOLS, getSector } from '@/lib/stock-universe'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = []
@@ -8,7 +9,11 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Screener fetches 100+ symbols — strict limit to avoid Yahoo IP ban
+  if (!rateLimit(getIp(req), 5, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
   try {
     const chunks = chunk(ALL_SYMBOLS, 50)
     const results = await Promise.all(chunks.map((c) => getYFBatchQuotes(c)))

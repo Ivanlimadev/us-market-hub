@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getYFBatchQuotes } from '@/lib/yahoo-finance'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // US market indices — Yahoo Finance format
 const INDEX_SYMBOLS = ['^DJI', '^IXIC', '^RUT', '^VIX']
@@ -17,7 +18,10 @@ const BLUE_CHIPS = [
 ]
 
 // GET /api/market — homepage market overview
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!rateLimit(getIp(req), 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
   try {
     const [indexQuotes, chipQuotes] = await Promise.all([
       getYFBatchQuotes(INDEX_SYMBOLS).catch(() => [] as Awaited<ReturnType<typeof getYFBatchQuotes>>),
