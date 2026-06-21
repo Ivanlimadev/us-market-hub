@@ -114,7 +114,7 @@ function applyTransform(obs: number[], kind: Transform) {
 function round2(n: number) { return Math.round(n * 100) / 100 }
 
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  if (!rateLimit(getIp(req), 60, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
