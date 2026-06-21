@@ -57,7 +57,6 @@ const SERIES: SeriesCfg[] = [
   // ── Leading Indicators ────────────────────────────────────────────────────────
   { id: 'RECPROUSM156N', label: 'NY Fed Recession Probability', unit: '%',   section: 'leading',   direction: -1, limit: 13, transform: 'raw' },
   { id: 'PERMIT',        label: 'Building Permits',             unit: 'K',   section: 'leading',   direction:  1, limit: 13, transform: 'raw' },
-  { id: 'NAPM',         label: 'ISM Manufacturing PMI',        unit: 'pts', section: 'leading',   direction:  1, limit: 13, transform: 'raw' },
   // ── Fiscal Policy ─────────────────────────────────────────────────────────────
   { id: 'WALCL',         label: 'Fed Balance Sheet',            unit: 'T',   section: 'fiscal',    direction:  1, limit: 13, transform: 'raw', frequency: 'm', postScale: 0.000001 },
   { id: 'GFDEGDQ188S',   label: 'Federal Debt / GDP',           unit: '%',   section: 'fiscal',    direction: -1, limit: 6,  transform: 'raw' },

@@ -163,11 +163,6 @@ const SERIES_META: Record<string, SeriesMeta> = {
     transform: 'raw',
     description: 'Licenças autorizadas para construção de novas unidades habitacionais (taxa anual sazonalmente ajustada, em milhares). Componente do Leading Economic Index (LEI) do Conference Board. Queda sustentada antecede retração no setor de construção civil, que tem efeito multiplicador sobre materiais de construção, móveis, eletrodomésticos e empregos relacionados. Muito sensível às taxas de hipoteca.',
   },
-  NAPM: {
-    label: 'ISM Manufacturing PMI', unit: 'pts', section: 'leading', direction: 1,
-    transform: 'raw',
-    description: 'Índice PMI de manufatura do Institute for Supply Management (ISM) — um dos indicadores líderes mais acompanhados do mundo. Calculado a partir de pesquisa com gerentes de compras de empresas industriais. Acima de 50 = expansão; abaixo de 50 = contração. Sub-índices de novos pedidos, produção, emprego e estoques fornecem sinais antecedentes de 3–6 meses para o ciclo econômico. Divulgado no primeiro dia útil de cada mês. Leituras abaixo de 45 por 3+ meses consecutivos são historicamente precursoras de recessão.',
-  },
 
   // ── Labor Market (extended) ───────────────────────────────────────────────────
   CIVPART: {
