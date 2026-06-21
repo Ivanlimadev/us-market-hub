@@ -118,15 +118,12 @@ const SERIES_META: Record<string, SeriesMeta> = {
 async function fetchObs(
   id: string, apiKey: string, extra: number, frequency?: string
 ): Promise<{date: string; value: number}[]> {
-  const startDate = new Date()
-  startDate.setFullYear(startDate.getFullYear() - 30)
-  const startStr = startDate.toISOString().slice(0, 10)
-
+  // Fetch newest-first so the limit always captures the most recent data,
+  // then reverse to get ascending (oldest → newest) order.
   const params = new URLSearchParams({
     series_id: id,
     api_key:   apiKey,
-    observation_start: startStr,
-    sort_order: 'asc',
+    sort_order: 'desc',
     limit: String(300 + extra),
     file_type: 'json',
     ...(frequency ? { frequency } : {}),
@@ -137,6 +134,7 @@ async function fetchObs(
   return (data.observations as {date: string; value: string}[])
     .map(o => ({ date: o.date, value: parseFloat(o.value) }))
     .filter(o => !isNaN(o.value))
+    .reverse() // ascending: oldest → newest
 }
 
 async function getRecessions(apiKey: string): Promise<{start: string; end: string}[]> {
