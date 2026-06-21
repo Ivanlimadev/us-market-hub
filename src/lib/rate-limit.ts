@@ -23,9 +23,18 @@ export function rateLimit(ip: string, limit: number, windowMs: number): boolean 
 }
 
 export function getIp(req: { headers: { get: (k: string) => string | null } }): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown'
-  )
+  // Prefer x-real-ip: nginx sets it to $remote_addr, overwriting any client value,
+  // so it cannot be spoofed to forge a fresh rate-limit bucket.
+  const realIp = req.headers.get('x-real-ip')?.trim()
+  if (realIp) return realIp
+
+  // Fallback: nginx appends the true client IP as the LAST entry of x-forwarded-for.
+  // Trusting the last (not first) entry avoids honoring a client-supplied prefix.
+  const xff = req.headers.get('x-forwarded-for')
+  if (xff) {
+    const parts = xff.split(',').map(s => s.trim()).filter(Boolean)
+    if (parts.length) return parts[parts.length - 1]
+  }
+
+  return 'unknown'
 }
