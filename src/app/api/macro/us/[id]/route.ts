@@ -59,6 +59,11 @@ const SERIES_META: Record<string, SeriesMeta> = {
     transform: 'yoy',
     description: 'Índice de Preços PCE Core — a medida de inflação preferida do Fed. Meta explícita: 2% ao ano. Tende a rodar 0.2-0.3pp abaixo do Core CPI. Principal driver das decisões do FOMC sobre juros.',
   },
+  MICH: {
+    label: 'Inflation Expectations 1Y', unit: '%', section: 'inflation', direction: -1,
+    transform: 'raw',
+    description: 'Expectativa mediana de inflação para os próximos 12 meses — pesquisa mensal de Sentimento do Consumidor da Universidade de Michigan. O Fed monitora este indicador de perto porque expectativas desancoradas são auto-realizáveis: consumidores que esperam inflação mais alta exigem salários maiores e compram antecipadamente, acelerando a inflação. Usado explicitamente pelo FOMC em suas projeções e comunicados. Leituras acima de 4% historicamente levam o Fed a adotar postura mais hawkish.',
+  },
   GDPC1: {
     label: 'Real GDP (YoY)', unit: '%', section: 'growth', direction: 1,
     transform: 'yoy_4',
@@ -104,6 +109,11 @@ const SERIES_META: Record<string, SeriesMeta> = {
     transform: 'raw', frequency: 'm',
     description: 'Spread entre yields de 10 e 2 anos. Negativo = inversão da curva = alarme de recessão. Invertida antes de TODAS as recessões americanas desde 1955 com 6-18 meses de antecedência. Atualmente o indicador mais monitorado por analistas macro.',
   },
+  T10YIE: {
+    label: 'Breakeven Inflation 10Y', unit: '%', section: 'bonds', direction: -1,
+    transform: 'raw', frequency: 'm',
+    description: 'Taxa de inflação implícita no mercado de bonds para os próximos 10 anos — calculada como a diferença entre o yield do Treasury nominal de 10 anos (DGS10) e o yield do TIPS de 10 anos (título indexado à inflação). Indica o que o mercado de títulos precifica como inflação média futura. Acima de 2.5% sinaliza pressão inflacionária crescente e pode levar o Fed a manter juros elevados por mais tempo. É um dos indicadores de expectativas de inflação mais confiáveis por ser market-implied, sem viés de survey.',
+  },
   HOUST: {
     label: 'Housing Starts', unit: 'K', section: 'housing', direction: 1,
     transform: 'raw',
@@ -136,6 +146,11 @@ const SERIES_META: Record<string, SeriesMeta> = {
     transform: 'raw', frequency: 'm',
     description: 'Taxa média nacional da hipoteca residencial de 30 anos (pesquisa semanal Freddie Mac / Primary Mortgage Market Survey). Fortemente correlacionada com o yield do Treasury de 10 anos + spread de crédito hipotecário. Taxa acima de 7% comprime drasticamente a demanda por imóveis e refinanciamentos. Principal barômetro de acessibilidade imobiliária para famílias americanas.',
   },
+  SP500: {
+    label: 'S&P 500 Index', unit: 'pts', section: 'markets', direction: 1,
+    transform: 'raw', frequency: 'm',
+    description: 'Nível de fechamento mensal do índice S&P 500 — benchmark do mercado americano de ações composto pelas 500 maiores empresas listadas nos EUA. Representa ~80% da capitalização de mercado americana total. Reflete expectativas de lucros corporativos futuros descontados pela taxa de juros (DGS10). Queda sustentada >20% define mercado de baixa (bear market). Analistas monitoram junto com EPS (lucros por ação), múltiplo P/E forward e o spread de crédito para avaliar se a valorização está fundamentada.',
+  },
 
   // ── Leading Indicators ───────────────────────────────────────────────────────
   RECPROUSM156N: {
@@ -147,6 +162,11 @@ const SERIES_META: Record<string, SeriesMeta> = {
     label: 'Building Permits', unit: 'K', section: 'leading', direction: 1,
     transform: 'raw',
     description: 'Licenças autorizadas para construção de novas unidades habitacionais (taxa anual sazonalmente ajustada, em milhares). Componente do Leading Economic Index (LEI) do Conference Board. Queda sustentada antecede retração no setor de construção civil, que tem efeito multiplicador sobre materiais de construção, móveis, eletrodomésticos e empregos relacionados. Muito sensível às taxas de hipoteca.',
+  },
+  NAPM: {
+    label: 'ISM Manufacturing PMI', unit: 'pts', section: 'leading', direction: 1,
+    transform: 'raw',
+    description: 'Índice PMI de manufatura do Institute for Supply Management (ISM) — um dos indicadores líderes mais acompanhados do mundo. Calculado a partir de pesquisa com gerentes de compras de empresas industriais. Acima de 50 = expansão; abaixo de 50 = contração. Sub-índices de novos pedidos, produção, emprego e estoques fornecem sinais antecedentes de 3–6 meses para o ciclo econômico. Divulgado no primeiro dia útil de cada mês. Leituras abaixo de 45 por 3+ meses consecutivos são historicamente precursoras de recessão.',
   },
 
   // ── Labor Market (extended) ───────────────────────────────────────────────────
@@ -188,6 +208,18 @@ const SERIES_META: Record<string, SeriesMeta> = {
     label: 'New Home Sales', unit: 'K', section: 'housing', direction: 1,
     transform: 'raw',
     description: 'Vendas mensais de novas residências unifamiliares nos EUA (taxa anual sazonalmente ajustada, em milhares). Leading indicator do mercado imobiliário — reflete compras de imóveis ainda em construção. Muito sensível às taxas hipotecárias: aumento de 1pp na taxa 30Y tipicamente reduz vendas em 10–20%. Queda sustentada abaixo de 500K sinaliza retração no setor de construção residencial.',
+  },
+
+  // ── Commodities ──────────────────────────────────────────────────────────────
+  DCOILWTICO: {
+    label: 'WTI Crude Oil', unit: '$', section: 'commodities', direction: -1,
+    transform: 'raw', frequency: 'm',
+    description: 'Preço médio mensal do petróleo bruto West Texas Intermediate (WTI) em dólares por barril — benchmark de referência do mercado americano. Componente direto da inflação via energia (gasolina, diesel, aviação). Alta de US$10/barril adiciona aproximadamente 0.3pp ao CPI headline. Preços elevados comprimem as margens de empresas intensivas em energia e reduzem a renda disponível dos consumidores. Principais drivers: OPEP+ (oferta), crescimento chinês (demanda), estoques semanais do EIA e geopolítica.',
+  },
+  PCOPPUSDM: {
+    label: 'Copper ($/lb)', unit: '$', section: 'commodities', direction: 1,
+    transform: 'raw', postScale: 0.000454,
+    description: 'Preço do cobre em dólares por libra (convertido de $/tonelada métrica). Apelidado de "Dr. Copper" porque seu preço reflete a saúde da economia global com meses de antecedência: cobre é insumo essencial em construção, manufatura, eletrônicos e infraestrutura elétrica (incluindo veículos elétricos). Alta sustentada antecipa aceleração industrial. Queda abaixo de US$3.50/lb historicamente precede desaceleração econômica. China responde por ~55% da demanda global, tornando o preço do cobre um proxy de crescimento chinês.',
   },
 }
 

@@ -34,6 +34,7 @@ const SERIES: SeriesCfg[] = [
   { id: 'CPIAUCSL',      label: 'CPI Inflation (YoY)',          unit: '%',   section: 'inflation', direction: -1, limit: 25, transform: 'yoy' },
   { id: 'CPILFESL',      label: 'Core CPI (ex Food & Energy)',  unit: '%',   section: 'inflation', direction: -1, limit: 25, transform: 'yoy' },
   { id: 'PCEPILFE',      label: 'Core PCE (Fed Target)',        unit: '%',   section: 'inflation', direction: -1, limit: 25, transform: 'yoy' },
+  { id: 'MICH',         label: 'Inflation Expectations 1Y',    unit: '%',   section: 'inflation', direction: -1, limit: 13, transform: 'raw' },
   // ── Economic Growth ───────────────────────────────────────────────────────────
   { id: 'GDPC1',         label: 'Real GDP (YoY)',               unit: '%',   section: 'growth',    direction:  1, limit: 9,  transform: 'yoy_4' },
   { id: 'INDPRO',        label: 'Industrial Production (MoM)',  unit: '%',   section: 'growth',    direction:  1, limit: 14, transform: 'mom_pct' },
@@ -46,14 +47,17 @@ const SERIES: SeriesCfg[] = [
   { id: 'DGS10',         label: '10-Year Treasury Yield',       unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'DGS30',         label: '30-Year Treasury Yield',       unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'T10Y2Y',        label: 'Yield Curve (10Y–2Y)',         unit: '%',   section: 'bonds',     direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
+  { id: 'T10YIE',       label: 'Breakeven Inflation 10Y',      unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   // ── Financial Markets ─────────────────────────────────────────────────────────
   { id: 'VIXCLS',        label: 'VIX — Volatility Index',       unit: 'pts', section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'BAMLH0A0HYM2',  label: 'High Yield Spread (OAS)',      unit: '%',   section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'DTWEXBGS',      label: 'US Dollar Index',              unit: 'idx', section: 'markets',   direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'MORTGAGE30US',  label: '30-Year Mortgage Rate',        unit: '%',   section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
+  { id: 'SP500',        label: 'S&P 500 Index',                unit: 'pts', section: 'markets',   direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
   // ── Leading Indicators ────────────────────────────────────────────────────────
   { id: 'RECPROUSM156N', label: 'NY Fed Recession Probability', unit: '%',   section: 'leading',   direction: -1, limit: 13, transform: 'raw' },
   { id: 'PERMIT',        label: 'Building Permits',             unit: 'K',   section: 'leading',   direction:  1, limit: 13, transform: 'raw' },
+  { id: 'NAPM',         label: 'ISM Manufacturing PMI',        unit: 'pts', section: 'leading',   direction:  1, limit: 13, transform: 'raw' },
   // ── Fiscal Policy ─────────────────────────────────────────────────────────────
   { id: 'WALCL',         label: 'Fed Balance Sheet',            unit: 'T',   section: 'fiscal',    direction:  1, limit: 13, transform: 'raw', frequency: 'm', postScale: 0.000001 },
   { id: 'GFDEGDQ188S',   label: 'Federal Debt / GDP',           unit: '%',   section: 'fiscal',    direction: -1, limit: 6,  transform: 'raw' },
@@ -63,6 +67,9 @@ const SERIES: SeriesCfg[] = [
   { id: 'HSN1F',         label: 'New Home Sales',               unit: 'K',   section: 'housing',   direction:  1, limit: 13, transform: 'raw' },
   // ── Money Supply ──────────────────────────────────────────────────────────────
   { id: 'M2SL',          label: 'M2 Money Supply (YoY)',        unit: '%',   section: 'money',     direction:  1, limit: 25, transform: 'yoy' },
+  // ── Commodities ───────────────────────────────────────────────────────────────
+  { id: 'DCOILWTICO',   label: 'WTI Crude Oil',                unit: '$',   section: 'commodities', direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
+  { id: 'PCOPPUSDM',    label: 'Copper ($/lb)',                 unit: '$',   section: 'commodities', direction:  1, limit: 13, transform: 'raw', postScale: 0.000454 },
 ]
 
 async function fetchObs(cfg: SeriesCfg, apiKey: string): Promise<number[]> {
