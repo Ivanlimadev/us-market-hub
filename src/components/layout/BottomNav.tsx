@@ -5,14 +5,14 @@ import { useState, useEffect } from 'react'
 import {
   Home, CalendarDays, Wallet, Newspaper, Menu, X, ChevronRight,
   Bitcoin, Star, Filter, BarChart3, LayoutGrid, GitCompareArrows, Calculator,
-  TrendingUp,
+  TrendingUp, Settings,
 } from 'lucide-react'
 
 /**
- * Mobile-only floating bottom dock — mirrors the app's bottom navigation
- * (Home · Finance · Portfolio · News · Menu). Hidden on md+ where the top
- * Navbar takes over. The "Menu" button opens a sheet with the same tools
- * list used in the app's menu.
+ * Floating dock — mirrors the app's navigation (Home · Finance · Portfolio ·
+ * News · Menu). Pinned below the header on mobile, a centered pill at the
+ * bottom on desktop. The "Menu" button opens a sheet (bottom sheet on mobile,
+ * centered dialog on desktop) with the tools list and a Settings shortcut.
  */
 
 const DOCK_ITEMS = [
@@ -22,23 +22,30 @@ const DOCK_ITEMS = [
   { href: '/blog',      label: 'News',      icon: Newspaper },
 ]
 
+// Items alphabetical within each section
 const MENU_SECTIONS = [
   {
     title: 'Markets',
     items: [
-      { href: '/stocks', label: 'Stocks',          icon: TrendingUp },
-      { href: '/crypto', label: 'Crypto',          icon: Bitcoin },
+      { href: '/crypto', label: 'Crypto', icon: Bitcoin },
+      { href: '/stocks', label: 'Stocks', icon: TrendingUp },
     ],
   },
   {
     title: 'Tools',
     items: [
-      { href: '/watchlist',   label: 'Watchlist',      icon: Star },
-      { href: '/screener',    label: 'Stock Screener', icon: Filter },
-      { href: '/rankings',    label: 'Rankings',       icon: BarChart3 },
-      { href: '/heatmap',     label: 'Market Heatmap', icon: LayoutGrid },
-      { href: '/compare',     label: 'Compare Stocks', icon: GitCompareArrows },
       { href: '/calculators', label: 'Calculators',    icon: Calculator },
+      { href: '/compare',     label: 'Compare Stocks', icon: GitCompareArrows },
+      { href: '/heatmap',     label: 'Market Heatmap', icon: LayoutGrid },
+      { href: '/rankings',    label: 'Rankings',       icon: BarChart3 },
+      { href: '/screener',    label: 'Stock Screener', icon: Filter },
+      { href: '/watchlist',   label: 'Watchlist',      icon: Star },
+    ],
+  },
+  {
+    title: 'Account',
+    items: [
+      { href: '/account', label: 'Settings', icon: Settings },
     ],
   },
 ]
@@ -94,16 +101,16 @@ export function BottomNav() {
         </button>
       </nav>
 
-      {/* Menu sheet */}
+      {/* Menu — bottom sheet on mobile, centered dialog on desktop */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[60]">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center md:items-center md:p-4">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
           <div
-            className="absolute inset-x-0 bottom-0 mx-auto max-w-md max-h-[80dvh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 pb-8 shadow-2xl"
-            style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
+            className="relative w-full max-w-md max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-2xl md:max-h-[80vh] md:rounded-2xl md:border"
+            style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
           >
             <div className="flex items-center justify-between px-5 pb-2 pt-4">
               <h2 className="text-lg font-bold text-white">Menu</h2>
