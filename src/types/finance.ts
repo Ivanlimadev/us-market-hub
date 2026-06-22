@@ -55,6 +55,27 @@ export interface FinanceBudget {
   period: 'monthly'
 }
 
+export type Frequency = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+
+export interface FinanceRecurring {
+  id: string
+  name: string
+  amount: number
+  category_id: string | null
+  frequency: Frequency
+  next_due: string | null   // YYYY-MM-DD
+  type: 'expense' | 'income'
+  active: boolean
+}
+
+// perMonth: factor to normalize an amount to a monthly equivalent.
+export const FREQUENCIES: { value: Frequency; label: string; perMonth: number }[] = [
+  { value: 'weekly',    label: 'Weekly',    perMonth: 4.345 },
+  { value: 'monthly',   label: 'Monthly',   perMonth: 1 },
+  { value: 'quarterly', label: 'Quarterly', perMonth: 1 / 3 },
+  { value: 'yearly',    label: 'Yearly',    perMonth: 1 / 12 },
+]
+
 // Seeded for new users on first load (US-oriented defaults).
 export const DEFAULT_CATEGORIES: { name: string; kind: CategoryKind }[] = [
   { name: 'Groceries',       kind: 'expense' },

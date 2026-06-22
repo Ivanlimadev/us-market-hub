@@ -10,7 +10,8 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import {
   ACCOUNT_TYPES, LIABILITY_TYPES,
   type FinanceAccount, type FinanceTransaction, type AccountType, type TxnType,
-  type FinanceCategory, type FinanceBudget,
+  type FinanceCategory, type FinanceBudget, type FinanceRecurring,
+  type Frequency, FREQUENCIES,
 } from '@/types/finance'
 
 const fmtUSD = (n: number) =>
@@ -22,6 +23,18 @@ const ACCOUNT_ICON: Record<AccountType, React.ElementType> = {
 }
 
 const monthKey = () => new Date().toISOString().slice(0, 7) // YYYY-MM
+
+// Visual due-date reminder (push notifications come later, with FCM).
+function dueBadge(next_due: string | null): { label: string; cls: string } | null {
+  if (!next_due) return null
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const due = new Date(next_due + 'T00:00:00')
+  const days = Math.round((due.getTime() - today.getTime()) / 86_400_000)
+  if (days < 0)  return { label: `Overdue ${-days}d`, cls: 'bg-red-500/15 text-red-400' }
+  if (days === 0) return { label: 'Due today',        cls: 'bg-amber-500/15 text-amber-400' }
+  if (days <= 7)  return { label: `Due in ${days}d`,  cls: 'bg-amber-500/15 text-amber-400' }
+  return { label: `in ${days}d`, cls: 'bg-zinc-800 text-zinc-400' }
+}
 
 export function FinanceClient() {
   const { user, loading } = useAuth()
@@ -47,10 +60,16 @@ export function FinanceClient() {
     queryFn: () => fetch('/api/finance/budgets').then((r) => (r.ok ? r.json() : [])),
     enabled: !!user,
   })
+  const recurringQ = useQuery<FinanceRecurring[]>({
+    queryKey: ['finance-recurring'],
+    queryFn: () => fetch('/api/finance/recurring').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
 
   const [showAccount, setShowAccount] = useState(false)
   const [showTxn, setShowTxn] = useState(false)
   const [showBudgets, setShowBudgets] = useState(false)
+  const [showRecurring, setShowRecurring] = useState(false)
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-zinc-500" /></div>
@@ -104,10 +123,21 @@ export function FinanceClient() {
     .map((b) => ({ ...b, name: catName.get(b.category_id) ?? '—', spent: spentByCat.get(b.category_id) ?? 0 }))
     .sort((a, b) => b.spent / (b.amount || 1) - a.spent / (a.amount || 1))
 
+  const recurring = recurringQ.data ?? []
+  const perMonthFactor = (f: Frequency) => FREQUENCIES.find((x) => x.value === f)?.perMonth ?? 1
+  const monthlySubs = recurring
+    .filter((r) => r.active && r.type === 'expense')
+    .reduce((s, r) => s + r.amount * perMonthFactor(r.frequency), 0)
+
   const refresh = () => {
-    for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets']) {
+    for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets', 'finance-recurring']) {
       qc.invalidateQueries({ queryKey: [k] })
     }
+  }
+
+  async function deleteRecurring(id: string) {
+    await fetch(`/api/finance/recurring/${id}`, { method: 'DELETE' })
+    refresh()
   }
 
   async function deleteAccount(id: string) {
@@ -218,6 +248,42 @@ export function FinanceClient() {
         </div>
       </section>
 
+      {/* Subscriptions & recurring bills */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-bold text-white">Subscriptions &amp; bills</h2>
+            <p className="text-[11px] text-zinc-500">~{fmtUSD(monthlySubs)}/mo</p>
+          </div>
+          <button onClick={() => setShowRecurring(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+            <Plus className="h-3.5 w-3.5" /> Add
+          </button>
+        </div>
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
+          {recurringQ.isLoading ? (
+            <div className="p-6 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-500" /></div>
+          ) : recurring.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">No subscriptions yet. Add Netflix, rent, gym… to track recurring bills and due dates.</p>
+          ) : recurring.map((r) => {
+            const badge = dueBadge(r.next_due)
+            return (
+              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-zinc-800 text-zinc-300"><Repeat className="h-[18px] w-[18px]" /></span>
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-sm font-medium text-white">{r.name}{!r.active && <span className="ml-1.5 text-[10px] text-zinc-600">(paused)</span>}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-[11px] capitalize text-zinc-500">{r.frequency}</p>
+                    {badge && <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>{badge.label}</span>}
+                  </div>
+                </div>
+                <p className={`text-sm font-semibold ${r.type === 'income' ? 'text-emerald-400' : 'text-zinc-200'}`}>{r.type === 'income' ? '+' : '-'}{fmtUSD(r.amount)}</p>
+                <button onClick={() => deleteRecurring(r.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete recurring"><Trash2 className="h-4 w-4" /></button>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
       {/* Recent transactions */}
       <section>
         <h2 className="mb-2 text-base font-bold text-white">Recent transactions</h2>
@@ -247,7 +313,6 @@ export function FinanceClient() {
         <h2 className="mb-2 text-base font-bold text-white">Coming next</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { icon: Repeat, label: 'Subscriptions' },
             { icon: Target, label: 'Goals' },
             { icon: Pencil, label: 'Reports' },
             { icon: Banknote, label: 'CSV import' },
@@ -264,6 +329,7 @@ export function FinanceClient() {
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} onSaved={() => { setShowAccount(false); refresh() }} />}
       {showTxn && <TransactionModal accounts={accounts} categories={categories} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
       {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
+      {showRecurring && <RecurringModal categories={categories} onClose={() => setShowRecurring(false)} onSaved={() => { setShowRecurring(false); refresh() }} />}
     </div>
   )
 }
@@ -419,6 +485,61 @@ function BudgetsModal({ categories, budgets, onClose, onSaved }: { categories: F
       <button onClick={save} disabled={saving} className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
         {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save budgets
       </button>
+    </Modal>
+  )
+}
+
+function RecurringModal({ categories, onClose, onSaved }: { categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState('')
+  const [amount, setAmount] = useState('')
+  const [type, setType] = useState<'expense' | 'income'>('expense')
+  const [frequency, setFrequency] = useState<Frequency>('monthly')
+  const [nextDue, setNextDue] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const catOptions = categories.filter((c) => c.kind === type)
+
+  async function save() {
+    if (!name.trim()) return
+    setSaving(true)
+    const res = await fetch('/api/finance/recurring', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, amount: parseFloat(amount) || 0, type, frequency,
+        next_due: nextDue || null, category_id: categoryId || null,
+      }),
+    })
+    setSaving(false)
+    if (res.ok) onSaved()
+  }
+
+  return (
+    <Modal title="Add subscription / bill" onClose={onClose}>
+      <div className="space-y-3">
+        <input className={inputCls} placeholder="Name (e.g. Netflix, Rent)" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+        <div className="grid grid-cols-2 gap-2">
+          {(['expense', 'income'] as const).map((t) => (
+            <button key={t} onClick={() => { setType(t); setCategoryId('') }} className={`rounded-lg py-2 text-sm font-medium capitalize transition-colors ${type === t ? (t === 'income' ? 'bg-emerald-600 text-white' : 'bg-zinc-700 text-white') : 'border border-zinc-700 text-zinc-400'}`}>{t}</button>
+          ))}
+        </div>
+        <input className={inputCls} type="number" inputMode="decimal" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+        <div className="grid grid-cols-2 gap-2">
+          <select className={inputCls} value={frequency} onChange={(e) => setFrequency(e.target.value as Frequency)}>
+            {FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+          </select>
+          <input className={inputCls} type="date" value={nextDue} onChange={(e) => setNextDue(e.target.value)} title="Next due date" />
+        </div>
+        {catOptions.length > 0 && (
+          <select className={inputCls} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+            <option value="">No category</option>
+            {catOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        )}
+        <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Add
+        </button>
+      </div>
     </Modal>
   )
 }
