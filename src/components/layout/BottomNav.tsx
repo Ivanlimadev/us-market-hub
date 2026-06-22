@@ -63,8 +63,8 @@ export function BottomNav() {
     <>
       {/* Floating dock */}
       <nav
-        className="fixed inset-x-3 bottom-3 z-50 flex items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md md:hidden"
-        style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+        className="fixed inset-x-3 bottom-1 z-50 flex items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md md:hidden"
+        style={{ marginBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
         aria-label="Primary"
       >
         {DOCK_ITEMS.map(({ href, label, icon: Icon }) => {
