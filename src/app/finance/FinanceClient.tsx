@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Wallet, Plus, Trash2, X, Loader2, TrendingUp, TrendingDown, LogIn,
   CreditCard, PiggyBank, Landmark, Banknote, Target, Repeat, PieChart, Pencil,
-  Upload, BarChart3,
+  Upload, BarChart3, Pause, Play,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import {
@@ -72,10 +72,11 @@ export function FinanceClient() {
     enabled: !!user,
   })
 
-  const [showAccount, setShowAccount] = useState(false)
-  const [txnEdit, setTxnEdit] = useState<FinanceTransaction | null | undefined>(undefined) // undefined=closed, null=new
+  const [accountEdit, setAccountEdit] = useState<FinanceAccount | null | undefined>(undefined) // undefined=closed, null=new
+  const [txnEdit, setTxnEdit] = useState<FinanceTransaction | null | undefined>(undefined)
   const [showBudgets, setShowBudgets] = useState(false)
-  const [showRecurring, setShowRecurring] = useState(false)
+  const [showCategories, setShowCategories] = useState(false)
+  const [recurringEdit, setRecurringEdit] = useState<FinanceRecurring | null | undefined>(undefined)
   const [showImport, setShowImport] = useState(false)
   const [goalEdit, setGoalEdit] = useState<FinanceGoal | null | undefined>(undefined) // undefined=closed, null=new
 
@@ -173,6 +174,13 @@ export function FinanceClient() {
     await fetch(`/api/finance/recurring/${id}`, { method: 'DELETE' })
     refresh()
   }
+  async function toggleRecurring(r: FinanceRecurring) {
+    await fetch(`/api/finance/recurring/${r.id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: !r.active }),
+    })
+    refresh()
+  }
   async function deleteGoal(id: string) {
     await fetch(`/api/finance/goals/${id}`, { method: 'DELETE' })
     refresh()
@@ -229,7 +237,7 @@ export function FinanceClient() {
       <section>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-base font-bold text-white">Accounts</h2>
-          <button onClick={() => setShowAccount(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+          <button onClick={() => setAccountEdit(null)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
             <Plus className="h-3.5 w-3.5" /> Add account
           </button>
         </div>
@@ -249,6 +257,7 @@ export function FinanceClient() {
                   <p className="text-[11px] capitalize text-zinc-500">{a.type.replace('_', ' ')}{a.institution ? ` · ${a.institution}` : ''}</p>
                 </div>
                 <p className={`text-sm font-semibold ${isLiab ? 'text-red-400' : 'text-zinc-200'}`}>{isLiab ? '-' : ''}{fmtUSD(a.balance)}</p>
+                <button onClick={() => setAccountEdit(a)} className="text-zinc-600 hover:text-zinc-300" aria-label="Edit account"><Pencil className="h-3.5 w-3.5" /></button>
                 <button onClick={() => deleteAccount(a.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete account"><Trash2 className="h-4 w-4" /></button>
               </div>
             )
@@ -260,9 +269,12 @@ export function FinanceClient() {
       <section>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-base font-bold text-white">Budgets · this month</h2>
-          <button onClick={() => setShowBudgets(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
-            <PieChart className="h-3.5 w-3.5" /> Manage
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowCategories(true)} className="text-xs font-medium text-zinc-400 hover:text-zinc-200">Categories</button>
+            <button onClick={() => setShowBudgets(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+              <PieChart className="h-3.5 w-3.5" /> Manage
+            </button>
+          </div>
         </div>
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
           {budgetRows.length === 0 ? (
@@ -293,7 +305,7 @@ export function FinanceClient() {
             <h2 className="text-base font-bold text-white">Subscriptions &amp; bills</h2>
             <p className="text-[11px] text-zinc-500">~{fmtUSD(monthlySubs)}/mo</p>
           </div>
-          <button onClick={() => setShowRecurring(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+          <button onClick={() => setRecurringEdit(null)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
             <Plus className="h-3.5 w-3.5" /> Add
           </button>
         </div>
@@ -315,6 +327,8 @@ export function FinanceClient() {
                   </div>
                 </div>
                 <p className={`text-sm font-semibold ${r.type === 'income' ? 'text-emerald-400' : 'text-zinc-200'}`}>{r.type === 'income' ? '+' : '-'}{fmtUSD(r.amount)}</p>
+                <button onClick={() => toggleRecurring(r)} className="text-zinc-600 hover:text-zinc-300" aria-label={r.active ? 'Pause' : 'Resume'}>{r.active ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}</button>
+                <button onClick={() => setRecurringEdit(r)} className="text-zinc-600 hover:text-zinc-300" aria-label="Edit recurring"><Pencil className="h-3.5 w-3.5" /></button>
                 <button onClick={() => deleteRecurring(r.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete recurring"><Trash2 className="h-4 w-4" /></button>
               </div>
             )
@@ -450,10 +464,11 @@ export function FinanceClient() {
         </div>
       </section>
 
-      {showAccount && <AccountModal onClose={() => setShowAccount(false)} onSaved={() => { setShowAccount(false); refresh() }} />}
+      {accountEdit !== undefined && <AccountModal account={accountEdit} onClose={() => setAccountEdit(undefined)} onSaved={() => { setAccountEdit(undefined); refresh() }} />}
       {txnEdit !== undefined && <TransactionModal txn={txnEdit} accounts={accounts} categories={categories} onClose={() => setTxnEdit(undefined)} onSaved={() => { setTxnEdit(undefined); refresh() }} />}
       {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
-      {showRecurring && <RecurringModal categories={categories} onClose={() => setShowRecurring(false)} onSaved={() => { setShowRecurring(false); refresh() }} />}
+      {showCategories && <CategoriesModal categories={categories} onClose={() => setShowCategories(false)} onChanged={refresh} />}
+      {recurringEdit !== undefined && <RecurringModal recurring={recurringEdit} categories={categories} onClose={() => setRecurringEdit(undefined)} onSaved={() => { setRecurringEdit(undefined); refresh() }} />}
       {goalEdit !== undefined && <GoalModal goal={goalEdit} onClose={() => setGoalEdit(undefined)} onSaved={() => { setGoalEdit(undefined); refresh() }} />}
       {showImport && <ImportModal onClose={() => setShowImport(false)} onSaved={() => { setShowImport(false); refresh() }} />}
     </div>
@@ -560,6 +575,70 @@ function ImportModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   )
 }
 
+function CategoriesModal({ categories, onClose, onChanged }: { categories: FinanceCategory[]; onClose: () => void; onChanged: () => void }) {
+  const [items, setItems] = useState(categories)
+  const [newName, setNewName] = useState('')
+  const [newKind, setNewKind] = useState<'expense' | 'income'>('expense')
+  const [busy, setBusy] = useState(false)
+
+  async function add() {
+    if (!newName.trim()) return
+    setBusy(true)
+    const res = await fetch('/api/finance/categories', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName, kind: newKind }),
+    })
+    setBusy(false)
+    if (res.ok) {
+      const c = await res.json() as FinanceCategory
+      setItems((p) => [...p, c]); setNewName(''); onChanged()
+    }
+  }
+  async function rename(id: string, name: string) {
+    await fetch(`/api/finance/categories/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })
+    onChanged()
+  }
+  async function del(id: string) {
+    await fetch(`/api/finance/categories/${id}`, { method: 'DELETE' })
+    setItems((p) => p.filter((c) => c.id !== id)); onChanged()
+  }
+
+  return (
+    <Modal title="Categories" onClose={onClose}>
+      <div className="max-h-[60dvh] space-y-4 overflow-y-auto">
+        {(['expense', 'income'] as const).map((kind) => (
+          <div key={kind}>
+            <p className="pb-1 text-[10px] font-bold uppercase tracking-widest text-zinc-500">{kind}</p>
+            <div className="space-y-1.5">
+              {items.filter((c) => c.kind === kind).map((c) => (
+                <div key={c.id} className="flex items-center gap-2">
+                  <input
+                    defaultValue={c.name}
+                    onBlur={(e) => { const v = e.target.value.trim(); if (v && v !== c.name) rename(c.id, v) }}
+                    className={`${inputCls} flex-1`}
+                  />
+                  <button onClick={() => del(c.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete category"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div className="border-t border-zinc-800 pt-3">
+          <span className="mb-1 block text-[11px] text-zinc-500">Add category</span>
+          <div className="flex gap-2">
+            <input className={`${inputCls} flex-1`} placeholder="Name" value={newName} onChange={(e) => setNewName(e.target.value)} />
+            <select className={`${inputCls} w-auto`} value={newKind} onChange={(e) => setNewKind(e.target.value as 'expense' | 'income')}>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+            <button onClick={add} disabled={!newName.trim() || busy} className="rounded-lg bg-emerald-600 px-3 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">Add</button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 function Card({ children }: { children: React.ReactNode }) {
   return <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">{children}</div>
 }
@@ -581,33 +660,35 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 
 const inputCls = 'w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
 
-function AccountModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
-  const [name, setName] = useState('')
-  const [type, setType] = useState<AccountType>('checking')
-  const [balance, setBalance] = useState('')
+function AccountModal({ account, onClose, onSaved }: { account: FinanceAccount | null; onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState(account?.name ?? '')
+  const [type, setType] = useState<AccountType>(account?.type ?? 'checking')
+  const [balance, setBalance] = useState(account ? String(account.balance) : '')
+  const [institution, setInstitution] = useState(account?.institution ?? '')
   const [saving, setSaving] = useState(false)
 
   async function save() {
     if (!name.trim()) return
     setSaving(true)
-    const res = await fetch('/api/finance/accounts', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, type, balance: parseFloat(balance) || 0 }),
-    })
+    const body = JSON.stringify({ name, type, balance: parseFloat(balance) || 0, institution: institution || null })
+    const res = account
+      ? await fetch(`/api/finance/accounts/${account.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body })
+      : await fetch('/api/finance/accounts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
     setSaving(false)
     if (res.ok) onSaved()
   }
 
   return (
-    <Modal title="Add account" onClose={onClose}>
+    <Modal title={account ? 'Edit account' : 'Add account'} onClose={onClose}>
       <div className="space-y-3">
         <input className={inputCls} placeholder="Account name (e.g. Chase Checking)" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
         <select className={inputCls} value={type} onChange={(e) => setType(e.target.value as AccountType)}>
           {ACCOUNT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
         <input className={inputCls} type="number" inputMode="decimal" placeholder="Current balance" value={balance} onChange={(e) => setBalance(e.target.value)} />
+        <input className={inputCls} placeholder="Institution (optional)" value={institution} onChange={(e) => setInstitution(e.target.value)} />
         <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
-          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Add account
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} {account ? 'Save' : 'Add account'}
         </button>
       </div>
     </Modal>
@@ -715,13 +796,13 @@ function BudgetsModal({ categories, budgets, onClose, onSaved }: { categories: F
   )
 }
 
-function RecurringModal({ categories, onClose, onSaved }: { categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
-  const [name, setName] = useState('')
-  const [amount, setAmount] = useState('')
-  const [type, setType] = useState<'expense' | 'income'>('expense')
-  const [frequency, setFrequency] = useState<Frequency>('monthly')
-  const [nextDue, setNextDue] = useState('')
-  const [categoryId, setCategoryId] = useState('')
+function RecurringModal({ recurring, categories, onClose, onSaved }: { recurring: FinanceRecurring | null; categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState(recurring?.name ?? '')
+  const [amount, setAmount] = useState(recurring ? String(recurring.amount) : '')
+  const [type, setType] = useState<'expense' | 'income'>(recurring?.type ?? 'expense')
+  const [frequency, setFrequency] = useState<Frequency>(recurring?.frequency ?? 'monthly')
+  const [nextDue, setNextDue] = useState(recurring?.next_due ?? '')
+  const [categoryId, setCategoryId] = useState(recurring?.category_id ?? '')
   const [saving, setSaving] = useState(false)
 
   const catOptions = categories.filter((c) => c.kind === type)
@@ -729,19 +810,19 @@ function RecurringModal({ categories, onClose, onSaved }: { categories: FinanceC
   async function save() {
     if (!name.trim()) return
     setSaving(true)
-    const res = await fetch('/api/finance/recurring', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name, amount: parseFloat(amount) || 0, type, frequency,
-        next_due: nextDue || null, category_id: categoryId || null,
-      }),
+    const body = JSON.stringify({
+      name, amount: parseFloat(amount) || 0, type, frequency,
+      next_due: nextDue || null, category_id: categoryId || null,
     })
+    const res = recurring
+      ? await fetch(`/api/finance/recurring/${recurring.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body })
+      : await fetch('/api/finance/recurring', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
     setSaving(false)
     if (res.ok) onSaved()
   }
 
   return (
-    <Modal title="Add subscription / bill" onClose={onClose}>
+    <Modal title={recurring ? 'Edit subscription / bill' : 'Add subscription / bill'} onClose={onClose}>
       <div className="space-y-3">
         <input className={inputCls} placeholder="Name (e.g. Netflix, Rent)" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
         <div className="grid grid-cols-2 gap-2">
@@ -763,7 +844,7 @@ function RecurringModal({ categories, onClose, onSaved }: { categories: FinanceC
           </select>
         )}
         <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
-          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Add
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} {recurring ? 'Save' : 'Add'}
         </button>
       </div>
     </Modal>
