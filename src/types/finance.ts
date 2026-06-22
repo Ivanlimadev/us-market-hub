@@ -55,6 +55,14 @@ export interface FinanceBudget {
   period: 'monthly'
 }
 
+export interface FinanceGoal {
+  id: string
+  name: string
+  target_amount: number
+  current_amount: number
+  target_date: string | null
+}
+
 export type Frequency = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 
 export interface FinanceRecurring {

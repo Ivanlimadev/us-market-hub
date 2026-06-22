@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import {
   ACCOUNT_TYPES, LIABILITY_TYPES,
   type FinanceAccount, type FinanceTransaction, type AccountType, type TxnType,
-  type FinanceCategory, type FinanceBudget, type FinanceRecurring,
+  type FinanceCategory, type FinanceBudget, type FinanceRecurring, type FinanceGoal,
   type Frequency, FREQUENCIES,
 } from '@/types/finance'
 
@@ -65,11 +65,17 @@ export function FinanceClient() {
     queryFn: () => fetch('/api/finance/recurring').then((r) => (r.ok ? r.json() : [])),
     enabled: !!user,
   })
+  const goalsQ = useQuery<FinanceGoal[]>({
+    queryKey: ['finance-goals'],
+    queryFn: () => fetch('/api/finance/goals').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
 
   const [showAccount, setShowAccount] = useState(false)
   const [showTxn, setShowTxn] = useState(false)
   const [showBudgets, setShowBudgets] = useState(false)
   const [showRecurring, setShowRecurring] = useState(false)
+  const [goalEdit, setGoalEdit] = useState<FinanceGoal | null | undefined>(undefined) // undefined=closed, null=new
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-zinc-500" /></div>
@@ -129,14 +135,20 @@ export function FinanceClient() {
     .filter((r) => r.active && r.type === 'expense')
     .reduce((s, r) => s + r.amount * perMonthFactor(r.frequency), 0)
 
+  const goals = goalsQ.data ?? []
+
   const refresh = () => {
-    for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets', 'finance-recurring']) {
+    for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets', 'finance-recurring', 'finance-goals']) {
       qc.invalidateQueries({ queryKey: [k] })
     }
   }
 
   async function deleteRecurring(id: string) {
     await fetch(`/api/finance/recurring/${id}`, { method: 'DELETE' })
+    refresh()
+  }
+  async function deleteGoal(id: string) {
+    await fetch(`/api/finance/goals/${id}`, { method: 'DELETE' })
     refresh()
   }
 
@@ -308,13 +320,59 @@ export function FinanceClient() {
         </div>
       </section>
 
+      {/* Goals */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-base font-bold text-white">Goals</h2>
+          <button onClick={() => setGoalEdit(null)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+            <Plus className="h-3.5 w-3.5" /> Add goal
+          </button>
+        </div>
+        {goals.length === 0 ? (
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-8 text-center text-sm text-zinc-500">
+            No goals yet. Set a target — emergency fund, vacation, new phone — and track your progress.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {goals.map((g) => {
+              const pct = g.target_amount > 0 ? Math.min(100, (g.current_amount / g.target_amount) * 100) : 0
+              const done = g.current_amount >= g.target_amount && g.target_amount > 0
+              return (
+                <div key={g.id} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      <Target className={`h-4 w-4 ${done ? 'text-emerald-400' : 'text-zinc-400'}`} />
+                      <p className="text-sm font-semibold text-white">{g.name}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setGoalEdit(g)} className="text-zinc-600 hover:text-zinc-300" aria-label="Edit goal"><Pencil className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => deleteGoal(g.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete goal"><Trash2 className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-baseline justify-between text-sm">
+                    <span className="font-bold text-white">{fmtUSD(g.current_amount)}</span>
+                    <span className="text-xs text-zinc-500">of {fmtUSD(g.target_amount)}</span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+                    <div className={`h-full rounded-full ${done ? 'bg-emerald-400' : 'bg-emerald-500'}`} style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between text-[11px] text-zinc-500">
+                    <span>{pct.toFixed(0)}%{done ? ' · reached 🎉' : ''}</span>
+                    {g.target_date && <span>by {g.target_date}</span>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
       {/* Coming next */}
       <section>
         <h2 className="mb-2 text-base font-bold text-white">Coming next</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { icon: Target, label: 'Goals' },
-            { icon: Pencil, label: 'Reports' },
+            { icon: PieChart, label: 'Reports' },
             { icon: Banknote, label: 'CSV import' },
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 py-5 text-center">
@@ -330,6 +388,7 @@ export function FinanceClient() {
       {showTxn && <TransactionModal accounts={accounts} categories={categories} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
       {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
       {showRecurring && <RecurringModal categories={categories} onClose={() => setShowRecurring(false)} onSaved={() => { setShowRecurring(false); refresh() }} />}
+      {goalEdit !== undefined && <GoalModal goal={goalEdit} onClose={() => setGoalEdit(undefined)} onSaved={() => { setGoalEdit(undefined); refresh() }} />}
     </div>
   )
 }
@@ -538,6 +597,53 @@ function RecurringModal({ categories, onClose, onSaved }: { categories: FinanceC
         )}
         <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
           {saving && <Loader2 className="h-4 w-4 animate-spin" />} Add
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+function GoalModal({ goal, onClose, onSaved }: { goal: FinanceGoal | null; onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState(goal?.name ?? '')
+  const [target, setTarget] = useState(goal ? String(goal.target_amount) : '')
+  const [current, setCurrent] = useState(goal ? String(goal.current_amount) : '')
+  const [targetDate, setTargetDate] = useState(goal?.target_date ?? '')
+  const [saving, setSaving] = useState(false)
+
+  async function save() {
+    if (!name.trim()) return
+    setSaving(true)
+    const body = JSON.stringify({
+      name, target_amount: parseFloat(target) || 0,
+      current_amount: parseFloat(current) || 0, target_date: targetDate || null,
+    })
+    const res = goal
+      ? await fetch(`/api/finance/goals/${goal.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body })
+      : await fetch('/api/finance/goals', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
+    setSaving(false)
+    if (res.ok) onSaved()
+  }
+
+  return (
+    <Modal title={goal ? 'Edit goal' : 'Add goal'} onClose={onClose}>
+      <div className="space-y-3">
+        <input className={inputCls} placeholder="Goal name (e.g. Emergency fund)" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+        <div className="grid grid-cols-2 gap-2">
+          <label className="block">
+            <span className="mb-1 block text-[11px] text-zinc-500">Target</span>
+            <input className={inputCls} type="number" inputMode="decimal" placeholder="0" value={target} onChange={(e) => setTarget(e.target.value)} />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-[11px] text-zinc-500">Saved so far</span>
+            <input className={inputCls} type="number" inputMode="decimal" placeholder="0" value={current} onChange={(e) => setCurrent(e.target.value)} />
+          </label>
+        </div>
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-zinc-500">Target date (optional)</span>
+          <input className={inputCls} type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+        </label>
+        <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} {goal ? 'Save' : 'Add goal'}
         </button>
       </div>
     </Modal>
