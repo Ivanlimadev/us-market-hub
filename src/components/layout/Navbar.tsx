@@ -12,14 +12,14 @@ import { useWatchlistStore } from '@/lib/store/watchlist-store'
 import { useAlertChecker } from '@/lib/hooks/useAlertChecker'
 import { TriggeredAlertsToast } from '@/components/watchlist/TriggeredAlertsToast'
 
-// Alphabetical by label
+// Markets (home) first, then alphabetical by label
 const NAV_LINKS = [
+  { href: '/', label: 'Markets' },
   { href: '/blog', label: 'Blog' },
   { href: '/calculators', label: 'Calculators' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/compare', label: 'Compare' },
   { href: '/crypto', label: 'Crypto' },
-  { href: '/', label: 'Markets' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/rankings', label: 'Rankings' },
   { href: '/screener', label: 'Screener' },
