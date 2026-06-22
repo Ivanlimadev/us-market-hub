@@ -37,3 +37,40 @@ export const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
 
 // Credit cards and loans represent money owed — they reduce net worth.
 export const LIABILITY_TYPES: AccountType[] = ['credit_card', 'loan']
+
+export type CategoryKind = 'expense' | 'income'
+
+export interface FinanceCategory {
+  id: string
+  name: string
+  kind: CategoryKind
+  icon: string | null
+  color: string | null
+}
+
+export interface FinanceBudget {
+  id: string
+  category_id: string
+  amount: number
+  period: 'monthly'
+}
+
+// Seeded for new users on first load (US-oriented defaults).
+export const DEFAULT_CATEGORIES: { name: string; kind: CategoryKind }[] = [
+  { name: 'Groceries',       kind: 'expense' },
+  { name: 'Dining & Drinks', kind: 'expense' },
+  { name: 'Transport',       kind: 'expense' },
+  { name: 'Housing & Rent',  kind: 'expense' },
+  { name: 'Utilities',       kind: 'expense' },
+  { name: 'Shopping',        kind: 'expense' },
+  { name: 'Health',          kind: 'expense' },
+  { name: 'Entertainment',   kind: 'expense' },
+  { name: 'Subscriptions',   kind: 'expense' },
+  { name: 'Travel',          kind: 'expense' },
+  { name: 'Fees & Charges',  kind: 'expense' },
+  { name: 'Other',           kind: 'expense' },
+  { name: 'Salary',          kind: 'income' },
+  { name: 'Freelance',       kind: 'income' },
+  { name: 'Investments',     kind: 'income' },
+  { name: 'Other Income',    kind: 'income' },
+]
