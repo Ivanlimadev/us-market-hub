@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
+import { isTopStock } from '@/lib/stock-universe'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
@@ -18,6 +19,9 @@ export async function generateMetadata({
     title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
     description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict — updated daily.`,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
+    // Only curated tickers are indexed; the rest are noindex,follow to keep the
+    // crawlable footprint focused on high-value pages (avoids "scaled content").
+    robots: isTopStock(upper) ? undefined : { index: false, follow: true },
     openGraph: {
       title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,

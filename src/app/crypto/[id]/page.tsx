@@ -5,6 +5,16 @@ import { CryptoDetailClient } from './CryptoDetailClient'
 export const revalidate = 60
 export const dynamicParams = true
 
+// Only top coins are indexed; obscure ones are noindex to keep the crawlable
+// footprint focused (mirrors the stock-page policy for search/AdSense quality).
+const INDEXED_CRYPTO = new Set([
+  'bitcoin','ethereum','tether','binancecoin','solana','ripple','usd-coin','cardano','dogecoin','tron',
+  'avalanche-2','chainlink','the-open-network','polkadot','polygon','litecoin','shiba-inu','bitcoin-cash','stellar','near',
+  'monero','ethereum-classic','uniswap','cosmos','filecoin','hedera-hashgraph','aptos','arbitrum','optimism','sui',
+  'pepe','floki','render-token','fetch-ai','worldcoin-wld','injective-protocol','sei-network','celestia','stacks','mantle',
+  'kaspa','immutable-x','blur','bonk','jupiter-exchange-solana','jito-governance-token','pyth-network','wormhole','ethena','ondo-finance',
+])
+
 export async function generateMetadata({
   params,
 }: {
@@ -18,6 +28,7 @@ export async function generateMetadata({
     title:      `${name} (${symbol}) Price, Chart & Analysis ${year}`,
     description:`${name} live price, market cap, chart, ROI calculator, exchange listings and in-depth analysis for ${year}.`,
     alternates: { canonical: `https://stockmarketroi.com/crypto/${id}` },
+    robots: INDEXED_CRYPTO.has(id) ? undefined : { index: false, follow: true },
     openGraph: {
       title:       `${name} (${symbol}) Crypto Analysis ${year}`,
       description: `Live ${name} price, market stats, historical ROI and exchange listings.`,

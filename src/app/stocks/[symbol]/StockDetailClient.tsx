@@ -245,6 +245,14 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
         <CompanyInfo data={data} />
       </WidgetBoundary>
 
+      <p className="rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 text-[11px] leading-relaxed text-zinc-500">
+        <strong className="text-zinc-400">Disclaimer:</strong> This page — including any buy/hold/avoid view,
+        fair value or price estimate — is generated from market data for informational and educational
+        purposes only and does <strong className="text-zinc-400">not constitute financial, investment or
+        trading advice</strong>. Data may be delayed or inaccurate. Always do your own research and consult
+        a licensed financial advisor before making any investment decision.
+      </p>
+
       {showAddTx && <AddTransactionModal defaultSymbol={symbol} onClose={() => setShowAddTx(false)} />}
       {showAuthModal && <AuthRequiredModal feature="portfolio" onClose={() => setShowAuthModal(false)} />}
     </div>
