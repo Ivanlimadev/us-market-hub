@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Wallet, Plus, Trash2, X, Loader2, TrendingUp, TrendingDown, LogIn,
   CreditCard, PiggyBank, Landmark, Banknote, Target, Repeat, PieChart, Pencil,
-  Upload, BarChart3, Pause, Play,
+  Upload, BarChart3, Pause, Play, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import {
@@ -79,6 +79,7 @@ export function FinanceClient() {
   const [recurringEdit, setRecurringEdit] = useState<FinanceRecurring | null | undefined>(undefined)
   const [showImport, setShowImport] = useState(false)
   const [goalEdit, setGoalEdit] = useState<FinanceGoal | null | undefined>(undefined) // undefined=closed, null=new
+  const [selMonth, setSelMonth] = useState(monthKey()) // YYYY-MM driving the "this month" views
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-zinc-500" /></div>
@@ -115,7 +116,14 @@ export function FinanceClient() {
   const budgets = budgetsQ.data ?? []
   const catName = new Map(categories.map((c) => [c.id, c.name]))
 
-  const mk = monthKey()
+  const mk = selMonth
+  const monthLabel = new Date(mk + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' })
+  const isCurrentMonth = mk === monthKey()
+  const shiftMonth = (delta: number) => {
+    const [y, m] = mk.split('-').map(Number)
+    const d = new Date(y, m - 1 + delta, 1)
+    setSelMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+  }
   const thisMonth = txns.filter((t) => t.date.startsWith(mk))
   const income = thisMonth.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
   const expense = thisMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
@@ -210,6 +218,13 @@ export function FinanceClient() {
         </button>
       </div>
 
+      {/* Month selector */}
+      <div className="flex items-center justify-center gap-2">
+        <button onClick={() => shiftMonth(-1)} className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white" aria-label="Previous month"><ChevronLeft className="h-4 w-4" /></button>
+        <span className="min-w-[8rem] text-center text-sm font-medium text-zinc-300">{monthLabel}</span>
+        <button onClick={() => shiftMonth(1)} disabled={isCurrentMonth} className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30" aria-label="Next month"><ChevronRight className="h-4 w-4" /></button>
+      </div>
+
       {/* Top cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card>
@@ -220,13 +235,13 @@ export function FinanceClient() {
           </p>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-zinc-500">Income · this month</p>
+          <p className="text-xs font-medium text-zinc-500">Income · {monthLabel}</p>
           <p className="mt-1 flex items-center gap-1.5 text-2xl font-bold text-emerald-400">
             <TrendingUp className="h-5 w-5" />{fmtUSD(income)}
           </p>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-zinc-500">Spending · this month</p>
+          <p className="text-xs font-medium text-zinc-500">Spending · {monthLabel}</p>
           <p className="mt-1 flex items-center gap-1.5 text-2xl font-bold text-red-400">
             <TrendingDown className="h-5 w-5" />{fmtUSD(expense)}
           </p>
@@ -268,7 +283,7 @@ export function FinanceClient() {
       {/* Budgets */}
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-base font-bold text-white">Budgets · this month</h2>
+          <h2 className="text-base font-bold text-white">Budgets · {monthLabel}</h2>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowCategories(true)} className="text-xs font-medium text-zinc-400 hover:text-zinc-200">Categories</button>
             <button onClick={() => setShowBudgets(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
@@ -419,7 +434,7 @@ export function FinanceClient() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Spending by category — this month */}
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-            <p className="mb-3 text-xs font-medium text-zinc-500">Spending by category · this month</p>
+            <p className="mb-3 text-xs font-medium text-zinc-500">Spending by category · {monthLabel}</p>
             {spendCats.length === 0 ? (
               <p className="py-4 text-center text-sm text-zinc-600">No spending yet this month.</p>
             ) : (
