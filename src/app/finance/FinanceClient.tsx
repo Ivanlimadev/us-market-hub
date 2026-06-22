@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Wallet, Plus, Trash2, X, Loader2, TrendingUp, TrendingDown, LogIn,
   CreditCard, PiggyBank, Landmark, Banknote, Target, Repeat, PieChart, Pencil,
+  Upload, BarChart3,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import {
@@ -75,6 +76,7 @@ export function FinanceClient() {
   const [showTxn, setShowTxn] = useState(false)
   const [showBudgets, setShowBudgets] = useState(false)
   const [showRecurring, setShowRecurring] = useState(false)
+  const [showImport, setShowImport] = useState(false)
   const [goalEdit, setGoalEdit] = useState<FinanceGoal | null | undefined>(undefined) // undefined=closed, null=new
 
   if (loading) {
@@ -136,6 +138,30 @@ export function FinanceClient() {
     .reduce((s, r) => s + r.amount * perMonthFactor(r.frequency), 0)
 
   const goals = goalsQ.data ?? []
+
+  // Reports: spending by category (this month)
+  const spendCats = [...spentByCat.entries()]
+    .map(([id, amt]) => ({ name: catName.get(id) ?? 'Uncategorized', amount: amt }))
+    .sort((a, b) => b.amount - a.amount)
+
+  // Reports: income vs spending, last 6 months
+  const last6 = (() => {
+    const now = new Date()
+    const out: { key: string; label: string; income: number; expense: number }[] = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      const label = d.toLocaleString('en-US', { month: 'short' })
+      const inM = txns.filter((t) => t.date.startsWith(key))
+      out.push({
+        key, label,
+        income: inM.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0),
+        expense: inM.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0),
+      })
+    }
+    return out
+  })()
+  const max6 = Math.max(1, ...last6.map((m) => Math.max(m.income, m.expense)))
 
   const refresh = () => {
     for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets', 'finance-recurring', 'finance-goals']) {
@@ -298,7 +324,12 @@ export function FinanceClient() {
 
       {/* Recent transactions */}
       <section>
-        <h2 className="mb-2 text-base font-bold text-white">Recent transactions</h2>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-base font-bold text-white">Recent transactions</h2>
+          <button onClick={() => setShowImport(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+            <Upload className="h-3.5 w-3.5" /> Import CSV
+          </button>
+        </div>
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
           {txnsQ.isLoading ? (
             <div className="p-6 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-500" /></div>
@@ -367,20 +398,54 @@ export function FinanceClient() {
         )}
       </section>
 
-      {/* Coming next */}
+      {/* Reports */}
       <section>
-        <h2 className="mb-2 text-base font-bold text-white">Coming next</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { icon: PieChart, label: 'Reports' },
-            { icon: Banknote, label: 'CSV import' },
-          ].map(({ icon: Icon, label }) => (
-            <div key={label} className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 py-5 text-center">
-              <Icon className="h-5 w-5 text-zinc-600" />
-              <span className="text-xs font-medium text-zinc-500">{label}</span>
-              <span className="text-[10px] text-zinc-600">Soon</span>
+        <h2 className="mb-2 flex items-center gap-1.5 text-base font-bold text-white"><BarChart3 className="h-4 w-4 text-zinc-400" /> Reports</h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {/* Spending by category — this month */}
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+            <p className="mb-3 text-xs font-medium text-zinc-500">Spending by category · this month</p>
+            {spendCats.length === 0 ? (
+              <p className="py-4 text-center text-sm text-zinc-600">No spending yet this month.</p>
+            ) : (
+              <div className="space-y-2.5">
+                {spendCats.slice(0, 8).map((c) => {
+                  const pct = expense > 0 ? (c.amount / expense) * 100 : 0
+                  return (
+                    <div key={c.name}>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-zinc-300">{c.name}</span>
+                        <span className="text-zinc-400">{fmtUSD(c.amount)} <span className="text-zinc-600">· {pct.toFixed(0)}%</span></span>
+                      </div>
+                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+                        <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Income vs spending — last 6 months */}
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+            <p className="mb-3 text-xs font-medium text-zinc-500">Income vs spending · last 6 months</p>
+            <div className="flex h-36 items-end justify-between gap-2">
+              {last6.map((m) => (
+                <div key={m.key} className="flex flex-1 flex-col items-center gap-1">
+                  <div className="flex h-28 w-full items-end justify-center gap-0.5">
+                    <div className="w-1/2 rounded-t bg-emerald-500" style={{ height: `${(m.income / max6) * 100}%` }} title={`Income ${fmtUSD(m.income)}`} />
+                    <div className="w-1/2 rounded-t bg-red-400" style={{ height: `${(m.expense / max6) * 100}%` }} title={`Spending ${fmtUSD(m.expense)}`} />
+                  </div>
+                  <span className="text-[10px] text-zinc-500">{m.label}</span>
+                </div>
+              ))}
             </div>
-          ))}
+            <div className="mt-2 flex items-center justify-center gap-4 text-[10px] text-zinc-500">
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-emerald-500" /> Income</span>
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-red-400" /> Spending</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -389,7 +454,108 @@ export function FinanceClient() {
       {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
       {showRecurring && <RecurringModal categories={categories} onClose={() => setShowRecurring(false)} onSaved={() => { setShowRecurring(false); refresh() }} />}
       {goalEdit !== undefined && <GoalModal goal={goalEdit} onClose={() => setGoalEdit(undefined)} onSaved={() => { setGoalEdit(undefined); refresh() }} />}
+      {showImport && <ImportModal onClose={() => setShowImport(false)} onSaved={() => { setShowImport(false); refresh() }} />}
     </div>
+  )
+}
+
+type ParsedRow = { date: string; amount: number; type: TxnType; note: string | null }
+
+function parseCsv(text: string, def: 'expense' | 'income' | 'sign'): ParsedRow[] {
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  if (!lines.length) return []
+  const first = lines[0].toLowerCase()
+  const start = (first.includes('date') || first.includes('amount')) ? 1 : 0
+  const out: ParsedRow[] = []
+  for (const line of lines.slice(start)) {
+    const cols = line.split(',').map((c) => c.trim())
+    if (cols.length < 2) continue
+    // date
+    let date = cols[0]
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const d = new Date(date)
+      if (isNaN(d.getTime())) continue
+      date = d.toISOString().slice(0, 10)
+    }
+    // amount
+    const raw = parseFloat(cols[1].replace(/[$,]/g, ''))
+    if (isNaN(raw) || raw === 0) continue
+    // type: explicit column 3, else default rule
+    let type: TxnType = def === 'income' ? 'income' : 'expense'
+    const c2 = (cols[2] ?? '').toLowerCase()
+    if (c2 === 'income' || c2 === 'expense') type = c2 as TxnType
+    else if (def === 'sign') type = raw < 0 ? 'expense' : 'income'
+    const note = (c2 === 'income' || c2 === 'expense' ? cols[3] : cols[2]) || null
+    out.push({ date, amount: Math.abs(raw), type, note })
+  }
+  return out
+}
+
+function ImportModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const [def, setDef] = useState<'expense' | 'income' | 'sign'>('expense')
+  const [rows, setRows] = useState<ParsedRow[]>([])
+  const [fileName, setFileName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [err, setErr] = useState('')
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    setFileName(f.name); setErr('')
+    const text = await f.text()
+    const parsed = parseCsv(text, def)
+    if (!parsed.length) setErr('Could not parse any rows. Expected: date, amount, [type], [note].')
+    setRows(parsed)
+  }
+
+  async function importRows() {
+    if (!rows.length) return
+    setSaving(true)
+    const res = await fetch('/api/finance/transactions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transactions: rows }),
+    })
+    setSaving(false)
+    if (res.ok) onSaved()
+    else setErr('Import failed. Please try again.')
+  }
+
+  return (
+    <Modal title="Import transactions (CSV)" onClose={onClose}>
+      <div className="space-y-3">
+        <p className="text-xs text-zinc-500">
+          Columns: <span className="font-mono text-zinc-400">date, amount, type, note</span>.
+          <code>type</code> and <code>note</code> are optional. Example: <span className="font-mono text-zinc-400">2026-06-01, 49.90, expense, Internet</span>
+        </p>
+        <div>
+          <span className="mb-1 block text-[11px] text-zinc-500">When type column is missing, treat amounts as</span>
+          <div className="grid grid-cols-3 gap-2">
+            {([['expense', 'Expenses'], ['income', 'Income'], ['sign', 'By sign']] as const).map(([v, label]) => (
+              <button key={v} onClick={() => setDef(v)} className={`rounded-lg py-2 text-xs font-medium transition-colors ${def === v ? 'bg-zinc-700 text-white' : 'border border-zinc-700 text-zinc-400'}`}>{label}</button>
+            ))}
+          </div>
+        </div>
+        <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-700 py-4 text-sm text-zinc-400 hover:border-zinc-500">
+          <Upload className="h-4 w-4" /> {fileName || 'Choose CSV file'}
+          <input type="file" accept=".csv,text/csv" className="hidden" onChange={onFile} />
+        </label>
+        {err && <p className="text-xs text-red-400">{err}</p>}
+        {rows.length > 0 && (
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3 text-xs">
+            <p className="font-medium text-zinc-300">{rows.length} transactions ready</p>
+            <div className="mt-1 space-y-0.5 text-zinc-500">
+              {rows.slice(0, 3).map((r, i) => (
+                <p key={i}>{r.date} · {r.type === 'income' ? '+' : '-'}{fmtUSD(r.amount)}{r.note ? ` · ${r.note}` : ''}</p>
+              ))}
+              {rows.length > 3 && <p>…and {rows.length - 3} more</p>}
+            </div>
+          </div>
+        )}
+        <button onClick={importRows} disabled={!rows.length || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Import {rows.length || ''} transactions
+        </button>
+      </div>
+    </Modal>
   )
 }
 
