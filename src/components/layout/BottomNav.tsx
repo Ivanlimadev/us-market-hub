@@ -63,7 +63,7 @@ export function BottomNav() {
     <>
       {/* Floating dock */}
       <nav
-        className="fixed inset-x-3 bottom-1 z-50 flex items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md md:hidden"
+        className="fixed bottom-1 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md"
         style={{ marginBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
         aria-label="Primary"
       >
@@ -96,13 +96,13 @@ export function BottomNav() {
 
       {/* Menu sheet */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden">
+        <div className="fixed inset-0 z-[60]">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
           <div
-            className="absolute inset-x-0 bottom-0 max-h-[80dvh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 pb-8 shadow-2xl"
+            className="absolute inset-x-0 bottom-0 mx-auto max-w-md max-h-[80dvh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 pb-8 shadow-2xl"
             style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
           >
             <div className="flex items-center justify-between px-5 pb-2 pt-4">
