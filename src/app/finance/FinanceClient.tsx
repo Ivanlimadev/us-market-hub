@@ -1,0 +1,308 @@
+'use client'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  Wallet, Plus, Trash2, X, Loader2, TrendingUp, TrendingDown, LogIn,
+  CreditCard, PiggyBank, Landmark, Banknote, Target, Repeat, PieChart, Pencil,
+} from 'lucide-react'
+import { useAuth } from '@/lib/hooks/useAuth'
+import {
+  ACCOUNT_TYPES, LIABILITY_TYPES,
+  type FinanceAccount, type FinanceTransaction, type AccountType, type TxnType,
+} from '@/types/finance'
+
+const fmtUSD = (n: number) =>
+  n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
+
+const ACCOUNT_ICON: Record<AccountType, React.ElementType> = {
+  checking: Landmark, savings: PiggyBank, cash: Banknote, credit_card: CreditCard,
+  investment: TrendingUp, loan: Landmark, other: Wallet,
+}
+
+const monthKey = () => new Date().toISOString().slice(0, 7) // YYYY-MM
+
+export function FinanceClient() {
+  const { user, loading } = useAuth()
+  const qc = useQueryClient()
+
+  const accountsQ = useQuery<FinanceAccount[]>({
+    queryKey: ['finance-accounts'],
+    queryFn: () => fetch('/api/finance/accounts').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
+  const txnsQ = useQuery<FinanceTransaction[]>({
+    queryKey: ['finance-transactions'],
+    queryFn: () => fetch('/api/finance/transactions').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
+
+  const [showAccount, setShowAccount] = useState(false)
+  const [showTxn, setShowTxn] = useState(false)
+
+  if (loading) {
+    return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-zinc-500" /></div>
+  }
+
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-screen-md px-4 py-16 text-center">
+        <Wallet className="mx-auto h-10 w-10 text-emerald-400" />
+        <h1 className="mt-4 text-2xl font-bold text-white">Your money, all in one place</h1>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-zinc-400">
+          Track accounts, net worth and spending. Sign in to start your personal finance hub.
+        </p>
+        <div className="mt-6 flex justify-center gap-3">
+          <Link href="/auth/login" className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:bg-zinc-800">
+            <LogIn className="h-4 w-4" /> Sign In
+          </Link>
+          <Link href="/auth/register" className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500">
+            Create free account
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const accounts = accountsQ.data ?? []
+  const txns = txnsQ.data ?? []
+
+  const assets = accounts.filter((a) => !LIABILITY_TYPES.includes(a.type)).reduce((s, a) => s + a.balance, 0)
+  const liabilities = accounts.filter((a) => LIABILITY_TYPES.includes(a.type)).reduce((s, a) => s + a.balance, 0)
+  const netWorth = assets - liabilities
+
+  const mk = monthKey()
+  const thisMonth = txns.filter((t) => t.date.startsWith(mk))
+  const income = thisMonth.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+  const expense = thisMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ['finance-accounts'] })
+    qc.invalidateQueries({ queryKey: ['finance-transactions'] })
+  }
+
+  async function deleteAccount(id: string) {
+    await fetch(`/api/finance/accounts/${id}`, { method: 'DELETE' })
+    refresh()
+  }
+  async function deleteTxn(id: string) {
+    await fetch(`/api/finance/transactions/${id}`, { method: 'DELETE' })
+    refresh()
+  }
+
+  return (
+    <div className="mx-auto max-w-screen-lg px-4 py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Finance</h1>
+          <p className="text-sm text-zinc-400">Your accounts, net worth and spending</p>
+        </div>
+        <button
+          onClick={() => setShowTxn(true)}
+          className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500"
+        >
+          <Plus className="h-4 w-4" /> Add transaction
+        </button>
+      </div>
+
+      {/* Top cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <p className="text-xs font-medium text-zinc-500">Net Worth</p>
+          <p className={`mt-1 text-2xl font-bold ${netWorth >= 0 ? 'text-white' : 'text-red-400'}`}>{fmtUSD(netWorth)}</p>
+          <p className="mt-1 text-[11px] text-zinc-500">
+            Assets {fmtUSD(assets)} · Liabilities {fmtUSD(liabilities)}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-zinc-500">Income · this month</p>
+          <p className="mt-1 flex items-center gap-1.5 text-2xl font-bold text-emerald-400">
+            <TrendingUp className="h-5 w-5" />{fmtUSD(income)}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-zinc-500">Spending · this month</p>
+          <p className="mt-1 flex items-center gap-1.5 text-2xl font-bold text-red-400">
+            <TrendingDown className="h-5 w-5" />{fmtUSD(expense)}
+          </p>
+        </Card>
+      </div>
+
+      {/* Accounts */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-base font-bold text-white">Accounts</h2>
+          <button onClick={() => setShowAccount(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+            <Plus className="h-3.5 w-3.5" /> Add account
+          </button>
+        </div>
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
+          {accountsQ.isLoading ? (
+            <div className="p-6 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-500" /></div>
+          ) : accounts.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">No accounts yet. Add your bank, card or cash balance to start your net worth.</p>
+          ) : accounts.map((a) => {
+            const Icon = ACCOUNT_ICON[a.type] ?? Wallet
+            const isLiab = LIABILITY_TYPES.includes(a.type)
+            return (
+              <div key={a.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-zinc-800 text-zinc-300"><Icon className="h-[18px] w-[18px]" /></span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white">{a.name}</p>
+                  <p className="text-[11px] capitalize text-zinc-500">{a.type.replace('_', ' ')}{a.institution ? ` · ${a.institution}` : ''}</p>
+                </div>
+                <p className={`text-sm font-semibold ${isLiab ? 'text-red-400' : 'text-zinc-200'}`}>{isLiab ? '-' : ''}{fmtUSD(a.balance)}</p>
+                <button onClick={() => deleteAccount(a.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete account"><Trash2 className="h-4 w-4" /></button>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* Recent transactions */}
+      <section>
+        <h2 className="mb-2 text-base font-bold text-white">Recent transactions</h2>
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
+          {txnsQ.isLoading ? (
+            <div className="p-6 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-500" /></div>
+          ) : txns.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">No transactions yet. Tap “Add transaction” to log your first one.</p>
+          ) : txns.slice(0, 15).map((t) => (
+            <div key={t.id} className="flex items-center gap-3 px-4 py-3">
+              <span className={`flex h-9 w-9 items-center justify-center rounded-[10px] ${t.type === 'income' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-zinc-800 text-zinc-300'}`}>
+                {t.type === 'income' ? <TrendingUp className="h-[18px] w-[18px]" /> : <TrendingDown className="h-[18px] w-[18px]" />}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="truncate text-sm font-medium text-white">{t.note || (t.type === 'income' ? 'Income' : 'Expense')}</p>
+                <p className="text-[11px] text-zinc-500">{t.date}</p>
+              </div>
+              <p className={`text-sm font-semibold ${t.type === 'income' ? 'text-emerald-400' : 'text-zinc-200'}`}>{t.type === 'income' ? '+' : '-'}{fmtUSD(t.amount)}</p>
+              <button onClick={() => deleteTxn(t.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete transaction"><Trash2 className="h-4 w-4" /></button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Coming next */}
+      <section>
+        <h2 className="mb-2 text-base font-bold text-white">Coming next</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { icon: PieChart, label: 'Budgets' },
+            { icon: Repeat, label: 'Subscriptions' },
+            { icon: Target, label: 'Goals' },
+            { icon: Pencil, label: 'Reports' },
+          ].map(({ icon: Icon, label }) => (
+            <div key={label} className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 py-5 text-center">
+              <Icon className="h-5 w-5 text-zinc-600" />
+              <span className="text-xs font-medium text-zinc-500">{label}</span>
+              <span className="text-[10px] text-zinc-600">Soon</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {showAccount && <AccountModal onClose={() => setShowAccount(false)} onSaved={() => { setShowAccount(false); refresh() }} />}
+      {showTxn && <TransactionModal accounts={accounts} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
+    </div>
+  )
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">{children}</div>
+}
+
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md rounded-t-2xl border-t border-zinc-800 bg-zinc-950 p-5 shadow-2xl md:rounded-2xl md:border">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white">{title}</h3>
+          <button onClick={onClose} className="text-zinc-400 hover:text-white" aria-label="Close"><X className="h-5 w-5" /></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+const inputCls = 'w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
+
+function AccountModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState('')
+  const [type, setType] = useState<AccountType>('checking')
+  const [balance, setBalance] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  async function save() {
+    if (!name.trim()) return
+    setSaving(true)
+    const res = await fetch('/api/finance/accounts', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, type, balance: parseFloat(balance) || 0 }),
+    })
+    setSaving(false)
+    if (res.ok) onSaved()
+  }
+
+  return (
+    <Modal title="Add account" onClose={onClose}>
+      <div className="space-y-3">
+        <input className={inputCls} placeholder="Account name (e.g. Chase Checking)" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+        <select className={inputCls} value={type} onChange={(e) => setType(e.target.value as AccountType)}>
+          {ACCOUNT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+        </select>
+        <input className={inputCls} type="number" inputMode="decimal" placeholder="Current balance" value={balance} onChange={(e) => setBalance(e.target.value)} />
+        <button onClick={save} disabled={!name.trim() || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Add account
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+function TransactionModal({ accounts, onClose, onSaved }: { accounts: FinanceAccount[]; onClose: () => void; onSaved: () => void }) {
+  const [type, setType] = useState<TxnType>('expense')
+  const [amount, setAmount] = useState('')
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [accountId, setAccountId] = useState('')
+  const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  async function save() {
+    const amt = parseFloat(amount)
+    if (!amt || amt <= 0) return
+    setSaving(true)
+    const res = await fetch('/api/finance/transactions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, amount: amt, date, account_id: accountId || null, note: note || null }),
+    })
+    setSaving(false)
+    if (res.ok) onSaved()
+  }
+
+  return (
+    <Modal title="Add transaction" onClose={onClose}>
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-2">
+          {(['expense', 'income'] as TxnType[]).map((t) => (
+            <button key={t} onClick={() => setType(t)} className={`rounded-lg py-2 text-sm font-medium capitalize transition-colors ${type === t ? (t === 'income' ? 'bg-emerald-600 text-white' : 'bg-zinc-700 text-white') : 'border border-zinc-700 text-zinc-400'}`}>{t}</button>
+          ))}
+        </div>
+        <input className={inputCls} type="number" inputMode="decimal" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} autoFocus />
+        <input className={inputCls} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        {accounts.length > 0 && (
+          <select className={inputCls} value={accountId} onChange={(e) => setAccountId(e.target.value)}>
+            <option value="">No account</option>
+            {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
+        )}
+        <input className={inputCls} placeholder="Note (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
+        <button onClick={save} disabled={!amount || saving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save
+        </button>
+      </div>
+    </Modal>
+  )
+}

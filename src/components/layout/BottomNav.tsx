@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import {
-  Home, CalendarDays, Wallet, Newspaper, Menu, X, ChevronRight,
+  Home, PiggyBank, Wallet, Newspaper, Menu, X, ChevronRight,
   Bitcoin, Star, Filter, BarChart3, LayoutGrid, GitCompareArrows, Calculator,
   TrendingUp, Settings,
 } from 'lucide-react'
@@ -17,7 +17,7 @@ import {
 
 const DOCK_ITEMS = [
   { href: '/',          label: 'Home',      icon: Home },
-  { href: '/calendar',  label: 'Finance',   icon: CalendarDays },
+  { href: '/finance',   label: 'Finance',   icon: PiggyBank },
   { href: '/portfolio', label: 'Portfolio', icon: Wallet },
   { href: '/blog',      label: 'News',      icon: Newspaper },
 ]
