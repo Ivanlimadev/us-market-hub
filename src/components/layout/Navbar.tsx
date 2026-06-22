@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { TrendingUp, Menu, X, LogIn, LogOut, User, Bell, Sun, Moon } from 'lucide-react'
+import { TrendingUp, LogIn, LogOut, User, Bell, Sun, Moon, Settings } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { GlobalSearch } from './GlobalSearch'
 import { formatMarketStatus, isMarketOpen } from '@/lib/market-hours'
@@ -32,9 +32,8 @@ export function Navbar() {
   const isCryptoPage    = pathname.startsWith('/crypto')
   const open            = isCryptoPage ? true : isMarketOpen()
   const { user }        = useAuth()
-  const [menuOpen, setMenuOpen]     = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const { setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
@@ -45,12 +44,6 @@ export function Navbar() {
   const triggeredCount = useWatchlistStore(
     (s) => s.alerts.filter((a) => a.triggered).length
   )
-
-  useEffect(() => { setMenuOpen(false) }, [pathname])
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
 
   async function handleLogout() {
     const supabase = createClient()
@@ -179,83 +172,22 @@ export function Navbar() {
               </Link>
             )}
 
-            {/* Hamburger — mobile */}
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white md:hidden"
-              aria-label="Toggle menu"
+            {/* Settings — top entry point to the account / settings hub */}
+            <Link
+              href="/account"
+              title="Settings"
+              aria-label="Settings"
+              className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+                pathname === '/account'
+                  ? 'bg-zinc-800 text-white'
+                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+              }`}
             >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+              <Settings className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </header>
-
-      {/* Mobile drawer */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-          <nav className="absolute left-0 right-0 top-14 border-b border-zinc-800 bg-zinc-950 px-4 py-3 pb-8 shadow-xl overflow-y-auto max-h-[calc(100dvh-3.5rem)]">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                  pathname === link.href ? 'bg-zinc-800 text-white' : 'text-zinc-300 hover:bg-zinc-800/60 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/watchlist"
-              className={`flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                pathname === '/watchlist' ? 'bg-zinc-800 text-white' : 'text-zinc-300 hover:bg-zinc-800/60 hover:text-white'
-              }`}
-            >
-              <Bell className="h-4 w-4" /> Watchlist & Alerts
-              {triggeredCount > 0 && (
-                <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
-                  {triggeredCount}
-                </span>
-              )}
-            </Link>
-            <div className="mt-2 border-t border-zinc-800 pt-2">
-              {/* Theme toggle in drawer */}
-              {mounted && (
-                <button
-                  onClick={() => { setTheme(resolvedTheme === 'dark' ? 'light' : 'dark'); setMenuOpen(false) }}
-                  className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800/60"
-                >
-                  {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                  {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
-                </button>
-              )}
-            </div>
-            <div className="mt-2 border-t border-zinc-800 pt-2">
-              {user ? (
-                <>
-                  <Link href="/account" className="flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800/60">
-                    <User className="h-4 w-4" /> My Account
-                  </Link>
-                  <button onClick={handleLogout} className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800/60">
-                    <LogOut className="h-4 w-4" /> Sign Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login" className="flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800/60">
-                    <LogIn className="h-4 w-4" /> Sign In
-                  </Link>
-                  <Link href="/auth/register" className="flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-emerald-400 hover:bg-zinc-800/60">
-                    Create Account
-                  </Link>
-                </>
-              )}
-            </div>
-          </nav>
-        </div>
-      )}
 
       {/* Global triggered alerts toast */}
       <TriggeredAlertsToast />
