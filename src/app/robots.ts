@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/auth/', '/account', '/portfolio', '/watchlist', '/api/'],
+        disallow: ['/auth/', '/account', '/portfolio', '/watchlist', '/finance', '/api/'],
       },
     ],
     sitemap: 'https://stockmarketroi.com/sitemap.xml',
