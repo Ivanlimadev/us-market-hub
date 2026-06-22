@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { ALL_SYMBOLS } from '@/lib/stock-universe'
+import { TOP_STOCKS } from '@/lib/stock-universe'
 
 const BASE = 'https://stockmarketroi.com'
 
@@ -108,14 +108,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }))
 
-  const stockUrls: MetadataRoute.Sitemap = ALL_SYMBOLS.map((symbol) => ({
+  // Only curated, high-demand tickers are listed (the rest are noindex).
+  const stockUrls: MetadataRoute.Sitemap = TOP_STOCKS.map((symbol) => ({
     url: `${BASE}/stocks/${symbol}`,
     lastModified: now,
     changeFrequency: 'daily',
     priority: 0.8,
   }))
 
-  const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.map((id) => ({
+  // Only the top coins are listed; obscure ones are noindex to stay focused.
+  const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.slice(0, 60).map((id) => ({
     url: `${BASE}/crypto/${id}`,
     lastModified: now,
     changeFrequency: 'daily',

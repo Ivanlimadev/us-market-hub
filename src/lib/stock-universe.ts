@@ -381,6 +381,39 @@ export const SECTORS = Object.keys(STOCK_UNIVERSE)
 
 export const ALL_SYMBOLS = dedup(Object.values(STOCK_UNIVERSE).flat())
 
+// Curated set of high-search-demand tickers. Only these stock pages are
+// indexed + listed in the sitemap; the rest are noindex,follow to avoid a
+// "thin/scaled content" footprint (AdSense / Search quality). The pages still
+// render for any ticker — they're just not pushed for indexing.
+export const TOP_STOCKS: string[] = dedup([
+  // Mega/large-cap tech & internet
+  'AAPL','MSFT','GOOGL','GOOG','AMZN','NVDA','META','TSLA','AVGO','ORCL',
+  'ADBE','CRM','AMD','INTC','QCOM','CSCO','IBM','TXN','NOW','INTU',
+  'PLTR','MU','AMAT','LRCX','KLAC','ARM','SMCI','DELL','PANW','CRWD',
+  'SNOW','NET','DDOG','ZS','MDB','UBER','ABNB','SHOP','PYPL','COIN',
+  'HOOD','SOFI','RBLX','SNAP','SPOT','NFLX','BABA','NIO',
+  // Financials
+  'JPM','BAC','WFC','C','GS','MS','BLK','SCHW','AXP','V',
+  'MA','BRK-B','COF','USB','PNC',
+  // Healthcare
+  'UNH','JNJ','LLY','PFE','MRK','ABBV','TMO','ABT','DHR','BMY',
+  'AMGN','GILD','CVS','MRNA',
+  // Consumer & retail
+  'WMT','COST','HD','LOW','NKE','MCD','SBUX','TGT','KO','PEP',
+  'PG','PM','MO','DIS','CMCSA','TJX','BKNG','CMG',
+  // Energy, industrial, autos
+  'XOM','CVX','COP','SLB','OXY','BA','CAT','GE','HON','UPS',
+  'FDX','LMT','RTX','DE','MMM','F','GM','T','VZ','TMUS',
+  // Popular ETFs
+  'SPY','QQQ','VOO','VTI','IWM','DIA','GLD','SLV','TLT','ARKK',
+  'XLF','XLE','XLK','SCHD','JEPI','VYM','VIG',
+  // Meme / retail favorites
+  'GME','AMC',
+])
+
+const TOP_STOCKS_SET = new Set(TOP_STOCKS)
+export const isTopStock = (symbol: string) => TOP_STOCKS_SET.has(symbol.toUpperCase())
+
 export function getSector(symbol: string): string | null {
   for (const [sector, syms] of Object.entries(STOCK_UNIVERSE)) {
     if (syms.includes(symbol)) return sector
