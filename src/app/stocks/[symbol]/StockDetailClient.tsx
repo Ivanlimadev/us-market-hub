@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useStockDetail, type StockDetailData } from '@/lib/hooks/useStockDetail'
 import { PriceChart } from '@/components/stock/PriceChart'
@@ -62,6 +63,32 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
     return (
       <div className="flex h-64 items-center justify-center text-zinc-400">
         Failed to load {symbol}
+      </div>
+    )
+  }
+
+  // fetchStockData uses Promise.allSettled and never returns null — a delisted
+  // or unknown symbol yields a degenerate object (price 0, no history, no info).
+  // Show a clear notice instead of a blank $0 page.
+  const hasData =
+    data.currentPrice > 0 ||
+    (data.recentEod?.length ?? 0) > 0 ||
+    data.info != null
+  if (!hasData) {
+    return (
+      <div className="mx-auto max-w-screen-md px-4 py-16 text-center">
+        <h1 className="text-xl font-bold text-white">{symbol} data unavailable</h1>
+        <p className="mt-2 text-sm text-zinc-400">
+          We couldn&rsquo;t load market data for{' '}
+          <span className="font-semibold text-zinc-200">{symbol}</span>. This symbol may be
+          delisted, renamed, or not covered by our data sources.
+        </p>
+        <Link
+          href="/stocks"
+          className="mt-6 inline-block rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+        >
+          Browse stocks
+        </Link>
       </div>
     )
   }
