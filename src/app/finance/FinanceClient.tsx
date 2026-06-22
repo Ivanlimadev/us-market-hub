@@ -73,7 +73,7 @@ export function FinanceClient() {
   })
 
   const [showAccount, setShowAccount] = useState(false)
-  const [showTxn, setShowTxn] = useState(false)
+  const [txnEdit, setTxnEdit] = useState<FinanceTransaction | null | undefined>(undefined) // undefined=closed, null=new
   const [showBudgets, setShowBudgets] = useState(false)
   const [showRecurring, setShowRecurring] = useState(false)
   const [showImport, setShowImport] = useState(false)
@@ -195,7 +195,7 @@ export function FinanceClient() {
           <p className="text-sm text-zinc-400">Your accounts, net worth and spending</p>
         </div>
         <button
-          onClick={() => setShowTxn(true)}
+          onClick={() => setTxnEdit(null)}
           className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500"
         >
           <Plus className="h-4 w-4" /> Add transaction
@@ -345,6 +345,7 @@ export function FinanceClient() {
                 <p className="text-[11px] text-zinc-500">{t.date}{t.category_id && catName.get(t.category_id) ? ` · ${catName.get(t.category_id)}` : ''}</p>
               </div>
               <p className={`text-sm font-semibold ${t.type === 'income' ? 'text-emerald-400' : 'text-zinc-200'}`}>{t.type === 'income' ? '+' : '-'}{fmtUSD(t.amount)}</p>
+              <button onClick={() => setTxnEdit(t)} className="text-zinc-600 hover:text-zinc-300" aria-label="Edit transaction"><Pencil className="h-3.5 w-3.5" /></button>
               <button onClick={() => deleteTxn(t.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete transaction"><Trash2 className="h-4 w-4" /></button>
             </div>
           ))}
@@ -450,7 +451,7 @@ export function FinanceClient() {
       </section>
 
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} onSaved={() => { setShowAccount(false); refresh() }} />}
-      {showTxn && <TransactionModal accounts={accounts} categories={categories} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
+      {txnEdit !== undefined && <TransactionModal txn={txnEdit} accounts={accounts} categories={categories} onClose={() => setTxnEdit(undefined)} onSaved={() => { setTxnEdit(undefined); refresh() }} />}
       {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
       {showRecurring && <RecurringModal categories={categories} onClose={() => setShowRecurring(false)} onSaved={() => { setShowRecurring(false); refresh() }} />}
       {goalEdit !== undefined && <GoalModal goal={goalEdit} onClose={() => setGoalEdit(undefined)} onSaved={() => { setGoalEdit(undefined); refresh() }} />}
@@ -613,13 +614,13 @@ function AccountModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =
   )
 }
 
-function TransactionModal({ accounts, categories, onClose, onSaved }: { accounts: FinanceAccount[]; categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
-  const [type, setType] = useState<TxnType>('expense')
-  const [amount, setAmount] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
-  const [accountId, setAccountId] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [note, setNote] = useState('')
+function TransactionModal({ txn, accounts, categories, onClose, onSaved }: { txn: FinanceTransaction | null; accounts: FinanceAccount[]; categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
+  const [type, setType] = useState<TxnType>(txn?.type ?? 'expense')
+  const [amount, setAmount] = useState(txn ? String(txn.amount) : '')
+  const [date, setDate] = useState(txn?.date ?? new Date().toISOString().slice(0, 10))
+  const [accountId, setAccountId] = useState(txn?.account_id ?? '')
+  const [categoryId, setCategoryId] = useState(txn?.category_id ?? '')
+  const [note, setNote] = useState(txn?.note ?? '')
   const [saving, setSaving] = useState(false)
 
   const catOptions = categories.filter((c) => c.kind === (type === 'income' ? 'income' : 'expense'))
@@ -628,16 +629,16 @@ function TransactionModal({ accounts, categories, onClose, onSaved }: { accounts
     const amt = parseFloat(amount)
     if (!amt || amt <= 0) return
     setSaving(true)
-    const res = await fetch('/api/finance/transactions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, amount: amt, date, account_id: accountId || null, category_id: categoryId || null, note: note || null }),
-    })
+    const body = JSON.stringify({ type, amount: amt, date, account_id: accountId || null, category_id: categoryId || null, note: note || null })
+    const res = txn
+      ? await fetch(`/api/finance/transactions/${txn.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body })
+      : await fetch('/api/finance/transactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
     setSaving(false)
     if (res.ok) onSaved()
   }
 
   return (
-    <Modal title="Add transaction" onClose={onClose}>
+    <Modal title={txn ? 'Edit transaction' : 'Add transaction'} onClose={onClose}>
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {(['expense', 'income'] as TxnType[]).map((t) => (
