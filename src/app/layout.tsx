@@ -55,8 +55,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}</Script>
         <Providers>
           <Navbar />
-          {/* pb on mobile keeps content/footer clear of the floating dock */}
-          <main className="flex-1 pb-24 md:pb-0">{children}</main>
+          {/* bottom padding keeps content/footer clear of the floating dock (all sizes) */}
+          <main className="flex-1 pb-24">{children}</main>
           <Footer />
           <BottomNav />
           <CookieBanner />
