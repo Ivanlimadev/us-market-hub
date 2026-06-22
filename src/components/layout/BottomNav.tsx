@@ -10,9 +10,9 @@ import {
 
 /**
  * Floating dock — mirrors the app's navigation (Home · Finance · Portfolio ·
- * News · Menu). Pinned below the header on mobile, a centered pill at the
- * bottom on desktop. The "Menu" button opens a sheet (bottom sheet on mobile,
- * centered dialog on desktop) with the tools list and a Settings shortcut.
+ * News · Menu). A centered pill fixed at the bottom on all breakpoints. The
+ * "Menu" button opens a sheet (bottom sheet on mobile, centered dialog on
+ * desktop) with the tools list and a Settings shortcut.
  */
 
 const DOCK_ITEMS = [
@@ -68,10 +68,10 @@ export function BottomNav() {
 
   return (
     <>
-      {/* Floating dock — mobile: pinned just below the sticky header (h-14) to
-          dodge the browser's bottom toolbar; desktop (md+): pill at the bottom. */}
+      {/* Floating dock — centered pill at the bottom on all breakpoints. */}
       <nav
-        className="fixed left-1/2 top-[3.75rem] z-40 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md md:top-auto md:bottom-1"
+        className="fixed bottom-1 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md"
+        style={{ marginBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
         aria-label="Primary"
       >
         {DOCK_ITEMS.map(({ href, label, icon: Icon }) => {
