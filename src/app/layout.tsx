@@ -4,6 +4,7 @@ import Script from 'next/script'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { Navbar } from '@/components/layout/Navbar'
+import { BottomNav } from '@/components/layout/BottomNav'
 import { Footer } from '@/components/layout/Footer'
 import { CookieBanner } from '@/components/layout/CookieBanner'
 
@@ -54,8 +55,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}</Script>
         <Providers>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          {/* pb on mobile keeps content/footer clear of the floating dock */}
+          <main className="flex-1 pb-24 md:pb-0">{children}</main>
           <Footer />
+          <BottomNav />
           <CookieBanner />
         </Providers>
       </body>
