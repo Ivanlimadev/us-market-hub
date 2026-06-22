@@ -47,12 +47,12 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
 
       <div>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-600">Trading</p>
-        <Row label="Open" value={eod ? `$${eod.open.toFixed(2)}` : '—'} />
-        <Row label="Day High" value={eod ? `$${eod.high.toFixed(2)}` : '—'} />
-        <Row label="Day Low" value={eod ? `$${eod.low.toFixed(2)}` : '—'} />
+        <Row label="Open" value={eod?.open != null ? `$${eod.open.toFixed(2)}` : '—'} />
+        <Row label="Day High" value={eod?.high != null ? `$${eod.high.toFixed(2)}` : '—'} />
+        <Row label="Day Low" value={eod?.low != null ? `$${eod.low.toFixed(2)}` : '—'} />
         <Row label="52W High" value={info?.week52High !== null && info?.week52High !== undefined ? `$${info.week52High.toFixed(2)}` : '—'} />
         <Row label="52W Low" value={info?.week52Low !== null && info?.week52Low !== undefined ? `$${info.week52Low.toFixed(2)}` : '—'} />
-        <Row label="Volume" value={eod ? eod.volume.toLocaleString() : '—'} />
+        <Row label="Volume" value={eod?.volume != null ? eod.volume.toLocaleString() : '—'} />
         <Row label="Avg Volume (3M)" value={info?.avgVolume3m ? info.avgVolume3m.toLocaleString() : '—'} />
         <Row label="Beta" value={fmtNum(info?.beta ?? null)} />
       </div>

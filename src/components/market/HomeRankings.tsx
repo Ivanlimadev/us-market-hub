@@ -96,7 +96,11 @@ export function HomeRankings() {
 
   const TOP = 5
 
-  const topDY: RankItem[] = (data ?? [])
+  // /api/screener can return a non-array error body (e.g. 429 rate limit) —
+  // guard so a bad response degrades to empty cards instead of crashing the widget.
+  const rows = Array.isArray(data) ? data : []
+
+  const topDY: RankItem[] = rows
     .filter((s) => (s.dividendYield ?? 0) > 0)
     .sort((a, b) => (b.dividendYield ?? 0) - (a.dividendYield ?? 0))
     .slice(0, TOP)
@@ -107,7 +111,7 @@ export function HomeRankings() {
       subUp: s.changePct >= 0,
     }))
 
-  const topVolume: RankItem[] = (data ?? [])
+  const topVolume: RankItem[] = rows
     .filter((s) => (s.volume ?? 0) > 0)
     .sort((a, b) => (b.volume ?? 0) - (a.volume ?? 0))
     .slice(0, TOP)
@@ -126,7 +130,7 @@ export function HomeRankings() {
       }
     })
 
-  const topGainers: RankItem[] = (data ?? [])
+  const topGainers: RankItem[] = rows
     .filter((s) => s.changePct > 0)
     .sort((a, b) => b.changePct - a.changePct)
     .slice(0, TOP)
