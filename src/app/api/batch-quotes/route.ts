@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getYFBatchQuotes } from '@/lib/yahoo-finance'
+import { getYFBatchQuotes, type YFBatchQuote } from '@/lib/yahoo-finance'
+import { cached, cachedStale } from '@/lib/server-cache'
 
 const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
 
@@ -12,12 +13,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'symbols param required' }, { status: 400 })
   }
 
+  // Cache key is the normalized symbol set so different orderings share an entry.
+  const key = `batch:${[...symbols].sort().join(',')}`
+
   try {
-    const quotes = await getYFBatchQuotes(symbols)
+    const quotes = await cached(key, 60_000, () => getYFBatchQuotes(symbols))
     return NextResponse.json(quotes, {
       headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch {
+    const stale = cachedStale<YFBatchQuote[]>(key)
+    if (stale) return NextResponse.json(stale)
     return NextResponse.json({ error: 'Failed to fetch quotes' }, { status: 502 })
   }
 }
