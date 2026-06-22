@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import {
   ACCOUNT_TYPES, LIABILITY_TYPES,
   type FinanceAccount, type FinanceTransaction, type AccountType, type TxnType,
+  type FinanceCategory, type FinanceBudget,
 } from '@/types/finance'
 
 const fmtUSD = (n: number) =>
@@ -36,9 +37,20 @@ export function FinanceClient() {
     queryFn: () => fetch('/api/finance/transactions').then((r) => (r.ok ? r.json() : [])),
     enabled: !!user,
   })
+  const categoriesQ = useQuery<FinanceCategory[]>({
+    queryKey: ['finance-categories'],
+    queryFn: () => fetch('/api/finance/categories').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
+  const budgetsQ = useQuery<FinanceBudget[]>({
+    queryKey: ['finance-budgets'],
+    queryFn: () => fetch('/api/finance/budgets').then((r) => (r.ok ? r.json() : [])),
+    enabled: !!user,
+  })
 
   const [showAccount, setShowAccount] = useState(false)
   const [showTxn, setShowTxn] = useState(false)
+  const [showBudgets, setShowBudgets] = useState(false)
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-zinc-500" /></div>
@@ -71,14 +83,31 @@ export function FinanceClient() {
   const liabilities = accounts.filter((a) => LIABILITY_TYPES.includes(a.type)).reduce((s, a) => s + a.balance, 0)
   const netWorth = assets - liabilities
 
+  const categories = categoriesQ.data ?? []
+  const budgets = budgetsQ.data ?? []
+  const catName = new Map(categories.map((c) => [c.id, c.name]))
+
   const mk = monthKey()
   const thisMonth = txns.filter((t) => t.date.startsWith(mk))
   const income = thisMonth.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
   const expense = thisMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
 
+  // Spent this month per category (expenses only).
+  const spentByCat = new Map<string, number>()
+  for (const t of thisMonth) {
+    if (t.type === 'expense' && t.category_id) {
+      spentByCat.set(t.category_id, (spentByCat.get(t.category_id) ?? 0) + t.amount)
+    }
+  }
+  // Show budgeted categories first, then any category with spending this month.
+  const budgetRows = budgets
+    .map((b) => ({ ...b, name: catName.get(b.category_id) ?? '—', spent: spentByCat.get(b.category_id) ?? 0 }))
+    .sort((a, b) => b.spent / (b.amount || 1) - a.spent / (a.amount || 1))
+
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ['finance-accounts'] })
-    qc.invalidateQueries({ queryKey: ['finance-transactions'] })
+    for (const k of ['finance-accounts', 'finance-transactions', 'finance-categories', 'finance-budgets']) {
+      qc.invalidateQueries({ queryKey: [k] })
+    }
   }
 
   async function deleteAccount(id: string) {
@@ -159,6 +188,36 @@ export function FinanceClient() {
         </div>
       </section>
 
+      {/* Budgets */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-base font-bold text-white">Budgets · this month</h2>
+          <button onClick={() => setShowBudgets(true)} className="flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300">
+            <PieChart className="h-3.5 w-3.5" /> Manage
+          </button>
+        </div>
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800/60">
+          {budgetRows.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">No budgets yet. Tap “Manage” to set a monthly limit per category.</p>
+          ) : budgetRows.map((b) => {
+            const pct = b.amount > 0 ? Math.min(100, (b.spent / b.amount) * 100) : 0
+            const over = b.spent > b.amount
+            const bar = over ? 'bg-red-500' : pct > 80 ? 'bg-amber-500' : 'bg-emerald-500'
+            return (
+              <div key={b.id} className="px-4 py-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-white">{b.name}</span>
+                  <span className={over ? 'text-red-400' : 'text-zinc-400'}>{fmtUSD(b.spent)} <span className="text-zinc-600">/ {fmtUSD(b.amount)}</span></span>
+                </div>
+                <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+                  <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
       {/* Recent transactions */}
       <section>
         <h2 className="mb-2 text-base font-bold text-white">Recent transactions</h2>
@@ -173,8 +232,8 @@ export function FinanceClient() {
                 {t.type === 'income' ? <TrendingUp className="h-[18px] w-[18px]" /> : <TrendingDown className="h-[18px] w-[18px]" />}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-white">{t.note || (t.type === 'income' ? 'Income' : 'Expense')}</p>
-                <p className="text-[11px] text-zinc-500">{t.date}</p>
+                <p className="truncate text-sm font-medium text-white">{t.note || (t.category_id && catName.get(t.category_id)) || (t.type === 'income' ? 'Income' : 'Expense')}</p>
+                <p className="text-[11px] text-zinc-500">{t.date}{t.category_id && catName.get(t.category_id) ? ` · ${catName.get(t.category_id)}` : ''}</p>
               </div>
               <p className={`text-sm font-semibold ${t.type === 'income' ? 'text-emerald-400' : 'text-zinc-200'}`}>{t.type === 'income' ? '+' : '-'}{fmtUSD(t.amount)}</p>
               <button onClick={() => deleteTxn(t.id)} className="text-zinc-600 hover:text-red-400" aria-label="Delete transaction"><Trash2 className="h-4 w-4" /></button>
@@ -188,10 +247,10 @@ export function FinanceClient() {
         <h2 className="mb-2 text-base font-bold text-white">Coming next</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { icon: PieChart, label: 'Budgets' },
             { icon: Repeat, label: 'Subscriptions' },
             { icon: Target, label: 'Goals' },
             { icon: Pencil, label: 'Reports' },
+            { icon: Banknote, label: 'CSV import' },
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 py-5 text-center">
               <Icon className="h-5 w-5 text-zinc-600" />
@@ -203,7 +262,8 @@ export function FinanceClient() {
       </section>
 
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} onSaved={() => { setShowAccount(false); refresh() }} />}
-      {showTxn && <TransactionModal accounts={accounts} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
+      {showTxn && <TransactionModal accounts={accounts} categories={categories} onClose={() => setShowTxn(false)} onSaved={() => { setShowTxn(false); refresh() }} />}
+      {showBudgets && <BudgetsModal categories={categories} budgets={budgets} onClose={() => setShowBudgets(false)} onSaved={() => { setShowBudgets(false); refresh() }} />}
     </div>
   )
 }
@@ -262,13 +322,16 @@ function AccountModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =
   )
 }
 
-function TransactionModal({ accounts, onClose, onSaved }: { accounts: FinanceAccount[]; onClose: () => void; onSaved: () => void }) {
+function TransactionModal({ accounts, categories, onClose, onSaved }: { accounts: FinanceAccount[]; categories: FinanceCategory[]; onClose: () => void; onSaved: () => void }) {
   const [type, setType] = useState<TxnType>('expense')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [accountId, setAccountId] = useState('')
+  const [categoryId, setCategoryId] = useState('')
   const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
+
+  const catOptions = categories.filter((c) => c.kind === (type === 'income' ? 'income' : 'expense'))
 
   async function save() {
     const amt = parseFloat(amount)
@@ -276,7 +339,7 @@ function TransactionModal({ accounts, onClose, onSaved }: { accounts: FinanceAcc
     setSaving(true)
     const res = await fetch('/api/finance/transactions', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, amount: amt, date, account_id: accountId || null, note: note || null }),
+      body: JSON.stringify({ type, amount: amt, date, account_id: accountId || null, category_id: categoryId || null, note: note || null }),
     })
     setSaving(false)
     if (res.ok) onSaved()
@@ -287,11 +350,17 @@ function TransactionModal({ accounts, onClose, onSaved }: { accounts: FinanceAcc
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {(['expense', 'income'] as TxnType[]).map((t) => (
-            <button key={t} onClick={() => setType(t)} className={`rounded-lg py-2 text-sm font-medium capitalize transition-colors ${type === t ? (t === 'income' ? 'bg-emerald-600 text-white' : 'bg-zinc-700 text-white') : 'border border-zinc-700 text-zinc-400'}`}>{t}</button>
+            <button key={t} onClick={() => { setType(t); setCategoryId('') }} className={`rounded-lg py-2 text-sm font-medium capitalize transition-colors ${type === t ? (t === 'income' ? 'bg-emerald-600 text-white' : 'bg-zinc-700 text-white') : 'border border-zinc-700 text-zinc-400'}`}>{t}</button>
           ))}
         </div>
         <input className={inputCls} type="number" inputMode="decimal" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} autoFocus />
         <input className={inputCls} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        {catOptions.length > 0 && (
+          <select className={inputCls} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+            <option value="">No category</option>
+            {catOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        )}
         {accounts.length > 0 && (
           <select className={inputCls} value={accountId} onChange={(e) => setAccountId(e.target.value)}>
             <option value="">No account</option>
@@ -303,6 +372,53 @@ function TransactionModal({ accounts, onClose, onSaved }: { accounts: FinanceAcc
           {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save
         </button>
       </div>
+    </Modal>
+  )
+}
+
+function BudgetsModal({ categories, budgets, onClose, onSaved }: { categories: FinanceCategory[]; budgets: FinanceBudget[]; onClose: () => void; onSaved: () => void }) {
+  const expenseCats = categories.filter((c) => c.kind === 'expense')
+  const original: Record<string, number> = {}
+  for (const b of budgets) original[b.category_id] = b.amount
+
+  const [amounts, setAmounts] = useState<Record<string, string>>(
+    () => Object.fromEntries(expenseCats.map((c) => [c.id, original[c.id] ? String(original[c.id]) : ''])),
+  )
+  const [saving, setSaving] = useState(false)
+
+  async function save() {
+    setSaving(true)
+    const changed = expenseCats.filter((c) => (parseFloat(amounts[c.id]) || 0) !== (original[c.id] ?? 0))
+    await Promise.all(changed.map((c) =>
+      fetch('/api/finance/budgets', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category_id: c.id, amount: parseFloat(amounts[c.id]) || 0 }),
+      }),
+    ))
+    setSaving(false)
+    onSaved()
+  }
+
+  return (
+    <Modal title="Monthly budgets" onClose={onClose}>
+      <div className="space-y-2 max-h-[60dvh] overflow-y-auto">
+        <p className="pb-1 text-xs text-zinc-500">Set a monthly limit per category. Leave blank for no limit.</p>
+        {expenseCats.map((c) => (
+          <div key={c.id} className="flex items-center gap-3">
+            <span className="flex-1 text-sm text-zinc-200">{c.name}</span>
+            <div className="relative w-28">
+              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-500">$</span>
+              <input
+                className={`${inputCls} pl-5 text-right`} type="number" inputMode="decimal" placeholder="0"
+                value={amounts[c.id] ?? ''} onChange={(e) => setAmounts((m) => ({ ...m, [c.id]: e.target.value }))}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <button onClick={save} disabled={saving} className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40">
+        {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save budgets
+      </button>
     </Modal>
   )
 }
