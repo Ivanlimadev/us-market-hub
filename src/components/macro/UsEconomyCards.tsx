@@ -57,6 +57,47 @@ const SECTION_ORDER = ['growth', 'inflation', 'labor', 'fed', 'bonds', 'consumer
 // ── Colors ────────────────────────────────────────────────────────────────────
 const C = { emerald: '#10b981', red: '#f87171', orange: '#f59e0b', neutral: '#71717a' }
 
+// "About this indicator" — English descriptions (the API ships PT text).
+const DESCRIPTIONS: Record<string, string> = {
+  FEDFUNDS: "The overnight interest rate set by the Federal Reserve. It anchors borrowing costs across the economy — mortgages, loans and savings rates all move with it.",
+  UNRATE: "The share of the labor force that is jobless and actively looking for work. A core gauge of labor-market health and half of the Fed's dual mandate.",
+  U6RATE: "A broader unemployment measure that also counts underemployed and discouraged workers, capturing slack the headline rate misses.",
+  PAYEMS: "The net number of jobs added or lost across the economy each month (excluding farms) — the market's headline jobs report.",
+  ICSA: "How many people filed new unemployment claims last week — a timely, real-time read on layoffs.",
+  CIVPART: "The share of the working-age population working or looking for work. Shows how many people are participating in the labor force.",
+  JTSJOL: "The number of open, unfilled jobs employers are trying to fill. High openings signal strong labor demand.",
+  JTSQUR: "The rate at which workers voluntarily quit. Rising quits usually signal confidence that better jobs are available.",
+  CPIAUCSL: "Consumer Price Index — how fast a typical basket of goods and services is rising year over year. The headline inflation number.",
+  CPILFESL: "Core CPI strips out volatile food and energy prices to reveal the underlying inflation trend.",
+  PCEPILFE: "Core PCE is the Fed's preferred inflation gauge, with a 2% target. Excludes food and energy to show persistent price pressure.",
+  MICH: "What consumers expect inflation to be over the next year (University of Michigan survey). Expectations can become self-fulfilling.",
+  GDPC1: "Real (inflation-adjusted) Gross Domestic Product — the broadest measure of US output. Two negative quarters is the classic recession rule of thumb.",
+  INDPRO: "Total output of factories, mines and utilities — a read on the industrial side of the economy.",
+  RSXFS: "Total monthly spending at retail and food-service businesses — a direct pulse on consumer demand, which drives ~70% of GDP.",
+  UMCSENT: "How optimistic households feel about their finances and the economy (UMich survey). Sentiment tends to lead future spending.",
+  PSAVERT: "The share of disposable income households save. Higher savings can mean caution; lower can mean confidence — or strain.",
+  DGS2: "The yield on 2-year US Treasuries. Closely tracks expectations for Fed rate moves over the near term.",
+  DGS10: "The 10-year Treasury yield — the benchmark 'risk-free' rate that helps price mortgages, loans and stock valuations.",
+  DGS30: "The 30-year Treasury yield, reflecting long-term growth and inflation expectations.",
+  T10Y2Y: "The gap between 10-year and 2-year yields. When it turns negative ('inverted'), it has preceded nearly every US recession.",
+  T10YIE: "The 10-year breakeven rate — the market's expected average inflation over the next decade, from Treasury vs TIPS yields.",
+  VIXCLS: "The VIX, Wall Street's 'fear gauge'. It measures expected stock-market volatility — low means calm, spikes mean stress.",
+  BAMLH0A0HYM2: "The extra yield investors demand to hold risky high-yield ('junk') bonds over Treasuries. Widening spreads signal credit stress.",
+  DTWEXBGS: "The trade-weighted US dollar index. A stronger dollar pressures exporters and multinationals; a weaker one supports commodities.",
+  MORTGAGE30US: "The average 30-year fixed mortgage rate — a key driver of housing affordability and demand.",
+  SP500: "The S&P 500 index, tracking 500 of the largest US companies — the standard benchmark for the US stock market.",
+  RECPROUSM156N: "The New York Fed's model-based probability that the US economy will be in recession within 12 months.",
+  PERMIT: "Building permits authorized for new housing — a leading indicator of future construction activity.",
+  WALCL: "The total size of the Federal Reserve's balance sheet. Expansion (QE) adds liquidity; shrinking (QT) removes it.",
+  GFDEGDQ188S: "Total federal debt as a share of GDP — a gauge of the government's fiscal position.",
+  HOUST: "The number of new residential construction projects started — a key read on housing momentum.",
+  CSUSHPISA: "The Case-Shiller index of US home prices, year over year — the standard measure of housing inflation.",
+  HSN1F: "Sales of newly built single-family homes — a timely signal of housing demand.",
+  M2SL: "M2 money-supply growth (year over year) — money circulating in the economy, which influences inflation and liquidity.",
+  DCOILWTICO: "The price of WTI crude oil — a benchmark that feeds into gas prices, inflation and energy-sector earnings.",
+  PCOPPUSDM: "The price of copper, nicknamed 'Dr. Copper' because its demand tracks global industrial and economic activity.",
+}
+
 // ── Scorecard tile logic (match _MacroScorecard) ─────────────────────────────
 type Regime = 'positive' | 'caution' | 'negative' | 'neutral'
 type Tile = { title: string; status: string; value: string; regime: Regime }
@@ -276,6 +317,14 @@ function MacroIndicatorCard({ s }: { s: Series }) {
           <StatCell label="Min" value={stats.min} />
         </div>
       )}
+
+      {/* About this indicator */}
+      {DESCRIPTIONS[s.id] && (
+        <div className="mt-3 border-t border-zinc-800 pt-3">
+          <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">About this indicator</p>
+          <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">{DESCRIPTIONS[s.id]}</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -302,7 +351,7 @@ export function UsEconomyCards() {
   const month = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' })
 
   return (
-    <div className="not-prose my-8">
+    <div className="not-prose relative left-1/2 my-8 w-screen max-w-[1100px] -translate-x-1/2 px-4">
       {/* Macro snapshot scorecard */}
       <div className="rounded-2xl bg-zinc-900 p-4">
         <div className="mb-3 flex items-center gap-1.5">
