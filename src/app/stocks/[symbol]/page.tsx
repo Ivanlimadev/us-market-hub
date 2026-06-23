@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
 import { isTopStock } from '@/lib/stock-universe'
+import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
+import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
@@ -46,27 +48,42 @@ export default async function StockPage({
   // Fetch server-side for SSR — passes as initialData to React Query on client
   const initialData = await fetchStockData(upper)
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebPage',
-        '@id':   `https://stockmarketroi.com/stocks/${upper}`,
-        url:     `https://stockmarketroi.com/stocks/${upper}`,
-        name:    `${upper} Stock Analysis ${year}`,
-        description: `In-depth ${upper} stock analysis for ${year} — fundamentals, valuation and verdict.`,
-        isPartOf: { '@id': 'https://stockmarketroi.com' },
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',   item: 'https://stockmarketroi.com' },
-          { '@type': 'ListItem', position: 2, name: 'Stocks', item: 'https://stockmarketroi.com/stocks' },
-          { '@type': 'ListItem', position: 3, name: upper,    item: `https://stockmarketroi.com/stocks/${upper}` },
-        ],
-      },
-    ],
+  // Unique, data-derived SEO content (intro + FAQ) — only when we have real data.
+  const hasData = initialData ? hasSeoData(initialData) : false
+  const intro = hasData ? buildStockIntro(initialData!, year) : null
+  const faqs = hasData ? buildStockFaqs(initialData!, year) : []
+
+  const graph: Record<string, unknown>[] = [
+    {
+      '@type': 'WebPage',
+      '@id':   `https://stockmarketroi.com/stocks/${upper}`,
+      url:     `https://stockmarketroi.com/stocks/${upper}`,
+      name:    `${upper} Stock Analysis ${year}`,
+      description: `In-depth ${upper} stock analysis for ${year} — fundamentals, valuation and verdict.`,
+      isPartOf: { '@id': 'https://stockmarketroi.com' },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home',   item: 'https://stockmarketroi.com' },
+        { '@type': 'ListItem', position: 2, name: 'Stocks', item: 'https://stockmarketroi.com/stocks' },
+        { '@type': 'ListItem', position: 3, name: upper,    item: `https://stockmarketroi.com/stocks/${upper}` },
+      ],
+    },
+  ]
+
+  if (faqs.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    })
   }
+
+  const jsonLd = { '@context': 'https://schema.org', '@graph': graph }
 
   return (
     <>
@@ -74,7 +91,12 @@ export default async function StockPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <StockDetailClient symbol={upper} initialData={initialData ?? undefined} />
+      <StockDetailClient
+        symbol={upper}
+        initialData={initialData ?? undefined}
+        seoIntro={intro ? <StockSeoIntro text={intro} /> : null}
+        seoFaq={faqs.length ? <StockFaqSection faqs={faqs} symbol={upper} /> : null}
+      />
     </>
   )
 }

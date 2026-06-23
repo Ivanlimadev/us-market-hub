@@ -29,6 +29,7 @@ import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
+import type { ReactNode } from 'react'
 
 function fmtLarge(n: number | null): string {
   if (n === null) return ''
@@ -37,7 +38,17 @@ function fmtLarge(n: number | null): string {
   return `$${n.toLocaleString()}`
 }
 
-export function StockDetailClient({ symbol, initialData }: { symbol: string; initialData?: StockDetailData }) {
+export function StockDetailClient({
+  symbol,
+  initialData,
+  seoIntro,
+  seoFaq,
+}: {
+  symbol: string
+  initialData?: StockDetailData
+  seoIntro?: ReactNode
+  seoFaq?: ReactNode
+}) {
   const { data, isLoading, error } = useStockDetail(symbol, initialData)
   const { user } = useAuth()
   const [showAddTx, setShowAddTx] = useState(false)
@@ -174,6 +185,8 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
         </div>
       </div>
 
+      {seoIntro}
+
       <WidgetBoundary label="Price Chart">
         <PriceChart
           symbol={symbol}
@@ -259,6 +272,8 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
       <WidgetBoundary label="Company Info">
         <CompanyInfo data={data} />
       </WidgetBoundary>
+
+      {seoFaq}
 
       <p className="rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 text-[11px] leading-relaxed text-zinc-500">
         <strong className="text-zinc-400">Disclaimer:</strong> This page — including any buy/hold/avoid view,
