@@ -6,6 +6,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
+import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
 
 interface Post {
@@ -213,6 +214,9 @@ export default async function BlogPostPage({
           />
         </div>
       )}
+
+      {/* Live indicator cards for the US-economy explainer */}
+      {post.slug === 'us-economic-indicators-explained' && <UsEconomyCards />}
 
       <article
         className="prose prose-invert max-w-none"
