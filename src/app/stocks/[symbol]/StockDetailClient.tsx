@@ -68,12 +68,12 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
   }
 
   // fetchStockData uses Promise.allSettled and never returns null — a delisted
-  // or unknown symbol yields a degenerate object (price 0, no history, no info).
-  // Show a clear notice instead of a blank $0 page.
+  // or unknown symbol yields a degenerate object (price 0, no real fundamentals).
+  // Require a live price OR a real market cap; otherwise show a clean notice
+  // instead of a $0 page full of "—" placeholders.
   const hasData =
     data.currentPrice > 0 ||
-    (data.recentEod?.length ?? 0) > 0 ||
-    data.info != null
+    (data.info?.marketCap ?? 0) > 0
   if (!hasData) {
     return (
       <div className="mx-auto max-w-screen-md px-4 py-16 text-center">
