@@ -53,6 +53,8 @@ export default async function StockPage({
   const intro = hasData ? buildStockIntro(initialData!, year) : null
   const faqs = hasData ? buildStockFaqs(initialData!, year) : []
 
+  const companyId = `https://stockmarketroi.com/stocks/${upper}#company`
+
   const graph: Record<string, unknown>[] = [
     {
       '@type': 'WebPage',
@@ -61,6 +63,7 @@ export default async function StockPage({
       name:    `${upper} Stock Analysis ${year}`,
       description: `In-depth ${upper} stock analysis for ${year} — fundamentals, valuation and verdict.`,
       isPartOf: { '@id': 'https://stockmarketroi.com' },
+      ...(hasData ? { about: { '@id': companyId }, mainEntity: { '@id': companyId } } : {}),
     },
     {
       '@type': 'BreadcrumbList',
@@ -71,6 +74,26 @@ export default async function StockPage({
       ],
     },
   ]
+
+  // Entity schema — tells Google this page is about a specific public company
+  // (ticker), not an empty blog page. Corporation + tickerSymbol is the
+  // accurate, warning-free type for an individual equity.
+  if (hasData && initialData) {
+    const info = initialData.info
+    const company: Record<string, unknown> = {
+      '@type': 'Corporation',
+      '@id': companyId,
+      name: initialData.name || upper,
+      tickerSymbol: initialData.exchange ? `${initialData.exchange}:${upper}` : upper,
+    }
+    if (info?.website) {
+      company.url = info.website
+      company.sameAs = info.website
+    }
+    if (info?.description) company.description = info.description
+    if (info?.employees) company.numberOfEmployees = info.employees
+    graph.push(company)
+  }
 
   if (faqs.length) {
     graph.push({
