@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 // Mirrors the app's US Macro dashboard (us_macro_page.dart): a MACRO SNAPSHOT
@@ -119,46 +120,162 @@ function ScoreTile({ t }: { t: Tile }) {
   )
 }
 
-// ── History chart ────────────────────────────────────────────────────────────
-function HistoryChart({ data, color }: { data: number[]; color: string }) {
-  if (!data || data.length < 2) return null
-  const min = Math.min(...data), max = Math.max(...data)
-  const range = max - min || 1
-  const W = 320, H = 70
-  const pts = data.map((v, i) => [(i / (data.length - 1)) * W, H - ((v - min) / range) * (H - 6) - 3])
-  const line = pts.map((p) => p.join(',')).join(' ')
-  const area = `${pts[0][0]},${H} ${line} ${pts[pts.length - 1][0]},${H}`
-  const gid = `g${color.replace('#', '')}`
+// ── Detail data (per-indicator full history) ─────────────────────────────────
+interface DetailPoint { date: string; value: number }
+interface Detail { id: string; unit: string; direction: number; data: DetailPoint[] }
+
+const RANGES: { label: string; years: number }[] = [
+  { label: '1Y', years: 1 }, { label: '2Y', years: 2 }, { label: '5Y', years: 5 },
+  { label: '10Y', years: 10 }, { label: 'Max', years: 999 },
+]
+
+function filterByRange(data: DetailPoint[], years: number, refTime: number): DetailPoint[] {
+  if (years >= 999 || !data.length) return data
+  const cutoff = refTime - years * 365.25 * 86_400_000
+  const out = data.filter((p) => new Date(p.date).getTime() >= cutoff)
+  return out.length >= 2 ? out : data.slice(-Math.max(2, Math.round(years * 12)))
+}
+
+function fmtAxis(v: number, unit: string): string {
+  if (unit === 'K') return Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(0)}k` : v.toFixed(0)
+  if (unit === '%' || unit === 'pts' || unit === 'idx') return v.toFixed(1)
+  return v.toFixed(0)
+}
+
+// SVG line+area chart with light grid, Y labels and date labels — mirrors the app chart.
+function DetailChart({ points, unit, color }: { points: DetailPoint[]; unit: string; color: string }) {
+  if (points.length < 2) return null
+  // Downsample for performance on long ranges.
+  const pts = points.length > 240
+    ? points.filter((_, i) => i % Math.ceil(points.length / 240) === 0).concat(points[points.length - 1])
+    : points
+  const vals = pts.map((p) => p.value)
+  const min = Math.min(...vals), max = Math.max(...vals)
+  const spread = max - min || 1
+  const W = 320, H = 150, padL = 30, padB = 16
+  const innerW = W - padL, innerH = H - padB
+  const x = (i: number) => padL + (i / (pts.length - 1)) * innerW
+  const y = (v: number) => innerH - ((v - min) / spread) * (innerH - 6) - 3
+  const line = pts.map((p, i) => `${x(i)},${y(p.value)}`).join(' ')
+  const area = `${padL},${innerH} ${line} ${x(pts.length - 1)},${innerH}`
+  const gid = `mg${color.replace('#', '')}${pts.length}`
+  const yTicks = [max, min + spread / 2, min]
+  const yr = (d: string) => new Date(d).getFullYear()
+  const xTicks = [0, Math.floor((pts.length - 1) / 2), pts.length - 1]
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="h-[70px] w-full">
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-[150px] w-full" preserveAspectRatio="none">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+          <stop offset="0%" stopColor={color} stopOpacity="0.18" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
       </defs>
+      {yTicks.map((t, i) => (
+        <g key={i}>
+          <line x1={padL} x2={W} y1={y(t)} y2={y(t)} stroke="#27272a" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <text x={padL - 4} y={y(t) + 3} textAnchor="end" fontSize="8" fill="#71717a">{fmtAxis(t, unit)}</text>
+        </g>
+      ))}
       <polygon points={area} fill={`url(#${gid})`} />
       <polyline points={line} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
+      {xTicks.map((i) => (
+        <text key={i} x={x(i)} y={H - 3} textAnchor={i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle'} fontSize="8" fill="#71717a">{yr(pts[i].date)}</text>
+      ))}
     </svg>
   )
 }
 
-function FullCard({ s }: { s: Series }) {
+function StatCell({ label, value, color }: { label: string; value: string; color?: string }) {
+  return (
+    <div className="flex-1 text-center">
+      <p className="text-[9px] uppercase tracking-wide text-zinc-500">{label}</p>
+      <p className="mt-0.5 text-xs font-semibold" style={{ color: color ?? '#e4e4e7' }}>{value}</p>
+    </div>
+  )
+}
+
+function MacroIndicatorCard({ s }: { s: Series }) {
+  const [range, setRange] = useState('5Y')
+  const { data: detail } = useQuery<Detail>({
+    queryKey: ['macro-detail', s.id],
+    queryFn: () => fetch(`/api/macro/us/${s.id}`).then((r) => (r.ok ? r.json() : null)),
+    staleTime: 30 * 60_000,
+  })
+
   const improving = s.change * s.direction > 0
   const worsening = s.change * s.direction < 0
-  const color = improving ? C.emerald : worsening ? C.red : C.neutral
+  const headColor = improving ? C.emerald : worsening ? C.red : C.neutral
+
+  const all = detail?.data ?? []
+  const refTime = all.length ? new Date(all[all.length - 1].date).getTime() : 0
+  const filtered = filterByRange(all, RANGES.find((r) => r.label === range)?.years ?? 5, refTime)
+  const trendColor = filtered.length >= 2
+    ? ((filtered[filtered.length - 1].value - filtered[0].value) * s.direction >= 0 ? C.emerald : C.red)
+    : headColor
+
+  // Stats over the full series
+  let stats: { prev: string; yoy: string; yoyColor?: string; max: string; min: string } | null = null
+  if (all.length) {
+    const vals = all.map((p) => p.value)
+    const current = vals[vals.length - 1]
+    const cutoff = refTime - 365 * 86_400_000
+    const prevYear = [...all].reverse().find((p) => new Date(p.date).getTime() < cutoff)?.value
+    const yoy = prevYear != null ? current - prevYear : null
+    stats = {
+      prev: prevYear != null ? fmtValue(prevYear, s.unit) : '—',
+      yoy: yoy != null ? fmtChange(yoy, s.unit) : '—',
+      yoyColor: yoy == null ? undefined : yoy * s.direction > 0 ? C.emerald : yoy * s.direction < 0 ? C.red : undefined,
+      max: fmtValue(Math.max(...vals), s.unit),
+      min: fmtValue(Math.min(...vals), s.unit),
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+      {/* Header */}
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-xs text-zinc-400">{s.label}</p>
           <p className="mt-0.5 text-[28px] font-extrabold leading-none text-white">{fmtValue(s.value, s.unit)}</p>
         </div>
-        <span className="mb-1 flex items-center gap-1 text-[13px] font-semibold" style={{ color }}>
+        <span className="mb-1 flex items-center gap-1 text-[13px] font-semibold" style={{ color: headColor }}>
           {s.change === 0 ? '–' : improving ? '↑' : worsening ? '↓' : '–'} {fmtChange(s.change, s.unit)}
         </span>
       </div>
-      <div className="mt-3"><HistoryChart data={s.history} color={color} /></div>
+
+      {/* Range chips */}
+      <div className="mt-3 flex gap-1.5">
+        {RANGES.map((r) => (
+          <button
+            key={r.label}
+            onClick={() => setRange(r.label)}
+            className={`flex-1 rounded-lg border py-1 text-[11px] transition-colors ${
+              range === r.label
+                ? 'border-emerald-500 bg-emerald-500 font-semibold text-white'
+                : 'border-zinc-700 text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div className="mt-3">
+        {detail
+          ? <DetailChart points={filtered} unit={s.unit} color={trendColor} />
+          : <div className="h-[150px] animate-pulse rounded-lg bg-zinc-800/50" />}
+      </div>
+
+      {/* Stats row */}
+      {stats && (
+        <div className="mt-3 flex divide-x divide-zinc-800 border-t border-zinc-800 pt-3">
+          <StatCell label="1Y ago" value={stats.prev} />
+          <StatCell label="Annual" value={stats.yoy} color={stats.yoyColor} />
+          <StatCell label="Max" value={stats.max} />
+          <StatCell label="Min" value={stats.min} />
+        </div>
+      )}
     </div>
   )
 }
@@ -213,7 +330,7 @@ export function UsEconomyCards() {
           <div key={key}>
             <p className="mb-3 mt-7 text-[11px] font-bold uppercase tracking-widest text-zinc-500">{SECTION_LABELS[key] ?? key}</p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {items.map((s) => <FullCard key={s.id} s={s} />)}
+              {items.map((s) => <MacroIndicatorCard key={s.id} s={s} />)}
             </div>
           </div>
         ))
