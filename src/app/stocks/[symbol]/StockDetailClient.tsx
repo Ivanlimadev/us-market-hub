@@ -198,43 +198,58 @@ export function StockDetailClient({ symbol, initialData }: { symbol: string; ini
         <StockRelatedPosts symbol={symbol} />
       </WidgetBoundary>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="space-y-5 lg:col-span-2">
-          <WidgetBoundary label="Financial Charts">
-            <FinancialCharts symbol={symbol} />
-          </WidgetBoundary>
-          <WidgetBoundary label="Dividends">
-            <DividendsSection data={data} />
-          </WidgetBoundary>
-          <WidgetBoundary label="Magic Number">
-            <MagicNumber data={data} />
-          </WidgetBoundary>
-          <WidgetBoundary label="Investment Simulator">
-            <InvestmentSimulator data={data} />
-          </WidgetBoundary>
-        </div>
+      {/* Wide widgets keep full width (charts + simulator need the room) */}
+      <WidgetBoundary label="Financial Charts">
+        <FinancialCharts symbol={symbol} />
+      </WidgetBoundary>
 
-        <div className="space-y-5">
+      {/* Masonry — packs the analysis cards with no empty columns */}
+      <div className="gap-5 [column-fill:balance] columns-1 lg:columns-2 [&>div]:mb-5 [&>div]:break-inside-avoid">
+        <div>
           <WidgetBoundary label="Earnings">
             <EarningsCard data={data} />
           </WidgetBoundary>
-          <WidgetBoundary label="Earnings History">
-            <EarningsHistory symbol={symbol} />
-          </WidgetBoundary>
-          <WidgetBoundary label="SEC Filings">
-            <SecFilings symbol={symbol} />
-          </WidgetBoundary>
+        </div>
+        <div>
           <WidgetBoundary label="Fundamentals">
             <FundamentalsCard data={data} />
           </WidgetBoundary>
+        </div>
+        <div>
+          <WidgetBoundary label="Dividends">
+            <DividendsSection data={data} />
+          </WidgetBoundary>
+        </div>
+        <div>
           <WidgetBoundary label="Fair Value">
             <FairValueCard data={data} />
           </WidgetBoundary>
+        </div>
+        <div>
+          <WidgetBoundary label="Earnings History">
+            <EarningsHistory symbol={symbol} />
+          </WidgetBoundary>
+        </div>
+        <div>
+          <WidgetBoundary label="Magic Number">
+            <MagicNumber data={data} />
+          </WidgetBoundary>
+        </div>
+        <div>
           <WidgetBoundary label="Buy & Hold Checklist">
             <BuyHoldChecklist data={data} />
           </WidgetBoundary>
         </div>
+        <div>
+          <WidgetBoundary label="SEC Filings">
+            <SecFilings symbol={symbol} />
+          </WidgetBoundary>
+        </div>
       </div>
+
+      <WidgetBoundary label="Investment Simulator">
+        <InvestmentSimulator data={data} />
+      </WidgetBoundary>
 
 
       <WidgetBoundary label="Related Assets">
