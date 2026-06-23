@@ -73,12 +73,16 @@ export function buildStockIntro(data: StockDetailData, year: number): string {
   const perfBits: string[] = []
   if (info?.revenueGrowth != null) {
     const g = info.revenueGrowth * 100
-    perfBits.push(`revenue ${g >= 0 ? 'grew' : 'fell'} ${Math.abs(g).toFixed(0)}% year-over-year`)
+    perfBits.push(
+      g >= 0
+        ? `${g.toFixed(0)}% year-over-year revenue growth`
+        : `a ${Math.abs(g).toFixed(0)}% year-over-year revenue decline`,
+    )
   }
   if (info?.profitMargin != null) {
     perfBits.push(`a net profit margin of ${(info.profitMargin * 100).toFixed(1)}%`)
   }
-  if (perfBits.length) parts.push(`Over the most recent period the company posted ${joinList(perfBits)}.`)
+  if (perfBits.length) parts.push(`Over the most recent period the company reported ${joinList(perfBits)}.`)
 
   parts.push(
     `Below you'll find ${symbol}'s full fundamentals, fair-value estimates, dividend history, earnings and our buy, hold or avoid verdict for ${year}.`,
