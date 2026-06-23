@@ -25,6 +25,7 @@ import { Plus } from 'lucide-react'
 import { recordView } from '@/lib/recently-viewed'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
+import { InsiderTransactions } from '@/components/stock/InsiderTransactions'
 import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
@@ -256,6 +257,9 @@ export function StockDetailClient({
         </WidgetBoundary>
         <WidgetBoundary label="SEC Filings">
           <SecFilings symbol={symbol} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Insider Transactions">
+          <InsiderTransactions symbol={symbol} />
         </WidgetBoundary>
       </Section>
 
