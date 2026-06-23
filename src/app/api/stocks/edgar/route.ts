@@ -12,23 +12,31 @@ export interface EdgarQuarter {
 }
 
 export interface EdgarAnnual {
-  year:        number
-  label:       string   // e.g. "2025"
-  operatingCf: number | null
-  capex:       number | null
-  fcf:         number | null
-  rdExpense:   number | null
-  revenue:     number | null  // annual, for R&D margin
+  year:         number
+  label:        string   // e.g. "2025"
+  operatingCf:  number | null
+  capex:        number | null
+  fcf:          number | null
+  rdExpense:    number | null
+  revenue:      number | null  // annual, for R&D margin + margins
+  grossProfit:  number | null
+  operatingIncome: number | null
+  netIncome:    number | null
+  taxExpense:   number | null  // income tax expense
+  pretaxIncome: number | null  // pre-tax income (for effective tax rate)
+  dps:          number | null  // dividends per share declared
 }
 
 export interface EdgarBalanceSheet {
-  year:         number
-  label:        string
-  assets:       number | null
-  liabilities:  number | null
-  cash:         number | null
-  longTermDebt: number | null
-  equity:       number | null
+  year:               number
+  label:              string
+  assets:             number | null
+  liabilities:        number | null
+  cash:               number | null
+  longTermDebt:       number | null
+  equity:             number | null
+  currentAssets:      number | null
+  currentLiabilities: number | null
 }
 
 export interface EdgarCapitalReturns {
@@ -38,6 +46,7 @@ export interface EdgarCapitalReturns {
   dividendsPaid:     number | null  // absolute value
   totalReturned:     number | null
   sharesOutstanding: number | null  // raw share count
+  dps:               number | null  // dividends per share declared
 }
 
 export interface EdgarData {
@@ -173,6 +182,17 @@ export async function GET(req: Request) {
   const rdMap    = extractConcept(gaap, YR, 'ResearchAndDevelopmentExpense')
   const revYrMap = extractConcept(gaap, YR, 'RevenueFromContractWithCustomerExcludingAssessedTax', 'Revenues', 'SalesRevenueNet')
 
+  // Annual income-statement lines for margins + effective tax rate + DPS
+  const gpYrMap   = extractConcept(gaap, YR, 'GrossProfit')
+  const opIncMap  = extractConcept(gaap, YR, 'OperatingIncomeLoss')
+  const niYrMap   = extractConcept(gaap, YR, 'NetIncomeLoss')
+  const taxMap    = extractConcept(gaap, YR, 'IncomeTaxExpenseBenefit')
+  const pretaxMap = extractConcept(gaap, YR,
+    'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest',
+    'IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments',
+  )
+  const dpsMap    = extractConcept(gaap, YR, 'CommonStockDividendsPerShareDeclared')
+
   // Annual capital returns (cash flow statement)
   const buybackMap = extractConcept(gaap, YR, 'PaymentsForRepurchaseOfCommonStock')
   const divPaidMap = extractConceptMerge(gaap, YR,
@@ -191,6 +211,8 @@ export async function GET(req: Request) {
   const cashMap    = extractConcept(gaap, BSI, 'CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsAndShortTermInvestments', 'Cash')
   const ltDebtMap  = extractConcept(gaap, BSI, 'LongTermDebt', 'LongTermDebtNoncurrent', 'LongTermNotesPayable')
   const equityMap  = extractConcept(gaap, BSI, 'StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest')
+  const caMap      = extractConcept(gaap, BSI, 'AssetsCurrent')
+  const clMap      = extractConcept(gaap, BSI, 'LiabilitiesCurrent')
 
   // Build quarters
   const qFrames = new Set<string>([...epsMap.keys(), ...revMap.keys(), ...niMap.keys(), ...gpMap.keys()])
@@ -207,8 +229,11 @@ export async function GET(req: Request) {
       grossProfit: gpMap.get(frame)?.val  ?? null,
     }))
 
-  // Build annual FCF + R&D
-  const yFrames = new Set<string>([...ocfMap.keys(), ...capexMap.keys(), ...rdMap.keys()])
+  // Build annual FCF + R&D + margins
+  const yFrames = new Set<string>([
+    ...ocfMap.keys(), ...capexMap.keys(), ...rdMap.keys(),
+    ...revYrMap.keys(), ...gpYrMap.keys(), ...opIncMap.keys(), ...niYrMap.keys(),
+  ])
   const annual: EdgarAnnual[] = [...yFrames]
     .sort().slice(-6)
     .map(frame => {
@@ -217,13 +242,19 @@ export async function GET(req: Request) {
       const rd  = rdMap.get(frame)?.val ?? null
       const rev = revYrMap.get(frame)?.val ?? null
       return {
-        year:        parseInt(frame.replace('CY', '')),
-        label:       frame.replace('CY', ''),
-        operatingCf: ocf,
-        capex:       cx != null ? -cx : null,
-        fcf:         ocf != null && cx != null ? ocf - cx : null,
-        rdExpense:   rd,
-        revenue:     rev,
+        year:           parseInt(frame.replace('CY', '')),
+        label:          frame.replace('CY', ''),
+        operatingCf:    ocf,
+        capex:          cx != null ? -cx : null,
+        fcf:            ocf != null && cx != null ? ocf - cx : null,
+        rdExpense:      rd,
+        revenue:        rev,
+        grossProfit:    gpYrMap.get(frame)?.val   ?? null,
+        operatingIncome: opIncMap.get(frame)?.val ?? null,
+        netIncome:      niYrMap.get(frame)?.val   ?? null,
+        taxExpense:     taxMap.get(frame)?.val    ?? null,
+        pretaxIncome:   pretaxMap.get(frame)?.val ?? null,
+        dps:            dpsMap.get(frame)?.val    ?? null,
       }
     })
 
@@ -235,12 +266,14 @@ export async function GET(req: Request) {
       const year = parseInt(frame.match(/CY(\d{4})/)?.[1] ?? '0')
       return {
         year,
-        label:        String(year),
-        assets:       assetsMap.get(frame)?.val  ?? null,
-        liabilities:  liabMap.get(frame)?.val    ?? null,
-        cash:         cashMap.get(frame)?.val     ?? null,
-        longTermDebt: ltDebtMap.get(frame)?.val  ?? null,
-        equity:       equityMap.get(frame)?.val   ?? null,
+        label:              String(year),
+        assets:             assetsMap.get(frame)?.val  ?? null,
+        liabilities:        liabMap.get(frame)?.val    ?? null,
+        cash:               cashMap.get(frame)?.val     ?? null,
+        longTermDebt:       ltDebtMap.get(frame)?.val  ?? null,
+        equity:             equityMap.get(frame)?.val   ?? null,
+        currentAssets:      caMap.get(frame)?.val       ?? null,
+        currentLiabilities: clMap.get(frame)?.val       ?? null,
       }
     })
 
@@ -262,6 +295,7 @@ export async function GET(req: Request) {
         dividendsPaid:     divAbs,
         totalReturned:     bbAbs != null || divAbs != null ? (bbAbs ?? 0) + (divAbs ?? 0) : null,
         sharesOutstanding: shares,
+        dps:               dpsMap.get(`CY${year}`)?.val ?? null,
       }
     })
 
