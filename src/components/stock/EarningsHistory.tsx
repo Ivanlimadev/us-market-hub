@@ -432,7 +432,16 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
 
   const { data, isLoading, isError } = useQuery<EdgarData>({
     queryKey: ['edgar', symbol],
-    queryFn:  () => fetch(`/api/stocks/edgar?symbol=${symbol}`).then(r => r.json()),
+    queryFn:  async () => {
+      const r = await fetch(`/api/stocks/edgar?symbol=${symbol}`)
+      const json = await r.json()
+      // SEC has no filings for this ticker (delisted, foreign, non-reporting).
+      // Treat as "no data" rather than throwing, so the component shows a clean empty state.
+      if (!r.ok || !json || !Array.isArray(json.quarters)) {
+        return { symbol, cik: '', name: '', quarters: [], annual: [], balanceSheet: [], capitalReturns: [] } as EdgarData
+      }
+      return json as EdgarData
+    },
     staleTime: 5 * 60 * 60_000,
     retry: 1,
   })
@@ -477,13 +486,13 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
         </div>
       )}
 
-      {isError && (
+      {!isLoading && (isError || !data?.quarters?.length) && (
         <div className="px-5 py-8 text-center text-xs text-zinc-500">
-          No financial data available for {symbol}.
+          No SEC filings available for {symbol}.
         </div>
       )}
 
-      {!isLoading && !isError && data?.quarters.length ? (
+      {!isLoading && !isError && data?.quarters?.length ? (
         <div className="p-5 space-y-4">
           {/* View selector — scrollable pills on mobile */}
           <div>
