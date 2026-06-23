@@ -43,20 +43,25 @@ export function hasSeoData(data: StockDetailData): boolean {
 }
 
 /** A unique, keyword-rich opening paragraph built from the live numbers. */
-export function buildStockIntro(data: StockDetailData, year: number): string {
+export function buildStockIntro(data: StockDetailData, year: number, isFund = false): string {
   const { info, currentPrice, name, symbol, changePct } = data
+  const noun = isFund ? 'ETF' : 'stock'
   const parts: string[] = []
 
   const priceClause =
     currentPrice > 0
-      ? `${name} (${symbol}) stock trades at ${fmtPrice(currentPrice)}` +
+      ? `${name} (${symbol}) ${noun} trades at ${fmtPrice(currentPrice)}` +
         (Number.isFinite(changePct) && changePct !== 0
           ? `, ${changePct >= 0 ? 'up' : 'down'} ${Math.abs(changePct).toFixed(2)}% on the day`
           : '')
       : `${name} (${symbol})`
   parts.push(`${priceClause}.`)
 
-  if (info?.marketCap) {
+  if (isFund) {
+    parts.push(
+      `${symbol} is an exchange-traded fund (ETF) — a single, diversified holding that trades like a stock.`,
+    )
+  } else if (info?.marketCap) {
     const tier = capTier(info.marketCap)
     const sector = info.sector ? ` ${info.sector.toLowerCase()}` : ''
     parts.push(
