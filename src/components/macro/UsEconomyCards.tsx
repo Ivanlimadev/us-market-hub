@@ -379,7 +379,13 @@ export function UsEconomyCards() {
           <div key={key}>
             <p className="mb-3 mt-7 text-[11px] font-bold uppercase tracking-widest text-zinc-500">{SECTION_LABELS[key] ?? key}</p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {items.map((s) => <MacroIndicatorCard key={s.id} s={s} />)}
+              {items.map((s, i) => (
+                // A lone card (odd count / single-item section) spans both columns
+                // so its chart fills the row instead of leaving empty space.
+                <div key={s.id} className={items.length % 2 === 1 && i === items.length - 1 ? 'sm:col-span-2' : ''}>
+                  <MacroIndicatorCard s={s} />
+                </div>
+              ))}
             </div>
           </div>
         ))
