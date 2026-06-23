@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Mail, MessageSquare, Clock, Shield, BookOpen, FileText } from 'lucide-react'
+import { ContactForm } from './ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -71,6 +72,12 @@ export default function ContactPage() {
           <Clock className="h-3.5 w-3.5 shrink-0" />
           <span>Response time: up to 48 hours on business days (Mon–Fri, Brazil time)</span>
         </div>
+      </div>
+
+      {/* Contact form */}
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-zinc-200">Send us a message</h2>
+        <ContactForm />
       </div>
 
       {/* Topic guide */}
