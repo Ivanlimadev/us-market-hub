@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { TrendingUp, TrendingDown, ExternalLink, DollarSign, BarChart2, Wallet, Layers, Gift, FlaskConical, LineChart, type LucideIcon } from 'lucide-react'
+import { TrendingUp, TrendingDown, ExternalLink, DollarSign, BarChart2, Wallet, Layers, Gift, FlaskConical, LineChart, Percent, type LucideIcon } from 'lucide-react'
 import type { EdgarData, EdgarQuarter, EdgarAnnual, EdgarBalanceSheet, EdgarCapitalReturns } from '@/app/api/stocks/edgar/route'
 
 function fmtB(n: number | null): string {
@@ -19,7 +19,7 @@ function fmtEps(n: number | null): string {
   return `$${n.toFixed(2)}`
 }
 
-type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet' | 'capitalReturns' | 'rd'
+type Metric = 'revenue' | 'netIncome' | 'eps' | 'fcf' | 'balanceSheet' | 'capitalReturns' | 'rd' | 'margins'
 
 // ── Balance Sheet ──────────────────────────────────────────────────────────
 
@@ -64,6 +64,7 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
             <th className="pb-2 text-right font-medium">Cash</th>
             <th className="pb-2 text-right font-medium">LT Debt</th>
             <th className="pb-2 text-right font-medium">Equity</th>
+            <th className="pb-2 text-right font-medium">Curr. Ratio</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/50">
@@ -72,6 +73,8 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
             const assetsUp   = prev?.assets != null && b.assets != null ? b.assets >= prev.assets : null
             const equityUp   = prev?.equity != null && b.equity != null ? b.equity >= prev.equity : null
             const debtUp     = prev?.longTermDebt != null && b.longTermDebt != null ? b.longTermDebt > prev.longTermDebt : null
+            const currRatio  = b.currentAssets != null && b.currentLiabilities != null && b.currentLiabilities !== 0
+              ? b.currentAssets / b.currentLiabilities : null
             return (
               <tr key={b.year} className="hover:bg-zinc-800/30 transition-colors">
                 <td className="py-2.5 font-semibold text-zinc-300">{b.label}</td>
@@ -95,6 +98,11 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
                     {equityUp === true && <TrendingUp className="h-3 w-3" />}
                     {equityUp === false && <TrendingDown className="h-3 w-3" />}
                     {fmtB(b.equity)}
+                  </span>
+                </td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={currRatio == null ? 'text-zinc-500' : currRatio >= 1 ? 'text-emerald-400' : 'text-orange-400'}>
+                    {currRatio != null ? `${currRatio.toFixed(2)}×` : '—'}
                   </span>
                 </td>
               </tr>
@@ -281,6 +289,7 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
             <th className="pb-2 text-left font-medium">Year</th>
             <th className="pb-2 text-right font-medium">Buybacks</th>
             <th className="pb-2 text-right font-medium">Dividends</th>
+            <th className="pb-2 text-right font-medium">DPS</th>
             <th className="pb-2 text-right font-medium">Total Returned</th>
             <th className="pb-2 text-right font-medium">Shares</th>
           </tr>
@@ -299,6 +308,9 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
                 <td className="py-2.5 text-right tabular-nums text-emerald-400">
                   {c.dividendsPaid != null ? fmtB(c.dividendsPaid) : '—'}
                 </td>
+                <td className="py-2.5 text-right tabular-nums text-zinc-400">
+                  {c.dps != null ? `$${c.dps.toFixed(2)}` : '—'}
+                </td>
                 <td className="py-2.5 text-right tabular-nums">
                   <span className={`flex items-center justify-end gap-0.5 font-semibold ${totalUp === true ? 'text-emerald-400' : totalUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
                     {totalUp === true && <TrendingUp className="h-3 w-3" />}
@@ -311,6 +323,93 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
                     {fmtShares(c.sharesOutstanding)}
                   </span>
                 </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  )
+}
+
+// ── Margins Chart ────────────────────────────────────────────────────────────
+
+function pct(n: number | null): string {
+  return n == null ? '—' : `${(n * 100).toFixed(1)}%`
+}
+
+function MarginsChart({ annual }: { annual: EdgarAnnual[] }) {
+  const rows = annual
+    .filter(a => a.revenue != null && a.revenue !== 0)
+    .map(a => ({
+      label: a.label,
+      gross: a.grossProfit != null ? a.grossProfit / a.revenue! : null,
+      operating: a.operatingIncome != null ? a.operatingIncome / a.revenue! : null,
+      net: a.netIncome != null ? a.netIncome / a.revenue! : null,
+      tax: a.taxExpense != null && a.pretaxIncome != null && a.pretaxIncome !== 0
+        ? Math.abs(a.taxExpense / a.pretaxIncome)
+        : null,
+    }))
+
+  if (!rows.length || rows.every(r => r.gross == null && r.operating == null && r.net == null)) {
+    return <p className="text-xs text-zinc-500 py-4 text-center">Margin data not available for this company.</p>
+  }
+
+  const maxMargin = Math.max(...rows.flatMap(r => [r.gross, r.operating, r.net].filter((v): v is number => v != null)), 0.01)
+
+  return (
+    <div className="space-y-3">
+      {/* Grouped bars: gross (zinc) / operating (violet) / net (emerald) per year */}
+      <div className="flex items-end gap-3 h-24">
+        {rows.map(r => (
+          <div key={r.label} className="flex flex-col items-center flex-1 gap-1">
+            <div className="flex items-end gap-[2px] w-full" style={{ height: '76px' }}>
+              <div className="flex-1 bg-zinc-600 rounded-t-sm" style={{ height: `${Math.max((r.gross ?? 0) / maxMargin * 100, 2)}%` }} title={`Gross: ${pct(r.gross)}`} />
+              <div className="flex-1 bg-violet-500 rounded-t-sm" style={{ height: `${Math.max((r.operating ?? 0) / maxMargin * 100, 2)}%` }} title={`Operating: ${pct(r.operating)}`} />
+              <div className="flex-1 bg-emerald-500 rounded-t-sm" style={{ height: `${Math.max((r.net ?? 0) / maxMargin * 100, 2)}%` }} title={`Net: ${pct(r.net)}`} />
+            </div>
+            <span className="text-[9px] text-zinc-600">{r.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Legend */}
+      <div className="flex gap-4 text-[10px] text-zinc-500">
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm bg-zinc-600" />Gross</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm bg-violet-500" />Operating</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm bg-emerald-500" />Net</span>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-600">
+            <th className="pb-2 text-left font-medium">Year</th>
+            <th className="pb-2 text-right font-medium">Gross</th>
+            <th className="pb-2 text-right font-medium">Operating</th>
+            <th className="pb-2 text-right font-medium">Net</th>
+            <th className="pb-2 text-right font-medium">Eff. Tax</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-800/50">
+          {[...rows].reverse().map((r, i, arr) => {
+            const prev = arr[i + 1]
+            const netUp = prev?.net != null && r.net != null ? r.net >= prev.net : null
+            return (
+              <tr key={r.label} className="hover:bg-zinc-800/30 transition-colors">
+                <td className="py-2.5 font-semibold text-zinc-300">{r.label}</td>
+                <td className="py-2.5 text-right tabular-nums text-zinc-400">{pct(r.gross)}</td>
+                <td className="py-2.5 text-right tabular-nums text-violet-400">{pct(r.operating)}</td>
+                <td className="py-2.5 text-right tabular-nums">
+                  <span className={`flex items-center justify-end gap-0.5 font-semibold ${netUp === true ? 'text-emerald-400' : netUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
+                    {netUp === true && <TrendingUp className="h-3 w-3" />}
+                    {netUp === false && <TrendingDown className="h-3 w-3" />}
+                    {pct(r.net)}
+                  </span>
+                </td>
+                <td className="py-2.5 text-right tabular-nums text-zinc-400">{pct(r.tax)}</td>
               </tr>
             )
           })}
@@ -451,6 +550,7 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
     { key: 'revenue',        label: 'Revenue',         short: 'Revenue',  icon: DollarSign },
     { key: 'netIncome',      label: 'Net Income',      short: 'Net Inc.', icon: LineChart },
     { key: 'eps',            label: 'EPS',             short: 'EPS',      icon: BarChart2 },
+    { key: 'margins',        label: 'Margins',         short: 'Margins',  icon: Percent },
     { key: 'fcf',            label: 'Free Cash Flow',  short: 'FCF',      icon: Wallet },
     { key: 'balanceSheet',   label: 'Balance Sheet',   short: 'Balance',  icon: Layers },
     { key: 'rd',             label: 'R&D Spending',    short: 'R&D',      icon: FlaskConical },
@@ -530,6 +630,9 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
 
           {/* R&D tab */}
           {tab === 'rd' && <RdChart annual={data.annual ?? []} />}
+
+          {/* Margins tab */}
+          {tab === 'margins' && <MarginsChart annual={data.annual ?? []} />}
 
           {/* Capital Returns tab */}
           {tab === 'capitalReturns' && (
