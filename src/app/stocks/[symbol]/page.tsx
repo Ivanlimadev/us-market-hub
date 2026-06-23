@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
-import { isTopStock } from '@/lib/stock-universe'
+import { isTopStock, isEtf } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
@@ -49,8 +49,9 @@ export default async function StockPage({
   const initialData = await fetchStockData(upper)
 
   // Unique, data-derived SEO content (intro + FAQ) — only when we have real data.
+  const fund = isEtf(upper)
   const hasData = initialData ? hasSeoData(initialData) : false
-  const intro = hasData ? buildStockIntro(initialData!, year) : null
+  const intro = hasData ? buildStockIntro(initialData!, year, fund) : null
   const faqs = hasData ? buildStockFaqs(initialData!, year) : []
 
   const companyId = `https://stockmarketroi.com/stocks/${upper}#company`
@@ -80,19 +81,36 @@ export default async function StockPage({
   // accurate, warning-free type for an individual equity.
   if (hasData && initialData) {
     const info = initialData.info
-    const company: Record<string, unknown> = {
-      '@type': 'Corporation',
-      '@id': companyId,
-      name: initialData.name || upper,
-      tickerSymbol: initialData.exchange ? `${initialData.exchange}:${upper}` : upper,
+    const ticker = initialData.exchange ? `${initialData.exchange}:${upper}` : upper
+    if (fund) {
+      // ETF → InvestmentFund (tickerSymbol isn't valid here, so use identifier).
+      const etf: Record<string, unknown> = {
+        '@type': 'InvestmentFund',
+        '@id': companyId,
+        name: initialData.name || upper,
+        identifier: { '@type': 'PropertyValue', propertyID: 'tickerSymbol', value: ticker },
+      }
+      if (info?.website) {
+        etf.url = info.website
+        etf.sameAs = info.website
+      }
+      if (info?.description) etf.description = info.description
+      graph.push(etf)
+    } else {
+      const company: Record<string, unknown> = {
+        '@type': 'Corporation',
+        '@id': companyId,
+        name: initialData.name || upper,
+        tickerSymbol: ticker,
+      }
+      if (info?.website) {
+        company.url = info.website
+        company.sameAs = info.website
+      }
+      if (info?.description) company.description = info.description
+      if (info?.employees) company.numberOfEmployees = info.employees
+      graph.push(company)
     }
-    if (info?.website) {
-      company.url = info.website
-      company.sameAs = info.website
-    }
-    if (info?.description) company.description = info.description
-    if (info?.employees) company.numberOfEmployees = info.employees
-    graph.push(company)
   }
 
   if (faqs.length) {

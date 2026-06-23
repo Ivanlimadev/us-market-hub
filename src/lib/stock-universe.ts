@@ -414,6 +414,14 @@ export const TOP_STOCKS: string[] = dedup([
 const TOP_STOCKS_SET = new Set(TOP_STOCKS)
 export const isTopStock = (symbol: string) => TOP_STOCKS_SET.has(symbol.toUpperCase())
 
+// Exchange-traded funds within our universe — marked as InvestmentFund (not
+// Corporation) in structured data, since the schema type must match the asset.
+export const ETF_SYMBOLS = new Set([
+  'SPY', 'QQQ', 'VOO', 'VTI', 'IWM', 'DIA', 'GLD', 'SLV', 'TLT', 'ARKK',
+  'XLF', 'XLE', 'XLK', 'SCHD', 'JEPI', 'VYM', 'VIG',
+])
+export const isEtf = (symbol: string) => ETF_SYMBOLS.has(symbol.toUpperCase())
+
 export function getSector(symbol: string): string | null {
   for (const [sector, syms] of Object.entries(STOCK_UNIVERSE)) {
     if (syms.includes(symbol)) return sector
