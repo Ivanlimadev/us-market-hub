@@ -8,6 +8,7 @@ import { fetchStockData } from '@/lib/stock-server'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
+import { BlogSidebar } from './BlogSidebar'
 
 interface Post {
   slug: string
@@ -183,9 +184,11 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-6xl px-4 py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
+      <div className="min-w-0">
       <Link href="/blog" className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300">
         ← Blog
       </Link>
@@ -430,6 +433,10 @@ export default async function BlogPostPage({
         This article was written with AI assistance based on real market data and reviewed for accuracy.
         It is for informational purposes only and does not constitute financial advice.
       </p>
+      </div>{/* /article column */}
+
+      <BlogSidebar latest={latestPosts} />
+      </div>{/* /grid */}
     </main>
   )
 }
