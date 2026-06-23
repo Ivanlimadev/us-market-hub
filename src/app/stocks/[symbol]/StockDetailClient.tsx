@@ -38,6 +38,21 @@ function fmtLarge(n: number | null): string {
   return `$${n.toLocaleString()}`
 }
 
+/** A titled page section (visible h2 + grouped widgets). */
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="space-y-5">
+      <h2 className="border-b border-zinc-800 pb-2 text-lg font-bold text-white">{title}</h2>
+      {children}
+    </section>
+  )
+}
+
+/** Two cards side-by-side on desktop, stacked on mobile (top-aligned). */
+function Pair({ children }: { children: ReactNode }) {
+  return <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">{children}</div>
+}
+
 export function StockDetailClient({
   symbol,
   initialData,
@@ -187,91 +202,94 @@ export function StockDetailClient({
 
       {seoIntro}
 
-      <WidgetBoundary label="Price Chart">
-        <PriceChart
-          symbol={symbol}
-          currentPrice={data.currentPrice}
-          prevClose={data.prevClose}
-        />
-      </WidgetBoundary>
+      {/* 1 — Price & Performance */}
+      <Section title="Price & Performance">
+        <WidgetBoundary label="Price Chart">
+          <PriceChart
+            symbol={symbol}
+            currentPrice={data.currentPrice}
+            prevClose={data.prevClose}
+          />
+        </WidgetBoundary>
+        <WidgetBoundary label="Performance">
+          <PerformanceStrip symbol={symbol} />
+        </WidgetBoundary>
+      </Section>
 
-      <WidgetBoundary label="Performance">
-        <PerformanceStrip symbol={symbol} />
-      </WidgetBoundary>
-
-      <WidgetBoundary label="Stock Analysis">
-        <StockAnalysisSummary data={data} />
-      </WidgetBoundary>
-
-      <WidgetBoundary label="AI Insight">
-        <StockAIInsight symbol={symbol} />
-      </WidgetBoundary>
-
-      <WidgetBoundary label="Related Articles">
-        <StockRelatedPosts symbol={symbol} />
-      </WidgetBoundary>
-
-      {/* Wide widgets keep full width (charts + simulator need the room) */}
-      <WidgetBoundary label="Financial Charts">
-        <FinancialCharts symbol={symbol} />
-      </WidgetBoundary>
-
-      {/* Masonry — packs the analysis cards with no empty columns */}
-      <div className="gap-5 [column-fill:balance] columns-1 lg:columns-2 [&>div]:mb-5 [&>div]:break-inside-avoid">
-        <div>
-          <WidgetBoundary label="Earnings">
-            <EarningsCard data={data} />
-          </WidgetBoundary>
-        </div>
-        <div>
-          <WidgetBoundary label="Fundamentals">
-            <FundamentalsCard data={data} />
-          </WidgetBoundary>
-        </div>
-        <div>
-          <WidgetBoundary label="Dividends">
-            <DividendsSection data={data} />
-          </WidgetBoundary>
-        </div>
-        <div>
+      {/* 2 — Analysis & Verdict */}
+      <Section title="Analysis & Verdict">
+        <WidgetBoundary label="Stock Analysis">
+          <StockAnalysisSummary data={data} />
+        </WidgetBoundary>
+        <WidgetBoundary label="AI Insight">
+          <StockAIInsight symbol={symbol} />
+        </WidgetBoundary>
+        <Pair>
           <WidgetBoundary label="Fair Value">
             <FairValueCard data={data} />
           </WidgetBoundary>
-        </div>
-        <div>
-          <WidgetBoundary label="Earnings History">
-            <EarningsHistory symbol={symbol} />
-          </WidgetBoundary>
-        </div>
-        <div>
-          <WidgetBoundary label="Magic Number">
-            <MagicNumber data={data} />
-          </WidgetBoundary>
-        </div>
-        <div>
           <WidgetBoundary label="Buy & Hold Checklist">
             <BuyHoldChecklist data={data} />
           </WidgetBoundary>
-        </div>
-        <div>
-          <WidgetBoundary label="SEC Filings">
-            <SecFilings symbol={symbol} />
+        </Pair>
+      </Section>
+
+      {/* 3 — Financials */}
+      <Section title="Financials">
+        <WidgetBoundary label="Financial Charts">
+          <FinancialCharts symbol={symbol} />
+        </WidgetBoundary>
+        <Pair>
+          <WidgetBoundary label="Fundamentals">
+            <FundamentalsCard data={data} />
           </WidgetBoundary>
-        </div>
-      </div>
+          <WidgetBoundary label="Earnings">
+            <EarningsCard data={data} />
+          </WidgetBoundary>
+        </Pair>
+      </Section>
 
-      <WidgetBoundary label="Investment Simulator">
-        <InvestmentSimulator data={data} />
-      </WidgetBoundary>
+      {/* 4 — SEC Filings & Reported Financials (the two SEC blocks together) */}
+      <Section title="SEC Filings & Reported Financials">
+        <WidgetBoundary label="Earnings History">
+          <EarningsHistory symbol={symbol} />
+        </WidgetBoundary>
+        <WidgetBoundary label="SEC Filings">
+          <SecFilings symbol={symbol} />
+        </WidgetBoundary>
+      </Section>
 
+      {/* 5 — Dividends & Income */}
+      <Section title="Dividends & Income">
+        <Pair>
+          <WidgetBoundary label="Dividends">
+            <DividendsSection data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Magic Number">
+            <MagicNumber data={data} />
+          </WidgetBoundary>
+        </Pair>
+      </Section>
 
-      <WidgetBoundary label="Related Assets">
-        <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
-      </WidgetBoundary>
+      {/* 6 — Tools */}
+      <Section title="Tools & Simulators">
+        <WidgetBoundary label="Investment Simulator">
+          <InvestmentSimulator data={data} />
+        </WidgetBoundary>
+      </Section>
 
-      <WidgetBoundary label="Company Info">
-        <CompanyInfo data={data} />
-      </WidgetBoundary>
+      {/* 7 — Discover (related content at the end) */}
+      <Section title="Discover">
+        <WidgetBoundary label="Related Assets">
+          <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Related Articles">
+          <StockRelatedPosts symbol={symbol} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Company Info">
+          <CompanyInfo data={data} />
+        </WidgetBoundary>
+      </Section>
 
       {seoFaq}
 
