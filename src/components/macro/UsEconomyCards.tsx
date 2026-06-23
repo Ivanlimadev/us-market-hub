@@ -351,7 +351,7 @@ export function UsEconomyCards() {
   const month = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' })
 
   return (
-    <div className="not-prose relative left-1/2 my-8 w-screen max-w-[1100px] -translate-x-1/2 px-4">
+    <div className="not-prose my-8">
       {/* Macro snapshot scorecard */}
       <div className="rounded-2xl bg-zinc-900 p-4">
         <div className="mb-3 flex items-center gap-1.5">
