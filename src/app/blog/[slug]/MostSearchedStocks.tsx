@@ -10,7 +10,10 @@ export function MostSearchedStocks() {
     queryFn: () => fetch('/api/trending').then((r) => (r.ok ? r.json() : [])),
     staleTime: 5 * 60_000,
   })
-  const items = (Array.isArray(data) ? data : []).slice(0, 8)
+  // Stocks only — drop crypto pairs (BTC-USD, ETH-USD…), forex and futures.
+  const items = (Array.isArray(data) ? data : [])
+    .filter((s) => !/-USDT?$/i.test(s.symbol) && !/[=^]/.test(s.symbol))
+    .slice(0, 8)
 
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
