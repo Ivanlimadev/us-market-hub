@@ -37,6 +37,27 @@ export async function GET(
   const { symbol } = await params
   const upper = symbol.toUpperCase()
 
+  // `?teaser=1` returns only verdict + confidence + summary (no bull/bear and
+  // no raw insight). The mobile app uses it to gate the full analysis behind a
+  // rewarded ad; the website calls without it and gets the full payload.
+  const teaser = req.nextUrl.searchParams.get('teaser') === '1'
+
+  const buildResponse = (
+    rawInsight: string,
+    structured: InsightData | null,
+    cached: boolean,
+  ) => {
+    if (teaser) {
+      return NextResponse.json({
+        verdict: structured?.verdict ?? 'HOLD',
+        confidence: structured?.confidence ?? 'Low',
+        summary: structured?.summary ?? '',
+        cached,
+      })
+    }
+    return NextResponse.json({ insight: rawInsight, cached, ...structured })
+  }
+
   // 10 req/hour per IP (cached responses don't count against this)
   if (!rateLimit(getIp(req), 10, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -59,7 +80,7 @@ export async function GET(
     const age = Date.now() - new Date(cached.updated_at).getTime()
     if (age < CACHE_HOURS * 60 * 60 * 1000) {
       const structured = parseInsight(cached.insight)
-      return NextResponse.json({ insight: cached.insight, cached: true, ...structured })
+      return buildResponse(cached.insight, structured, true)
     }
   }
 
@@ -113,5 +134,5 @@ Return this exact JSON structure:
     { onConflict: 'symbol' },
   )
 
-  return NextResponse.json({ insight, cached: false, ...structured })
+  return buildResponse(insight, structured, false)
 }
