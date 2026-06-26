@@ -30,7 +30,7 @@ export default function AuthorByline() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-zinc-100">
             Ivan Lima{' '}
-            <span className="font-normal text-emerald-400">· Founder · Stock Market ROI</span>
+            <span className="font-normal text-emerald-400">· Author · Stock Market ROI</span>
           </p>
           <p
             className={`text-xs leading-relaxed text-zinc-400 ${
