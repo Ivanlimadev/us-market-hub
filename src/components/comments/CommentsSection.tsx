@@ -23,7 +23,7 @@ type Comment = {
 };
 
 const SELECT =
-  'id,user_id,body,like_count,edited,created_at,parent_id,hidden,author:profiles(display_name,avatar_url)';
+  'id,user_id,body,like_count,edited,created_at,parent_id,hidden,author:profiles!comments_user_id_fkey(display_name,avatar_url)';
 
 function ago(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
