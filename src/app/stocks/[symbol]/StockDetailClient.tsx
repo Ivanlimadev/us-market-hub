@@ -26,6 +26,7 @@ import { recordView } from '@/lib/recently-viewed'
 import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
 import { InsiderTransactions } from '@/components/stock/InsiderTransactions'
+import CommentsSection from '@/components/comments/CommentsSection'
 import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
@@ -294,6 +295,9 @@ export function StockDetailClient({
           <CompanyInfo data={data} />
         </WidgetBoundary>
       </Section>
+
+      {/* Discussion — shared with the mobile app */}
+      <CommentsSection entityType="stock" entityId={symbol} />
 
       {seoFaq}
 
