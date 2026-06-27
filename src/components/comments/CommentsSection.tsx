@@ -17,12 +17,13 @@ type Comment = {
   edited: boolean;
   created_at: string;
   parent_id: string | null;
+  hidden: boolean;
   author: Author | null;
   likedByMe: boolean;
 };
 
 const SELECT =
-  'id,user_id,body,like_count,edited,created_at,parent_id,author:profiles(display_name,avatar_url)';
+  'id,user_id,body,like_count,edited,created_at,parent_id,hidden,author:profiles(display_name,avatar_url)';
 
 function ago(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -51,6 +52,7 @@ export default function CommentsSection({
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [body, setBody] = useState('');
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [sending, setSending] = useState(false);
@@ -80,6 +82,17 @@ export default function CommentsSection({
         .eq('user_id', user.id)
         .in('comment_id', ids);
       liked = new Set((likes ?? []).map((l: { comment_id: string }) => l.comment_id));
+    }
+
+    if (user) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .maybeSingle();
+      setIsAdmin(!!prof?.is_admin);
+    } else {
+      setIsAdmin(false);
     }
 
     setComments(
@@ -133,6 +146,29 @@ export default function CommentsSection({
       await supabase.from('comment_likes').insert({ comment_id: c.id, user_id: user.id });
     }
     load();
+  }
+
+  async function report(c: Comment) {
+    if (!user) return;
+    if (!confirm('Report this comment for review?')) return;
+    const supabase = createClient();
+    await supabase
+      .from('comment_reports')
+      .upsert({ comment_id: c.id, reporter_id: user.id });
+    load();
+  }
+
+  async function toggleHidden(c: Comment) {
+    const supabase = createClient();
+    await supabase.from('comments').update({ hidden: !c.hidden }).eq('id', c.id);
+    load();
+  }
+
+  async function ban(c: Comment) {
+    if (!confirm(`Ban ${c.author?.display_name || 'this user'} from posting?`)) return;
+    const supabase = createClient();
+    await supabase.from('banned_users').upsert({ user_id: c.user_id });
+    alert('User banned.');
   }
 
   async function saveEdit(c: Comment) {
@@ -232,6 +268,11 @@ export default function CommentsSection({
                 onLike={() => toggleLike(c)}
                 onReply={() => setReplyTo(c)}
                 onDelete={() => remove(c)}
+                loggedIn={!!user}
+                isAdmin={isAdmin}
+                onReport={() => report(c)}
+                onToggleHidden={() => toggleHidden(c)}
+                onBan={() => ban(c)}
               />
               {(repliesByParent[c.id] ?? [])
                 .sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at))
@@ -252,6 +293,11 @@ export default function CommentsSection({
                       onLike={() => toggleLike(r)}
                       onReply={() => setReplyTo(c)}
                       onDelete={() => remove(r)}
+                      loggedIn={!!user}
+                      isAdmin={isAdmin}
+                      onReport={() => report(r)}
+                      onToggleHidden={() => toggleHidden(r)}
+                      onBan={() => ban(r)}
                     />
                   </div>
                 ))}
@@ -275,6 +321,11 @@ function CommentItem({
   onLike,
   onReply,
   onDelete,
+  loggedIn,
+  isAdmin,
+  onReport,
+  onToggleHidden,
+  onBan,
 }: {
   c: Comment;
   isMine: boolean;
@@ -287,6 +338,11 @@ function CommentItem({
   onLike: () => void;
   onReply: () => void;
   onDelete: () => void;
+  loggedIn: boolean;
+  isAdmin: boolean;
+  onReport: () => void;
+  onToggleHidden: () => void;
+  onBan: () => void;
 }) {
   const name = c.author?.display_name || 'User';
 
@@ -311,6 +367,11 @@ function CommentItem({
           <span className="font-semibold text-zinc-100">{name}</span>
           <span className="text-xs text-zinc-500">· {ago(c.created_at)}</span>
           {c.edited && <span className="text-xs text-zinc-600">· edited</span>}
+          {c.hidden && (
+            <span className="rounded bg-orange-500/15 px-1.5 py-0.5 text-[10px] font-bold text-orange-400">
+              Hidden
+            </span>
+          )}
         </div>
 
         {editing ? (
@@ -344,6 +405,19 @@ function CommentItem({
               <>
                 <button onClick={onStartEdit} className="hover:text-zinc-300">Edit</button>
                 <button onClick={onDelete} className="text-red-400/80 hover:text-red-400">Delete</button>
+              </>
+            )}
+            {loggedIn && !isMine && (
+              <button onClick={onReport} className="hover:text-zinc-300">Report</button>
+            )}
+            {isAdmin && (
+              <>
+                <button onClick={onToggleHidden} className="text-orange-400/80 hover:text-orange-400">
+                  {c.hidden ? 'Unhide' : 'Hide'}
+                </button>
+                {!isMine && (
+                  <button onClick={onBan} className="text-red-400/80 hover:text-red-400">Ban</button>
+                )}
               </>
             )}
           </div>
