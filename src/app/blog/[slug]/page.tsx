@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
 import { jsonLdSafe } from '@/lib/jsonld'
-import { authorForCategory } from '@/lib/authors'
+import { authorForCategory, authorBySlug } from '@/lib/authors'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
@@ -25,6 +25,7 @@ interface Post {
   seo_title: string | null
   seo_description: string | null
   tickers: string[] | null
+  author_slug: string | null
 }
 
 interface RelatedPost {
@@ -163,8 +164,10 @@ export default async function BlogPostPage({
     .limit(4)
   const latestPosts: RelatedPost[] = (latestData ?? []) as RelatedPost[]
 
-  // Author is attributed by the post's category (see src/lib/authors.ts).
-  const author = authorForCategory(post.category)
+  // Author: explicit per-post author_slug when set, else derived from category.
+  const author =
+      (post.author_slug ? authorBySlug(post.author_slug) : undefined) ??
+      authorForCategory(post.category)
 
   const jsonLd = {
     '@context':        'https://schema.org',

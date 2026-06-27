@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   let query = supabase
     .from('blog_posts')
-    .select('slug, title, excerpt, image_url, image_alt, published_at, category')
+    .select('slug, title, excerpt, image_url, image_alt, published_at, category, author_slug')
     .eq('status', 'published')
     .order('published_at', { ascending: false })
     .limit(limit)
