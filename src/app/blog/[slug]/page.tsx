@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
+import { jsonLdSafe } from '@/lib/jsonld'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
@@ -67,7 +68,13 @@ export async function generateMetadata(
 }
 
 function markdownToHtml(md: string): string {
+  // Escape raw HTML first so untrusted blog content (AI-generated from external
+  // news) cannot inject markup/scripts. Markdown syntax below uses #, *, [](), -
+  // which are unaffected by escaping &, < and >.
   return md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold text-zinc-100 mt-8 mb-3">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-zinc-100 mt-10 mb-4">$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
@@ -186,8 +193,8 @@ export default async function BlogPostPage({
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(breadcrumbLd) }} />
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
       <div className="min-w-0">
       <Link href="/blog" className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300">
