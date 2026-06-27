@@ -5,6 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
 import { jsonLdSafe } from '@/lib/jsonld'
+import { authorForCategory } from '@/lib/authors'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
@@ -162,6 +163,9 @@ export default async function BlogPostPage({
     .limit(4)
   const latestPosts: RelatedPost[] = (latestData ?? []) as RelatedPost[]
 
+  // Author is attributed by the post's category (see src/lib/authors.ts).
+  const author = authorForCategory(post.category)
+
   const jsonLd = {
     '@context':        'https://schema.org',
     '@type':           'Article',
@@ -172,10 +176,10 @@ export default async function BlogPostPage({
     dateModified:      post.published_at,
     author: {
       '@type': 'Person',
-      name: 'Ivan Lima',
-      url: 'https://stockmarketroi.com/about',
-      image: 'https://stockmarketroi.com/ivan-lima.jpg',
-      description: 'Systems Analysis & Development student and active US stock market investor since 2018. Founder of Stock Market ROI.',
+      name: author.name,
+      image: `https://stockmarketroi.com${author.photo}`,
+      description: author.bio,
+      ...(author.aboutHref ? { url: `https://stockmarketroi.com${author.aboutHref}` } : {}),
     },
     publisher:         { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
     mainEntityOfPage:  { '@type': 'WebPage', '@id': `https://stockmarketroi.com/blog/${post.slug}` },
@@ -364,8 +368,8 @@ export default async function BlogPostPage({
       {/* Related posts com abas Related / Latest */}
       <RelatedTabs related={related} latest={latestPosts} />
 
-      {/* Author byline (mini) */}
-      <AuthorByline />
+      {/* Author byline (mini) — attributed by post category */}
+      <AuthorByline author={author} />
 
       {/* Discussion — shared with the mobile app */}
       <CommentsSection entityType="post" entityId={slug} />
