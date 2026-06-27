@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { CryptoDetailClient } from './CryptoDetailClient'
+import CommentsSection from '@/components/comments/CommentsSection'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
@@ -80,6 +81,9 @@ export default async function CryptoDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <CryptoDetailClient id={id} />
+      <div className="mx-auto max-w-screen-xl px-4 pb-8">
+        <CommentsSection entityType="crypto" entityId={id} />
+      </div>
     </>
   )
 }

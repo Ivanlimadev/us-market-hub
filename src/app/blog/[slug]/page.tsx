@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
@@ -9,6 +8,8 @@ import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
 import { BlogSidebar } from './BlogSidebar'
+import AuthorByline from '@/components/blog/AuthorByline'
+import CommentsSection from '@/components/comments/CommentsSection'
 
 interface Post {
   slug: string
@@ -356,68 +357,11 @@ export default async function BlogPostPage({
       {/* Related posts com abas Related / Latest */}
       <RelatedTabs related={related} latest={latestPosts} />
 
-      {/* E-E-A-T author section */}
-      <div className="mt-10 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Written by</p>
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-          <img
-            src="/ivan-lima.jpg"
-            alt="Ivan Lima"
-            width={64}
-            height={64}
-            className="h-16 w-16 shrink-0 rounded-full object-cover border-2 border-emerald-500/30"
-          />
-          <div className="min-w-0 w-full space-y-2 text-center sm:text-left">
-            <p className="font-semibold text-zinc-100">Ivan Lima</p>
-            <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
-            <p className="text-sm leading-relaxed text-zinc-400">
-              Systems Analysis &amp; Development student and active US stock market investor since 2018.
-              Ivan built Stock Market ROI to give retail investors direct access to the same data and
-              analytical tools he wished existed when he started. Every article on this site is written
-              from the perspective of someone with real skin in the game — tracking earnings, reading
-              SEC filings, and following market cycles for over eight years.
-            </p>
-            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
-              {/* Instagram — logo only */}
-              <a
-                href="https://www.instagram.com/ivan_lima_dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram @ivan_lima_dev"
-                className="flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white transition-opacity hover:opacity-80"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <circle cx="12" cy="12" r="4"/>
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                </svg>
-              </a>
-              {/* LinkedIn — logo only */}
-              <a
-                href="https://www.linkedin.com/in/ivanlimadev/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#0A66C2] text-white transition-opacity hover:opacity-80"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/>
-                  <rect x="2" y="9" width="4" height="12"/>
-                  <circle cx="4" cy="4" r="2"/>
-                </svg>
-              </a>
-              {/* Email — logo only */}
-              <a
-                href="mailto:contato@ivanlimadev.com"
-                aria-label="Email"
-                className="flex items-center justify-center h-8 w-8 rounded-lg border border-zinc-700 text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
-              >
-                <Mail className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Author byline (mini) */}
+      <AuthorByline />
+
+      {/* Discussion — shared with the mobile app */}
+      <CommentsSection entityType="post" entityId={slug} />
 
       <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
         <p className="mb-3 text-zinc-300">Track US stocks, crypto, and market data</p>
