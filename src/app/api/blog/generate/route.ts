@@ -5,10 +5,12 @@ import { ALL_SYMBOLS, STOCK_NAMES } from '@/lib/stock-universe'
 
 export const maxDuration = 60
 
-function anonClient() {
+// Writes (insert posts) require the service role — blog_posts RLS grants the
+// anon role SELECT only. This route is server-only and CRON_SECRET-protected.
+function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   )
 }
 
@@ -154,7 +156,7 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 
-  const supabase = anonClient()
+  const supabase = serviceClient()
   const year = new Date().getFullYear()
   const base = req.nextUrl.origin
 

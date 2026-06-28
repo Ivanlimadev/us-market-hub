@@ -6,10 +6,12 @@ import { createClient } from '@supabase/supabase-js'
 
 export const maxDuration = 60
 
-function anonClient() {
+// Writes (update post content) require the service role — blog_posts RLS grants
+// the anon role SELECT only. This route is server-only and CRON_SECRET-protected.
+function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   )
 }
 
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
 
-  const supabase = anonClient()
+  const supabase = serviceClient()
   const base = req.nextUrl.origin
 
   // Fetch existing post
