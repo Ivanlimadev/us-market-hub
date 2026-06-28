@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
+import { jsonLdSafe } from '@/lib/jsonld'
+import { authorForCategory, authorBySlug } from '@/lib/authors'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
@@ -23,6 +25,7 @@ interface Post {
   seo_title: string | null
   seo_description: string | null
   tickers: string[] | null
+  author_slug: string | null
 }
 
 interface RelatedPost {
@@ -67,7 +70,13 @@ export async function generateMetadata(
 }
 
 function markdownToHtml(md: string): string {
+  // Escape raw HTML first so untrusted blog content (AI-generated from external
+  // news) cannot inject markup/scripts. Markdown syntax below uses #, *, [](), -
+  // which are unaffected by escaping &, < and >.
   return md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold text-zinc-100 mt-8 mb-3">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-zinc-100 mt-10 mb-4">$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
@@ -155,6 +164,11 @@ export default async function BlogPostPage({
     .limit(4)
   const latestPosts: RelatedPost[] = (latestData ?? []) as RelatedPost[]
 
+  // Author: explicit per-post author_slug when set, else derived from category.
+  const author =
+      (post.author_slug ? authorBySlug(post.author_slug) : undefined) ??
+      authorForCategory(post.category)
+
   const jsonLd = {
     '@context':        'https://schema.org',
     '@type':           'Article',
@@ -165,10 +179,10 @@ export default async function BlogPostPage({
     dateModified:      post.published_at,
     author: {
       '@type': 'Person',
-      name: 'Ivan Lima',
-      url: 'https://stockmarketroi.com/about',
-      image: 'https://stockmarketroi.com/ivan-lima.jpg',
-      description: 'Systems Analysis & Development student and active US stock market investor since 2018. Founder of Stock Market ROI.',
+      name: author.name,
+      image: `https://stockmarketroi.com${author.photo}`,
+      description: author.bio,
+      ...(author.aboutHref ? { url: `https://stockmarketroi.com${author.aboutHref}` } : {}),
     },
     publisher:         { '@type': 'Organization', name: 'Stock Market ROI', url: 'https://stockmarketroi.com' },
     mainEntityOfPage:  { '@type': 'WebPage', '@id': `https://stockmarketroi.com/blog/${post.slug}` },
@@ -186,8 +200,8 @@ export default async function BlogPostPage({
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(breadcrumbLd) }} />
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
       <div className="min-w-0">
       <Link href="/blog" className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300">
@@ -357,8 +371,8 @@ export default async function BlogPostPage({
       {/* Related posts com abas Related / Latest */}
       <RelatedTabs related={related} latest={latestPosts} />
 
-      {/* Author byline (mini) */}
-      <AuthorByline />
+      {/* Author byline (mini) — attributed by post category */}
+      <AuthorByline author={author} />
 
       {/* Discussion — shared with the mobile app */}
       <CommentsSection entityType="post" entityId={slug} />

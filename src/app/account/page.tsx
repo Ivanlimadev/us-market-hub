@@ -54,7 +54,7 @@ export default function AccountPage() {
   }
 
   async function handleDeleteAccount() {
-    if (confirmText.toUpperCase() !== 'APAGAR') return
+    if (confirmText.trim().toUpperCase() !== 'DELETE') return
     setDeleting(true)
     setError('')
 
@@ -231,14 +231,14 @@ export default function AccountPage() {
             ) : (
               <div className="space-y-3">
                 <p className="text-sm text-zinc-400">
-                  Digite <strong className="text-white font-mono">APAGAR</strong> para confirmar:
+                  Type <strong className="text-white font-mono">DELETE</strong> to confirm:
                 </p>
                 <input
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  placeholder="Digite APAGAR para confirmar"
+                  placeholder="Type DELETE to confirm"
                 />
                 {error && <p className="text-xs text-red-400">{error}</p>}
                 <div className="flex gap-2">
@@ -250,7 +250,7 @@ export default function AccountPage() {
                   </button>
                   <button
                     onClick={handleDeleteAccount}
-                    disabled={confirmText.toUpperCase() !== 'APAGAR' || deleting}
+                    disabled={confirmText.trim().toUpperCase() !== 'DELETE' || deleting}
                     className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-40"
                   >
                     {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
