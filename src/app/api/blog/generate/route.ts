@@ -410,11 +410,10 @@ At the very end, separated by "---META---":
     }
   }
 
-  // Rotate the byline so the (up to 3) posts published the same day each get a
-  // different author; a per-day offset varies which author leads each day.
-  const AUTHOR_SLUGS = ['ivan-lima', 'jennifer-moore', 'maya-bennett']
-  const dayOffset = Math.floor(Date.now() / 86_400_000) % 3
-  const authorSlug = AUTHOR_SLUGS[(((todayCount ?? 0) + dayOffset) % 3 + 3) % 3]
+  // All posts are attributed to Ivan Lima (real, accountable author) for
+  // E-E-A-T / AdSense. The multi-author registry in lib/authors.ts is kept so
+  // the byline rotation can be reintroduced later if desired.
+  const authorSlug = 'ivan-lima'
 
   const { data, error } = await supabase.from('blog_posts').insert({
     slug: postSlug,
