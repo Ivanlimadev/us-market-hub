@@ -82,13 +82,17 @@ function markdownToHtml(md: string): string {
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, text, href) => {
-      const isInternal = href.includes('stockmarketroi.com')
+      // URL-encode any `"` so a crafted link can't break out of the href
+      // attribute and inject an event handler (stored XSS).
+      const safe = href.replace(/"/g, '%22')
+      const isInternal = safe.includes('stockmarketroi.com')
       return isInternal
-        ? `<a href="${href}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
-        : `<a href="${href}" target="_blank" rel="noopener noreferrer" class="text-zinc-300 hover:text-white underline underline-offset-2 transition-colors">${text}</a>`
+        ? `<a href="${safe}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
+        : `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="text-zinc-300 hover:text-white underline underline-offset-2 transition-colors">${text}</a>`
     })
     .replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, (_, text, href) => {
-      return `<a href="${href}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
+      const safe = href.replace(/"/g, '%22')
+      return `<a href="${safe}" class="font-semibold text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">${text}</a>`
     })
     .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-zinc-300">$1</li>')
     .replace(/(<li[\s\S]+?<\/li>)/g, '<ul class="my-4 space-y-1">$1</ul>')
