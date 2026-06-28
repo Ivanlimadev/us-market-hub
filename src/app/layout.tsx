@@ -9,6 +9,9 @@ import { Footer } from '@/components/layout/Footer'
 import { CookieBanner } from '@/components/layout/CookieBanner'
 
 const GA_ID = 'G-XV8QGQ8JS9'
+// Set NEXT_PUBLIC_ADSENSE_CLIENT (e.g. "ca-pub-7113858977365190") once the
+// AdSense account is approved — the ad loader stays dormant until then.
+const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -43,16 +46,37 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning translate="no">
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
+        {/* Google Consent Mode v2 — defaults must run before GA/AdSense tags.
+            Honors a returning visitor's stored choice; the cookie banner updates it. */}
+        <Script id="consent-default" strategy="beforeInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          var c = 'denied';
+          try { if (localStorage.getItem('smroi-cookie-consent') === 'all') c = 'granted'; } catch (e) {}
+          gtag('consent', 'default', {
+            ad_storage: c,
+            ad_user_data: c,
+            ad_personalization: c,
+            analytics_storage: c,
+            wait_for_update: 500
+          });
+        `}</Script>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
         />
         <Script id="ga-init" strategy="afterInteractive">{`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${GA_ID}');
         `}</Script>
+        {ADSENSE_CLIENT && (
+          <Script
+            id="adsense"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+          />
+        )}
         <Providers>
           <Navbar />
           {/* bottom padding keeps content/footer clear of the floating dock (all sizes) */}
