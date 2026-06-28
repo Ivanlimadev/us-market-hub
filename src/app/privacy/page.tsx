@@ -128,12 +128,37 @@ export default function PrivacyPage() {
                 <td className="py-2 pr-4">Functional</td>
                 <td className="py-2">Keeps you signed in across sessions. Set only when you create an account and sign in. Cleared on sign-out.</td>
               </tr>
+              <tr>
+                <td className="py-2 pr-4 font-mono">_ga, _ga_* (Google)</td>
+                <td className="py-2 pr-4">Analytics</td>
+                <td className="py-2">Google Analytics — measures traffic and usage. Loaded only after you accept non-essential cookies.</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 font-mono">__gads, __gpi, IDE (Google)</td>
+                <td className="py-2 pr-4">Advertising</td>
+                <td className="py-2">Google AdSense — serves and measures ads, including personalized ads based on prior visits. Loaded only after you accept advertising cookies.</td>
+              </tr>
             </tbody>
           </table>
         </div>
         <p>
           Withdraw consent at any time by clearing your browser local storage or choosing
-          &quot;Essential only&quot; in the cookie banner. No third-party tracking cookies are used.
+          &quot;Essential only&quot; in the cookie banner. Choosing &quot;Essential only&quot;
+          keeps non-essential analytics and advertising cookies disabled.
+        </p>
+        <p>
+          <strong className="text-zinc-200">Advertising — Google AdSense.</strong> We use
+          Google AdSense to display advertising. Google and its certified partners use cookies
+          (such as the DoubleClick / <span className="font-mono">IDE</span> cookie) to serve and
+          measure ads, including personalized ads based on your prior visits to this and other
+          websites. You can opt out of personalized advertising in{' '}
+          <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">Google Ad Settings</a>,
+          learn how Google uses data from partner sites at{' '}
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">policies.google.com/technologies/partner-sites</a>,
+          or opt out of third-party vendors via{' '}
+          <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">aboutads.info/choices</a>{' '}
+          and{' '}
+          <a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">youronlinechoices.eu</a>{' '}(EU/UK).
         </p>
       </Section>
 
@@ -174,6 +199,16 @@ export default function PrivacyPage() {
           <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
             supabase.com/privacy
           </a>.
+        </p>
+        <p>
+          We use <strong className="text-zinc-200">Google Analytics</strong> and{' '}
+          <strong className="text-zinc-200">Google AdSense</strong> (Google LLC) to measure
+          traffic and to serve advertising. Through their cookies, Google may process usage and
+          device data as an independent controller for advertising purposes. See Google&apos;s
+          policy at{' '}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
+            policies.google.com/privacy
+          </a>{' '}and the opt-out options in the Cookies section above.
         </p>
       </Section>
 
@@ -295,9 +330,11 @@ export default function PrivacyPage() {
         </ul>
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
           <p className="text-xs text-zinc-500">
-            <strong className="text-zinc-300">Do Not Sell or Share My Personal Information:</strong> We do not sell or share personal information
-            with third parties for cross-context behavioral advertising. No opt-out mechanism is
-            required because this practice does not occur.
+            <strong className="text-zinc-300">Do Not Sell or Share My Personal Information:</strong> We do not sell your
+            personal information for money. However, our use of Google AdSense advertising
+            cookies may be considered &quot;sharing&quot; for cross-context behavioral advertising
+            under the CCPA. You can opt out at any time by choosing &quot;Essential only&quot; in
+            our cookie banner and via the advertising opt-out links in the Cookies section above.
           </p>
         </div>
         <p>
