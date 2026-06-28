@@ -69,14 +69,52 @@ export async function generateMetadata(
   }
 }
 
+// Converts GitHub-style Markdown tables into HTML. Runs after HTML-escaping so
+// cell content is already safe; inline markdown (bold/links) is handled later.
+function convertTables(md: string): string {
+  const lines = md.split('\n')
+  const out: string[] = []
+  const cells = (row: string) =>
+    row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim())
+  let i = 0
+  while (i < lines.length) {
+    const header = lines[i]
+    const sep = lines[i + 1] ?? ''
+    const isHeader = /^\s*\|(.+)\|\s*$/.test(header)
+    const isSep = /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(sep)
+    if (isHeader && isSep) {
+      const ths = cells(header)
+        .map((h) => `<th class="border-b border-zinc-700 px-3 py-2 text-left font-semibold text-zinc-200">${h}</th>`)
+        .join('')
+      i += 2
+      const trs: string[] = []
+      while (i < lines.length && /^\s*\|(.+)\|\s*$/.test(lines[i])) {
+        const tds = cells(lines[i])
+          .map((c) => `<td class="border-b border-zinc-800/60 px-3 py-2 text-zinc-300">${c}</td>`)
+          .join('')
+        trs.push(`<tr>${tds}</tr>`)
+        i++
+      }
+      out.push(
+        `<div class="my-6 overflow-x-auto"><table class="w-full border-collapse text-sm"><thead><tr>${ths}</tr></thead><tbody>${trs.join('')}</tbody></table></div>`,
+      )
+      continue
+    }
+    out.push(header)
+    i++
+  }
+  return out.join('\n')
+}
+
 function markdownToHtml(md: string): string {
   // Escape raw HTML first so untrusted blog content (AI-generated from external
   // news) cannot inject markup/scripts. Markdown syntax below uses #, *, [](), -
   // which are unaffected by escaping &, < and >.
-  return md
+  const escaped = md
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
+  return convertTables(escaped)
     .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold text-zinc-100 mt-8 mb-3">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-zinc-100 mt-10 mb-4">$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
@@ -96,7 +134,26 @@ function markdownToHtml(md: string): string {
     })
     .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-zinc-300">$1</li>')
     .replace(/(<li[\s\S]+?<\/li>)/g, '<ul class="my-4 space-y-1">$1</ul>')
-    .replace(/^(?!<[hul])(.*\S.*)$/gm, '<p class="text-zinc-300 leading-relaxed my-4">$1</p>')
+    .replace(/^(?!\s*<)(.*\S.*)$/gm, '<p class="text-zinc-300 leading-relaxed my-4">$1</p>')
+}
+
+// Extracts the FAQ section (## Frequently Asked Questions → ### question / answer)
+// so the page can emit FAQPage structured data for rich results.
+function extractFaq(md: string): { question: string; answer: string }[] {
+  const out: { question: string; answer: string }[] = []
+  const head = md.match(/\n##\s+(?:Frequently Asked Questions|FAQs?)\b.*/i)
+  if (!head || head.index == null) return out
+  let section = md.slice(head.index + head[0].length)
+  const nextH2 = section.search(/\n##\s/)
+  if (nextH2 !== -1) section = section.slice(0, nextH2)
+  const re = /\n###\s+(.+?)\s*\n([\s\S]*?)(?=\n###\s|$)/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(section)) !== null) {
+    const question = m[1].trim()
+    const answer = m[2].replace(/\s+/g, ' ').trim()
+    if (question && answer) out.push({ question, answer })
+  }
+  return out
 }
 
 function readingTime(content: string): number {
@@ -119,6 +176,7 @@ export default async function BlogPostPage({
   if (!post) notFound()
 
   const html = markdownToHtml(post.content)
+  const faqs = extractFaq(post.content)
 
   // Fetch stock data for the first ticker if post has one
   const primaryTicker = post.tickers?.[0] ?? null
@@ -202,10 +260,23 @@ export default async function BlogPostPage({
     ],
   }
 
+  const faqLd = faqs.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      }
+    : null
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(breadcrumbLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(faqLd) }} />}
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
       <div className="min-w-0">
       <Link href="/blog" className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300">

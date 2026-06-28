@@ -120,8 +120,8 @@ ${newsResults}
   const year = new Date().getFullYear()
 
   const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
+    model: 'claude-opus-4-8',
+    max_tokens: 6000,
     messages: [{
       role: 'user',
       content: `You are a senior financial analyst at stockmarketroi.com, a US-focused investing publication. Rewrite this article with the most current, accurate and specific information available.
@@ -147,15 +147,22 @@ ${realDataBlock}${newsBlock}
   [Compare top stocks with our free screener →](https://stockmarketroi.com/screener)
 - These are REQUIRED and are in addition to any other stock links in the body.
 
-━━━ LAYER 4 — STRONG OPINION (no hedging) ━━━
+━━━ LAYER 4 — STRONG OPINION + EXPERIENCE (E-E-A-T) ━━━
 - Take a clear, opinionated position. Don't present both sides without a verdict.
-- The "## Bottom Line" section (mandatory, at the end) must include ALL THREE:
-  1. A clear verdict: **BUY**, **HOLD**, or **AVOID**
-  2. One specific 12-month prediction with a price level or % range and reasoning
-  3. One risk scenario that would invalidate the thesis ("If X happens, the thesis breaks")
+- Write with the lived-in voice of an investor who has tracked US markets since 2018. In the Bottom Line, use first person ("In my view…", "What I'd watch…") to convey real reasoning and conviction — but NEVER fabricate specific personal trades, entry prices, or returns.
+
+━━━ STRUCTURE (mandatory blocks, in this exact order) ━━━
+1. Intro hook (2-3 short paragraphs) — no H1, no title.
+2. "## Key Takeaways" — 3 to 5 bullet points with the thesis, the key numbers, and the verdict.
+${chosenSymbol ? `3. A Markdown data table under an H3 like "### ${chosenSymbol} at a Glance" comparing the REAL metrics from the data block (Price, P/E, Forward P/E, PEG, Profit Margin, ROE, Dividend Yield, 52-Week Range, Mean Analyst Target). Use GitHub table syntax: a header row, a |---|---| separator row, then data rows. Use ONLY the real numbers above; write "N/A" where missing.` : '3. (No data table — this is a non-stock topic.)'}
+4. 4-6 in-depth H2 sections with H3 sub-points: real analysis, comparisons, and scenarios.
+5. The two internal CTAs from LAYER 3.
+6. "## Frequently Asked Questions" — 4 to 5 entries, each formatted as "### <long-tail question>" on its own line followed by a 2-3 sentence answer. Questions must match real search queries.
+7. "## Bottom Line" — the verdict (**BUY**/**HOLD**/**AVOID**) + one specific 12-month prediction (price level or % range with reasoning) + one risk scenario that breaks the thesis. First person.
+8. "## Sources" — a short bullet list of the data sources used (e.g. Yahoo Finance, SEC filings, recent financial news). Generic outlet names only.
 
 ━━━ FORMATTING ━━━
-- Length: 1,000–1,200 words
+- Length: 2,000–2,500 words (be thorough — depth and specificity over filler)
 - Open with a hook: a specific data point, counterintuitive insight, or current event angle
 - Write for US investors (USD, ${year} context)
 - Avoid AI clichés: "In today's fast-paced world", "navigating the landscape", "In conclusion", "the picture is nuanced", "it's worth noting"
