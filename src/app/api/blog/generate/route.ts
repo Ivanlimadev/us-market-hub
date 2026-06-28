@@ -158,7 +158,9 @@ async function run(req: NextRequest, requireAuth: boolean): Promise<NextResponse
 
   const supabase = serviceClient()
   const year = new Date().getFullYear()
-  const base = req.nextUrl.origin
+  // Use the internal URL on the VPS to avoid an SSL loopback failure when the
+  // app fetches its own /api over the public HTTPS host.
+  const base = process.env.INTERNAL_API_URL ?? req.nextUrl.origin
 
   // Enforce max 3 posts per calendar day (UTC) — prevents AdSense spam signals
   const MAX_PER_DAY = 3
@@ -385,6 +387,14 @@ At the very end, separated by "---META---":
   for (const line of (metaBlock ?? '').split('\n')) {
     const m = line.match(/^(\w+(?:_\w+)*):\s*(.+)/)
     if (m) meta[m[1]] = m[2].trim()
+  }
+
+  // Safety: never publish a refusal, truncated, or malformed generation.
+  if (content.length < 3000 || !/##\s+Bottom Line/i.test(content) || !meta.excerpt) {
+    return NextResponse.json(
+      { error: 'Generation failed quality check (too short, missing Bottom Line, or missing meta) — nothing published', length: content.length },
+      { status: 422 },
+    )
   }
 
   // Fetch image from Pexels — try company-specific queries first, then Claude's suggestion

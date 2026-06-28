@@ -53,7 +53,9 @@ export async function POST(req: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
 
   const supabase = serviceClient()
-  const base = req.nextUrl.origin
+  // Use the internal URL on the VPS to avoid an SSL loopback failure when the
+  // app fetches its own /api over the public HTTPS host.
+  const base = process.env.INTERNAL_API_URL ?? req.nextUrl.origin
 
   // Fetch existing post
   const { data: post, error: fetchErr } = await supabase
@@ -184,6 +186,15 @@ At the very end, separated by "---META---":
   for (const line of (metaBlock ?? '').split('\n')) {
     const m = line.match(/^(\w+(?:_\w+)*):\s*(.+)/)
     if (m) meta[m[1]] = m[2].trim()
+  }
+
+  // Safety: never overwrite an existing post with a refusal, truncated, or
+  // malformed generation. Require a real article shape before saving.
+  if (content.length < 3000 || !/##\s+Bottom Line/i.test(content) || !meta.excerpt) {
+    return NextResponse.json(
+      { error: 'Rewrite failed quality check (too short, missing Bottom Line, or missing meta) — post left unchanged', length: content.length },
+      { status: 422 },
+    )
   }
 
   // Fetch new cover image from Pexels
