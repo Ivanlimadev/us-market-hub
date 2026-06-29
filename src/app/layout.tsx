@@ -51,15 +51,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id="consent-default" strategy="beforeInteractive">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          var c = 'denied';
-          try { if (localStorage.getItem('smroi-cookie-consent') === 'all') c = 'granted'; } catch (e) {}
+          // Rest of world: analytics on by default (measurement), ads gated until consent.
           gtag('consent', 'default', {
-            ad_storage: c,
-            ad_user_data: c,
-            ad_personalization: c,
-            analytics_storage: c,
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'granted',
             wait_for_update: 500
           });
+          // EEA / UK / Switzerland: deny everything (incl. analytics) until explicit consent.
+          gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            wait_for_update: 500,
+            region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']
+          });
+          // Returning visitor who already accepted: grant everything immediately.
+          try {
+            if (localStorage.getItem('smroi-cookie-consent') === 'all') {
+              gtag('consent', 'update', {
+                ad_storage: 'granted',
+                ad_user_data: 'granted',
+                ad_personalization: 'granted',
+                analytics_storage: 'granted'
+              });
+            }
+          } catch (e) {}
         `}</Script>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
