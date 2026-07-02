@@ -26,9 +26,14 @@ export default function CryptoPage() {
         </p>
       </div>
 
-      <WidgetBoundary label="Global Stats">
-        <GlobalCryptoStats />
-      </WidgetBoundary>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <WidgetBoundary label="Global Stats">
+          <GlobalCryptoStats />
+        </WidgetBoundary>
+        <WidgetBoundary label="DeFi TVL">
+          <DefiTVLWidget />
+        </WidgetBoundary>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <WidgetBoundary label="Fear & Greed">
@@ -45,9 +50,6 @@ export default function CryptoPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <WidgetBoundary label="Dominance Chart">
           <DominanceChart />
-        </WidgetBoundary>
-        <WidgetBoundary label="DeFi TVL">
-          <DefiTVLWidget />
         </WidgetBoundary>
       </div>
 
