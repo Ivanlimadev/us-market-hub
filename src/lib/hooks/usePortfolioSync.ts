@@ -11,18 +11,25 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export function usePortfolioSync() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const store = usePortfolioStore()
   const syncedUserId = useRef<string | null>(null)
 
   // On login / user change: sync from Supabase
   useEffect(() => {
+    // Wait until auth resolves. During the initial loading window `user` is
+    // null even for signed-in users — clearing here would wipe their data.
+    if (loading) return
+
     if (!user) {
-      // Logged out — clear local data so it doesn't bleed into next session
-      if (syncedUserId.current !== null) {
+      // No signed-in user. If the persisted data belonged to a user (ownerId
+      // set), clear it so a previous session's holdings don't show to a guest
+      // on this device — even across page reloads (syncedUserId is in-memory
+      // only, so we rely on the persisted ownerId here).
+      if (store.ownerId !== null) {
         store.clearAll()
-        syncedUserId.current = null
       }
+      syncedUserId.current = null
       return
     }
 
@@ -44,10 +51,13 @@ export function usePortfolioSync() {
             body: JSON.stringify({ transactions: localTxs }),
           }).catch(console.error)
         }
+        // Tag the persisted data with its owner so it can be cleared for a
+        // guest later, even after a full reload.
+        store.setOwnerId(user.id)
         syncedUserId.current = user.id
       })
       .catch(console.error)
-  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const addTransaction = useCallback(
     (tx: Omit<Transaction, 'id'>) => {
