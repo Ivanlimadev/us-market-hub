@@ -283,6 +283,9 @@ export function StockDetailClient({
         </WidgetBoundary>
       </Section>
 
+      {/* Discussion — shared with the mobile app */}
+      <CommentsSection entityType="stock" entityId={symbol} />
+
       {/* 7 — Discover (related content at the end) */}
       <Section title="Discover">
         <WidgetBoundary label="Related Assets">
@@ -295,9 +298,6 @@ export function StockDetailClient({
           <CompanyInfo data={data} />
         </WidgetBoundary>
       </Section>
-
-      {/* Discussion — shared with the mobile app */}
-      <CommentsSection entityType="stock" entityId={symbol} />
 
       {seoFaq}
 
