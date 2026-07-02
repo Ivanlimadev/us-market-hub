@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown, ExternalLink, Users } from 'lucide-react'
 import type { InsiderData, InsiderTx } from '@/app/api/stocks/insiders/route'
@@ -32,6 +33,9 @@ function typeClass(t: InsiderTx['type']): string {
 }
 
 export function InsiderTransactions({ symbol }: { symbol: string }) {
+  const [expanded, setExpanded] = useState(false)
+  const VISIBLE = 7
+
   const { data, isLoading } = useQuery<InsiderData>({
     queryKey: ['insiders', symbol],
     queryFn: async () => {
@@ -104,7 +108,7 @@ export function InsiderTransactions({ symbol }: { symbol: string }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/50">
-                {data.transactions.slice(0, 15).map((t, i) => (
+                {(expanded ? data.transactions : data.transactions.slice(0, VISIBLE)).map((t, i) => (
                   <tr key={`${t.owner}-${t.date}-${i}`} className="hover:bg-zinc-800/30 transition-colors">
                     <td className="py-2.5 whitespace-nowrap text-zinc-400">{shortDate(t.date)}</td>
                     <td className="py-2.5 pr-2">
@@ -125,6 +129,15 @@ export function InsiderTransactions({ symbol }: { symbol: string }) {
               </tbody>
             </table>
           </div>
+
+          {data.transactions.length > VISIBLE && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="w-full rounded-lg bg-zinc-800 px-4 py-2.5 text-xs font-semibold text-zinc-200 hover:bg-zinc-700 transition-colors"
+            >
+              {expanded ? 'Show less' : `View all ${data.transactions.length} transactions`}
+            </button>
+          )}
 
           <div className="flex items-center justify-between text-[10px] text-zinc-600">
             <span>P = open-market buy · S = sell · others are compensation events</span>
