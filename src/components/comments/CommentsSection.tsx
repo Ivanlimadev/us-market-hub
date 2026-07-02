@@ -345,10 +345,11 @@ function CommentItem({
   onBan: () => void;
 }) {
   const name = c.author?.display_name || 'User';
+  const [avatarError, setAvatarError] = useState(false);
 
   return (
     <div className="flex gap-3">
-      {c.author?.avatar_url ? (
+      {c.author?.avatar_url && !avatarError ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={c.author.avatar_url}
@@ -356,6 +357,7 @@ function CommentItem({
           width={32}
           height={32}
           className="h-8 w-8 shrink-0 rounded-full object-cover"
+          onError={() => setAvatarError(true)}
         />
       ) : (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-sm font-bold text-emerald-400">
