@@ -25,7 +25,6 @@ const NAV_LINKS = [
   { href: '/rankings', label: 'Rankings' },
   { href: '/screener', label: 'Screener' },
   { href: '/stocks', label: 'Stocks' },
-  { href: '/heatmap', label: 'Top 20' },
 ]
 
 export function Navbar() {
