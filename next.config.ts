@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'logo.clearbit.com' },
       { protocol: 'https', hostname: 'cdn.snapi.dev' },
       { protocol: 'https', hostname: 's.yimg.com' },
+      { protocol: 'https', hostname: 'stockmarketroi.com' },
     ],
   },
   async headers() {
