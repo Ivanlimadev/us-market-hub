@@ -202,7 +202,18 @@ export function GlobalSearch() {
   const stockSymbols = new Set(stockResults.map(s => s.symbol))
   const apiExtra = apiResults.filter(s => !stockSymbols.has(s.symbol)).slice(0, 2)
 
-  const results: Result[] = [...stockResults, ...cryptoResults, ...apiExtra].slice(0, 10)
+  // Direct-navigate fallback: if the query looks like a ticker and nothing we
+  // have matches it exactly, always offer to open /stocks/<ticker>. This keeps
+  // any valid symbol reachable even when it isn't in the curated universe and
+  // the live /api/tickers lookup is unavailable.
+  const isTicker = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/.test(q)
+  const knownExact =
+    stockResults.some(s => s.symbol === q) || apiExtra.some(s => s.symbol === q)
+  const directResult: Result[] = isTicker && !knownExact
+    ? [{ symbol: q, name: `Open ${q} page →`, asset_type: 'stock' as const, href: `/stocks/${q}` }]
+    : []
+
+  const results: Result[] = [...stockResults, ...apiExtra, ...directResult, ...cryptoResults].slice(0, 10)
 
   useEffect(() => setHighlighted(0), [results.length])
 

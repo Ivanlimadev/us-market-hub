@@ -93,7 +93,7 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'AVB','EQR','ESS','MAA','UDR','CPT','NNN','BXP','VNO','KIM',
     'REG','FRT','ROIC','WSR','SITC','RPAI','PECO','CTO',
     'EXR','CUBE','LSI','NSA','PSB','REXR','FR','EGP','STAG',
-    'IIPR','SAFE','LADR','ABR','RITM','ACRE','RC',
+    'IIPR','SAFE','LADR','ABR','RITM','ACRE','RC','NLY','LOAN',
     'IRM','SBAC','UNIT','LUMN','CONE','QTS','INDT',
     'WPC','EPR','SRC','NTST','ADC','FCPT','PINE',
     'PEAK','VTR','OHI','MPW','SBRA','CTRE','CSR',
@@ -144,6 +144,8 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
 }
 
 export const STOCK_NAMES: Record<string, string> = {
+  // Real Estate (mortgage REITs)
+  NLY:'Annaly Capital Management', LOAN:'Manhattan Bridge Capital',
   // Technology
   AAPL:'Apple Inc.',MSFT:'Microsoft Corp.',NVDA:'NVIDIA Corp.',
   GOOGL:'Alphabet Inc. (A)',GOOG:'Alphabet Inc. (C)',META:'Meta Platforms',
