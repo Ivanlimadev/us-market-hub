@@ -38,7 +38,9 @@ export function CryptoTable() {
   const [sortKey, setSortKey]   = useState<SortKey>('market_cap_rank')
   const [sortDir, setSortDir]   = useState<'asc' | 'desc'>('asc')
   const [page, setPage]         = useState(0)
+  const [expanded, setExpanded] = useState(false)
   const PAGE_SIZE = 50
+  const VISIBLE   = 7
 
   const { data, isLoading } = useQuery<CryptoMarket[]>({
     queryKey: ['crypto-markets'],
@@ -69,6 +71,9 @@ export function CryptoTable() {
 
   const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
   const totalPages = Math.ceil((data ?? []).length / PAGE_SIZE)
+  // Collapsed by default: show only the top few; "View all" expands to the
+  // full paginated table.
+  const rows = expanded ? paged : sorted.slice(0, VISIBLE)
 
   const cols: { key: SortKey; label: string; align?: string }[] = [
     { key: 'market_cap_rank', label: '#' },
@@ -108,14 +113,14 @@ export function CryptoTable() {
           </thead>
           <tbody>
             {isLoading
-              ? Array.from({ length: 20 }).map((_, i) => (
+              ? Array.from({ length: VISIBLE }).map((_, i) => (
                   <tr key={i} className="border-b border-zinc-800/50 animate-pulse">
                     <td colSpan={8} className="px-4 py-3">
                       <div className="h-4 rounded bg-zinc-800/50 w-full" />
                     </td>
                   </tr>
                 ))
-              : paged.map((coin) => {
+              : rows.map((coin) => {
                   const live = tickers.get(coin.symbol)
                   const price  = live ? live.price : coin.current_price
                   const pct24h = live ? live.priceChangePercent : (coin.price_change_percentage_24h ?? 0)
@@ -170,28 +175,46 @@ export function CryptoTable() {
         </table>
       </div>
 
-      {totalPages > 1 && (
+      {/* Collapsed: single "View all" button */}
+      {!isLoading && !expanded && (data ?? []).length > VISIBLE && (
+        <div className="border-t border-zinc-800 p-3">
+          <button
+            onClick={() => setExpanded(true)}
+            className="w-full rounded-lg bg-zinc-800 px-4 py-2.5 text-sm font-semibold text-zinc-200 hover:bg-zinc-700 transition-colors"
+          >
+            View all {(data ?? []).length} cryptocurrencies
+          </button>
+        </div>
+      )}
+
+      {/* Expanded: pagination + collapse */}
+      {expanded && (
         <div className="flex items-center justify-between border-t border-zinc-800 px-4 py-3">
-          <span className="text-xs text-zinc-500">
-            Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, (data ?? []).length)} of {(data ?? []).length}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setPage((p) => p - 1)}
-              disabled={page === 0}
-              className="rounded-md px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              ← Prev
-            </button>
-            <span className="text-xs text-zinc-500">{page + 1} / {totalPages}</span>
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={page >= totalPages - 1}
-              className="rounded-md px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              Next →
-            </button>
-          </div>
+          <button
+            onClick={() => { setExpanded(false); setPage(0) }}
+            className="text-xs font-medium text-zinc-400 hover:text-white transition-colors"
+          >
+            Show less
+          </button>
+          {totalPages > 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 0}
+                className="rounded-md px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-zinc-500">{page + 1} / {totalPages}</span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= totalPages - 1}
+                className="rounded-md px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
