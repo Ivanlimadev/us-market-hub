@@ -17,6 +17,7 @@ import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 import { StockAIInsight }      from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts }   from '@/components/stock/StockRelatedPosts'
 import { CryptoBlogPosts }     from '@/components/crypto/CryptoBlogPosts'
+import { AppDownloadCard }      from '@/components/app/AppDownloadCard'
 
 const PERIODS: { label: string; days: number }[] = [
   { label: '24h', days: 1 },
@@ -393,6 +394,8 @@ export function CryptoDetailClient({ id }: { id: string }) {
           ))}
         </div>
       )}
+
+      <AppDownloadCard variant="hero" />
 
       {showAddTx && (
         <AddTransactionModal
