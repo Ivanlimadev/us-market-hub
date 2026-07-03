@@ -21,7 +21,8 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 const SITE_URL = 'https://stockmarketroi.com'
 
 export const metadata: Metadata = {
-  other: { google: 'notranslate', 'google-adsense-account': ADSENSE_CLIENT },
+  // apple-itunes-app → native Smart App Banner on iOS Safari (app id 6785098951)
+  other: { google: 'notranslate', 'google-adsense-account': ADSENSE_CLIENT, 'apple-itunes-app': 'app-id=6785098951' },
   title: {
     default:  'Stock Market ROI — US Stock Market Data & Analysis',
     template: '%s | Stock Market ROI',
