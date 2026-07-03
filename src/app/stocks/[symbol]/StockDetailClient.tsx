@@ -19,6 +19,7 @@ import { ChangeBadge } from '@/components/ui/change-badge'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
+import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 import { AuthRequiredModal } from '@/components/auth/AuthRequiredModal'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { Plus } from 'lucide-react'
@@ -298,6 +299,8 @@ export function StockDetailClient({
           <CompanyInfo data={data} />
         </WidgetBoundary>
       </Section>
+
+      <AppDownloadCard variant="hero" />
 
       {seoFaq}
 
