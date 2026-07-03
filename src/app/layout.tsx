@@ -9,9 +9,11 @@ import { Footer } from '@/components/layout/Footer'
 import { CookieBanner } from '@/components/layout/CookieBanner'
 
 const GA_ID = 'G-XV8QGQ8JS9'
-// Set NEXT_PUBLIC_ADSENSE_CLIENT (e.g. "ca-pub-7113858977365190") once the
-// AdSense account is approved — the ad loader stays dormant until then.
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT
+// AdSense publisher. Kept as an env override, but defaults to the real pub id
+// so the AdSense loader + verification meta are present site-wide — Google must
+// detect the code to review/approve the account. No ads serve until the account
+// is approved (and consent granted via Consent Mode below).
+const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? 'ca-pub-7113858977365190'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -19,7 +21,7 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 const SITE_URL = 'https://stockmarketroi.com'
 
 export const metadata: Metadata = {
-  other: { google: 'notranslate' },
+  other: { google: 'notranslate', 'google-adsense-account': ADSENSE_CLIENT },
   title: {
     default:  'Stock Market ROI — US Stock Market Data & Analysis',
     template: '%s | Stock Market ROI',
