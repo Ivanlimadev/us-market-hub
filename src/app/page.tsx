@@ -14,6 +14,7 @@ import { PortfolioWidget } from '@/components/portfolio/PortfolioWidget'
 import { HomeBlogWidget } from '@/components/market/HomeBlogWidget'
 import { CryptoHomeWidget } from '@/components/crypto/CryptoHomeWidget'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
+import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 
 export default function HomePage() {
   return (
@@ -51,6 +52,8 @@ export default function HomePage() {
       <WidgetBoundary label="Our Blog">
         <HomeBlogWidget />
       </WidgetBoundary>
+
+      <AppDownloadCard variant="hero" />
 
       <WidgetBoundary label="Crypto Markets">
         <CryptoHomeWidget />

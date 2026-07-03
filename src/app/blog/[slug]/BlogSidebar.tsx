@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { MostSearchedStocks } from './MostSearchedStocks'
+import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 
 interface SidebarPost {
   slug: string
@@ -44,6 +45,7 @@ export function BlogSidebar({ latest }: { latest: SidebarPost[] }) {
   return (
     <aside className="mt-10 space-y-6 lg:mt-0 lg:sticky lg:top-20 lg:self-start">
       <MostSearchedStocks />
+      <AppDownloadCard variant="sidebar" />
       <LatestPosts posts={latest} />
     </aside>
   )
