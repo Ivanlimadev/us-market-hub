@@ -13,10 +13,15 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const MAX_CHARS = 5000
 
+// Fixed presenter voices from the ElevenLabs library (public voice ids — safe to
+// hardcode). Env vars override if you ever want to swap them.
+const VOICE_MAYA = process.env.ELEVENLABS_VOICE_MAYA ?? 'Y2pP8eXRDH19yyV1Tslt' // markets/news anchor
+const VOICE_JENNIFER = process.env.ELEVENLABS_VOICE_JENNIFER ?? 'IDHS58OMlK9jZvRdhEVy' // education
+
 function resolveVoiceId(voice: string | null): { id: string | null; label: string } {
   const v = (voice ?? 'maya').toLowerCase().trim()
-  if (v === 'maya') return { id: process.env.ELEVENLABS_VOICE_MAYA ?? null, label: 'maya' }
-  if (v === 'jennifer') return { id: process.env.ELEVENLABS_VOICE_JENNIFER ?? null, label: 'jennifer' }
+  if (v === 'maya') return { id: VOICE_MAYA, label: 'maya' }
+  if (v === 'jennifer') return { id: VOICE_JENNIFER, label: 'jennifer' }
   // Allow passing a raw ElevenLabs voice id directly.
   if (/^[A-Za-z0-9]{16,}$/.test((voice ?? '').trim())) return { id: (voice as string).trim(), label: 'custom' }
   return { id: null, label: v }
