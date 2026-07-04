@@ -69,13 +69,14 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex">
+          {/* Desktop nav — shrinkable + horizontally scrollable so a crowded
+              link list never pushes the right-side controls off screen */}
+          <nav className="hidden min-w-0 items-center gap-1 overflow-x-auto md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   pathname === link.href
                     ? 'bg-zinc-800 text-white'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -86,8 +87,9 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Right side */}
-          <div className="ml-auto flex items-center gap-2">
+          {/* Right side — shrink-0 keeps the Settings gear (last item) pinned
+              on screen even when the nav link list overflows */}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             {/* Global search */}
             <GlobalSearch />
 
