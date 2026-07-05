@@ -47,11 +47,14 @@ export async function GET(
   const cacheKey = `crypto:${id}`
   const supabase = serviceClient()
 
-  const { data: cached } = await supabase
+  const { data: cached, error: readErr } = await supabase
     .from('ai_insights')
     .select('insight, updated_at')
     .eq('symbol', cacheKey)
     .single()
+  if (readErr && readErr.code !== 'PGRST116') {
+    console.error('[crypto-insight] cache READ failed:', readErr.code, readErr.message)
+  }
 
   if (cached) {
     const age = Date.now() - new Date(cached.updated_at).getTime()
@@ -107,10 +110,13 @@ Return this exact JSON structure:
   const insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   const structured = parseInsight(insight)
 
-  await supabase.from('ai_insights').upsert(
+  const { error: writeErr } = await supabase.from('ai_insights').upsert(
     { symbol: cacheKey, insight, updated_at: new Date().toISOString() },
     { onConflict: 'symbol' },
   )
+  if (writeErr) {
+    console.error('[crypto-insight] cache WRITE failed:', writeErr.code, writeErr.message)
+  }
 
   return NextResponse.json({ insight, cached: false, ...structured })
 }
