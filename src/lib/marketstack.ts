@@ -6,6 +6,9 @@ import type {
   MSSplitResponse,
 } from '@/types/marketstack'
 import { withRetry, HttpError } from '@/lib/retry'
+import { createHash } from 'node:crypto'
+import { promises as fs } from 'node:fs'
+import path from 'node:path'
 
 const BASE_URL = 'https://api.marketstack.com/v1'
 const API_KEY = process.env.MARKETSTACK_API_KEY!
@@ -13,8 +16,29 @@ const API_KEY = process.env.MARKETSTACK_API_KEY!
 // In-memory cache — expired entries are kept as stale fallback on API failure
 const cache = new Map<string, { data: unknown; expiresAt: number }>()
 
+// Disk mirror of the last good response per key, so the stale fallback SURVIVES
+// a server restart / deploy (the in-memory Map is wiped on PM2 restart). If
+// Marketstack is down or over quota right after a deploy, we still serve the
+// last data from disk instead of erroring. Configurable via MS_CACHE_DIR.
+const DISK_DIR = process.env.MS_CACHE_DIR || path.join(process.cwd(), '.ms-cache')
+const diskFile = (key: string) =>
+  path.join(DISK_DIR, createHash('sha1').update(key).digest('hex') + '.json')
+
 function setCache(key: string, data: unknown, ttlSeconds: number) {
   cache.set(key, { data, expiresAt: Date.now() + ttlSeconds * 1000 })
+  // Fire-and-forget disk write — never let persistence break the request path.
+  fs.mkdir(DISK_DIR, { recursive: true })
+    .then(() => fs.writeFile(diskFile(key), JSON.stringify(data)))
+    .catch(() => {})
+}
+
+/** Last good response persisted on disk (any age). Used when in-memory is cold. */
+async function readDisk<T>(key: string): Promise<T | undefined> {
+  try {
+    return JSON.parse(await fs.readFile(diskFile(key), 'utf8')) as T
+  } catch {
+    return undefined
+  }
 }
 
 async function msGet<T>(
@@ -47,10 +71,18 @@ async function msGet<T>(
     setCache(cacheKey, data, ttlSeconds)
     return data
   } catch (err) {
-    // API failed — serve stale data if available rather than crashing
+    // API failed — serve the last good data rather than crashing the cards.
+    // 1) in-memory stale (fastest), 2) disk snapshot (survives restart/deploy).
     if (entry) {
-      console.warn(`[Marketstack] stale fallback for ${endpoint}:`, (err as Error).message)
+      console.warn(`[Marketstack] in-memory stale fallback for ${endpoint}:`, (err as Error).message)
       return entry.data as T
+    }
+    const fromDisk = await readDisk<T>(cacheKey)
+    if (fromDisk !== undefined) {
+      console.warn(`[Marketstack] disk stale fallback for ${endpoint}:`, (err as Error).message)
+      // Re-warm the in-memory cache (already expired, so it only serves on error).
+      cache.set(cacheKey, { data: fromDisk, expiresAt: 0 })
+      return fromDisk
     }
     throw err
   }
