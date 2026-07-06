@@ -70,11 +70,16 @@ export async function GET(
   const supabase = serviceClient()
 
   // Check cache
-  const { data: cached } = await supabase
+  const { data: cached, error: readErr } = await supabase
     .from('ai_insights')
     .select('insight, updated_at')
     .eq('symbol', upper)
     .single()
+  // PGRST116 = no cached row yet (normal cache miss). Anything else (e.g. a
+  // missing GRANT → 42501) means the cache is broken and must not fail silently.
+  if (readErr && readErr.code !== 'PGRST116') {
+    console.error('[insight] cache READ failed:', readErr.code, readErr.message)
+  }
 
   if (cached) {
     const age = Date.now() - new Date(cached.updated_at).getTime()
@@ -129,10 +134,13 @@ Return this exact JSON structure:
   const insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   const structured = parseInsight(insight)
 
-  await supabase.from('ai_insights').upsert(
+  const { error: writeErr } = await supabase.from('ai_insights').upsert(
     { symbol: upper, insight, updated_at: new Date().toISOString() },
     { onConflict: 'symbol' },
   )
+  if (writeErr) {
+    console.error('[insight] cache WRITE failed:', writeErr.code, writeErr.message)
+  }
 
   return buildResponse(insight, structured, false)
 }
