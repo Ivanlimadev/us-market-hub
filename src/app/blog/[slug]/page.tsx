@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 import { fetchStockData } from '@/lib/stock-server'
+import { cgCoin } from '@/lib/coingecko'
+import type { CryptoDetail } from '@/types/crypto'
 import { jsonLdSafe } from '@/lib/jsonld'
 import { authorForCategory, authorBySlug } from '@/lib/authors'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
@@ -160,6 +162,24 @@ function readingTime(content: string): number {
   return Math.max(1, Math.ceil(content.trim().split(/\s+/).length / 200))
 }
 
+function fmtCryptoPrice(p: number): string {
+  return p >= 1
+    ? `$${p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    : `$${p.toLocaleString('en-US', { maximumFractionDigits: 8 })}`
+}
+
+function fmtUsdCompact(n: number): string {
+  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
+  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`
+  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`
+  return `$${n.toLocaleString('en-US')}`
+}
+
+function fmtPct(p: number | null | undefined): string {
+  if (p == null) return '--'
+  return `${p >= 0 ? '+' : ''}${p.toFixed(2)}%`
+}
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -191,6 +211,20 @@ export default async function BlogPostPage({
     const newest = stockData.recentEod[0].close
     const oldest = stockData.recentEod[stockData.recentEod.length - 1].close
     if (oldest > 0) change12m = ((newest - oldest) / oldest) * 100
+  }
+
+  // Crypto card — for Crypto posts, feature the first coin the article links to
+  // (e.g. /crypto/bitcoin). Keeps the stock `tickers`/chips untouched.
+  const cryptoId = post.category === 'Crypto'
+    ? (post.content.match(/\/crypto\/([a-z0-9-]+)/)?.[1] ?? null)
+    : null
+  let cryptoData: CryptoDetail | null = null
+  if (cryptoId) {
+    try {
+      cryptoData = await cgCoin(cryptoId)
+    } catch {
+      cryptoData = null
+    }
   }
 
   // Related posts: same category first, fill with latest if needed
@@ -352,8 +386,83 @@ export default async function BlogPostPage({
         ))}
       </div>
 
+      {/* Crypto card — shown for crypto posts (amber accent) */}
+      {cryptoData && cryptoId && (
+        <div className="mt-10 overflow-hidden rounded-2xl border border-amber-500/40 bg-zinc-900">
+          {/* Header: logo + symbol + name */}
+          <div className="flex items-center gap-4 border-b border-zinc-700/60 px-5 py-4">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white p-1 shadow-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={cryptoData.image.large}
+                alt={cryptoData.name}
+                width={56}
+                height={56}
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-2xl font-extrabold text-white">{cryptoData.symbol.toUpperCase()}</p>
+              <p className="truncate text-sm text-zinc-400">{cryptoData.name}</p>
+            </div>
+            <span className="ml-auto shrink-0 rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-400">
+              Live Data
+            </span>
+          </div>
+
+          {/* Metrics grid */}
+          <div className="grid grid-cols-3 divide-x divide-zinc-700/60 border-b border-zinc-700/60">
+            {[
+              { label: 'Price', value: fmtCryptoPrice(cryptoData.market_data.current_price), cls: 'text-white' },
+              {
+                label: '24h',
+                value: fmtPct(cryptoData.market_data.price_change_percentage_24h),
+                cls: cryptoData.market_data.price_change_percentage_24h >= 0 ? 'text-emerald-400' : 'text-red-400',
+              },
+              { label: 'Market Cap', value: fmtUsdCompact(cryptoData.market_data.market_cap), cls: 'text-zinc-200' },
+            ].map(({ label, value, cls }) => (
+              <div key={label} className="px-4 py-4 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{label}</p>
+                <p className={`mt-1.5 text-xl font-bold tabular-nums ${cls}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 divide-x divide-zinc-700/60">
+            {[
+              {
+                label: 'Chg (1Y)',
+                value: fmtPct(cryptoData.market_data.price_change_percentage_1y),
+                cls: (cryptoData.market_data.price_change_percentage_1y ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400',
+              },
+              { label: 'All-Time High', value: fmtCryptoPrice(cryptoData.market_data.ath), cls: 'text-zinc-200' },
+              {
+                label: 'Rank',
+                value: cryptoData.market_data.market_cap_rank ? `#${cryptoData.market_data.market_cap_rank}` : '--',
+                cls: 'text-zinc-200',
+              },
+            ].map(({ label, value, cls }) => (
+              <div key={label} className="px-4 py-4 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{label}</p>
+                <p className={`mt-1.5 text-xl font-bold tabular-nums ${cls}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA button */}
+          <div className="px-5 py-4">
+            <Link
+              href={`/crypto/${cryptoId}`}
+              className="block w-full rounded-xl bg-amber-500 py-3 text-center text-sm font-bold text-black shadow-lg shadow-amber-500/20 transition-colors hover:bg-amber-400"
+            >
+              View all {cryptoData.symbol.toUpperCase()} data →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Ticker card — shown when post has a related stock */}
-      {stockData && primaryTicker && (
+      {!cryptoData && stockData && primaryTicker && (
         <div className="mt-10 overflow-hidden rounded-2xl border border-emerald-500/40 bg-zinc-900">
           {/* Header: logo + ticker + name */}
           <div className="flex items-center gap-4 border-b border-zinc-700/60 px-5 py-4">
