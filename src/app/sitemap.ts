@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { TOP_STOCKS } from '@/lib/stock-universe'
+import { TOP_STOCKS, ALL_SYMBOLS } from '@/lib/stock-universe'
 
 const BASE = 'https://stockmarketroi.com'
 
@@ -108,12 +108,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }))
 
-  // Only curated, high-demand tickers are listed (the rest are noindex).
-  const stockUrls: MetadataRoute.Sitemap = TOP_STOCKS.map((symbol) => ({
+  // Curated universe (real companies, organized by sector). TOP_STOCKS get the
+  // highest priority; the rest are indexed only when their page has real data
+  // (content-gated in generateMetadata), so listing them here just aids
+  // discovery of the newly-indexable pages without creating "scaled content".
+  const topSet = new Set(TOP_STOCKS)
+  const stockUrls: MetadataRoute.Sitemap = ALL_SYMBOLS.map((symbol) => ({
     url: `${BASE}/stocks/${symbol}`,
     lastModified: now,
     changeFrequency: 'daily',
-    priority: 0.8,
+    priority: topSet.has(symbol) ? 0.8 : 0.6,
   }))
 
   // Only the top coins are listed; obscure ones are noindex to stay focused.

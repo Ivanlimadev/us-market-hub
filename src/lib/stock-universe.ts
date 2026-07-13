@@ -416,6 +416,13 @@ export const TOP_STOCKS: string[] = dedup([
 const TOP_STOCKS_SET = new Set(TOP_STOCKS)
 export const isTopStock = (symbol: string) => TOP_STOCKS_SET.has(symbol.toUpperCase())
 
+// Whole curated universe (organized by sector, real companies). Used to safely
+// expand indexing beyond TOP_STOCKS: a universe ticker is indexed only when its
+// page actually has real data (see generateMetadata + hasSeoData), so obscure
+// tickers with no data stay noindex and never become "scaled content".
+const UNIVERSE_SET = new Set(ALL_SYMBOLS.map((s) => s.toUpperCase()))
+export const isInUniverse = (symbol: string) => UNIVERSE_SET.has(symbol.toUpperCase())
+
 // Exchange-traded funds within our universe — marked as InvestmentFund (not
 // Corporation) in structured data, since the schema type must match the asset.
 export const ETF_SYMBOLS = new Set([

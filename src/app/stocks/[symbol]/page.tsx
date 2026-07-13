@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
-import { isTopStock, isEtf } from '@/lib/stock-universe'
+import { isTopStock, isEtf, isInUniverse } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
@@ -17,13 +17,24 @@ export async function generateMetadata({
   const { symbol } = await params
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
+
+  // Index policy (content-gated): a page is indexable when it's a curated ticker
+  // AND actually has real data on it. TOP_STOCKS are always indexable; any other
+  // ticker in our curated universe is indexable only if it has real data
+  // (hasSeoData). Everything else stays noindex,follow — so obscure/dataless
+  // tickers never become "scaled content". The fetch is deduped with the page
+  // body's fetchStockData via Next's request-scoped fetch cache.
+  let indexable = isTopStock(upper)
+  if (!indexable && isInUniverse(upper)) {
+    const data = await fetchStockData(upper)
+    indexable = data ? hasSeoData(data) : false
+  }
+
   return {
     title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
     description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict — updated daily.`,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
-    // Only curated tickers are indexed; the rest are noindex,follow to keep the
-    // crawlable footprint focused on high-value pages (avoids "scaled content").
-    robots: isTopStock(upper) ? undefined : { index: false, follow: true },
+    robots: indexable ? undefined : { index: false, follow: true },
     openGraph: {
       title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
