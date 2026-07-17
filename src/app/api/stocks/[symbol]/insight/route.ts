@@ -143,7 +143,7 @@ Return this exact JSON structure:
       return buildResponse(cached.insight, parseInsight(cached.insight), true)
     }
     return NextResponse.json(
-      { error: 'AI temporarily unavailable', detail: (err as Error).message },
+      { error: 'AI temporarily unavailable' },
       { status: 503 },
     )
   }
