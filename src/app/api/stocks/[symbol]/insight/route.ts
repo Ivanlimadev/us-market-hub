@@ -124,14 +124,30 @@ Return this exact JSON structure:
 }`
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-  const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  })
+  let insight: string
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 512,
+      messages: [{ role: 'user', content: prompt }],
+    })
+    const raw = (message.content[0] as { type: string; text: string }).text.trim()
+    insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+  } catch (err) {
+    // Anthropic call failed (out of credits, rate limit, model change, outage).
+    // Never 500 the app: serve the last cached insight if we have one — even if
+    // it's older than CACHE_HOURS — so the section shows stale data instead of
+    // going blank. Only fail if there's nothing cached at all.
+    console.error('[insight] Anthropic call failed:', (err as Error).message)
+    if (cached) {
+      return buildResponse(cached.insight, parseInsight(cached.insight), true)
+    }
+    return NextResponse.json(
+      { error: 'AI temporarily unavailable' },
+      { status: 503 },
+    )
+  }
 
-  const raw = (message.content[0] as { type: string; text: string }).text.trim()
-  const insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   const structured = parseInsight(insight)
 
   const { error: writeErr } = await supabase.from('ai_insights').upsert(
