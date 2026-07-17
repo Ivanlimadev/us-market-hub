@@ -14,6 +14,7 @@ import { RelatedTabs } from './related-tabs'
 import { BlogSidebar } from './BlogSidebar'
 import AuthorByline from '@/components/blog/AuthorByline'
 import CommentsSection from '@/components/comments/CommentsSection'
+import AppDownloadCard from '@/components/blog/AppDownloadCard'
 
 interface Post {
   slug: string
@@ -28,6 +29,7 @@ interface Post {
   seo_description: string | null
   tickers: string[] | null
   author_slug: string | null
+  youtube_id: string | null
 }
 
 interface RelatedPost {
@@ -342,6 +344,20 @@ export default async function BlogPostPage({
         </div>
       )}
 
+      {/* YouTube video embed (when the post has a companion video) */}
+      {post.youtube_id && (
+        <div className="mb-8 aspect-video w-full overflow-hidden rounded-xl bg-black">
+          <iframe
+            className="h-full w-full"
+            src={`https://www.youtube.com/embed/${post.youtube_id}`}
+            title={post.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
+      )}
+
       {/* Live indicator cards for the US-economy explainer */}
       {post.slug === 'us-economic-indicators-explained' && <UsEconomyCards />}
 
@@ -349,6 +365,8 @@ export default async function BlogPostPage({
         className="prose prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+
+      <AppDownloadCard />
 
       {/* Share buttons */}
       {(() => {
