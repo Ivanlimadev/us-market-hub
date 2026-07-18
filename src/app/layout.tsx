@@ -23,6 +23,9 @@ const SITE_URL = 'https://stockmarketroi.com'
 export const metadata: Metadata = {
   // apple-itunes-app → native Smart App Banner on iOS Safari (app id 6785098951)
   other: { google: 'notranslate', 'google-adsense-account': ADSENSE_CLIENT, 'apple-itunes-app': 'app-id=6785098951' },
+  // Google Search Console — URL-prefix property verification (renders the
+  // <meta name="google-site-verification"> tag site-wide).
+  verification: { google: 'a5W-rL6VY-JoCL7rU_ZyKVnaOqPcmtX-T4xzle74T2c' },
   title: {
     default:  'Stock Market ROI — US Stock Market Data & Analysis',
     template: '%s | Stock Market ROI',
