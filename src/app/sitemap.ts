@@ -2,6 +2,14 @@ import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { TOP_STOCKS, ALL_SYMBOLS } from '@/lib/stock-universe'
 
+// The sitemap is backed by the Supabase blog_posts table, which changes daily.
+// Left static, the route is prerendered once at build and freezes — and because
+// supabase-js runs on fetch (which Next caches) and deploys never clear .next,
+// the query result stayed frozen at an old snapshot, so new daily posts never
+// entered the sitemap and Google couldn't discover them. force-dynamic makes the
+// route run per-request with no-store fetches, so the sitemap is always live.
+export const dynamic = 'force-dynamic'
+
 const BASE = 'https://stockmarketroi.com'
 
 const STATIC_ROUTES = [
