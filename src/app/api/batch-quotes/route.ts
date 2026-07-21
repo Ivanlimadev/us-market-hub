@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getYFBatchQuotes, type YFBatchQuote } from '@/lib/yahoo-finance'
 import { cached, cachedStale } from '@/lib/server-cache'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
 
 // GET /api/batch-quotes?symbols=AAPL,MSFT,NVDA
 export async function GET(req: NextRequest) {
+  // 20 batch calls/min per IP — each call can fetch up to 50 symbols
+  if (!rateLimit(getIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const raw = req.nextUrl.searchParams.get('symbols') ?? ''
   const symbols = raw.split(',').map(s => s.trim().toUpperCase()).filter(s => TICKER_RE.test(s)).slice(0, 50)
 

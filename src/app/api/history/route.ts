@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getEod } from '@/lib/marketstack'
 import { parseSymbol, badRequest, dateSchema, limitSchema } from '@/lib/validate'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/history?symbol=AAPL&from=2024-01-01&to=2025-01-01&limit=365
 export async function GET(req: NextRequest) {
+  if (!rateLimit(getIp(req), 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const { searchParams } = req.nextUrl
 
   const r = parseSymbol(searchParams.get('symbol'))

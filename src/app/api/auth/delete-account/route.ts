@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdmin } from '@supabase/supabase-js'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // Every table that holds user-owned rows (keyed by user_id). Deleting an
 // auth user does NOT cascade to these (no FK cascade exists), so we must
@@ -27,7 +28,12 @@ const USER_TABLES = [
   'banned_users',
 ] as const
 
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
+  // 3 attempts per hour per IP — this action is irreversible
+  if (!rateLimit(getIp(req), 3, 60 * 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

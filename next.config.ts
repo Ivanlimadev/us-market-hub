@@ -4,7 +4,8 @@ import { withSentryConfig } from '@sentry/nextjs'
 const CSP = [
   "default-src 'self'",
   // Scripts: self + inline (Next.js hydration) + Cloudflare Turnstile + Google Analytics
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
+  // 'unsafe-eval' removed — Next.js 15 App Router does not require it in production.
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
@@ -41,9 +42,12 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options',            value: 'DENY' },
           { key: 'X-Content-Type-Options',      value: 'nosniff' },
           { key: 'Referrer-Policy',             value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy',          value: 'camera=(), microphone=(), geolocation=()' },
-          { key: 'Strict-Transport-Security',   value: 'max-age=31536000; includeSubDomains' },
-          { key: 'Content-Security-Policy',     value: CSP },
+          { key: 'Permissions-Policy',                value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Strict-Transport-Security',        value: 'max-age=31536000; includeSubDomains' },
+          { key: 'Cross-Origin-Opener-Policy',        value: 'same-origin' },
+          { key: 'Cross-Origin-Resource-Policy',      value: 'same-origin' },
+          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+          { key: 'Content-Security-Policy',           value: CSP },
         ],
       },
     ]

@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getTickers } from '@/lib/marketstack'
 import { searchSchema, limitSchema } from '@/lib/validate'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/tickers?search=apple&exchange=XNAS&limit=20
 export async function GET(req: NextRequest) {
+  if (!rateLimit(getIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
   const { searchParams } = req.nextUrl
   const search   = searchSchema.safeParse(searchParams.get('search') ?? undefined).data
   const exchange = searchParams.get('exchange')?.slice(0, 10) ?? undefined

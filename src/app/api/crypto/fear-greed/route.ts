@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 export interface FearGreedPoint {
   value: number
@@ -6,7 +7,10 @@ export interface FearGreedPoint {
   timestamp: number
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!rateLimit(getIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
   try {
     const res = await fetch('https://api.alternative.me/fng/?limit=30', {
       next: { revalidate: 3600 },

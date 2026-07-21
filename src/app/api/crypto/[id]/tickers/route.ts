@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cgFetch } from '@/lib/coingecko'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 interface RawTicker {
   base: string
@@ -28,9 +29,13 @@ const STABLE_TARGETS = new Set(['USD', 'USDT', 'USDC', 'BUSD', 'DAI', 'FDUSD', '
 const TRUST_ORDER: Record<string, number> = { green: 3, yellow: 2, red: 1 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  if (!rateLimit(getIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const { id } = await params
 
   try {
