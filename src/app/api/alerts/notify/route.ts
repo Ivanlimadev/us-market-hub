@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user?.email) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const { alertId, currentPrice } = await req.json() as { alertId: string; currentPrice: number }
+  const body = await req.json() as { alertId?: string; currentPrice?: number }
+  const alertId = typeof body.alertId === 'string' ? body.alertId : null
+  const currentPrice = typeof body.currentPrice === 'number' && body.currentPrice > 0 ? body.currentPrice : null
+  if (!alertId || !currentPrice) {
+    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+  }
 
   const { data: alert } = await supabase
     .from('price_alerts')

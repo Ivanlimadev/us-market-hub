@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getYFIntraday } from '@/lib/yahoo-finance'
 import { parseSymbol, badRequest } from '@/lib/validate'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/stocks/[symbol]/intraday?interval=5min
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  if (!rateLimit(getIp(req), 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const { symbol: rawSym } = await params
   const r = parseSymbol(rawSym)
   if (!r.ok) return badRequest(r.error)

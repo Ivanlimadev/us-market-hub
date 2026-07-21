@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getYFChart } from '@/lib/yahoo-finance'
 import { parseSymbol, badRequest } from '@/lib/validate'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // Map our period labels → Yahoo Finance range + interval
 const PERIOD_MAP: Record<string, { range: string; interval: string }> = {
@@ -22,6 +23,10 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  if (!rateLimit(getIp(req), 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   const { symbol: raw } = await params
   const r = parseSymbol(raw)
   if (!r.ok) return badRequest(r.error)

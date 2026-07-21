@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { cgFetch } from '@/lib/coingecko'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 interface TrendingItem {
   item: {
@@ -15,7 +16,11 @@ interface TrendingItem {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!rateLimit(getIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
     const raw = await cgFetch<{ coins: TrendingItem[] }>('/search/trending', 10 * 60_000)
     const coins = raw.coins.slice(0, 10).map(({ item: i }) => ({
