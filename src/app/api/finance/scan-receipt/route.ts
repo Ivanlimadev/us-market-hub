@@ -75,7 +75,9 @@ export async function POST(req: NextRequest) {
       category: typeof parsed.category === 'string' ? parsed.category : null,
       note:     typeof parsed.note === 'string' ? parsed.note : null,
     })
-  } catch {
-    return NextResponse.json({ error: 'Failed to process receipt' }, { status: 500 })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[scan-receipt] error:', msg)
+    return NextResponse.json({ error: 'Failed to process receipt', detail: msg }, { status: 500 })
   }
 }
