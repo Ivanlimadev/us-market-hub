@@ -30,8 +30,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json() as { image?: unknown; mimeType?: unknown }
+    console.log('[scan-receipt] body keys:', Object.keys(body ?? {}), 'image type:', typeof body?.image, 'image length:', typeof body?.image === 'string' ? (body.image as string).length : 'N/A')
     if (typeof body.image !== 'string' || !body.image) {
-      return NextResponse.json({ error: 'image required' }, { status: 400 })
+      return NextResponse.json({ error: 'image required', detail: `body keys: ${Object.keys(body ?? {}).join(',')}, image type: ${typeof body?.image}` }, { status: 400 })
     }
     const mimeType: ValidMime = VALID_MIMES.includes(body.mimeType as ValidMime)
       ? (body.mimeType as ValidMime)
