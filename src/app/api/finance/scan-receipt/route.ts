@@ -28,15 +28,14 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await serviceClient().auth.getUser(token)
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const body = await req.json() as { image?: unknown; mimeType?: unknown }
-  if (typeof body.image !== 'string' || !body.image) {
-    return NextResponse.json({ error: 'image required' }, { status: 400 })
-  }
-  const mimeType: ValidMime = VALID_MIMES.includes(body.mimeType as ValidMime)
-    ? (body.mimeType as ValidMime)
-    : 'image/jpeg'
-
   try {
+    const body = await req.json() as { image?: unknown; mimeType?: unknown }
+    if (typeof body.image !== 'string' || !body.image) {
+      return NextResponse.json({ error: 'image required' }, { status: 400 })
+    }
+    const mimeType: ValidMime = VALID_MIMES.includes(body.mimeType as ValidMime)
+      ? (body.mimeType as ValidMime)
+      : 'image/jpeg'
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
