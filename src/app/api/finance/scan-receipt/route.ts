@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
 const anthropic = new Anthropic()
+
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 const VALID_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const
 type ValidMime = typeof VALID_MIMES[number]
@@ -13,8 +20,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  // Mobile app sends Bearer token; SSR cookie client won't see it.
+  const authHeader = req.headers.get('authorization') ?? ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+  const { data: { user } } = await serviceClient().auth.getUser(token)
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
   const body = await req.json() as { image?: unknown; mimeType?: unknown }

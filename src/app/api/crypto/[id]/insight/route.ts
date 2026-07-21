@@ -44,6 +44,20 @@ export async function GET(
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 
+  const teaser = req.nextUrl.searchParams.get('teaser') === '1'
+
+  const buildResponse = (structured: InsightData | null, cached: boolean) => {
+    if (teaser) {
+      return NextResponse.json({
+        verdict:    structured?.verdict    ?? 'HOLD',
+        confidence: structured?.confidence ?? 'Low',
+        summary:    structured?.summary    ?? '',
+        cached,
+      })
+    }
+    return NextResponse.json({ cached, ...structured })
+  }
+
   const cacheKey = `crypto:${id}`
   const supabase = serviceClient()
 
@@ -59,8 +73,7 @@ export async function GET(
   if (cached) {
     const age = Date.now() - new Date(cached.updated_at).getTime()
     if (age < CACHE_HOURS * 60 * 60 * 1000) {
-      const structured = parseInsight(cached.insight)
-      return NextResponse.json({ insight: cached.insight, cached: true, ...structured })
+      return buildResponse(parseInsight(cached.insight), true)
     }
   }
 
@@ -113,11 +126,7 @@ Return this exact JSON structure:
     // Never 500: serve the last cached insight (even if stale) instead of blank.
     console.error('[crypto-insight] Anthropic call failed:', (err as Error).message)
     if (cached) {
-      return NextResponse.json({
-        insight: cached.insight,
-        cached: true,
-        ...parseInsight(cached.insight),
-      })
+      return buildResponse(parseInsight(cached.insight), true)
     }
     return NextResponse.json(
       { error: 'AI temporarily unavailable' },
@@ -135,5 +144,5 @@ Return this exact JSON structure:
     console.error('[crypto-insight] cache WRITE failed:', writeErr.code, writeErr.message)
   }
 
-  return NextResponse.json({ insight, cached: false, ...structured })
+  return buildResponse(structured, false)
 }
