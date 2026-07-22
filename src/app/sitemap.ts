@@ -122,7 +122,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // discovery of the newly-indexable pages without creating "scaled content".
   const topSet = new Set(TOP_STOCKS)
   const stockUrls: MetadataRoute.Sitemap = ALL_SYMBOLS.map((symbol) => ({
-    url: `${BASE}/stocks/${symbol}`,
+    // Lowercase to match the canonical URL on each stock page
+    // (page.tsx uses symbol.toLowerCase()). Emitting uppercase here made Google
+    // treat the sitemap URL as a non-canonical "alternate" and skip indexing.
+    url: `${BASE}/stocks/${symbol.toLowerCase()}`,
     lastModified: now,
     changeFrequency: 'daily',
     priority: topSet.has(symbol) ? 0.8 : 0.6,
