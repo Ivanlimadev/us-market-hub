@@ -42,6 +42,20 @@ function bucket(ip: string, pathname: string): string {
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  // SEO: redirect uppercase stock URLs to the lowercase canonical.
+  // Internal links emit /stocks/NVDA but each page's canonical is /stocks/nvda,
+  // so a 301 here consolidates crawl/link-equity on one URL. Lowercase editorial
+  // pages (e.g. /stocks/best-dividend-stocks) already match and pass through.
+  if (pathname.startsWith('/stocks/')) {
+    const lower = pathname.toLowerCase()
+    if (pathname !== lower) {
+      const url = req.nextUrl.clone()
+      url.pathname = lower
+      return NextResponse.redirect(url, 301)
+    }
+    return NextResponse.next()
+  }
+
   if (!pathname.startsWith('/api/')) return NextResponse.next()
 
   maybeClean()
@@ -85,5 +99,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ['/api/:path*', '/stocks/:path*'],
 }
