@@ -88,7 +88,7 @@ export function MagicNumber({ data }: Props) {
           {/* Magic number */}
           <div className="text-center">
             <p className="font-mono text-3xl font-extrabold text-emerald-400">
-              {result.magicNumber.toLocaleString()}
+              {result.magicNumber.toLocaleString('en-US')}
             </p>
             <p className="mt-0.5 text-[11px] uppercase tracking-wider text-zinc-500">shares</p>
           </div>
@@ -98,7 +98,7 @@ export function MagicNumber({ data }: Props) {
         <div className="mt-5 rounded-lg border border-zinc-700/60 bg-zinc-800/40 px-4 py-3">
           <p className="text-sm leading-relaxed text-zinc-300">
             Own{' '}
-            <span className="font-bold text-white">{result.magicNumber.toLocaleString()} {data.symbol}</span>{' '}
+            <span className="font-bold text-white">{result.magicNumber.toLocaleString('en-US')} {data.symbol}</span>{' '}
             shares
             {' '}
             <span className="text-zinc-500">({fmt$(result.totalInvested)})</span>

@@ -18,7 +18,6 @@ import { EarningsCard } from '@/components/stock/EarningsCard'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
 import { StockQuickNav } from '@/components/stock/StockQuickNav'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
-import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
 import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 import { AuthRequiredModal } from '@/components/auth/AuthRequiredModal'
@@ -160,11 +159,6 @@ export function StockDetailClient({
         </div>
 
         <div className="flex items-center gap-1">
-          <WatchlistButton
-            symbol={symbol}
-            name={data.name}
-            asset_type="stock"
-          />
           <AlertButton
             symbol={symbol}
             name={data.name}
@@ -181,7 +175,7 @@ export function StockDetailClient({
       </div>
 
       {/* Investidor10-style anchor bar + key-stats card strip */}
-      <StockQuickNav />
+      <StockQuickNav symbol={symbol} name={data.name} />
       <KeyStatsStrip symbol={symbol} initialData={data} />
 
       {seoIntro}
@@ -218,7 +212,9 @@ export function StockDetailClient({
         </Pair>
       </Section>
 
-      {/* 3 — Financials */}
+      {/* ── Anchored sequence, Investidor10 order: Indicators → Dividends → Company → Results → News ── */}
+
+      {/* Indicators */}
       <Section id="indicators" title="Financials">
         <WidgetBoundary label="Financial Charts">
           <FinancialCharts symbol={symbol} />
@@ -233,7 +229,26 @@ export function StockDetailClient({
         </Pair>
       </Section>
 
-      {/* 4 — SEC Filings & Reported Financials (the two SEC blocks together) */}
+      {/* Dividends */}
+      <Section id="dividends" title="Dividends & Income">
+        <Pair>
+          <WidgetBoundary label="Dividends">
+            <DividendsSection data={data} />
+          </WidgetBoundary>
+          <WidgetBoundary label="Magic Number">
+            <MagicNumber data={data} />
+          </WidgetBoundary>
+        </Pair>
+      </Section>
+
+      {/* Company */}
+      <Section id="company" title="Company">
+        <WidgetBoundary label="Company Info">
+          <CompanyInfo data={data} />
+        </WidgetBoundary>
+      </Section>
+
+      {/* Results */}
       <Section id="results" title="SEC Filings & Reported Financials">
         <WidgetBoundary label="Earnings History">
           <EarningsHistory symbol={symbol} />
@@ -246,19 +261,16 @@ export function StockDetailClient({
         </WidgetBoundary>
       </Section>
 
-      {/* 5 — Dividends & Income */}
-      <Section id="dividends" title="Dividends & Income">
-        <Pair>
-          <WidgetBoundary label="Dividends">
-            <DividendsSection data={data} />
-          </WidgetBoundary>
-          <WidgetBoundary label="Magic Number">
-            <MagicNumber data={data} />
-          </WidgetBoundary>
-        </Pair>
+      {/* News — own blog posts only */}
+      <Section id="news" title="News">
+        <WidgetBoundary label="Related Articles">
+          <StockRelatedPosts symbol={symbol} />
+        </WidgetBoundary>
       </Section>
 
-      {/* 6 — Tools */}
+      {/* ── Footer sections (outside the anchored sequence) ── */}
+
+      {/* Tools */}
       <Section title="Tools & Simulators">
         <WidgetBoundary label="Investment Simulator">
           <InvestmentSimulator data={data} />
@@ -268,19 +280,11 @@ export function StockDetailClient({
       {/* Discussion — shared with the mobile app */}
       <CommentsSection entityType="stock" entityId={symbol} />
 
-      {/* 7 — Discover (related content at the end) */}
+      {/* Discover (related content at the end) */}
       <Section title="Discover">
         <WidgetBoundary label="Related Assets">
           <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
         </WidgetBoundary>
-        <WidgetBoundary label="Related Articles">
-          <StockRelatedPosts symbol={symbol} />
-        </WidgetBoundary>
-        <div id="company" className="scroll-mt-24">
-          <WidgetBoundary label="Company Info">
-            <CompanyInfo data={data} />
-          </WidgetBoundary>
-        </div>
       </Section>
 
       <AppDownloadCard variant="hero" />

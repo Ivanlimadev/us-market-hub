@@ -92,12 +92,15 @@ export function GlobalSearch() {
   useEffect(() => { setMounted(true) }, [])
 
   // Always keep crypto cache warm (used by search on any page)
-  const { data: cryptoCache = [] } = useQuery<CryptoMarket[]>({
+  const { data: cryptoData } = useQuery<CryptoMarket[]>({
     queryKey: ['crypto-markets'],
     queryFn: () => fetch('/api/crypto/markets?limit=250').then((r) => r.json()),
     staleTime: 60_000,
     refetchInterval: false,
   })
+  // Guard: the endpoint can return a non-array (e.g. an error object) which the
+  // `= []` default doesn't cover — `.filter`/`.slice` on it would crash the Navbar.
+  const cryptoCache = Array.isArray(cryptoData) ? cryptoData : []
 
   // Open on Cmd+K / Ctrl+K
   useEffect(() => {
