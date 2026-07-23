@@ -48,7 +48,15 @@ export interface HistoryData {
 export function useStockDetail(symbol: string, initialData?: StockDetailData) {
   return useQuery<StockDetailData>({
     queryKey: ['stock-detail', symbol],
-    queryFn: () => fetch(`/api/stocks/${symbol}`).then((r) => r.json()),
+    queryFn: async () => {
+      const r = await fetch(`/api/stocks/${symbol}`)
+      const json = await r.json()
+      // On a rate-limit / error response (e.g. { error: 'Too many requests' }),
+      // throw so React Query keeps the last good data instead of overwriting it
+      // with the error object — which would collapse the page to "unavailable".
+      if (!r.ok || json?.error) throw new Error(json?.error || `Failed to load ${symbol}`)
+      return json as StockDetailData
+    },
     refetchInterval: getPollInterval,
     staleTime: 55_000,
     enabled: !!symbol,
