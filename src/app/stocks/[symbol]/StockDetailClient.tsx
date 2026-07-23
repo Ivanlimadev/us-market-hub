@@ -125,10 +125,10 @@ export function StockDetailClient({
       {/* Investidor10-style dark header band: identity + quick-nav (center) + actions.
           Neutral colors (not remapped by the light-mode zinc inversion) keep text
           light on the dark band in both themes. */}
-      <div className="rounded-2xl bg-neutral-800 px-5 py-4">
-        <div className="flex items-center gap-4">
-          {/* Identity */}
-          <div className="flex shrink-0 items-center gap-4">
+      <div className="rounded-2xl bg-neutral-800 px-4 py-4 sm:px-5">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+          {/* Identity — shrinks & truncates on mobile so it never overflows the viewport */}
+          <div className="flex min-w-0 flex-1 items-center gap-3 md:flex-none md:gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-neutral-900">
               <Image
                 src={`https://assets.parqet.com/logos/symbol/${symbol}?format=png`}
@@ -144,11 +144,11 @@ export function StockDetailClient({
                 unoptimized
               />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
                 {/* Inline colors so the title stays visible even if the dev CSS
                     chunk is stale in the browser cache (neutral-* utilities). */}
-                <h1 className="text-xl font-bold" style={{ color: '#fafafa' }}>
+                <h1 className="truncate text-xl font-bold" style={{ color: '#fafafa' }}>
                   {symbol}
                   {data.name && data.name !== symbol && (
                     <span className="ml-2 text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
@@ -156,7 +156,7 @@ export function StockDetailClient({
                 </h1>
                 {data.exchange && (
                   <span
-                    className="rounded-md px-2 py-0.5 text-xs"
+                    className="shrink-0 rounded-md px-2 py-0.5 text-xs"
                     style={{ backgroundColor: '#404040', color: '#d4d4d4' }}
                   >
                     {data.exchange}
@@ -164,15 +164,15 @@ export function StockDetailClient({
                 )}
               </div>
               {(data.info?.sector || data.info?.industry) && (
-                <p className="text-xs" style={{ color: '#a3a3a3' }}>
+                <p className="truncate text-xs" style={{ color: '#a3a3a3' }}>
                   {[data.info.sector, data.info.industry].filter(Boolean).join(' · ')}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Quick-nav — centered in the middle of the band */}
-          <StockQuickNav className="min-w-0 flex-1 justify-center" />
+          {/* Quick-nav — full-width scroll row on mobile; centered in the middle on desktop */}
+          <StockQuickNav className="order-last w-full justify-start md:order-none md:w-auto md:min-w-0 md:flex-1 md:justify-center" />
 
           {/* Actions */}
           <div className="flex shrink-0 items-center gap-1">
@@ -191,7 +191,7 @@ export function StockDetailClient({
               onClick={() => user ? setShowAddTx(true) : setShowAuthModal(true)}
               className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
             >
-              <Plus className="h-3.5 w-3.5" /> Add to Portfolio
+              <Plus className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Add to Portfolio</span>
             </button>
           </div>
         </div>
