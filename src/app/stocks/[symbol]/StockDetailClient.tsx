@@ -15,7 +15,8 @@ import { FinancialCharts } from '@/components/stock/FinancialCharts'
 import { FairValueCard } from '@/components/stock/FairValueCard'
 import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
-import { ChangeBadge } from '@/components/ui/change-badge'
+import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
+import { StockQuickNav } from '@/components/stock/StockQuickNav'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
@@ -34,17 +35,11 @@ import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 import type { ReactNode } from 'react'
 
-function fmtLarge(n: number | null): string {
-  if (n === null) return ''
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`
-  return `$${n.toLocaleString()}`
-}
-
-/** A titled page section (visible h2 + grouped widgets). */
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** A titled page section (visible h2 + grouped widgets). Optional `id` makes it
+ *  a scroll anchor for the header quick-nav (scroll-mt clears the sticky nav). */
+function Section({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
   return (
-    <section className="space-y-5">
+    <section id={id} className={`space-y-5${id ? ' scroll-mt-24' : ''}`}>
       <h2 className="border-b border-zinc-800 pb-2 text-lg font-bold text-white">{title}</h2>
       {children}
     </section>
@@ -122,11 +117,9 @@ export function StockDetailClient({
     )
   }
 
-  const marketCap = fmtLarge(data.info?.marketCap ?? null)
-
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
-      {/* Header */}
+      {/* Header — identity left, actions right (price now lives in the stats strip) */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-zinc-800 shrink-0">
@@ -166,42 +159,30 @@ export function StockDetailClient({
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold tabular-nums text-white">
-              ${data.currentPrice.toFixed(2)}
-            </span>
-            <ChangeBadge value={data.changePct} size="md" />
-          </div>
-          <div className="flex items-center gap-3 text-xs text-zinc-500">
-            {marketCap && <span>Mkt Cap: <span className="text-zinc-300">{marketCap}</span></span>}
-            {data.info?.dividendYield && (
-              <span>
-                DY: <span className="text-emerald-400">{(data.info.dividendYield * 100).toFixed(2)}%</span>
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1">
-            <WatchlistButton
-              symbol={symbol}
-              name={data.name}
-              asset_type="stock"
-            />
-            <AlertButton
-              symbol={symbol}
-              name={data.name}
-              asset_type="stock"
-              currentPrice={data.currentPrice}
-            />
-            <button
-              onClick={() => user ? setShowAddTx(true) : setShowAuthModal(true)}
-              className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
-            >
-              <Plus className="h-3.5 w-3.5" /> Add to Portfolio
-            </button>
-          </div>
+        <div className="flex items-center gap-1">
+          <WatchlistButton
+            symbol={symbol}
+            name={data.name}
+            asset_type="stock"
+          />
+          <AlertButton
+            symbol={symbol}
+            name={data.name}
+            asset_type="stock"
+            currentPrice={data.currentPrice}
+          />
+          <button
+            onClick={() => user ? setShowAddTx(true) : setShowAuthModal(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add to Portfolio
+          </button>
         </div>
       </div>
+
+      {/* Investidor10-style anchor bar + key-stats card strip */}
+      <StockQuickNav />
+      <KeyStatsStrip symbol={symbol} initialData={data} />
 
       {seoIntro}
 
@@ -238,7 +219,7 @@ export function StockDetailClient({
       </Section>
 
       {/* 3 — Financials */}
-      <Section title="Financials">
+      <Section id="indicators" title="Financials">
         <WidgetBoundary label="Financial Charts">
           <FinancialCharts symbol={symbol} />
         </WidgetBoundary>
@@ -253,7 +234,7 @@ export function StockDetailClient({
       </Section>
 
       {/* 4 — SEC Filings & Reported Financials (the two SEC blocks together) */}
-      <Section title="SEC Filings & Reported Financials">
+      <Section id="results" title="SEC Filings & Reported Financials">
         <WidgetBoundary label="Earnings History">
           <EarningsHistory symbol={symbol} />
         </WidgetBoundary>
@@ -266,7 +247,7 @@ export function StockDetailClient({
       </Section>
 
       {/* 5 — Dividends & Income */}
-      <Section title="Dividends & Income">
+      <Section id="dividends" title="Dividends & Income">
         <Pair>
           <WidgetBoundary label="Dividends">
             <DividendsSection data={data} />
@@ -295,9 +276,11 @@ export function StockDetailClient({
         <WidgetBoundary label="Related Articles">
           <StockRelatedPosts symbol={symbol} />
         </WidgetBoundary>
-        <WidgetBoundary label="Company Info">
-          <CompanyInfo data={data} />
-        </WidgetBoundary>
+        <div id="company" className="scroll-mt-24">
+          <WidgetBoundary label="Company Info">
+            <CompanyInfo data={data} />
+          </WidgetBoundary>
+        </div>
       </Section>
 
       <AppDownloadCard variant="hero" />
