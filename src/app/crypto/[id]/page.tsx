@@ -9,11 +9,24 @@ export const dynamicParams = true
 // Only top coins are indexed; obscure ones are noindex to keep the crawlable
 // footprint focused (mirrors the stock-page policy for search/AdSense quality).
 const INDEXED_CRYPTO = new Set([
+  // Top 10
   'bitcoin','ethereum','tether','binancecoin','solana','ripple','usd-coin','cardano','dogecoin','tron',
+  // 11-50
   'avalanche-2','chainlink','the-open-network','polkadot','polygon','litecoin','shiba-inu','bitcoin-cash','stellar','near',
   'monero','ethereum-classic','uniswap','cosmos','filecoin','hedera-hashgraph','aptos','arbitrum','optimism','sui',
   'pepe','floki','render-token','fetch-ai','worldcoin-wld','injective-protocol','sei-network','celestia','stacks','mantle',
   'kaspa','immutable-x','blur','bonk','jupiter-exchange-solana','jito-governance-token','pyth-network','wormhole','ethena','ondo-finance',
+  // 51-100
+  'algorand','eos','decentraland','the-sandbox','axie-infinity',
+  'gala','illuvium','stepn','gods-unchained',
+  'vechain','iota','neo','qtum','icon',
+  'waves','zilliqa','harmony','celo','band-protocol',
+  'ocean-protocol','the-graph','livepeer','radicle','arweave',
+  'helium','theta-token','ankr','api3',
+  'compound-governance-token','aave','maker','curve-dao-token','yearn-finance',
+  'convex-finance','frax-share','synthetix-network-token','uma','sushi',
+  'balancer','1inch','dydx','gmx','gains-network',
+  'lido-dao','rocket-pool','frax-ether','stakewise','stafi',
 ])
 
 export async function generateMetadata({

@@ -11,9 +11,12 @@ page on its first mention** (later mentions can stay plain). This is the biggest
 thing that separates a "real" post from a thin one — it builds internal links
 (SEO) and keeps readers on-site.
 
-- Pattern: `[Exxon Mobil (XOM)](/stocks/XOM)`, `[JPMorgan](/stocks/JPM)`.
-- Bold + link is fine: `[**Micron (MU)**](/stocks/MU)` renders as a bold link.
-- Root-relative paths only (`/stocks/XOM`), never full URLs — so links work
+- Pattern: `[Exxon Mobil (XOM)](/stocks/xom)`, `[JPMorgan](/stocks/jpm)`.
+  Use a **lowercase** symbol in the URL — it matches each stock page's canonical
+  and avoids a 301 hop (the proxy redirects uppercase → lowercase). Display text
+  keeps the uppercase ticker in parens; only the path is lowercase.
+- Bold + link is fine: `[**Micron (MU)**](/stocks/mu)` renders as a bold link.
+- Root-relative paths only (`/stocks/xom`), never full URLs — so links work
   **in the app too** (the app navigates `/stocks/**` in-app; absolute URLs open
   Safari and leave the app).
 - Only link tickers that are real, data-backed pages (in the curated universe).

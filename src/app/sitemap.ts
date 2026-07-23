@@ -132,7 +132,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Only the top coins are listed; obscure ones are noindex to stay focused.
-  const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.slice(0, 60).map((id) => ({
+  const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.slice(0, 100).map((id) => ({
     url: `${BASE}/crypto/${id}`,
     lastModified: now,
     changeFrequency: 'daily',
