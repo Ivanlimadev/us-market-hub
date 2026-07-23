@@ -146,20 +146,25 @@ export function StockDetailClient({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-neutral-50">
+                {/* Inline colors so the title stays visible even if the dev CSS
+                    chunk is stale in the browser cache (neutral-* utilities). */}
+                <h1 className="text-xl font-bold" style={{ color: '#fafafa' }}>
                   {symbol}
                   {data.name && data.name !== symbol && (
-                    <span className="ml-2 text-base font-normal text-neutral-300">— {data.name}</span>
+                    <span className="ml-2 text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
                   )}
                 </h1>
                 {data.exchange && (
-                  <span className="rounded-md bg-neutral-700 px-2 py-0.5 text-xs text-neutral-300">
+                  <span
+                    className="rounded-md px-2 py-0.5 text-xs"
+                    style={{ backgroundColor: '#404040', color: '#d4d4d4' }}
+                  >
                     {data.exchange}
                   </span>
                 )}
               </div>
               {(data.info?.sector || data.info?.industry) && (
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs" style={{ color: '#a3a3a3' }}>
                   {[data.info.sector, data.info.industry].filter(Boolean).join(' · ')}
                 </p>
               )}
