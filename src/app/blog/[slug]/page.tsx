@@ -362,7 +362,7 @@ export default async function BlogPostPage({
       {post.slug === 'us-economic-indicators-explained' && <UsEconomyCards />}
 
       <article
-        className="prose prose-invert max-w-none"
+        className="prose max-w-none"
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
