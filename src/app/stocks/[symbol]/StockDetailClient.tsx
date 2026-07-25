@@ -28,7 +28,6 @@ import { EarningsHistory } from '@/components/stock/EarningsHistory'
 import { SecFilings } from '@/components/stock/SecFilings'
 import { InsiderTransactions } from '@/components/stock/InsiderTransactions'
 import CommentsSection from '@/components/comments/CommentsSection'
-import { StockAnalysisSummary } from '@/components/stock/StockAnalysisSummary'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
@@ -207,9 +206,6 @@ export function StockDetailClient({
 
       {/* 2 — Analysis & Verdict */}
       <Section title="Analysis & Verdict">
-        <WidgetBoundary label="Stock Analysis">
-          <StockAnalysisSummary data={data} />
-        </WidgetBoundary>
         <WidgetBoundary label="AI Insight">
           <StockAIInsight symbol={symbol} />
         </WidgetBoundary>
