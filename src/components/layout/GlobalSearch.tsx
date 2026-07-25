@@ -28,6 +28,18 @@ const SHORT_SECTOR: Record<string, string> = {
 }
 function shortSector(s: string) { return SHORT_SECTOR[s] ?? s }
 
+// Curated pages that aren't stocks or crypto (indices, macro) but should still
+// be reachable from search — e.g. the US Dollar Index at /dxy. `keywords` widen
+// the match so "dollar", "dollar index" or "usd" all surface DXY.
+const SPECIAL_PAGES = [
+  {
+    symbol: 'DXY',
+    name: 'US Dollar Index',
+    href: '/dxy',
+    keywords: ['DXY', 'DOLLAR', 'US DOLLAR', 'DOLLAR INDEX', 'USD', 'DX', 'GREENBACK'],
+  },
+] as const
+
 function useDebounce<T>(value: T, ms: number): T {
   const [dv, setDv] = useState(value)
   useEffect(() => {
@@ -41,7 +53,7 @@ interface Result {
   symbol: string
   name: string
   sector?: string
-  asset_type: 'stock' | 'crypto'
+  asset_type: 'stock' | 'crypto' | 'index'
   coingeckoId?: string
   image?: string
   href: string
@@ -202,6 +214,17 @@ export function GlobalSearch() {
         href: `/crypto/${c.id}`,
       }))
 
+  // Curated non-stock/crypto pages (e.g. DXY → /dxy), matched by symbol/name/keywords.
+  const specialResults: Result[] = q.length >= 2
+    ? SPECIAL_PAGES
+        .filter(p =>
+          p.symbol.startsWith(q) ||
+          p.name.toUpperCase().includes(q) ||
+          p.keywords.some(k => k.startsWith(q)),
+        )
+        .map(p => ({ symbol: p.symbol, name: p.name, asset_type: 'index' as const, href: p.href }))
+    : []
+
   const stockSymbols = new Set(stockResults.map(s => s.symbol))
   const apiExtra = apiResults.filter(s => !stockSymbols.has(s.symbol)).slice(0, 2)
 
@@ -211,12 +234,14 @@ export function GlobalSearch() {
   // the live /api/tickers lookup is unavailable.
   const isTicker = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/.test(q)
   const knownExact =
-    stockResults.some(s => s.symbol === q) || apiExtra.some(s => s.symbol === q)
+    stockResults.some(s => s.symbol === q) ||
+    apiExtra.some(s => s.symbol === q) ||
+    specialResults.some(s => s.symbol === q)
   const directResult: Result[] = isTicker && !knownExact
     ? [{ symbol: q, name: `Open ${q} page →`, asset_type: 'stock' as const, href: `/stocks/${q}` }]
     : []
 
-  const results: Result[] = [...stockResults, ...apiExtra, ...directResult, ...cryptoResults].slice(0, 10)
+  const results: Result[] = [...specialResults, ...stockResults, ...apiExtra, ...directResult, ...cryptoResults].slice(0, 10)
 
   useEffect(() => setHighlighted(0), [results.length])
 
@@ -298,6 +323,38 @@ export function GlobalSearch() {
             <div className="max-h-[420px] overflow-y-auto overscroll-contain">
               {results.length > 0 ? (
                 <>
+                  {/* Markets / index section (e.g. DXY) */}
+                  {results.some(r => r.asset_type === 'index') && (
+                    <div className="px-4 pt-2.5 pb-1">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600">Markets</p>
+                    </div>
+                  )}
+                  {results.filter(r => r.asset_type === 'index').map((r, i) => {
+                    const idx = results.indexOf(r)
+                    return (
+                      <button
+                        key={`i-${r.symbol}-${i}`}
+                        onClick={() => go(r.href)}
+                        onMouseEnter={() => setHighlighted(idx)}
+                        className={`flex w-full items-center gap-3 px-4 py-2.5 transition-colors text-left ${
+                          highlighted === idx ? 'bg-zinc-800' : 'hover:bg-zinc-800/60'
+                        }`}
+                      >
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800 text-lg font-bold text-[#c8a45d]">
+                          $
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold tracking-wide text-[#c8a45d]">{r.symbol}</span>
+                            <span className="rounded-md bg-yellow-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c8a45d]">Index</span>
+                          </div>
+                          <p className="truncate text-xs text-zinc-400 mt-0.5">{r.name}</p>
+                        </div>
+                        <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-colors ${highlighted === idx ? 'text-[#c8a45d]' : 'text-zinc-700'}`} />
+                      </button>
+                    )
+                  })}
+
                   {/* Stock section */}
                   {results.some(r => r.asset_type === 'stock') && (
                     <div className="px-4 pt-2.5 pb-1">
