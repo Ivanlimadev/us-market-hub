@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
-import { isTopStock, isEtf, isInUniverse } from '@/lib/stock-universe'
+import { isTopStock, isEtf } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
@@ -18,14 +18,14 @@ export async function generateMetadata({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
 
-  // Index policy (content-gated): a page is indexable when it's a curated ticker
-  // AND actually has real data on it. TOP_STOCKS are always indexable; any other
-  // ticker in our curated universe is indexable only if it has real data
-  // (hasSeoData). Everything else stays noindex,follow — so obscure/dataless
-  // tickers never become "scaled content". The fetch is deduped with the page
-  // body's fetchStockData via Next's request-scoped fetch cache.
+  // Index policy (content-gated): a page is indexable when it actually has real
+  // data on it. TOP_STOCKS are always indexable; any other ticker is indexable
+  // as long as it has real data (hasSeoData: a live price or a market cap). Only
+  // dead/delisted/dataless tickers stay noindex,follow — so they never become
+  // "scaled" thin content. The fetch is deduped with the page body's
+  // fetchStockData via Next's request-scoped fetch cache.
   let indexable = isTopStock(upper)
-  if (!indexable && isInUniverse(upper)) {
+  if (!indexable) {
     const data = await fetchStockData(upper)
     indexable = data ? hasSeoData(data) : false
   }
