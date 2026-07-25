@@ -6,7 +6,7 @@ import { getPollInterval } from '@/lib/market-hours'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
-const SECTOR_PEERS: Record<string, string[]> = {
+export const SECTOR_PEERS: Record<string, string[]> = {
   Technology: ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'META', 'AVGO', 'AMD', 'CRM'],
   'Consumer Electronics': ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'META', 'AMZN', 'SONY', 'QCOM'],
   'Communication Services': ['GOOGL', 'META', 'NFLX', 'DIS', 'T', 'VZ', 'CMCSA', 'SNAP'],
@@ -21,7 +21,7 @@ const SECTOR_PEERS: Record<string, string[]> = {
   Materials: ['LIN', 'APD', 'ECL', 'NEM', 'FCX', 'NUE', 'ALB', 'PPG'],
 }
 
-const DEFAULT_PEERS = ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'AMZN', 'META', 'TSLA', 'JPM']
+export const DEFAULT_PEERS = ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'AMZN', 'META', 'TSLA', 'JPM']
 
 interface Props {
   symbol: string

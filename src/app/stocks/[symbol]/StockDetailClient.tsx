@@ -7,7 +7,7 @@ import { PriceChart } from '@/components/stock/PriceChart'
 import { PerformanceStrip } from '@/components/stock/PerformanceStrip'
 import { FundamentalsCard } from '@/components/stock/FundamentalsCard'
 import { DividendsSection } from '@/components/stock/DividendsSection'
-import { InvestmentSimulator } from '@/components/stock/InvestmentSimulator'
+import { StockGrowthComparison } from '@/components/stock/StockGrowthComparison'
 import { CompanyInfo } from '@/components/stock/CompanyInfo'
 import { RelatedAssets } from '@/components/stock/RelatedAssets'
 import { MagicNumber } from '@/components/stock/MagicNumber'
@@ -276,8 +276,8 @@ export function StockDetailClient({
 
       {/* 6 — Tools */}
       <Section title="Tools & Simulators">
-        <WidgetBoundary label="Investment Simulator">
-          <InvestmentSimulator data={data} />
+        <WidgetBoundary label="Growth Comparison">
+          <StockGrowthComparison data={data} />
         </WidgetBoundary>
       </Section>
 

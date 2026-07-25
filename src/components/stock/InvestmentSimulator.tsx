@@ -20,12 +20,6 @@ const SIM_PERIODS = [
   { key: '10y', label: '10Y',  desc: '10 years ago',  getDays: () => 3650      },
 ]
 
-// Market benchmarks the stock's return is compared against (price-only).
-const BENCHMARKS = [
-  { symbol: 'SPY', label: 'S&P 500',    badge: 'bg-sky-500/15 text-sky-300'    },
-  { symbol: 'QQQ', label: 'Nasdaq 100', badge: 'bg-violet-500/15 text-violet-300' },
-]
-
 function fmt$(n: number) {
   return n.toLocaleString('en-US', {
     style: 'currency', currency: 'USD',
@@ -46,9 +40,6 @@ export function InvestmentSimulator({ data }: Props) {
   const symbol = data.symbol
 
   const { data: bars, isLoading } = useStockHistory15y(symbol)
-  // Benchmarks — shared React Query cache, so effectively fetched once per session.
-  const { data: spyBars } = useStockHistory15y('SPY')
-  const { data: qqqBars } = useStockHistory15y('QQQ')
 
   const selectedPeriod = SIM_PERIODS.find((p) => p.key === selectedKey) ?? SIM_PERIODS[4]
   const days = selectedPeriod.getDays()
@@ -58,32 +49,12 @@ export function InvestmentSimulator({ data }: Props) {
     return calcSimulatorForDays(bars, data.dividends ?? [], numAmount, days)
   }, [bars, data.dividends, numAmount, days])
 
-  // Price-only benchmark outcomes for the same amount + period.
-  const spyOut = useMemo(
-    () => (spyBars?.length ? calcSimulatorForDays(spyBars, [], numAmount, days)?.withoutDiv ?? null : null),
-    [spyBars, numAmount, days],
-  )
-  const qqqOut = useMemo(
-    () => (qqqBars?.length ? calcSimulatorForDays(qqqBars, [], numAmount, days)?.withoutDiv ?? null : null),
-    [qqqBars, numAmount, days],
-  )
-  const benchOut: Record<string, number | null> = { SPY: spyOut, QQQ: qqqOut }
-
   const pctWithout = result?.withoutDiv != null
     ? ((result.withoutDiv - numAmount) / numAmount) * 100
     : null
   const pctWith = result?.withDiv != null
     ? ((result.withDiv - numAmount) / numAmount) * 100
     : null
-
-  // "Beat the market": stock price-only vs S&P price-only (apples to apples).
-  const spyPct = spyOut != null ? ((spyOut - numAmount) / numAmount) * 100 : null
-  const upper = symbol.toUpperCase()
-  const outperf = pctWithout != null && spyPct != null && upper !== 'SPY'
-    ? pctWithout - spyPct
-    : null
-
-  const benchmarks = BENCHMARKS.filter((b) => b.symbol !== upper)
 
   const noData = !isLoading && result?.withoutDiv == null
 
@@ -194,57 +165,13 @@ export function InvestmentSimulator({ data }: Props) {
                 )}
               </div>
             </div>
-
-            {/* Compared to the market */}
-            {benchmarks.length > 0 && (
-              <div className="mt-4 border-t border-zinc-800 pt-4">
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
-                  Compared to the market
-                </p>
-                <div className="grid grid-cols-2 gap-3">
-                  {benchmarks.map((b) => {
-                    const val = benchOut[b.symbol]
-                    const pct = val != null ? ((val - numAmount) / numAmount) * 100 : null
-                    return (
-                      <div key={b.symbol} className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-4">
-                        <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${b.badge}`}>
-                          {b.label}
-                        </span>
-                        <p className="mt-2 font-mono text-lg font-bold text-white leading-tight">
-                          {val != null ? fmt$(val) : '—'}
-                        </p>
-                        {pct != null && (
-                          <p className={`mt-1 text-xs font-semibold tabular-nums ${
-                            pct >= 0 ? 'text-emerald-400' : 'text-red-400'
-                          }`}>
-                            {fmtPct(pct)}
-                          </p>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {outperf != null && (
-                  <p className="mt-3 text-xs text-zinc-400">
-                    <span className="font-semibold text-white">{symbol}</span>{' '}
-                    {outperf >= 0 ? 'outperformed' : 'lagged'} the S&amp;P 500 by{' '}
-                    <span className={`font-semibold ${outperf >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {Math.abs(outperf).toFixed(2)}%
-                    </span>{' '}
-                    over this period.
-                  </p>
-                )}
-              </div>
-            )}
           </>
         )}
       </div>
 
       <div className="border-t border-zinc-800 px-5 py-2.5">
         <p className="text-[11px] text-zinc-600">
-          * Price-only for benchmarks; dividend reinvestment (stock) calculated at ex-date price.
-          For informational purposes only.
+          * Dividend reinvestment calculated at ex-date price. For informational purposes only.
         </p>
       </div>
     </div>
