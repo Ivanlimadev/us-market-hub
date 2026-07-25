@@ -63,13 +63,11 @@ export async function GET(
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
-  }
-
   const supabase = serviceClient()
 
-  // Check cache
+  // Check cache FIRST — a cached insight is served regardless of whether the live
+  // AI key is configured, so the website shows the same insights the app already
+  // generated (and the card stays up even if the key is ever unset).
   const { data: cached, error: readErr } = await supabase
     .from('ai_insights')
     .select('insight, updated_at')
@@ -84,9 +82,16 @@ export async function GET(
   if (cached) {
     const age = Date.now() - new Date(cached.updated_at).getTime()
     if (age < CACHE_HOURS * 60 * 60 * 1000) {
-      const structured = parseInsight(cached.insight)
-      return buildResponse(cached.insight, structured, true)
+      return buildResponse(cached.insight, parseInsight(cached.insight), true)
     }
+  }
+
+  // Generating a NEW insight needs the AI key. Without it, fall back to any cached
+  // insight we have (even if stale) so the section still renders; only 503 when
+  // there is nothing cached at all.
+  if (!process.env.ANTHROPIC_API_KEY) {
+    if (cached) return buildResponse(cached.insight, parseInsight(cached.insight), true)
+    return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 
   // Fetch stock data — use internal URL to avoid SSL loop on VPS
