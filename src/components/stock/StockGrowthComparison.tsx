@@ -21,11 +21,11 @@ import type { StockDetailData } from '@/lib/hooks/useStockDetail'
  */
 
 const PERIODS = [
-  { key: '1y',  label: '1Y',  days: 365,  desc: '1 year ago'   },
-  { key: '2y',  label: '2Y',  days: 730,  desc: '2 years ago'  },
-  { key: '3y',  label: '3Y',  days: 1095, desc: '3 years ago'  },
-  { key: '5y',  label: '5Y',  days: 1825, desc: '5 years ago'  },
-  { key: '10y', label: '10Y', days: 3650, desc: '10 years ago' },
+  { key: '1y',  label: '1Y',  days: 365,  desc: '1 year'   },
+  { key: '2y',  label: '2Y',  days: 730,  desc: '2 years'  },
+  { key: '3y',  label: '3Y',  days: 1095, desc: '3 years'  },
+  { key: '5y',  label: '5Y',  days: 1825, desc: '5 years'  },
+  { key: '10y', label: '10Y', days: 3650, desc: '10 years' },
 ]
 
 const PEER_COLORS = ['#ec4899', '#f97316', '#06b6d4', '#84cc16']
@@ -200,7 +200,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
     if (!containerRef.current) return
     const chart = createChart(containerRef.current, {
       layout: { background: { color: 'transparent' }, textColor: '#71717a', attributionLogo: false },
-      grid: { vertLines: { color: '#27272a' }, horzLines: { color: '#27272a' } },
+      grid: { vertLines: { visible: false }, horzLines: { color: '#1f1f23' } },
       crosshair: { mode: 1 },
       rightPriceScale: { borderColor: '#3f3f46', mode: PriceScaleMode.Logarithmic },
       timeScale: { borderColor: '#3f3f46', timeVisible: false, secondsVisible: false },
@@ -280,8 +280,8 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
       </div>
 
       {/* Chart */}
-      <div className="px-3 pt-3">
-        <div className="relative h-72">
+      <div className="px-3 pt-2">
+        <div className="relative h-56">
           <div ref={containerRef} className="h-full w-full" />
           {tip && (
             <div
@@ -305,39 +305,43 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
       </div>
 
       {/* Controls + grouped, clickable result cards */}
-      <div className="border-t border-zinc-800 px-5 py-4">
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
+      <div className="border-t border-zinc-800 px-5 pb-1 pt-3">
+        <div className="mb-3 flex flex-col gap-2 text-sm text-zinc-400">
           <span>If you had invested</span>
-          <span className="inline-flex h-9 items-center overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800 focus-within:border-emerald-500">
-            <span className="flex h-full items-center border-r border-zinc-700 px-2 text-xs font-medium text-zinc-400">$</span>
-            <input
-              type="number" min="1" value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="h-full w-24 bg-transparent px-2 text-sm font-mono font-semibold text-white focus:outline-none"
-            />
-          </span>
-          <select
-            value={periodKey}
-            onChange={(e) => setPeriodKey(e.target.value)}
-            className="h-9 rounded-lg border border-zinc-700 bg-zinc-800 px-2 text-sm font-semibold text-zinc-200 focus:border-emerald-500 focus:outline-none"
-          >
-            {PERIODS.map((p) => (
-              <option key={p.key} value={p.key}>{p.desc}</option>
-            ))}
-          </select>
-          {/* Reinvest dividends — box styled like the period select: green when on, gray when off */}
-          <button
-            type="button"
-            role="switch"
-            aria-checked={reinvest}
-            onClick={() => setReinvest((r) => !r)}
-            title={reinvest ? 'Dividends reinvested (total return) — click for price only' : 'Price change only — click to reinvest dividends'}
-            className={`h-9 rounded-lg border px-3 text-sm font-semibold transition-colors ${reinvest ? '' : 'border-zinc-700 bg-zinc-800 text-zinc-400'}`}
-            style={reinvest ? { borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.12)', color: '#10b981' } : undefined}
-          >
-            Reinvest dividends
-          </button>
-          <span>, you would have:</span>
+          {/* The three controls forced onto one row: the $ input flexes to fill the
+              remaining width, the period select and reinvest toggle keep their size. */}
+          <div className="flex items-center gap-1.5">
+            <span className="inline-flex h-9 min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800 focus-within:border-emerald-500">
+              <span className="flex h-full items-center border-r border-zinc-700 px-1.5 text-xs font-medium text-zinc-400">$</span>
+              <input
+                type="number" min="1" value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="h-full w-full min-w-0 bg-transparent px-1.5 text-sm font-mono font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+            </span>
+            <select
+              value={periodKey}
+              onChange={(e) => setPeriodKey(e.target.value)}
+              className="h-9 shrink-0 rounded-lg border border-zinc-700 bg-zinc-800 px-1.5 text-sm font-semibold text-zinc-200 focus:border-emerald-500 focus:outline-none"
+            >
+              {PERIODS.map((p) => (
+                <option key={p.key} value={p.key}>{p.desc}</option>
+              ))}
+            </select>
+            {/* Reinvest dividends — green when on, gray when off. Compact so all three fit one line. */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={reinvest}
+              onClick={() => setReinvest((r) => !r)}
+              title={reinvest ? 'Dividends reinvested (total return) — click for price only' : 'Price change only — click to reinvest dividends'}
+              className={`h-9 shrink-0 whitespace-nowrap rounded-lg border px-2 text-xs font-semibold transition-colors ${reinvest ? '' : 'border-zinc-700 bg-zinc-800 text-zinc-400'}`}
+              style={reinvest ? { borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.12)', color: '#10b981' } : undefined}
+            >
+              Reinvest dividends
+            </button>
+          </div>
+          <span>you would have:</span>
         </div>
 
         {/* Investidor10-style: one flat 2-column grid of comparison assets — 5 per
@@ -380,15 +384,6 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
             </span>{' '}over this period.
           </p>
         )}
-      </div>
-
-      <div className="border-t border-zinc-800 px-5 py-2.5">
-        <p className="text-center text-[11px] text-zinc-600">
-          {reinvest
-            ? '* Total return with dividends reinvested (adjusted close).'
-            : '* Price change only, dividends excluded (raw close).'}{' '}
-          Chart shows % growth from the start of the period. For informational purposes only.
-        </p>
       </div>
     </div>
   )
