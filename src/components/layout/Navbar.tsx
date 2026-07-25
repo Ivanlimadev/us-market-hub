@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { href: '/calendar', label: 'Calendar' },
   { href: '/compare', label: 'Compare' },
   { href: '/crypto', label: 'Crypto' },
+  { href: '/dxy', label: 'Dollar' },
   { href: '/finance', label: 'Finance' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/rankings', label: 'Rankings' },

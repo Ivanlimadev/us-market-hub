@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import {
   Home, PiggyBank, Wallet, Newspaper, Menu, X, ChevronRight,
   Bitcoin, Star, Filter, BarChart3, LayoutGrid, GitCompareArrows, Calculator,
-  TrendingUp, Settings,
+  TrendingUp, Settings, DollarSign,
 } from 'lucide-react'
 
 /**
@@ -28,6 +28,7 @@ const MENU_SECTIONS = [
     title: 'Markets',
     items: [
       { href: '/crypto', label: 'Crypto', icon: Bitcoin },
+      { href: '/dxy', label: 'US Dollar Index', icon: DollarSign },
       { href: '/stocks', label: 'Stocks', icon: TrendingUp },
     ],
   },
