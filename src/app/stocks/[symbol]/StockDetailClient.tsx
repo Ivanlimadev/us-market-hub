@@ -147,20 +147,13 @@ export function StockDetailClient({
               <div className="flex min-w-0 items-center gap-2">
                 {/* Inline colors so the title stays visible even if the dev CSS
                     chunk is stale in the browser cache (neutral-* utilities). */}
-                <h1 className="truncate text-xl font-bold" style={{ color: '#fafafa' }}>
-                  {symbol}
+                {/* Ticker never truncates (shrink-0); only the company name does. */}
+                <h1 className="flex min-w-0 items-baseline text-xl font-bold" style={{ color: '#fafafa' }}>
+                  <span className="shrink-0">{symbol}</span>
                   {data.name && data.name !== symbol && (
-                    <span className="ml-2 text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
+                    <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
                   )}
                 </h1>
-                {data.exchange && (
-                  <span
-                    className="shrink-0 rounded-md px-2 py-0.5 text-xs"
-                    style={{ backgroundColor: '#404040', color: '#d4d4d4' }}
-                  >
-                    {data.exchange}
-                  </span>
-                )}
               </div>
               {(data.info?.sector || data.info?.industry) && (
                 <p className="truncate text-xs" style={{ color: '#a3a3a3' }}>
@@ -260,17 +253,13 @@ export function StockDetailClient({
 
       {/* 5 — Dividends & Income */}
       <Section id="dividends" title="Dividends & Income">
-        <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
           <WidgetBoundary label="Dividends">
             <DividendsSection data={data} />
           </WidgetBoundary>
-          <div className="flex flex-col gap-5">
-            <WidgetBoundary label="Magic Number">
-              <MagicNumber data={data} />
-            </WidgetBoundary>
-            {/* Fill the rest of the right column with a dividend-alert app CTA */}
-            <AppDownloadCard variant="dividends" />
-          </div>
+          <WidgetBoundary label="Magic Number">
+            <MagicNumber data={data} />
+          </WidgetBoundary>
         </div>
       </Section>
 

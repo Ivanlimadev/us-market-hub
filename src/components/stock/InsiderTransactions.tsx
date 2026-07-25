@@ -34,7 +34,7 @@ function typeClass(t: InsiderTx['type']): string {
 
 export function InsiderTransactions({ symbol }: { symbol: string }) {
   const [expanded, setExpanded] = useState(false)
-  const VISIBLE = 7
+  const VISIBLE = 3
 
   const { data, isLoading } = useQuery<InsiderData>({
     queryKey: ['insiders', symbol],
