@@ -1,13 +1,18 @@
 import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import { getYFChart } from '@/lib/yahoo-finance'
 import { PriceChart } from '@/components/stock/PriceChart'
+import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
+import { AlertButton } from '@/components/watchlist/AlertButton'
+import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 // ISR: render on first request, refresh the live hero value every 5 minutes.
 export const revalidate = 300
 
 const SYMBOL = 'DX-Y.NYB' // ICE US Dollar Index on Yahoo Finance
+const NAME = 'US Dollar Index'
 const BASE = 'https://stockmarketroi.com'
 
 // ICE US Dollar Index basket (fixed weights since 1999, when the euro replaced
@@ -21,6 +26,16 @@ const BASKET = [
   { code: 'SEK', name: 'Swedish krona',   weight: 4.2  },
   { code: 'CHF', name: 'Swiss franc',     weight: 3.6  },
 ]
+
+/** A titled page section — same idiom as the stock/crypto asset pages. */
+function Section({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
+  return (
+    <section id={id} className={`space-y-4${id ? ' scroll-mt-24' : ''}`}>
+      <h2 className="border-b border-zinc-800 pb-2 text-lg font-bold text-white">{title}</h2>
+      {children}
+    </section>
+  )
+}
 
 async function getDxy(): Promise<{ value: number; prevClose: number } | null> {
   try {
@@ -130,67 +145,81 @@ export default async function DxyPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-screen-lg px-4 py-6 space-y-6">
-        {/* Hero — live value */}
-        <header className="rounded-2xl bg-neutral-800 px-5 py-5">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#c8a45d]">
-                Live · ICE US Dollar Index
-              </p>
-              <h1 className="mt-1 text-2xl font-bold text-white">US Dollar Index (DXY)</h1>
-              <p className="mt-1 text-sm text-neutral-400">
-                The US dollar measured against a basket of six major currencies.
-              </p>
+      <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
+        {/* Asset header band — same idiom as the stock/crypto detail pages */}
+        <div className="rounded-2xl bg-neutral-800 px-4 py-4 sm:px-5">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3 md:flex-none md:gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-neutral-900">
+                <span className="text-2xl font-bold text-[#c8a45d]">$</span>
+              </div>
+              <div className="min-w-0">
+                <h1 className="flex items-baseline text-xl font-bold" style={{ color: '#fafafa' }}>
+                  <span className="shrink-0">DXY</span>
+                  <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>
+                    &mdash; {NAME}
+                  </span>
+                </h1>
+                <p className="truncate text-xs" style={{ color: '#a3a3a3' }}>
+                  ICE U.S. Dollar Index &middot; Live
+                </p>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="font-mono text-4xl font-bold text-white">{valueStr}</div>
-              {changePct != null && (
-                <div className={`mt-1 text-sm font-semibold ${up ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {up ? '▲' : '▼'} {changeStr} today
-                </div>
-              )}
+
+            <div className="ml-auto flex items-center gap-3">
+              <div className="text-right">
+                <div className="font-mono text-2xl font-bold" style={{ color: '#fafafa' }}>{valueStr}</div>
+                {changePct != null && (
+                  <div className={`text-xs font-semibold ${up ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {up ? '▲' : '▼'} {changeStr} today
+                  </div>
+                )}
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <WatchlistButton symbol={SYMBOL} name={NAME} asset_type="stock" />
+                <AlertButton symbol={SYMBOL} name={NAME} asset_type="stock" currentPrice={value ?? undefined} />
+              </div>
             </div>
           </div>
-        </header>
+        </div>
 
-        {/* Interactive chart (reuses the stock PriceChart on the DXY symbol) */}
-        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          <h2 className="mb-3 text-lg font-bold text-white">US Dollar Index chart</h2>
-          <PriceChart symbol={SYMBOL} currentPrice={value ?? 0} prevClose={prevClose} />
-        </section>
+        {/* Chart */}
+        <Section title="Chart">
+          <WidgetBoundary label="Price Chart">
+            <PriceChart symbol={SYMBOL} currentPrice={value ?? 0} prevClose={prevClose} />
+          </WidgetBoundary>
+        </Section>
 
         {/* Currency basket */}
-        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <h2 className="text-lg font-bold text-white">What&rsquo;s in the DXY basket?</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            The index tracks the dollar against these six currencies, at fixed weights.
-          </p>
-          <div className="mt-4 divide-y divide-zinc-800/60">
-            {BASKET.map((c) => (
-              <div key={c.code} className="flex items-center gap-3 py-2.5">
-                <span className="w-12 shrink-0 rounded-md bg-zinc-800 px-2 py-1 text-center text-xs font-bold text-zinc-200">
-                  {c.code}
-                </span>
-                <span className="min-w-0 flex-1 truncate text-sm text-zinc-300">{c.name}</span>
-                <span className="w-16 shrink-0 text-right font-mono text-sm font-semibold text-white">
-                  {c.weight.toFixed(1)}%
-                </span>
-                <div className="hidden w-40 shrink-0 sm:block">
-                  <div className="h-2 rounded-full bg-zinc-800">
-                    <div className="h-2 rounded-full bg-emerald-500/70" style={{ width: `${c.weight}%` }} />
+        <Section title="Currency Basket">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+            <p className="text-sm text-zinc-400">
+              The index tracks the dollar against these six currencies, at fixed weights.
+            </p>
+            <div className="mt-4 divide-y divide-zinc-800/60">
+              {BASKET.map((c) => (
+                <div key={c.code} className="flex items-center gap-3 py-2.5">
+                  <span className="w-12 shrink-0 rounded-md bg-zinc-800 px-2 py-1 text-center text-xs font-bold text-zinc-200">
+                    {c.code}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-zinc-300">{c.name}</span>
+                  <span className="w-16 shrink-0 text-right font-mono text-sm font-semibold text-white">
+                    {c.weight.toFixed(1)}%
+                  </span>
+                  <div className="hidden w-40 shrink-0 sm:block">
+                    <div className="h-2 rounded-full bg-zinc-800">
+                      <div className="h-2 rounded-full bg-emerald-500/70" style={{ width: `${c.weight}%` }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </section>
+        </Section>
 
         {/* SEO explainer */}
-        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <h2 className="text-lg font-bold text-white">About the US Dollar Index</h2>
-
-          <div className="mt-4 space-y-5 text-sm leading-relaxed text-zinc-400">
+        <Section title="About the US Dollar Index">
+          <div className="space-y-5 rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-sm leading-relaxed text-zinc-400">
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">What is the US Dollar Index?</h3>
               <p>
@@ -200,7 +229,6 @@ export default async function DxyPage() {
                 means the dollar has gained versus the basket since that baseline, and below 100 means it has weakened.
               </p>
             </div>
-
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">What moves the US Dollar Index?</h3>
               <p>
@@ -211,7 +239,6 @@ export default async function DxyPage() {
                 — moves the index almost as much as US data does.
               </p>
             </div>
-
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">Is a strong dollar good or bad?</h3>
               <p>
@@ -221,7 +248,6 @@ export default async function DxyPage() {
                 depends on why it&rsquo;s moving and which side of the trade you&rsquo;re on.
               </p>
             </div>
-
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">DXY vs EUR/USD</h3>
               <p>
@@ -231,34 +257,34 @@ export default async function DxyPage() {
               </p>
             </div>
           </div>
-        </section>
+        </Section>
 
         {/* FAQ — native <details> so it&rsquo;s crawlable and works without JS */}
-        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <h2 className="mb-4 text-lg font-bold text-white">US Dollar Index — Frequently Asked Questions</h2>
-          <div className="divide-y divide-zinc-800/60">
-            {faqs.map((f) => (
-              <details key={f.q} className="group py-3">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-zinc-200 marker:hidden">
-                  {f.q}
-                  <ChevronDown className="h-4 w-4 shrink-0 text-zinc-500 transition-transform group-open:rotate-180" />
-                </summary>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{f.a}</p>
-              </details>
-            ))}
+        <Section title="Frequently Asked Questions">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+            <div className="divide-y divide-zinc-800/60">
+              {faqs.map((f) => (
+                <details key={f.q} className="group py-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-zinc-200 marker:hidden">
+                    {f.q}
+                    <ChevronDown className="h-4 w-4 shrink-0 text-zinc-500 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">{f.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
-        </section>
+        </Section>
 
         {/* Internal links */}
-        <section className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-          <h2 className="text-sm font-semibold text-zinc-300">Explore more</h2>
-          <div className="mt-3 flex flex-wrap gap-2 text-sm">
+        <Section title="Explore more">
+          <div className="flex flex-wrap gap-2 text-sm">
             {[
-              { href: '/stocks',        label: 'US Stocks' },
-              { href: '/screener',      label: 'Stock Screener' },
-              { href: '/crypto',        label: 'Crypto' },
-              { href: '/heatmap',       label: 'Market Heatmap' },
-              { href: '/calculators',   label: 'Calculators' },
+              { href: '/stocks',      label: 'US Stocks' },
+              { href: '/screener',    label: 'Stock Screener' },
+              { href: '/crypto',      label: 'Crypto' },
+              { href: '/heatmap',     label: 'Market Heatmap' },
+              { href: '/calculators', label: 'Calculators' },
             ].map((l) => (
               <Link
                 key={l.href}
@@ -269,7 +295,7 @@ export default async function DxyPage() {
               </Link>
             ))}
           </div>
-        </section>
+        </Section>
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
           Data from ICE via Yahoo Finance, updated in real time during market hours. For informational purposes only —
