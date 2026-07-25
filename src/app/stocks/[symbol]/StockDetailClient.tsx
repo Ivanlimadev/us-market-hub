@@ -16,7 +16,6 @@ import { FairValueCard } from '@/components/stock/FairValueCard'
 import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
-import { StockQuickNav } from '@/components/stock/StockQuickNav'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
@@ -171,11 +170,8 @@ export function StockDetailClient({
             </div>
           </div>
 
-          {/* Quick-nav — full-width scroll row on mobile; centered in the middle on desktop */}
-          <StockQuickNav className="order-last w-full justify-start md:order-none md:w-auto md:min-w-0 md:flex-1 md:justify-center" />
-
           {/* Actions */}
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="ml-auto flex shrink-0 items-center gap-1">
             <WatchlistButton
               symbol={symbol}
               name={data.name}
@@ -264,14 +260,18 @@ export function StockDetailClient({
 
       {/* 5 — Dividends & Income */}
       <Section id="dividends" title="Dividends & Income">
-        <Pair>
+        <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
           <WidgetBoundary label="Dividends">
             <DividendsSection data={data} />
           </WidgetBoundary>
-          <WidgetBoundary label="Magic Number">
-            <MagicNumber data={data} />
-          </WidgetBoundary>
-        </Pair>
+          <div className="flex flex-col gap-5">
+            <WidgetBoundary label="Magic Number">
+              <MagicNumber data={data} />
+            </WidgetBoundary>
+            {/* Fill the rest of the right column with a dividend-alert app CTA */}
+            <AppDownloadCard variant="dividends" />
+          </div>
+        </div>
       </Section>
 
       {/* 6 — Tools */}
