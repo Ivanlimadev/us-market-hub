@@ -23,7 +23,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  // One stock page fires ~12 history calls at once (stock + peers + indexes +
+  // commodities in the growth-comparison card), so 30/min tripped on the second
+  // page view within a minute. 60/min keeps a per-client burst comfortable while
+  // still bounding abuse. (Per-client is enforced by getIp → cf-connecting-ip.)
+  if (!rateLimit(getIp(req), 60, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

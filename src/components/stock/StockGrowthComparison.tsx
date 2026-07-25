@@ -63,12 +63,28 @@ function toBars(json: { bars?: Array<{ date: string; adj_close?: number | null; 
     .filter((b) => b.close > 0)
 }
 
+/**
+ * Fetch 10y bars, THROWING on a bad/empty response so React Query retries it.
+ * The stock page fires ~a dozen history calls at once; the upstream (and our
+ * 30 req/min limiter) throttles bursts and returns 429/502 or an empty list for
+ * a few symbols. A plain fetch().json() swallows that, so React Query never
+ * retries and those cards stick on "—". Throwing lets the `retry: 2` backoff
+ * refill them once the burst clears.
+ */
+async function fetchBars(symbol: string): Promise<Bar[]> {
+  const res = await fetch(`/api/stocks/${symbol}/history?period=10y`)
+  if (!res.ok) throw new Error(`history ${symbol}: HTTP ${res.status}`)
+  const bars = toBars(await res.json())
+  if (bars.length === 0) throw new Error(`history ${symbol}: empty`)
+  return bars
+}
+
 /** 10y daily history keeping BOTH raw close and adjusted close (for the reinvest switch). */
 function useHist(symbol: string) {
   return useQuery<Bar[]>({
     queryKey: ['gc-hist', symbol],
     staleTime: 5 * 60_000,
-    queryFn: async () => toBars(await (await fetch(`/api/stocks/${symbol}/history?period=10y`)).json()),
+    queryFn: () => fetchBars(symbol),
   })
 }
 
@@ -85,27 +101,6 @@ function normalize(bars: Bar[] | undefined, days: number, reinvest: boolean): Po
     time: Math.floor(new Date(b.date).getTime() / 1000) as UTCTimestamp,
     value: (px(b) / base) * 100,
   }))
-}
-
-/** Company logo for stocks; a colored code badge for indexes/commodities. */
-function AssetLogo({ ticker, color, useLogo }: { ticker: string; color: string; useLogo: boolean }) {
-  const [err, setErr] = useState(false)
-  if (!useLogo || err) {
-    return (
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white" style={{ backgroundColor: color }}>
-        {ticker.slice(0, 4)}
-      </div>
-    )
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`https://assets.parqet.com/logos/symbol/${ticker}?format=png`}
-      alt={ticker}
-      className="h-9 w-9 shrink-0 rounded-md bg-zinc-950 object-contain"
-      onError={() => setErr(true)}
-    />
-  )
 }
 
 export function StockGrowthComparison({ data }: { data: StockDetailData }) {
@@ -139,10 +134,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
     enabled: peers.length > 0,
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<Record<string, Bar[]>> => {
-      const entries = await Promise.all(peers.map(async (p) => {
-        const res = await fetch(`/api/stocks/${p}/history?period=10y`)
-        return [p, toBars(await res.json())] as const
-      }))
+      const entries = await Promise.all(peers.map(async (p) => [p, await fetchBars(p)] as const))
       return Object.fromEntries(entries)
     },
   })
@@ -183,10 +175,9 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
     return { ...a, pct, value: idx != null ? numAmount * (idx / 100) : null }
   }), [assets, normalized, numAmount])
 
-  const groups = useMemo(() => (['Similar Stocks', 'Indexes', 'Commodities'] as const).map((title) => ({
-    title,
-    items: rows.filter((r) => r.group === title),
-  })), [rows])
+  // Flat list of exactly 10 comparison assets (page stock first, then peers /
+  // indexes / commodities) — rendered as one 2-column grid, no category headers.
+  const compareRows = useMemo(() => rows.slice(0, 10), [rows])
 
   const stockRow = rows.find((r) => r.key === symbol)
   const spyPct = rows.find((r) => r.key === 'SPY')?.pct ?? null
@@ -349,37 +340,35 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
           <span>, you would have:</span>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-3 gap-y-4">
-          {groups.map((g) => g.items.length > 0 && (
-            <div key={g.title}>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">{g.title}</p>
-              <div className="space-y-2">
-                {g.items.map((r) => {
-                  const on = isOn(r.key)
-                  return (
-                    <button
-                      key={r.key}
-                      type="button"
-                      onClick={() => toggle(r.key)}
-                      disabled={r.fixed}
-                      title={r.fixed ? 'Always shown' : on ? 'Hide line' : 'Show on chart'}
-                      className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-all ${r.fixed ? 'cursor-default' : 'hover:brightness-110'}`}
-                      style={on ? { borderColor: r.color, backgroundColor: `${r.color}14` } : { borderColor: '#27272a', backgroundColor: 'rgba(39,39,42,0.4)' }}
-                    >
-                      <AssetLogo ticker={r.key} color={r.color} useLogo={r.useLogo} />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-semibold" style={{ color: r.color }}>{r.label}</p>
-                        <p className="font-mono text-sm font-bold leading-tight text-white">{r.value != null ? fmt$(r.value) : '—'}</p>
-                        {r.pct != null && (
-                          <p className={`text-[11px] font-semibold tabular-nums ${r.pct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtPct(r.pct)}</p>
-                        )}
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          ))}
+        {/* Investidor10-style: one flat 2-column grid of comparison assets — 5 per
+            column. Colored ticker pill + value below, hairline between rows. Click a
+            card to toggle its line on the chart (the page's stock is fixed on). */}
+        <div className="grid grid-cols-2 gap-x-2 border-t border-zinc-800/60">
+          {compareRows.map((r) => {
+            const on = isOn(r.key)
+            return (
+              <button
+                key={r.key}
+                type="button"
+                onClick={() => toggle(r.key)}
+                disabled={r.fixed}
+                title={r.fixed ? 'Always shown' : on ? 'Hide line' : `Show ${r.label} on chart`}
+                className={`flex flex-col items-center gap-1.5 border-b border-zinc-800/60 py-3 transition-all ${r.fixed ? 'cursor-default' : 'hover:brightness-105'}`}
+                style={on && !r.fixed ? { boxShadow: `inset 0 0 0 2px ${r.color}` } : undefined}
+              >
+                {/* pill dimmed only when its line is OFF; value always fully readable */}
+                <span
+                  className="rounded-md px-3 py-1 text-xs font-bold transition-opacity"
+                  style={{ backgroundColor: r.color, color: '#fff', opacity: on ? 1 : 0.55 }}
+                >
+                  {r.key}
+                </span>
+                <span className="font-mono text-sm font-bold text-white">
+                  {r.value != null ? fmt$(r.value) : '—'}
+                </span>
+              </button>
+            )
+          })}
         </div>
 
         {outperf != null && (
