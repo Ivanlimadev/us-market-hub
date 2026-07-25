@@ -20,6 +20,7 @@ const STATIC_ROUTES = [
   { url: '/screener',                    priority: 0.8,  changeFrequency: 'weekly'  },
   { url: '/heatmap',                     priority: 0.7,  changeFrequency: 'daily'   },
   { url: '/rankings',                    priority: 0.7,  changeFrequency: 'daily'   },
+  { url: '/dxy',                         priority: 0.75, changeFrequency: 'daily'   },
   { url: '/compare',                     priority: 0.6,  changeFrequency: 'weekly'  },
   { url: '/calendar',                    priority: 0.6,  changeFrequency: 'daily'   },
   // Editorial ranking pages
