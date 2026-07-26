@@ -19,7 +19,7 @@ interface Post {
   published_at: string
 }
 
-const CATEGORIES = ['All', 'Markets', 'Stocks', 'Investing', 'Finance', 'Economics', 'Crypto', 'Technology']
+const CATEGORIES = ['All', 'Markets', 'Stocks', 'Investing', 'Finance', 'Banks & Cards', 'Economics', 'Crypto', 'Technology']
 
 function supabase() {
   return createServerClient(
@@ -61,7 +61,7 @@ export default async function BlogPage({
         {CATEGORIES.map((c) => (
           <Link
             key={c}
-            href={c === 'All' ? '/blog' : `/blog?category=${c}`}
+            href={c === 'All' ? '/blog' : `/blog?category=${encodeURIComponent(c)}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               active === c
                 ? 'bg-emerald-500 text-white'
