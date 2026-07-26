@@ -123,6 +123,18 @@ function markdownToHtml(md: string): string {
     .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-zinc-100 mt-10 mb-4">$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Inline images: ![alt](url). Rendered only from an allowlist of trusted
+    // hosts (the CSP img-src also restricts this) so AI-generated/external blog
+    // content can't embed arbitrary or hostile images. Runs before the link
+    // rules because ![]() contains []().
+    .replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, (_, alt, src) => {
+      const safeSrc = src.replace(/"/g, '%22')
+      const host = safeSrc.replace(/^https?:\/\//, '').split(/[/?#]/)[0].toLowerCase()
+      const ALLOWED = ['www.google.com', 'assets.parqet.com', 'images.pexels.com', 's.yimg.com', 'assets.coingecko.com', 'coin-images.coingecko.com']
+      if (!ALLOWED.includes(host)) return ''
+      const safeAlt = alt.replace(/["<>]/g, '')
+      return `<img src="${safeSrc}" alt="${safeAlt}" loading="lazy" class="inline-block h-12 w-12 rounded-xl object-contain align-middle" />`
+    })
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, text, href) => {
       // URL-encode any `"` so a crafted link can't break out of the href
       // attribute and inject an event handler (stored XSS).
