@@ -11,6 +11,7 @@ import { StockGrowthComparison } from '@/components/stock/StockGrowthComparison'
 import { CompanyInfo } from '@/components/stock/CompanyInfo'
 import { RelatedAssets } from '@/components/stock/RelatedAssets'
 import { MagicNumber } from '@/components/stock/MagicNumber'
+import { DividendCalculator } from '@/components/stock/DividendCalculator'
 import { FinancialCharts } from '@/components/stock/FinancialCharts'
 import { FairValueCard } from '@/components/stock/FairValueCard'
 import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
@@ -251,9 +252,14 @@ export function StockDetailClient({
           <WidgetBoundary label="Dividends">
             <DividendsSection data={data} />
           </WidgetBoundary>
-          <WidgetBoundary label="Magic Number">
-            <MagicNumber data={data} />
-          </WidgetBoundary>
+          <div className="flex flex-col gap-5">
+            <WidgetBoundary label="Magic Number">
+              <MagicNumber data={data} />
+            </WidgetBoundary>
+            <WidgetBoundary label="Dividend Calculator">
+              <DividendCalculator data={data} />
+            </WidgetBoundary>
+          </div>
         </div>
       </Section>
 
