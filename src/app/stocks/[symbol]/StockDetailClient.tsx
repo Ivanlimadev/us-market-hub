@@ -188,8 +188,6 @@ export function StockDetailClient({
       {/* Key-stats card strip */}
       <KeyStatsStrip symbol={symbol} initialData={data} />
 
-      {seoIntro}
-
       {/* 1 — Price & Performance */}
       <Section title="Price & Performance">
         <WidgetBoundary label="Price Chart">
@@ -285,6 +283,10 @@ export function StockDetailClient({
       </Section>
 
       <AppDownloadCard variant="hero" />
+
+      {/* SEO intro — moved to the end so the mobile page opens on the chart/data,
+          not a wall of text (kept indexable, just lower on the page). */}
+      {seoIntro}
 
       {seoFaq}
 
