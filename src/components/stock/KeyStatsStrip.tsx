@@ -31,14 +31,16 @@ function StatCard({
         </span>
         <span className="group/tip relative flex">
           <span
+            tabIndex={0}
+            role="button"
             aria-label={help}
-            className="flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-full border border-neutral-500 text-[9px] leading-none text-neutral-400"
+            className="flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-full border border-neutral-500 text-[9px] leading-none text-neutral-400 focus:outline-none focus:border-neutral-300"
           >
             ?
           </span>
           <span
             role="tooltip"
-            className="pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 hidden w-44 -translate-x-1/2 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-center text-[11px] font-normal normal-case leading-snug tracking-normal text-neutral-200 shadow-xl group-hover/tip:block"
+            className="pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 hidden w-44 -translate-x-1/2 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-center text-[11px] font-normal normal-case leading-snug tracking-normal text-neutral-200 shadow-xl group-hover/tip:block group-focus-within/tip:block"
           >
             {help}
           </span>
