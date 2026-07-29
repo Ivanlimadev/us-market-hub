@@ -7,6 +7,28 @@ import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 const MS_KEY = process.env.MARKETSTACK_API_KEY!
 const BASE   = 'https://api.marketstack.com/v1'
 
+// ── Last-good in-memory cache ───────────────────────────────────────────────
+// The VPS runs a long-lived Node process (PM2 `next start`), so module memory
+// survives across requests and ISR revalidations. When the upstreams (Yahoo +
+// Marketstack) momentarily fail, we return the last usable snapshot instead of
+// an empty one. This keeps stock pages from blanking out — an empty render sets
+// `hasSeoData=false` → noindex → the page drops out of Google. Bridging the gap
+// with stale-but-real data keeps the page indexable until the next good fetch.
+type Cached = { data: StockDetailData; ts: number }
+const lastGood = new Map<string, Cached>()
+const LAST_GOOD_TTL_MS = 24 * 60 * 60 * 1000 // 24h — long enough to ride out a
+// throttle window, short enough that a truly delisted ticker eventually clears.
+
+// Matches hasSeoData(): a snapshot is "usable" if it has a price or a market cap.
+function isUsable(d: StockDetailData): boolean {
+  return d.currentPrice > 0 || (d.info?.marketCap ?? 0) > 0
+}
+
+function freshCached(sym: string): StockDetailData | null {
+  const c = lastGood.get(sym)
+  return c && Date.now() - c.ts < LAST_GOOD_TTL_MS ? c.data : null
+}
+
 async function msGet(path: string, params: Record<string, string | number> = {}) {
   const url = new URL(`${BASE}${path}`)
   url.searchParams.set('access_key', MS_KEY)
@@ -54,7 +76,7 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
       (prevEod as { close?: number } | null)?.close
     )
 
-    return {
+    const result: StockDetailData = {
       symbol: sym,
       name: eodData?.name ?? yfPrice?.longName ?? sym,
       currentPrice,
@@ -76,7 +98,15 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
       info: yfInfo.status === 'fulfilled' ? yfInfo.value : null,
       exchange: eodData?.stock_exchange?.acronym ?? yfPrice?.exchangeName ?? null,
     }
+
+    // Cache good snapshots; serve the last good one when this fetch came back empty.
+    if (isUsable(result)) {
+      lastGood.set(sym, { data: result, ts: Date.now() })
+      return result
+    }
+    return freshCached(sym) ?? result
   } catch {
-    return null
+    // Total failure — fall back to the last good snapshot rather than a blank page.
+    return freshCached(sym)
   }
 }
