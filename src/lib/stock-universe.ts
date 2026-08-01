@@ -389,13 +389,29 @@ function dedup(arr: string[]): string[] {
   return [...new Set(arr)]
 }
 
+// Delisted / acquired / renamed tickers. They still return a *stale* last EOD
+// price from the data provider, which would otherwise flip their pages back to
+// indexable — so we exclude them from the sitemap, search and related lists, and
+// force noindex on the page. Hand-verified from public M&A (conservative: only
+// tickers we're confident are gone; anything live/uncertain is left in).
+export const DELISTED = new Set<string>([
+  'ABC','AIRC','BERY','CNSL','CONE','COUP','CPE','DFS','DRE','ENDP','FBHS','GLOG',
+  'GPS','HES','INDT','JNPR','LSI','MRO','NEP','OSTK','PARA','PDCE','PDCO','PEAK',
+  'PSB','PTVE','PXD','QTS','RDFN','RIDE','ROIC','RPAI','SAGE','SMAR','SQ','SRC',
+  'SRCL','TCS','TERP','UMPQ','VERV','WOW','WRK','Y',
+])
+
+export function isDelisted(symbol: string): boolean {
+  return DELISTED.has(symbol.toUpperCase())
+}
+
 export const UNIVERSE_FLAT = Object.entries(STOCK_UNIVERSE).flatMap(([sector, symbols]) =>
   dedup(symbols).map(sym => ({ symbol: sym, name: STOCK_NAMES[sym] ?? sym, sector }))
-)
+).filter(x => !DELISTED.has(x.symbol))
 
 export const SECTORS = Object.keys(STOCK_UNIVERSE)
 
-export const ALL_SYMBOLS = dedup(Object.values(STOCK_UNIVERSE).flat())
+export const ALL_SYMBOLS = dedup(Object.values(STOCK_UNIVERSE).flat()).filter(s => !DELISTED.has(s))
 
 // Curated set of high-search-demand tickers. Only these stock pages are
 // indexed + listed in the sitemap; the rest are noindex,follow to avoid a

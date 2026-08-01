@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
-import { isTopStock, isEtf } from '@/lib/stock-universe'
+import { isTopStock, isEtf, isDelisted } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
@@ -24,8 +24,10 @@ export async function generateMetadata({
   // dead/delisted/dataless tickers stay noindex,follow — so they never become
   // "scaled" thin content. The fetch is deduped with the page body's
   // fetchStockData via Next's request-scoped fetch cache.
-  let indexable = isTopStock(upper)
-  if (!indexable) {
+  // Delisted tickers still return a stale last price (which passes hasSeoData),
+  // so exclude them explicitly — otherwise their thin, frozen pages get indexed.
+  let indexable = !isDelisted(upper) && isTopStock(upper)
+  if (!indexable && !isDelisted(upper)) {
     const data = await fetchStockData(upper)
     indexable = data ? hasSeoData(data) : false
   }
