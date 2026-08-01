@@ -73,6 +73,8 @@ export function KeyStatsStrip({
 
   if (!data) return null
 
+  // TSX tickers (`.TO`) are quoted in CAD — prefix their money values with C$.
+  const cur = symbol.toUpperCase().endsWith('.TO') ? 'C$' : '$'
   const info = data.info
 
   // 1Y change from the first vs. last close of the 1-year daily series.
@@ -99,7 +101,7 @@ export function KeyStatsStrip({
         label="Price"
         help="Current share price and today's change versus the previous close."
       >
-        <BigValue>${data.currentPrice.toFixed(2)}</BigValue>
+        <BigValue>{cur}{data.currentPrice.toFixed(2)}</BigValue>
         <ChangeBadge value={data.changePct} size="sm" />
       </StatCard>
 
@@ -125,7 +127,7 @@ export function KeyStatsStrip({
         label="Last Dividend"
         help="The most recent dividend paid per share by the company."
       >
-        {lastDiv != null && lastDiv > 0 ? <BigValue>${lastDiv.toFixed(2)}</BigValue> : DASH}
+        {lastDiv != null && lastDiv > 0 ? <BigValue>{cur}{lastDiv.toFixed(2)}</BigValue> : DASH}
       </StatCard>
 
       <StatCard
