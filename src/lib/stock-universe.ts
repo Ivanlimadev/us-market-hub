@@ -141,9 +141,23 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'IRM','SBAC','CONE','AMH','INVH','TMHC','AIV','AIRC','CSR',
     'BRT','CLPR','NRE','NXRT','GMRE','SAFE','LADR',
   ],
+  International: [
+    'NU','PBR','VALE','ITUB','BBD','ABEV','BSBR','ERJ','XP','STNE',
+    'PAGS','VIV','GGB','SBS','CIG','MELI','TSM','SE','ASML','NVO',
+    'TM','SONY','SAP','RIO','BHP','UL','TD','RY',
+  ],
 }
 
 export const STOCK_NAMES: Record<string, string> = {
+  // International / ADRs
+  NU:'Nu Holdings',PBR:'Petrobras',VALE:'Vale S.A.',ITUB:'Itaú Unibanco',
+  BBD:'Banco Bradesco',ABEV:'Ambev S.A.',BSBR:'Banco Santander Brasil',
+  ERJ:'Embraer',XP:'XP Inc.',STNE:'StoneCo',PAGS:'PagSeguro',
+  VIV:'Telefônica Brasil',GGB:'Gerdau',SBS:'Sabesp',CIG:'Cemig',
+  MELI:'MercadoLibre',TSM:'Taiwan Semiconductor',SE:'Sea Ltd',
+  ASML:'ASML Holding',NVO:'Novo Nordisk',TM:'Toyota Motor',
+  SONY:'Sony Group',SAP:'SAP SE',RIO:'Rio Tinto',BHP:'BHP Group',
+  UL:'Unilever',TD:'Toronto-Dominion Bank',RY:'Royal Bank of Canada',
   // Real Estate (mortgage REITs)
   NLY:'Annaly Capital Management', LOAN:'Manhattan Bridge Capital',
   // Technology

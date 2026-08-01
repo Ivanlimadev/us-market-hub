@@ -38,6 +38,24 @@ const SPECIAL_PAGES = [
     href: '/dxy',
     keywords: ['DXY', 'DOLLAR', 'US DOLLAR', 'DOLLAR INDEX', 'USD', 'DX', 'GREENBACK'],
   },
+  {
+    symbol: 'US10Y',
+    name: '10-Year Treasury Yield',
+    href: '/10-year-treasury-yield',
+    keywords: ['US10Y', 'TNX', '10Y', '10 YEAR', '10-YEAR', 'TEN YEAR', 'TREASURY', 'TREASURY YIELD', 'BOND YIELD', 'YIELD'],
+  },
+  {
+    symbol: 'US30Y',
+    name: '30-Year Treasury Yield',
+    href: '/30-year-treasury-yield',
+    keywords: ['US30Y', 'TYX', '30Y', '30 YEAR', '30-YEAR', 'THIRTY YEAR', 'LONG BOND', 'TREASURY', 'YIELD'],
+  },
+  {
+    symbol: 'US2Y',
+    name: '2-Year Treasury Yield',
+    href: '/2-year-treasury-yield',
+    keywords: ['US2Y', '2Y', '2 YEAR', '2-YEAR', 'TWO YEAR', '2S10S', 'TREASURY', 'YIELD', 'RECESSION'],
+  },
 ] as const
 
 function useDebounce<T>(value: T, ms: number): T {

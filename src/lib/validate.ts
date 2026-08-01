@@ -7,7 +7,9 @@ export const symbolSchema = z
   .string()
   .min(1)
   .max(10)
-  .regex(/^\^?[A-Z0-9.\-]+$/, 'Invalid ticker symbol')
+  // Allows `^` index prefix, `.` (DX-Y.NYB), `-` (BRK-B) and `=` for Yahoo FX /
+  // futures / yield symbols (2YY=F, BRL=X). Still bounded to a safe char set.
+  .regex(/^\^?[A-Z0-9.\-=]+$/, 'Invalid ticker symbol')
   .transform((s) => s.toUpperCase())
 
 export const cryptoIdSchema = z
