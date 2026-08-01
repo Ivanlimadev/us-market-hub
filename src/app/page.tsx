@@ -16,6 +16,7 @@ import { CryptoHomeWidget } from '@/components/crypto/CryptoHomeWidget'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 import { HeroSearch } from '@/components/home/HeroSearch'
+import { CanadaSection } from '@/components/market/CanadaSection'
 
 export default function HomePage() {
   return (
@@ -41,6 +42,10 @@ export default function HomePage() {
 
       <WidgetBoundary label="Rankings">
         <HomeRankings />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Canadian Markets">
+        <CanadaSection />
       </WidgetBoundary>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
