@@ -146,6 +146,14 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'PAGS','VIV','GGB','SBS','CIG','MELI','TSM','SE','ASML','NVO',
     'TM','SONY','SAP','RIO','BHP','UL','TD','RY',
   ],
+  // Canada pilot — Toronto Stock Exchange (Yahoo `.TO`; mapped to `.XTSE` for Marketstack).
+  Canada: [
+    'RY.TO','TD.TO','BNS.TO','BMO.TO','CM.TO','NA.TO',
+    'ENB.TO','TRP.TO','CNQ.TO','SU.TO','CVE.TO','IMO.TO',
+    'CNR.TO','CP.TO','SHOP.TO','CSU.TO','OTEX.TO',
+    'NTR.TO','FNV.TO','WPM.TO','AEM.TO','BCE.TO','T.TO',
+    'L.TO','ATD.TO','DOL.TO','QSR.TO','FTS.TO','MFC.TO','SLF.TO',
+  ],
 }
 
 export const STOCK_NAMES: Record<string, string> = {
@@ -158,6 +166,18 @@ export const STOCK_NAMES: Record<string, string> = {
   ASML:'ASML Holding',NVO:'Novo Nordisk',TM:'Toyota Motor',
   SONY:'Sony Group',SAP:'SAP SE',RIO:'Rio Tinto',BHP:'BHP Group',
   UL:'Unilever',TD:'Toronto-Dominion Bank',RY:'Royal Bank of Canada',
+  // Canada (TSX)
+  'RY.TO':'Royal Bank of Canada','TD.TO':'Toronto-Dominion Bank','BNS.TO':'Bank of Nova Scotia',
+  'BMO.TO':'Bank of Montreal','CM.TO':'CIBC','NA.TO':'National Bank of Canada',
+  'ENB.TO':'Enbridge','TRP.TO':'TC Energy','CNQ.TO':'Canadian Natural Resources',
+  'SU.TO':'Suncor Energy','CVE.TO':'Cenovus Energy','IMO.TO':'Imperial Oil',
+  'CNR.TO':'Canadian National Railway','CP.TO':'Canadian Pacific Kansas City',
+  'SHOP.TO':'Shopify','CSU.TO':'Constellation Software','OTEX.TO':'OpenText',
+  'NTR.TO':'Nutrien','FNV.TO':'Franco-Nevada','WPM.TO':'Wheaton Precious Metals',
+  'AEM.TO':'Agnico Eagle Mines','BCE.TO':'BCE','T.TO':'Telus',
+  'L.TO':'Loblaw','ATD.TO':'Alimentation Couche-Tard','DOL.TO':'Dollarama',
+  'QSR.TO':'Restaurant Brands Intl','FTS.TO':'Fortis','MFC.TO':'Manulife Financial',
+  'SLF.TO':'Sun Life Financial',
   // Real Estate (mortgage REITs)
   NLY:'Annaly Capital Management', LOAN:'Manhattan Bridge Capital',
   // Technology
