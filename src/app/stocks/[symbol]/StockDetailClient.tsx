@@ -155,6 +155,11 @@ export function StockDetailClient({
                     <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
                   )}
                 </h1>
+                {symbol.toUpperCase().endsWith('.TO') && (
+                  <span className="shrink-0 rounded-md bg-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-200" title="Toronto Stock Exchange — prices in Canadian dollars">
+                    🇨🇦 CAD
+                  </span>
+                )}
               </div>
               {(data.info?.sector || data.info?.industry) && (
                 <p className="truncate text-xs" style={{ color: '#a3a3a3' }}>
