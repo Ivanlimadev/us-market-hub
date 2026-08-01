@@ -15,12 +15,15 @@ import { HomeBlogWidget } from '@/components/market/HomeBlogWidget'
 import { CryptoHomeWidget } from '@/components/crypto/CryptoHomeWidget'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 import { AppDownloadCard } from '@/components/app/AppDownloadCard'
+import { HeroSearch } from '@/components/home/HeroSearch'
 
 export default function HomePage() {
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
+      <HeroSearch />
+
       <div>
-        <h1 className="text-2xl font-bold text-white">US Markets</h1>
+        <h2 className="text-2xl font-bold text-white">US Markets</h2>
         <p className="text-sm text-zinc-400">Updates every 60s during market hours</p>
       </div>
 

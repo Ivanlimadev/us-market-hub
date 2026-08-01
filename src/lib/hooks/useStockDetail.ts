@@ -32,6 +32,9 @@ export interface StockDetailData {
     roa: number | null; revenueGrowth: number | null; earningsGrowth: number | null
     totalRevenue: number | null; totalDebt: number | null; debtToEquity: number | null
     currentRatio: number | null; freeCashflow: number | null
+    recommendationKey: string | null; targetMeanPrice: number | null
+    targetHighPrice: number | null; targetLowPrice: number | null
+    numberOfAnalystOpinions: number | null
   } | null
   exchange: string | null
 }

@@ -26,6 +26,7 @@ const NAV_LINKS = [
   { href: '/rankings', label: 'Rankings' },
   { href: '/screener', label: 'Screener' },
   { href: '/stocks', label: 'Stocks' },
+  { href: '/10-year-treasury-yield', label: 'Yields' },
 ]
 
 export function Navbar() {

@@ -14,6 +14,7 @@ import { MagicNumber } from '@/components/stock/MagicNumber'
 import { DividendCalculator } from '@/components/stock/DividendCalculator'
 import { FinancialCharts } from '@/components/stock/FinancialCharts'
 import { FairValueCard } from '@/components/stock/FairValueCard'
+import { AnalystRatingsCard } from '@/components/stock/AnalystRatingsCard'
 import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
@@ -207,6 +208,9 @@ export function StockDetailClient({
       <Section title="Analysis & Verdict">
         <WidgetBoundary label="AI Insight">
           <StockAIInsight symbol={symbol} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Analyst Ratings">
+          <AnalystRatingsCard data={data} />
         </WidgetBoundary>
         <Pair>
           <WidgetBoundary label="Fair Value">
