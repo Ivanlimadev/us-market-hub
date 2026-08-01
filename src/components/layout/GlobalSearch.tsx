@@ -56,6 +56,18 @@ const SPECIAL_PAGES = [
     href: '/2-year-treasury-yield',
     keywords: ['US2Y', '2Y', '2 YEAR', '2-YEAR', 'TWO YEAR', '2S10S', 'TREASURY', 'YIELD', 'RECESSION'],
   },
+  {
+    symbol: 'GOLD',
+    name: 'Gold Price',
+    href: '/gold-price',
+    keywords: ['GOLD', 'XAU', 'GC', 'GOLD PRICE', 'PRECIOUS METAL', 'BULLION'],
+  },
+  {
+    symbol: 'OIL',
+    name: 'Crude Oil Price (WTI)',
+    href: '/oil-price',
+    keywords: ['OIL', 'CRUDE', 'CRUDE OIL', 'WTI', 'CL', 'OIL PRICE', 'PETROLEUM', 'BRENT'],
+  },
 ] as const
 
 function useDebounce<T>(value: T, ms: number): T {
