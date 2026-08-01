@@ -40,12 +40,15 @@ async function msGet(path: string, params: Record<string, string | number> = {})
 
 export async function fetchStockData(symbol: string): Promise<StockDetailData | null> {
   const sym = symbol.toUpperCase()
+  // Toronto Stock Exchange: Yahoo uses the `.TO` suffix, Marketstack uses `.XTSE`.
+  // Map only for the Marketstack calls; Yahoo keeps `.TO`.
+  const msSym = sym.endsWith('.TO') ? sym.slice(0, -3) + '.XTSE' : sym
   try {
     const [intraday, tickerEod, dividends, splits, yfInfo] = await Promise.allSettled([
-      msGet(`/tickers/${sym}/intraday/latest`),
-      msGet(`/tickers/${sym}/eod`, { limit: 365 }),
+      msGet(`/tickers/${msSym}/intraday/latest`),
+      msGet(`/tickers/${msSym}/eod`, { limit: 365 }),
       getYFDividends(sym),
-      msGet(`/tickers/${sym}/splits`, { limit: 20 }),
+      msGet(`/tickers/${msSym}/splits`, { limit: 20 }),
       getYFSummary(sym),
     ])
 
