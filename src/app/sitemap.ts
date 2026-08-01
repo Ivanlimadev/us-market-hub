@@ -24,6 +24,8 @@ const STATIC_ROUTES = [
   { url: '/10-year-treasury-yield',      priority: 0.75, changeFrequency: 'daily'   },
   { url: '/30-year-treasury-yield',      priority: 0.7,  changeFrequency: 'daily'   },
   { url: '/2-year-treasury-yield',       priority: 0.7,  changeFrequency: 'daily'   },
+  { url: '/gold-price',                  priority: 0.75, changeFrequency: 'daily'   },
+  { url: '/oil-price',                   priority: 0.75, changeFrequency: 'daily'   },
   { url: '/compare',                     priority: 0.6,  changeFrequency: 'weekly'  },
   { url: '/calendar',                    priority: 0.6,  changeFrequency: 'daily'   },
   // Editorial ranking pages

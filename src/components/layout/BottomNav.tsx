@@ -32,6 +32,8 @@ const MENU_SECTIONS = [
       { href: '/10-year-treasury-yield', label: '10-Year Treasury Yield', icon: Percent },
       { href: '/30-year-treasury-yield', label: '30-Year Treasury Yield', icon: Percent },
       { href: '/2-year-treasury-yield', label: '2-Year Treasury Yield', icon: Percent },
+      { href: '/gold-price', label: 'Gold Price', icon: DollarSign },
+      { href: '/oil-price', label: 'Oil Price (WTI)', icon: DollarSign },
       { href: '/stocks', label: 'Stocks', icon: TrendingUp },
     ],
   },
