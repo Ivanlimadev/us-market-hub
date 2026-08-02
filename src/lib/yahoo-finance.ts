@@ -658,3 +658,78 @@ export async function getYFDividendCalendar(symbols: string[]): Promise<YFDivEve
 
   return events.sort((a, b) => a.exDate.localeCompare(b.exDate))
 }
+
+// ── Options chain ─────────────────────────────────────────────────────────────
+
+export interface YFOptionContract {
+  contractSymbol: string
+  strike: number
+  lastPrice: number
+  bid: number
+  ask: number
+  volume: number
+  openInterest: number
+  impliedVolatility: number   // decimal (0.35 = 35%)
+  inTheMoney: boolean
+}
+
+export interface YFOptionChain {
+  symbol: string
+  underlyingPrice: number
+  expirationDates: number[]   // unix seconds, all available expirations
+  expiration: number          // the expiration this chain covers
+  calls: YFOptionContract[]
+  puts: YFOptionContract[]
+}
+
+/**
+ * Options chain from Yahoo Finance (delayed ~15 min, unofficial).
+ * Pass a specific expiration `date` (unix seconds) or omit for the nearest one.
+ * NOTE: Yahoo gives implied volatility but no Greeks and no historical chains.
+ * Planned migration to a paid, complete provider. See docs/data-sources.md.
+ */
+export async function getYFOptions(
+  symbol: string,
+  date?: number
+): Promise<YFOptionChain | null> {
+  const url =
+    `https://query1.finance.yahoo.com/v7/finance/options/${symbol}` +
+    (date ? `?date=${date}` : '')
+
+  const data = await yfGet(url)
+  const res = (
+    (data as { optionChain?: { result?: unknown[] } }).optionChain?.result?.[0]
+  ) as Record<string, unknown> | undefined
+  if (!res) return null
+
+  const quote = res.quote as { regularMarketPrice?: number } | undefined
+  const expirationDates = (res.expirationDates as number[] | undefined) ?? []
+  const opt =
+    (res.options as Array<Record<string, unknown>> | undefined)?.[0] ?? {}
+
+  type Raw = Partial<YFOptionContract>
+  const map = (arr: Raw[] | undefined): YFOptionContract[] =>
+    (arr ?? []).map((o) => ({
+      contractSymbol: o.contractSymbol ?? '',
+      strike: o.strike ?? 0,
+      lastPrice: o.lastPrice ?? 0,
+      bid: o.bid ?? 0,
+      ask: o.ask ?? 0,
+      volume: o.volume ?? 0,
+      openInterest: o.openInterest ?? 0,
+      impliedVolatility: o.impliedVolatility ?? 0,
+      inTheMoney: !!o.inTheMoney,
+    }))
+
+  return {
+    symbol: (res.underlyingSymbol as string) ?? symbol.toUpperCase(),
+    underlyingPrice: quote?.regularMarketPrice ?? 0,
+    expirationDates,
+    expiration:
+      ((opt as { expirationDate?: number }).expirationDate) ??
+      expirationDates[0] ??
+      0,
+    calls: map(opt.calls as Raw[] | undefined),
+    puts: map(opt.puts as Raw[] | undefined),
+  }
+}
