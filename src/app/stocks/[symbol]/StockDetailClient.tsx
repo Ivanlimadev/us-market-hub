@@ -56,11 +56,13 @@ export function StockDetailClient({
   initialData,
   seoIntro,
   seoFaq,
+  relatedLinks,
 }: {
   symbol: string
   initialData?: StockDetailData
   seoIntro?: ReactNode
   seoFaq?: ReactNode
+  relatedLinks?: ReactNode
 }) {
   const { data, isLoading } = useStockDetail(symbol, initialData)
   const { user } = useAuth()
@@ -287,6 +289,8 @@ export function StockDetailClient({
         <WidgetBoundary label="Related Assets">
           <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
         </WidgetBoundary>
+        {/* Server-rendered sector peer links — crawlable in initial HTML (SEO) */}
+        {relatedLinks}
         <WidgetBoundary label="Related Articles">
           <StockRelatedPosts symbol={symbol} />
         </WidgetBoundary>

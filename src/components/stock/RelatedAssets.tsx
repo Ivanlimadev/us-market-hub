@@ -96,7 +96,7 @@ export function RelatedAssets({ symbol, sector }: Props) {
               return (
                 <Link
                   key={q.symbol}
-                  href={`/stocks/${q.symbol}`}
+                  href={`/stocks/${q.symbol.toLowerCase()}`}
                   className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-800/50"
                 >
                   <StockLogo symbol={q.symbol} />
