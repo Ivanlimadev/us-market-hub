@@ -4,6 +4,7 @@ import { fetchStockData } from '@/lib/stock-server'
 import { isTopStock, isEtf, isDelisted } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
+import { RelatedStocksLinks } from '@/components/stock/RelatedStocksLinks'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
@@ -150,6 +151,7 @@ export default async function StockPage({
         initialData={initialData ?? undefined}
         seoIntro={intro ? <StockSeoIntro text={intro} /> : null}
         seoFaq={faqs.length ? <StockFaqSection faqs={faqs} symbol={upper} /> : null}
+        relatedLinks={<RelatedStocksLinks symbol={upper} />}
       />
     </>
   )
