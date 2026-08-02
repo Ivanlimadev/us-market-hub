@@ -46,16 +46,16 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `30-Year Treasury Yield — Live Chart & Rate Today ${year}`,
+    title:       `30-Year Treasury Yield - Live Chart & Rate Today ${year}`,
     description: `Live 30-year US Treasury yield chart and rate. See the 30-year yield today, what moves the long bond, and why it drives mortgages and long-term inflation expectations.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
-      title:       `30-Year Treasury Yield — Live Chart & Rate ${year}`,
+      title:       `30-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 30-year US Treasury yield (the "long bond") in real time: interactive chart and what moves it.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `30-Year Treasury Yield — Live Chart & Rate ${year}`,
+      title:       `30-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 30-year US Treasury yield (the long bond) in real time and see what moves it.`,
     },
   }
@@ -71,8 +71,8 @@ export default async function ThirtyYearYieldPage() {
   const prevClose = yld?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? `${value.toFixed(2)}%` : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? `${value.toFixed(2)}%` : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -83,7 +83,7 @@ export default async function ThirtyYearYieldPage() {
     },
     {
       q: 'What is the 30-year Treasury yield?',
-      a: 'It is the interest rate the US government pays to borrow money for 30 years — the longest standard Treasury, nicknamed the "long bond." It reflects the market’s view of long-run inflation and growth, and it anchors the cost of the longest-dated debt in the economy.',
+      a: 'It is the interest rate the US government pays to borrow money for 30 years - the longest standard Treasury, nicknamed the "long bond." It reflects the market’s view of long-run inflation and growth, and it anchors the cost of the longest-dated debt in the economy.',
     },
     {
       q: 'What moves the 30-year yield?',
@@ -95,7 +95,7 @@ export default async function ThirtyYearYieldPage() {
     },
     {
       q: 'What is the difference between the 10-year and 30-year yield?',
-      a: 'Both are benchmark rates, but the 10-year is the market’s main reference point while the 30-year captures the longest-term view. The gap between them (the "10s30s" spread) shows how much extra yield investors demand to lend for an extra 20 years — a read on long-run inflation and growth expectations.',
+      a: 'Both are benchmark rates, but the 10-year is the market’s main reference point while the 30-year captures the longest-term view. The gap between them (the "10s30s" spread) shows how much extra yield investors demand to lend for an extra 20 years - a read on long-run inflation and growth expectations.',
     },
   ]
 
@@ -106,7 +106,7 @@ export default async function ThirtyYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `30-Year Treasury Yield — Live Chart & Rate ${year}`,
+        name:    `30-Year Treasury Yield - Live Chart & Rate ${year}`,
         description: 'Live 30-year US Treasury yield chart and rate, and what moves the long bond.',
         isPartOf: { '@id': BASE },
       },
@@ -196,7 +196,7 @@ export default async function ThirtyYearYieldPage() {
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">What is the 30-year Treasury yield?</h3>
               <p>
-                The 30-year Treasury yield is the interest rate the US government pays to borrow for three decades — the
+                The 30-year Treasury yield is the interest rate the US government pays to borrow for three decades - the
                 longest standard Treasury, known as the &ldquo;long bond.&rdquo; Because it locks in a rate for so long,
                 it is the market&rsquo;s purest read on long-run inflation and growth expectations.
               </p>
@@ -213,15 +213,15 @@ export default async function ThirtyYearYieldPage() {
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">Why it matters for markets</h3>
               <p>
                 The long bond anchors 30-year mortgage rates and long-term corporate borrowing costs. When it rises, the
-                most rate-sensitive corners of the market — utilities, REITs, and long-duration growth stocks whose value
-                sits decades out — tend to feel it first.
+                most rate-sensitive corners of the market - utilities, REITs, and long-duration growth stocks whose value
+                sits decades out - tend to feel it first.
               </p>
             </div>
             <div>
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">10-year vs 30-year</h3>
               <p>
                 The 10-year is the market&rsquo;s main benchmark; the 30-year is the long-run view. The spread between
-                them shows how much extra yield investors demand to lend for another 20 years — a widening gap signals
+                them shows how much extra yield investors demand to lend for another 20 years - a widening gap signals
                 rising long-term inflation or growth expectations. Compare it with the{' '}
                 <Link href="/10-year-treasury-yield" className="text-emerald-400 hover:text-emerald-300">10-year yield</Link>.
               </p>
@@ -262,7 +262,7 @@ export default async function ThirtyYearYieldPage() {
         </Section>
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
-          Data via Yahoo Finance (CBOE ^TYX), updated in real time during market hours. For informational purposes only —
+          Data via Yahoo Finance (CBOE ^TYX), updated in real time during market hours. For informational purposes only -
           not financial advice.
         </p>
       </div>

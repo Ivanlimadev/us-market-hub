@@ -50,16 +50,16 @@ async function getPrice(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `Gold Price Today — Live Gold Chart & Price per Ounce ${year}`,
-    description: `Live gold price and interactive chart. See the price of gold today per ounce, what moves it, and why gold trades as an inflation hedge and safe haven — updated in real time.`,
+    title:       `Gold Price Today - Live Gold Chart & Price per Ounce ${year}`,
+    description: `Live gold price and interactive chart. See the price of gold today per ounce, what moves it, and why gold trades as an inflation hedge and safe haven - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
-      title:       `Gold Price Today — Live Chart & Price per Ounce ${year}`,
-      description: `Track the gold price in real time: interactive chart and what moves gold — the dollar, real rates and safe-haven demand.`,
+      title:       `Gold Price Today - Live Chart & Price per Ounce ${year}`,
+      description: `Track the gold price in real time: interactive chart and what moves gold - the dollar, real rates and safe-haven demand.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `Gold Price Today — Live Chart & Price per Ounce ${year}`,
+      title:       `Gold Price Today - Live Chart & Price per Ounce ${year}`,
       description: `Track the gold price in real time and see what moves it.`,
     },
   }
@@ -75,8 +75,8 @@ export default async function GoldPage() {
   const prevClose = q?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? usd(value) : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? usd(value) : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -91,7 +91,7 @@ export default async function GoldPage() {
     },
     {
       q: 'Is gold a good inflation hedge?',
-      a: 'Over long periods gold has broadly held its purchasing power, which is why it is seen as an inflation hedge. Over shorter windows it can lag — especially when real interest rates rise — so it protects against currency debasement better than against every inflationary episode.',
+      a: 'Over long periods gold has broadly held its purchasing power, which is why it is seen as an inflation hedge. Over shorter windows it can lag - especially when real interest rates rise - so it protects against currency debasement better than against every inflationary episode.',
     },
     {
       q: 'Why does gold go up when the dollar falls?',
@@ -99,7 +99,7 @@ export default async function GoldPage() {
     },
     {
       q: 'How can I invest in gold?',
-      a: 'Common routes are physical gold (coins/bars), gold ETFs such as GLD or IAU, gold-mining stocks, and futures. Each has different costs and risks — ETFs are the simplest for most investors, while miners add company-specific and leverage risk.',
+      a: 'Common routes are physical gold (coins/bars), gold ETFs such as GLD or IAU, gold-mining stocks, and futures. Each has different costs and risks - ETFs are the simplest for most investors, while miners add company-specific and leverage risk.',
     },
   ]
 
@@ -110,7 +110,7 @@ export default async function GoldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `Gold Price Today — Live Chart & Price per Ounce ${year}`,
+        name:    `Gold Price Today - Live Chart & Price per Ounce ${year}`,
         description: 'Live gold price and chart, and what moves gold.',
         isPartOf: { '@id': BASE },
       },
@@ -181,7 +181,7 @@ export default async function GoldPage() {
 
         <Section title="What Moves the Gold Price">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <p className="text-sm text-zinc-400">Gold has no earnings — its price is set by these forces:</p>
+            <p className="text-sm text-zinc-400">Gold has no earnings - its price is set by these forces:</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {AFFECTS.map((a) => (
                 <div key={a.label} className="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">
@@ -210,7 +210,7 @@ export default async function GoldPage() {
                 Gold and the{' '}
                 <Link href="/dxy" className="text-emerald-400 hover:text-emerald-300">US Dollar Index</Link>{' '}
                 tend to move in opposite directions. When the dollar weakens, gold priced in dollars becomes cheaper for
-                the rest of the world, boosting demand — and vice-versa.
+                the rest of the world, boosting demand - and vice-versa.
               </p>
             </div>
             <div>
@@ -259,7 +259,7 @@ export default async function GoldPage() {
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
           Data via Yahoo Finance (COMEX GC=F, continuous), updated in real time during market hours. For informational
-          purposes only — not financial advice.
+          purposes only - not financial advice.
         </p>
       </div>
     </>

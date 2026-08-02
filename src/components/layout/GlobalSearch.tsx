@@ -29,7 +29,7 @@ const SHORT_SECTOR: Record<string, string> = {
 function shortSector(s: string) { return SHORT_SECTOR[s] ?? s }
 
 // Curated pages that aren't stocks or crypto (indices, macro) but should still
-// be reachable from search — e.g. the US Dollar Index at /dxy. `keywords` widen
+// be reachable from search - e.g. the US Dollar Index at /dxy. `keywords` widen
 // the match so "dollar", "dollar index" or "usd" all surface DXY.
 const SPECIAL_PAGES = [
   {
@@ -141,7 +141,7 @@ export function GlobalSearch() {
     refetchInterval: false,
   })
   // Guard: the endpoint can return a non-array (e.g. an error object) which the
-  // `= []` default doesn't cover — `.filter`/`.slice` on it would crash the Navbar.
+  // `= []` default doesn't cover - `.filter`/`.slice` on it would crash the Navbar.
   const cryptoCache = Array.isArray(cryptoData) ? cryptoData : []
 
   // Open on Cmd+K / Ctrl+K
@@ -158,7 +158,7 @@ export function GlobalSearch() {
   }, [])
 
   // Focus input + scroll lock when modal opens
-  // Uses position:fixed (not overflow:hidden) — the only technique that works on iOS Safari
+  // Uses position:fixed (not overflow:hidden) - the only technique that works on iOS Safari
   useEffect(() => {
     if (open) {
       scrollRef.current = window.scrollY
@@ -299,7 +299,7 @@ export function GlobalSearch() {
         <span className="hidden sm:inline">Search</span>
       </button>
 
-      {/* Modal overlay — rendered via portal so backdrop-filter on Navbar header doesn't trap fixed positioning */}
+      {/* Modal overlay - rendered via portal so backdrop-filter on Navbar header doesn't trap fixed positioning */}
       {mounted && open && createPortal(
         <div className="fixed inset-0 z-[200] flex items-start justify-center pt-4 sm:pt-[12vh] px-4">
           {/* Backdrop */}

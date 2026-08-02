@@ -12,7 +12,7 @@ export interface YFTickerState {
  * YF sends base64-encoded protobuf frames over the WebSocket.
  *
  * Relevant fields (proto field numbers):
- *   1  = id (string)     — ticker symbol, e.g. "AAPL"
+ *   1  = id (string)     - ticker symbol, e.g. "AAPL"
  *   2  = price (float32)
  *   8  = changePercent (float32)
  *   12 = change (float32)
@@ -61,10 +61,10 @@ function decodeYFProto(buf: Uint8Array): { id: string; price: number; changePerc
       }
       i += len
     } else if (wireType === 0) {
-      // Varint — skip
+      // Varint - skip
       while (i < buf.length && buf[i++] & 0x80) { /* consume */ }
     } else if (wireType === 1) {
-      // 64-bit — skip
+      // 64-bit - skip
       i += 8
     } else {
       break

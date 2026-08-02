@@ -96,7 +96,7 @@ export function HomeRankings() {
 
   const TOP = 5
 
-  // /api/screener can return a non-array error body (e.g. 429 rate limit) —
+  // /api/screener can return a non-array error body (e.g. 429 rate limit) -
   // guard so a bad response degrades to empty cards instead of crashing the widget.
   const rows = Array.isArray(data) ? data : []
 

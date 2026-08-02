@@ -146,7 +146,7 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'PAGS','VIV','GGB','SBS','CIG','MELI','TSM','SE','ASML','NVO',
     'TM','SONY','SAP','RIO','BHP','UL','TD','RY',
   ],
-  // Canada — Toronto Stock Exchange (Yahoo `.TO`; mapped to `.XTSE` for Marketstack).
+  // Canada - Toronto Stock Exchange (Yahoo `.TO`; mapped to `.XTSE` for Marketstack).
   // Verified live against Marketstack (fresh EOD). ~116 S&P/TSX names.
   Canada: [
     'ABX.TO','AC.TO','AEM.TO','AGI.TO','AQN.TO','ARX.TO','ATD.TO','ATZ.TO',
@@ -451,7 +451,7 @@ function dedup(arr: string[]): string[] {
 
 // Delisted / acquired / renamed tickers. They still return a *stale* last EOD
 // price from the data provider, which would otherwise flip their pages back to
-// indexable — so we exclude them from the sitemap, search and related lists, and
+// indexable - so we exclude them from the sitemap, search and related lists, and
 // force noindex on the page. Hand-verified from public M&A (conservative: only
 // tickers we're confident are gone; anything live/uncertain is left in).
 export const DELISTED = new Set<string>([
@@ -476,7 +476,7 @@ export const ALL_SYMBOLS = dedup(Object.values(STOCK_UNIVERSE).flat()).filter(s 
 // Curated set of high-search-demand tickers. Only these stock pages are
 // indexed + listed in the sitemap; the rest are noindex,follow to avoid a
 // "thin/scaled content" footprint (AdSense / Search quality). The pages still
-// render for any ticker — they're just not pushed for indexing.
+// render for any ticker - they're just not pushed for indexing.
 export const TOP_STOCKS: string[] = dedup([
   // Mega/large-cap tech & internet
   'AAPL','MSFT','GOOGL','GOOG','AMZN','NVDA','META','TSLA','AVGO','ORCL',
@@ -513,7 +513,7 @@ export const isTopStock = (symbol: string) => TOP_STOCKS_SET.has(symbol.toUpperC
 const UNIVERSE_SET = new Set(ALL_SYMBOLS.map((s) => s.toUpperCase()))
 export const isInUniverse = (symbol: string) => UNIVERSE_SET.has(symbol.toUpperCase())
 
-// Exchange-traded funds within our universe — marked as InvestmentFund (not
+// Exchange-traded funds within our universe - marked as InvestmentFund (not
 // Corporation) in structured data, since the schema type must match the asset.
 export const ETF_SYMBOLS = new Set([
   'SPY', 'QQQ', 'VOO', 'VTI', 'IWM', 'DIA', 'GLD', 'SLV', 'TLT', 'ARKK',

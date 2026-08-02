@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://stockmarketroi.com/stocks/best-growth-stocks' },
   openGraph: {
     title: 'Best Growth Stocks 2026 | Stock Market ROI',
-    description: 'Top US growth stocks ranked by revenue growth, TAM, and competitive moat — our 2026 picks.',
+    description: 'Top US growth stocks ranked by revenue growth, TAM, and competitive moat - our 2026 picks.',
   },
 }
 
@@ -65,7 +65,7 @@ const STOCKS = [
     name: 'Tesla',
     growth: 'Recovering',
     sector: 'Automotive / AI',
-    verdict: 'The most controversial stock on this list. Tesla\'s EV margins have compressed under price war pressure, but the FSD (Full Self-Driving) software business and Optimus humanoid robot could be trillion-dollar opportunities — if they deliver. The next 18 months are pivotal.',
+    verdict: 'The most controversial stock on this list. Tesla\'s EV margins have compressed under price war pressure, but the FSD (Full Self-Driving) software business and Optimus humanoid robot could be trillion-dollar opportunities - if they deliver. The next 18 months are pivotal.',
     moat: ['Largest real-world autonomous driving dataset', 'Vertical integration (cells, motors, software)', 'Supercharger network'],
   },
   {
@@ -126,7 +126,7 @@ export default function BestGrowthStocksPage() {
       </h1>
       <p className="mb-2 text-zinc-400 leading-relaxed">
         Companies with durable competitive advantages, large addressable markets, and
-        double-digit revenue growth — ranked by our analysts for long-term investors.
+        double-digit revenue growth - ranked by our analysts for long-term investors.
       </p>
       <p className="mb-8 text-xs text-zinc-600">
         Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} ·

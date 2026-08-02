@@ -65,7 +65,7 @@ export async function GET(
 
   const supabase = serviceClient()
 
-  // Check cache FIRST — a cached insight is served regardless of whether the live
+  // Check cache FIRST - a cached insight is served regardless of whether the live
   // AI key is configured, so the website shows the same insights the app already
   // generated (and the card stays up even if the key is ever unset).
   const { data: cached, error: readErr } = await supabase
@@ -94,7 +94,7 @@ export async function GET(
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 
-  // Fetch stock data — use internal URL to avoid SSL loop on VPS
+  // Fetch stock data - use internal URL to avoid SSL loop on VPS
   const base = process.env.INTERNAL_API_URL ?? req.nextUrl.origin
   const stockRes = await fetch(`${base}/api/stocks/${upper}`, {
     headers: { 'x-internal': '1' },
@@ -109,7 +109,7 @@ export async function GET(
   const fmt = (n: number | null, mult = 1, suffix = '%') =>
     n != null ? `${(n * mult).toFixed(1)}${suffix}` : 'N/A'
 
-  const prompt = `You are a financial analyst. Analyze ${upper} (${stock.name ?? upper}) using only the data below and return ONLY valid JSON — no markdown, no explanation, nothing else.
+  const prompt = `You are a financial analyst. Analyze ${upper} (${stock.name ?? upper}) using only the data below and return ONLY valid JSON - no markdown, no explanation, nothing else.
 
 Data:
 Sector: ${info.sector ?? 'N/A'} | Industry: ${info.industry ?? 'N/A'}
@@ -117,7 +117,7 @@ P/E: ${info.pe ?? 'N/A'} | Forward P/E: ${info.forwardPE ?? 'N/A'} | PEG: ${info
 Revenue Growth: ${fmt(info.revenueGrowth)} | Earnings Growth: ${fmt(info.earningsGrowth)}
 Profit Margin: ${fmt(info.profitMargin)} | ROE: ${fmt(info.roe)} | Debt/Equity: ${info.debtToEquity ?? 'N/A'}
 Beta: ${info.beta ?? 'N/A'} | Dividend Yield: ${info.dividendYield != null ? fmt(info.dividendYield) : 'none'}
-52w range: $${info.week52Low ?? 'N/A'}–$${info.week52High ?? 'N/A'} | Current: $${stock.currentPrice ?? 'N/A'}
+52w range: $${info.week52Low ?? 'N/A'}-$${info.week52High ?? 'N/A'} | Current: $${stock.currentPrice ?? 'N/A'}
 
 Return this exact JSON structure:
 {
@@ -140,8 +140,8 @@ Return this exact JSON structure:
     insight = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   } catch (err) {
     // Anthropic call failed (out of credits, rate limit, model change, outage).
-    // Never 500 the app: serve the last cached insight if we have one — even if
-    // it's older than CACHE_HOURS — so the section shows stale data instead of
+    // Never 500 the app: serve the last cached insight if we have one - even if
+    // it's older than CACHE_HOURS - so the section shows stale data instead of
     // going blank. Only fail if there's nothing cached at all.
     console.error('[insight] Anthropic call failed:', (err as Error).message)
     if (cached) {

@@ -14,25 +14,25 @@ const TOPICS = [
     icon: MessageSquare,
     title: 'General Questions',
     desc: 'Questions about the platform, features or data.',
-    subject: 'General Question — Stock Market ROI',
+    subject: 'General Question - Stock Market ROI',
   },
   {
     icon: Shield,
     title: 'Privacy & Data Requests',
     desc: 'Access, correction or deletion of your personal data (LGPD / GDPR / CCPA).',
-    subject: 'Data Privacy Request — Stock Market ROI',
+    subject: 'Data Privacy Request - Stock Market ROI',
   },
   {
     icon: BookOpen,
     title: 'Editorial Feedback',
     desc: 'Corrections, inaccuracies or feedback on a blog article.',
-    subject: 'Editorial Feedback — Stock Market ROI',
+    subject: 'Editorial Feedback - Stock Market ROI',
   },
   {
     icon: FileText,
     title: 'DMCA / Copyright',
     desc: 'Copyright infringement notices as described in our Terms of Use.',
-    subject: 'DMCA Notice — Stock Market ROI',
+    subject: 'DMCA Notice - Stock Market ROI',
   },
 ]
 
@@ -70,7 +70,7 @@ export default function ContactPage() {
         </a>
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <Clock className="h-3.5 w-3.5 shrink-0" />
-          <span>Response time: up to 48 hours on business days (Mon–Fri, Brazil time)</span>
+          <span>Response time: up to 48 hours on business days (Mon-Fri, Brazil time)</span>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export default function ContactPage() {
           <p className="text-xs text-emerald-400">Founder · Stock Market ROI</p>
           <p className="text-xs text-zinc-500 leading-relaxed">
             Systems Analysis &amp; Development student and active US stock market investor since 2018.
-            Every message goes directly to me — there is no support team.
+            Every message goes directly to me - there is no support team.
           </p>
         </div>
       </div>

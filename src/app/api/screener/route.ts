@@ -18,7 +18,7 @@ async function loadQuotes() {
   }))
 }
 
-// Screener fetches 100+ symbols from Yahoo — expensive and risky to hammer.
+// Screener fetches 100+ symbols from Yahoo - expensive and risky to hammer.
 // A per-IP rate limit didn't help: the homepage Rankings widget AND the
 // /screener page both hit this, so a single visitor tripped the limit and got
 // a 429 body that crashed the client. Instead, cache the computed list

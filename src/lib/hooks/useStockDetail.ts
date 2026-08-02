@@ -56,7 +56,7 @@ export function useStockDetail(symbol: string, initialData?: StockDetailData) {
       const json = await r.json()
       // On a rate-limit / error response (e.g. { error: 'Too many requests' }),
       // throw so React Query keeps the last good data instead of overwriting it
-      // with the error object — which would collapse the page to "unavailable".
+      // with the error object - which would collapse the page to "unavailable".
       if (!r.ok || json?.error) throw new Error(json?.error || `Failed to load ${symbol}`)
       return json as StockDetailData
     },

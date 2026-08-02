@@ -12,7 +12,7 @@ const FORM_META: Record<string, { badge: string; border: string; label: string }
 }
 
 function formatDate(d: string): string {
-  if (!d) return '—'
+  if (!d) return '-'
   const [y, m, day] = d.split('-')
   return `${day}/${m}/${y}`
 }

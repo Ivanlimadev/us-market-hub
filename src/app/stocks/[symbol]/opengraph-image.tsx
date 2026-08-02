@@ -13,7 +13,7 @@ export default async function Image({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
 
-  // Try to load company logo — fall back gracefully if unavailable
+  // Try to load company logo - fall back gracefully if unavailable
   const logoUrl = `https://assets.parqet.com/logos/symbol/${upper}?format=png`
 
   return new ImageResponse(

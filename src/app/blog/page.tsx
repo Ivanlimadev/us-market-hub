@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Blog — Stock Market Insights & Investing Guides',
+  title: 'Blog - Stock Market Insights & Investing Guides',
   description: 'In-depth articles on stocks, investing strategies, ETFs, dividends, and US market analysis from Stock Market ROI.',
   alternates: { canonical: 'https://stockmarketroi.com/blog' },
 }

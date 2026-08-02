@@ -16,7 +16,7 @@ const NAME = '10-Year Treasury Yield'
 const BASE = 'https://stockmarketroi.com'
 const PATH = '/10-year-treasury-yield'
 
-// What the 10-year yield sets the price of — a quick "why it matters" panel.
+// What the 10-year yield sets the price of - a quick "why it matters" panel.
 const AFFECTS = [
   { label: 'Mortgage rates', note: '30-year mortgages track the 10-year closely.' },
   { label: 'Stock valuations', note: 'Higher yields lower the value of future profits (P/E).' },
@@ -48,16 +48,16 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `10-Year Treasury Yield — Live Chart & Rate Today ${year}`,
-    description: `Live 10-year US Treasury yield chart and rate. See the 10-year yield today, what moves it, and why it drives mortgage rates, stocks and the dollar — updated in real time.`,
+    title:       `10-Year Treasury Yield - Live Chart & Rate Today ${year}`,
+    description: `Live 10-year US Treasury yield chart and rate. See the 10-year yield today, what moves it, and why it drives mortgage rates, stocks and the dollar - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
-      title:       `10-Year Treasury Yield — Live Chart & Rate ${year}`,
+      title:       `10-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 10-year US Treasury yield in real time: interactive chart and what moves the most important interest rate in markets.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `10-Year Treasury Yield — Live Chart & Rate ${year}`,
+      title:       `10-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 10-year US Treasury yield in real time and see why it drives mortgages, stocks and the dollar.`,
     },
   }
@@ -73,8 +73,8 @@ export default async function TenYearYieldPage() {
   const prevClose = yld?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? `${value.toFixed(2)}%` : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? `${value.toFixed(2)}%` : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -85,7 +85,7 @@ export default async function TenYearYieldPage() {
     },
     {
       q: 'What is the 10-year Treasury yield?',
-      a: 'It is the interest rate the US government pays to borrow money for 10 years. Because US Treasuries are considered risk-free, the 10-year yield is the benchmark "risk-free rate" that almost every other interest rate — and asset price — is measured against.',
+      a: 'It is the interest rate the US government pays to borrow money for 10 years. Because US Treasuries are considered risk-free, the 10-year yield is the benchmark "risk-free rate" that almost every other interest rate - and asset price - is measured against.',
     },
     {
       q: 'What moves the 10-year Treasury yield?',
@@ -93,11 +93,11 @@ export default async function TenYearYieldPage() {
     },
     {
       q: 'Why does the 10-year yield matter for stocks?',
-      a: 'The 10-year yield is the discount rate for future profits. When it rises, those future earnings are worth less today, which compresses stock valuations (P/E ratios) — especially for high-growth companies. It also competes with stocks: a higher risk-free yield makes bonds more attractive versus equities.',
+      a: 'The 10-year yield is the discount rate for future profits. When it rises, those future earnings are worth less today, which compresses stock valuations (P/E ratios) - especially for high-growth companies. It also competes with stocks: a higher risk-free yield makes bonds more attractive versus equities.',
     },
     {
       q: 'Why does bond yield go up when the price goes down?',
-      a: 'A bond pays a fixed coupon. If its market price falls, that fixed payment represents a larger percentage of the lower price — so the yield rises. Price and yield always move in opposite directions.',
+      a: 'A bond pays a fixed coupon. If its market price falls, that fixed payment represents a larger percentage of the lower price - so the yield rises. Price and yield always move in opposite directions.',
     },
     {
       q: 'What is the difference between the 2-year, 10-year and 30-year yields?',
@@ -112,7 +112,7 @@ export default async function TenYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `10-Year Treasury Yield — Live Chart & Rate ${year}`,
+        name:    `10-Year Treasury Yield - Live Chart & Rate ${year}`,
         description: 'Live 10-year US Treasury yield chart and rate, and what moves the benchmark interest rate.',
         isPartOf: { '@id': BASE },
       },
@@ -190,7 +190,7 @@ export default async function TenYearYieldPage() {
         <Section title="Why the 10-Year Yield Matters">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
             <p className="text-sm text-zinc-400">
-              The 10-year is the benchmark rate that ripples through the whole economy — it helps set the price of:
+              The 10-year is the benchmark rate that ripples through the whole economy - it helps set the price of:
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {AFFECTS.map((a) => (
@@ -211,7 +211,7 @@ export default async function TenYearYieldPage() {
               <p>
                 The 10-year Treasury yield is the interest rate the US government pays to borrow money for a decade. Since
                 US government debt is treated as risk-free, this yield is the single most-watched interest rate in the
-                world — the benchmark against which mortgages, corporate bonds, and even stock valuations are priced.
+                world - the benchmark against which mortgages, corporate bonds, and even stock valuations are priced.
               </p>
             </div>
             <div>
@@ -227,8 +227,8 @@ export default async function TenYearYieldPage() {
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">Why it matters for stocks</h3>
               <p>
                 The 10-year is the discount rate for future earnings. When it rises, tomorrow&rsquo;s profits are worth
-                less today, which squeezes valuations — hardest on high-growth names whose value sits far in the future.
-                It&rsquo;s also competition: when a risk-free bond yields 4–5%, investors demand more from stocks to
+                less today, which squeezes valuations - hardest on high-growth names whose value sits far in the future.
+                It&rsquo;s also competition: when a risk-free bond yields 4-5%, investors demand more from stocks to
                 justify the extra risk. That&rsquo;s why a spike in the 10-year so often triggers a selloff.
               </p>
             </div>
@@ -236,7 +236,7 @@ export default async function TenYearYieldPage() {
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">The yield curve (2Y vs 10Y vs 30Y)</h3>
               <p>
                 Compare the 10-year with the 2-year and 30-year and you get the &ldquo;yield curve.&rdquo; Normally longer
-                maturities pay more. When short-term yields climb above the 10-year — an <em>inverted</em> curve — it has
+                maturities pay more. When short-term yields climb above the 10-year - an <em>inverted</em> curve - it has
                 preceded every US recession in recent history, which is why investors watch the spread so closely.
               </p>
             </div>
@@ -282,7 +282,7 @@ export default async function TenYearYieldPage() {
         </Section>
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
-          Data via Yahoo Finance (CBOE ^TNX), updated in real time during market hours. For informational purposes only —
+          Data via Yahoo Finance (CBOE ^TNX), updated in real time during market hours. For informational purposes only -
           not financial advice.
         </p>
       </div>

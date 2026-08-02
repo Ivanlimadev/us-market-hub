@@ -10,7 +10,7 @@ export function MostSearchedStocks() {
     queryFn: () => fetch('/api/trending').then((r) => (r.ok ? r.json() : [])),
     staleTime: 5 * 60_000,
   })
-  // Stocks only — drop crypto pairs (BTC-USD, ETH-USD…), forex and futures.
+  // Stocks only - drop crypto pairs (BTC-USD, ETH-USD…), forex and futures.
   const items = (Array.isArray(data) ? data : [])
     .filter((s) => !/-USDT?$/i.test(s.symbol) && !/[=^]/.test(s.symbol))
     .slice(0, 8)

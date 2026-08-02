@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   const pexelsKey = process.env.PEXELS_API_KEY
   if (!pexelsKey) return NextResponse.json({ error: 'PEXELS_API_KEY not set' }, { status: 503 })
 
-  // Writes (update post images) require the service role — blog_posts RLS grants
+  // Writes (update post images) require the service role - blog_posts RLS grants
   // the anon role SELECT only. Route is server-only and CRON_SECRET-protected.
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

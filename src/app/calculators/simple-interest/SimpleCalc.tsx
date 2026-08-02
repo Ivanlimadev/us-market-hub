@@ -105,7 +105,7 @@ export function SimpleCalc() {
       <h1 className="mb-2 text-3xl font-bold text-zinc-100">Simple Interest Calculator</h1>
       <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
         Calculate returns on fixed-income investments where interest is applied only to the original
-        principal. Unlike compound interest, there is no reinvestment — returns grow linearly.
+        principal. Unlike compound interest, there is no reinvestment - returns grow linearly.
       </p>
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
@@ -215,7 +215,7 @@ export function SimpleCalc() {
       <section className="mt-14 space-y-5 border-t border-zinc-800 pt-10 text-sm leading-relaxed text-zinc-400">
         <h2 className="text-base font-bold text-zinc-200">What is simple interest?</h2>
         <p>
-          Simple interest is calculated only on the original principal — it does not accumulate.
+          Simple interest is calculated only on the original principal - it does not accumulate.
           If you invest $10,000 at 10% per year for 5 years, you earn $1,000 every year for a
           total of $5,000 in interest and $15,000 final value.
         </p>
@@ -229,7 +229,7 @@ export function SimpleCalc() {
             Final = Principal + Interest
           </code>.
           Annual rates are divided by 12 when calculating monthly periods.
-          Unlike compound interest, the base never grows — returns are linear.
+          Unlike compound interest, the base never grows - returns are linear.
         </p>
         <p className="text-xs text-zinc-600">
           For educational purposes only. Not financial advice.

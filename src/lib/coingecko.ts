@@ -3,7 +3,7 @@ import { withRetry, HttpError } from '@/lib/retry'
 
 const BASE = 'https://api.coingecko.com/api/v3'
 
-// In-memory cache — entry stays after expiry so it can be used as stale fallback
+// In-memory cache - entry stays after expiry so it can be used as stale fallback
 const cache = new Map<string, { data: unknown; expires: number }>()
 
 export async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
@@ -24,7 +24,7 @@ export async function cgFetch<T>(path: string, ttlMs = 60_000): Promise<T> {
     cache.set(path, { data, expires: Date.now() + ttlMs })
     return data
   } catch (err) {
-    // API failed — serve stale data if we have any rather than crashing
+    // API failed - serve stale data if we have any rather than crashing
     if (entry) {
       console.warn(`[CoinGecko] stale fallback for ${path}:`, (err as Error).message)
       return entry.data as T

@@ -50,7 +50,7 @@ export function usePortfolio(): {
 
   const summary = useMemo(() => {
     if (!transactions.length) return null
-    // Wait until the fetch completes (success or error) — don't block on empty results
+    // Wait until the fetch completes (success or error) - don't block on empty results
     if (stockSymbols.length > 0 && !stockFetched) return null
     if (hasCrypto && !cryptoFetched) return null
 

@@ -54,7 +54,7 @@ export function CryptoHeatmap() {
 
   const top20 = (data ?? []).slice(0, 20)
 
-  // Live 24h % via Kraken — only subscribe when 24h period is active
+  // Live 24h % via Kraken - only subscribe when 24h period is active
   const krakenSymbols = period === '24h' ? top20.map((c) => c.symbol) : []
   const tickers = useKrakenTicker(krakenSymbols)
 

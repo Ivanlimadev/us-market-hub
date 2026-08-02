@@ -1,6 +1,6 @@
 // Process-wide cache + single-flight + stale-while-revalidate for expensive
 // upstream fetches (e.g. Yahoo batch quotes). PM2 runs a single instance, so a
-// module-level Map is shared across every request — one refresh per TTL serves
+// module-level Map is shared across every request - one refresh per TTL serves
 // all visitors instead of each request (or each IP) hammering the upstream.
 //
 // Behaviour:

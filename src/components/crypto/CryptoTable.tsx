@@ -18,7 +18,7 @@ function fmt(n: number, decimals = 2): string {
 }
 
 function PctCell({ val }: { val: number | null }) {
-  if (val == null) return <span className="text-zinc-600">—</span>
+  if (val == null) return <span className="text-zinc-600">-</span>
   const pos = val >= 0
   return (
     <span className={pos ? 'text-emerald-400' : 'text-red-400'}>

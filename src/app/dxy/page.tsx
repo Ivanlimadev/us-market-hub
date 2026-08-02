@@ -27,7 +27,7 @@ const BASKET = [
   { code: 'CHF', name: 'Swiss franc',     weight: 3.6  },
 ]
 
-/** A titled page section — same idiom as the stock/crypto asset pages. */
+/** A titled page section - same idiom as the stock/crypto asset pages. */
 function Section({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className={`space-y-4${id ? ' scroll-mt-24' : ''}`}>
@@ -52,16 +52,16 @@ async function getDxy(): Promise<{ value: number; prevClose: number } | null> {
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `US Dollar Index (DXY) — Live Chart, Price & Analysis ${year}`,
-    description: `Live US Dollar Index (DXY) chart and price. See what the dollar index is today, which currencies are in the basket, and what makes the dollar rise or fall — updated in real time.`,
+    title:       `US Dollar Index (DXY) - Live Chart, Price & Analysis ${year}`,
+    description: `Live US Dollar Index (DXY) chart and price. See what the dollar index is today, which currencies are in the basket, and what makes the dollar rise or fall - updated in real time.`,
     alternates:  { canonical: `${BASE}/dxy` },
     openGraph: {
-      title:       `US Dollar Index (DXY) — Live Chart & Price ${year}`,
+      title:       `US Dollar Index (DXY) - Live Chart & Price ${year}`,
       description: `Track the US Dollar Index (DXY) in real time: interactive chart, the six currencies in the basket, and what moves the dollar.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `US Dollar Index (DXY) — Live Chart & Price ${year}`,
+      title:       `US Dollar Index (DXY) - Live Chart & Price ${year}`,
       description: `Track the US Dollar Index (DXY) in real time: interactive chart, the currency basket, and what moves the dollar.`,
     },
   }
@@ -77,8 +77,8 @@ export default async function DxyPage() {
   const prevClose = dxy?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? value.toFixed(2) : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? value.toFixed(2) : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -89,7 +89,7 @@ export default async function DxyPage() {
     },
     {
       q: 'What is the US Dollar Index?',
-      a: 'The US Dollar Index (DXY) measures the value of the US dollar against a basket of six major currencies — the euro, Japanese yen, British pound, Canadian dollar, Swedish krona and Swiss franc. It was set to a base of 100 in March 1973, so a reading of 105 means the dollar is about 5% stronger than that baseline against the basket.',
+      a: 'The US Dollar Index (DXY) measures the value of the US dollar against a basket of six major currencies - the euro, Japanese yen, British pound, Canadian dollar, Swedish krona and Swiss franc. It was set to a base of 100 in March 1973, so a reading of 105 means the dollar is about 5% stronger than that baseline against the basket.',
     },
     {
       q: 'Which currencies are in the DXY?',
@@ -101,7 +101,7 @@ export default async function DxyPage() {
     },
     {
       q: 'Is a strong dollar good or bad for stocks?',
-      a: 'It depends. A strong dollar can dent the reported earnings of US companies with large foreign revenue and pressure commodities, but it also reflects demand for US assets and can cool import-driven inflation. There is no fixed rule — it depends on why the dollar is moving.',
+      a: 'It depends. A strong dollar can dent the reported earnings of US companies with large foreign revenue and pressure commodities, but it also reflects demand for US assets and can cool import-driven inflation. There is no fixed rule - it depends on why the dollar is moving.',
     },
     {
       q: 'How is the US Dollar Index calculated?',
@@ -116,7 +116,7 @@ export default async function DxyPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}/dxy`,
         url:     `${BASE}/dxy`,
-        name:    `US Dollar Index (DXY) — Live Chart & Price ${year}`,
+        name:    `US Dollar Index (DXY) - Live Chart & Price ${year}`,
         description: 'Live US Dollar Index (DXY) chart and price, the currency basket, and what moves the dollar.',
         isPartOf: { '@id': BASE },
       },
@@ -146,7 +146,7 @@ export default async function DxyPage() {
       />
 
       <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
-        {/* Asset header band — same idiom as the stock/crypto detail pages */}
+        {/* Asset header band - same idiom as the stock/crypto detail pages */}
         <div className="rounded-2xl bg-neutral-800 px-4 py-4 sm:px-5">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
             <div className="flex min-w-0 flex-1 items-center gap-3 md:flex-none md:gap-4">
@@ -225,7 +225,7 @@ export default async function DxyPage() {
               <p>
                 The US Dollar Index (ticker <strong className="text-zinc-300">DXY</strong>) measures the strength of
                 the US dollar against a weighted basket of six major currencies. Created in 1973 with a base value of
-                100, it&rsquo;s the most widely-watched gauge of the dollar&rsquo;s overall value — a reading above 100
+                100, it&rsquo;s the most widely-watched gauge of the dollar&rsquo;s overall value - a reading above 100
                 means the dollar has gained versus the basket since that baseline, and below 100 means it has weakened.
               </p>
             </div>
@@ -235,8 +235,8 @@ export default async function DxyPage() {
                 The dollar index is driven mostly by relative interest rates and growth. When the Federal Reserve raises
                 rates or is expected to stay higher-for-longer, dollar-denominated assets pay more and the DXY tends to
                 rise. Risk sentiment matters too: in times of stress, investors buy dollars as a safe haven. Because the
-                euro is 57.6% of the basket, anything that moves EUR/USD — European Central Bank policy, eurozone growth
-                — moves the index almost as much as US data does.
+                euro is 57.6% of the basket, anything that moves EUR/USD - European Central Bank policy, eurozone growth
+                - moves the index almost as much as US data does.
               </p>
             </div>
             <div>
@@ -259,7 +259,7 @@ export default async function DxyPage() {
           </div>
         </Section>
 
-        {/* FAQ — native <details> so it&rsquo;s crawlable and works without JS */}
+        {/* FAQ - native <details> so it&rsquo;s crawlable and works without JS */}
         <Section title="Frequently Asked Questions">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
             <div className="divide-y divide-zinc-800/60">
@@ -298,7 +298,7 @@ export default async function DxyPage() {
         </Section>
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
-          Data from ICE via Yahoo Finance, updated in real time during market hours. For informational purposes only —
+          Data from ICE via Yahoo Finance, updated in real time during market hours. For informational purposes only -
           not financial advice.
         </p>
       </div>

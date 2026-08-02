@@ -12,7 +12,7 @@ const TABS: { id: TabId; label: string; short: string }[] = [
 ]
 
 const fmt = (n: number) => {
-  if (!isFinite(n) || isNaN(n)) return '—'
+  if (!isFinite(n) || isNaN(n)) return '-'
   const abs = Math.abs(n)
   if (abs >= 1_000_000) return n.toLocaleString('en-US', { maximumFractionDigits: 2 })
   if (abs >= 1) return n.toLocaleString('en-US', { maximumFractionDigits: 4 })
@@ -217,7 +217,7 @@ export function PercentageCalc() {
         <p>
           Percentage calculations are the foundation of investment analysis. Whether you're
           comparing a stock's daily move, calculating portfolio allocation, or measuring how
-          much an ETF has gained since purchase — every answer is a percentage.
+          much an ETF has gained since purchase - every answer is a percentage.
         </p>
         <p>
           The <strong className="text-zinc-300">% change</strong> formula used here is{' '}

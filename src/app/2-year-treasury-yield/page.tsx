@@ -46,17 +46,17 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `2-Year Treasury Yield — Live Chart & Rate Today ${year}`,
+    title:       `2-Year Treasury Yield - Live Chart & Rate Today ${year}`,
     description: `Live 2-year US Treasury yield chart and rate. See the 2-year yield today, how it tracks Fed policy, and the 2s10s spread that has warned of every recent recession.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
-      title:       `2-Year Treasury Yield — Live Chart & Rate ${year}`,
+      title:       `2-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 2-year US Treasury yield in real time: the market’s best read on Fed policy, plus the 2s10s recession signal.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `2-Year Treasury Yield — Live Chart & Rate ${year}`,
-      description: `Track the 2-year US Treasury yield in real time — the market’s best read on where the Fed is headed.`,
+      title:       `2-Year Treasury Yield - Live Chart & Rate ${year}`,
+      description: `Track the 2-year US Treasury yield in real time - the market’s best read on where the Fed is headed.`,
     },
   }
 }
@@ -71,8 +71,8 @@ export default async function TwoYearYieldPage() {
   const prevClose = yld?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? `${value.toFixed(2)}%` : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? `${value.toFixed(2)}%` : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -91,7 +91,7 @@ export default async function TwoYearYieldPage() {
     },
     {
       q: 'What is the 2s10s spread and why does it matter?',
-      a: 'The 2s10s spread is the 10-year yield minus the 2-year yield. Normally it is positive (longer loans pay more). When it turns negative — the 2-year rising above the 10-year, an "inverted yield curve" — it has preceded every US recession in recent history, which is why investors watch it so closely.',
+      a: 'The 2s10s spread is the 10-year yield minus the 2-year yield. Normally it is positive (longer loans pay more). When it turns negative - the 2-year rising above the 10-year, an "inverted yield curve" - it has preceded every US recession in recent history, which is why investors watch it so closely.',
     },
     {
       q: 'Why does bond yield rise when the price falls?',
@@ -106,7 +106,7 @@ export default async function TwoYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `2-Year Treasury Yield — Live Chart & Rate ${year}`,
+        name:    `2-Year Treasury Yield - Live Chart & Rate ${year}`,
         description: 'Live 2-year US Treasury yield chart and rate, Fed expectations, and the 2s10s recession signal.',
         isPartOf: { '@id': BASE },
       },
@@ -178,7 +178,7 @@ export default async function TwoYearYieldPage() {
         <Section title="Why the 2-Year Yield Matters">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
             <p className="text-sm text-zinc-400">
-              The 2-year is the market&rsquo;s read on the Fed — and half of the most-watched recession signal:
+              The 2-year is the market&rsquo;s read on the Fed - and half of the most-watched recession signal:
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {AFFECTS.map((a) => (
@@ -198,7 +198,7 @@ export default async function TwoYearYieldPage() {
               <p>
                 The 2-year Treasury yield is the interest rate the US government pays to borrow for two years. Its short
                 maturity makes it the market&rsquo;s single best gauge of where the Federal Reserve is likely to take
-                interest rates — it tracks Fed expectations more tightly than any other benchmark.
+                interest rates - it tracks Fed expectations more tightly than any other benchmark.
               </p>
             </div>
             <div>
@@ -214,8 +214,8 @@ export default async function TwoYearYieldPage() {
               <p>
                 Subtract the 2-year from the{' '}
                 <Link href="/10-year-treasury-yield" className="text-emerald-400 hover:text-emerald-300">10-year yield</Link>{' '}
-                and you get the &ldquo;2s10s&rdquo; spread. When it goes negative — the 2-year above the 10-year, an
-                inverted curve — it has warned of every US recession in recent decades. That is why a rising 2-year, even
+                and you get the &ldquo;2s10s&rdquo; spread. When it goes negative - the 2-year above the 10-year, an
+                inverted curve - it has warned of every US recession in recent decades. That is why a rising 2-year, even
                 as long rates lag, makes markets nervous.
               </p>
             </div>
@@ -256,7 +256,7 @@ export default async function TwoYearYieldPage() {
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
           Data via Yahoo Finance (2-year Treasury yield, continuous), updated in real time during market hours. For
-          informational purposes only — not financial advice.
+          informational purposes only - not financial advice.
         </p>
       </div>
     </>

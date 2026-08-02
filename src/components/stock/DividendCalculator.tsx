@@ -14,7 +14,7 @@ function fmtUsd(n: number, max = 2): string {
 /**
  * Compact "what would I earn in dividends" calculator, shown in the right column
  * of the Dividends & Income section (fills the space next to the payout history).
- * Uses the stock's own annual dividend rate + price — no extra data fetch.
+ * Uses the stock's own annual dividend rate + price - no extra data fetch.
  */
 export function DividendCalculator({ data }: { data: StockDetailData }) {
   const [amount, setAmount] = useState('10000')
@@ -27,7 +27,7 @@ export function DividendCalculator({ data }: { data: StockDetailData }) {
   const ttm = divs.slice(0, 4).reduce((s, d) => s + (d.dividend || 0), 0)
   const annualPerShare = rate > 0 ? rate : ttm
 
-  // Non-payers (or missing price) get nothing — the column just shows Magic Number.
+  // Non-payers (or missing price) get nothing - the column just shows Magic Number.
   if (!(annualPerShare > 0) || !(price > 0)) return null
 
   const numAmount = Math.max(parseFloat(amount) || 0, 0)
@@ -73,7 +73,7 @@ export function DividendCalculator({ data }: { data: StockDetailData }) {
 
       <p className="mt-3 text-[11px] leading-relaxed text-zinc-600">
         ≈ {shares.toLocaleString('en-US', { maximumFractionDigits: 1 })} shares at {fmtUsd(annualPerShare)}/share a year.
-        Estimate only — dividends can be cut or raised.
+        Estimate only - dividends can be cut or raised.
       </p>
     </div>
   )

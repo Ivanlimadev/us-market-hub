@@ -25,7 +25,7 @@ export function rateLimit(ip: string, limit: number, windowMs: number): boolean 
 export function getIp(req: { headers: { get: (k: string) => string | null } }): string {
   // Behind Cloudflare the chain is client → CF edge → nginx → app, so nginx's
   // $remote_addr (and thus x-real-ip / the last x-forwarded-for hop) is the CF
-  // EDGE IP, shared by many users — that collapses everyone into one rate-limit
+  // EDGE IP, shared by many users - that collapses everyone into one rate-limit
   // bucket. CF-Connecting-IP is always the true client IP, so prefer it. It only
   // reaches us via Cloudflare (direct-to-nginx traffic is denied), so it is as
   // trustworthy as x-real-ip here.

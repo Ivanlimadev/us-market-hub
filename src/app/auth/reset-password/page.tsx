@@ -19,7 +19,7 @@ function ResetPasswordContent() {
   const [ready, setReady]       = useState(false)
 
   useEffect(() => {
-    // The /auth/callback route passed an error — link was invalid or expired.
+    // The /auth/callback route passed an error - link was invalid or expired.
     if (searchParams.get('error')) {
       setError('This link has expired or is invalid. Please request a new one.')
       return

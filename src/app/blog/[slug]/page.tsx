@@ -227,7 +227,7 @@ export default async function BlogPostPage({
     if (oldest > 0) change12m = ((newest - oldest) / oldest) * 100
   }
 
-  // Crypto card — for Crypto posts, feature the first coin the article links to
+  // Crypto card - for Crypto posts, feature the first coin the article links to
   // (e.g. /crypto/bitcoin). Keeps the stock `tickers`/chips untouched.
   const cryptoId = post.category === 'Crypto'
     ? (post.content.match(/\/crypto\/([a-z0-9-]+)/)?.[1] ?? null)
@@ -416,7 +416,7 @@ export default async function BlogPostPage({
         ))}
       </div>
 
-      {/* Crypto card — shown for crypto posts (amber accent) */}
+      {/* Crypto card - shown for crypto posts (amber accent) */}
       {cryptoData && cryptoId && (
         <div className="mt-10 overflow-hidden rounded-2xl border border-amber-500/40 bg-zinc-900">
           {/* Header: logo + symbol + name */}
@@ -491,7 +491,7 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* Ticker card — shown when post has a related stock */}
+      {/* Ticker card - shown when post has a related stock */}
       {!cryptoData && stockData && primaryTicker && (
         <div className="mt-10 overflow-hidden rounded-2xl border border-emerald-500/40 bg-zinc-900">
           {/* Header: logo + ticker + name */}
@@ -585,10 +585,10 @@ export default async function BlogPostPage({
       {/* Related posts com abas Related / Latest */}
       <RelatedTabs related={related} latest={latestPosts} />
 
-      {/* Author byline (mini) — attributed by post category */}
+      {/* Author byline (mini) - attributed by post category */}
       <AuthorByline author={author} />
 
-      {/* Discussion — shared with the mobile app */}
+      {/* Discussion - shared with the mobile app */}
       <CommentsSection entityType="post" entityId={slug} />
 
       <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">

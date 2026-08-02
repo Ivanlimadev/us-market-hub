@@ -1,7 +1,7 @@
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 /**
- * Server-side SEO content for stock pages — a unique prose intro and a set of
+ * Server-side SEO content for stock pages - a unique prose intro and a set of
  * FAQs, both derived entirely from real market data (no AI, no fabrication).
  * Used to (a) render crawlable long-tail content and (b) emit FAQPage JSON-LD.
  */
@@ -59,7 +59,7 @@ export function buildStockIntro(data: StockDetailData, year: number, isFund = fa
 
   if (isFund) {
     parts.push(
-      `${symbol} is an exchange-traded fund (ETF) — a single, diversified holding that trades like a stock.`,
+      `${symbol} is an exchange-traded fund (ETF) - a single, diversified holding that trades like a stock.`,
     )
   } else if (info?.marketCap) {
     const tier = capTier(info.marketCap)
@@ -102,12 +102,12 @@ function joinList(items: string[]): string {
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
 }
 
-/** FAQs answered from real data — feeds both visible <details> and FAQPage schema. */
+/** FAQs answered from real data - feeds both visible <details> and FAQPage schema. */
 export function buildStockFaqs(data: StockDetailData, year: number): StockFaq[] {
   const { info, currentPrice, name, symbol } = data
   const faqs: StockFaq[] = []
 
-  // 1. Should I buy — synthesised from strengths vs. risks (with disclaimer).
+  // 1. Should I buy - synthesised from strengths vs. risks (with disclaimer).
   const strengths: string[] = []
   const risks: string[] = []
   if (info?.revenueGrowth != null) {
@@ -129,7 +129,7 @@ export function buildStockFaqs(data: StockDetailData, year: number): StockFaq[] 
     if (strengths.length) answer += `strengths such as ${joinList(strengths)}`
     if (strengths.length && risks.length) answer += `, while risks include ${joinList(risks)}`
     else if (risks.length) answer += `risks such as ${joinList(risks)}`
-    answer += `. Whether ${symbol} is a good buy in ${year} depends on your time horizon and risk tolerance — review the full bull case, bear case and fair-value estimates above. This is informational analysis, not financial advice.`
+    answer += `. Whether ${symbol} is a good buy in ${year} depends on your time horizon and risk tolerance - review the full bull case, bear case and fair-value estimates above. This is informational analysis, not financial advice.`
     faqs.push({ question: `Is ${name} (${symbol}) a good stock to buy in ${year}?`, answer })
   }
 

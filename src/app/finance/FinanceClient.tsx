@@ -137,7 +137,7 @@ export function FinanceClient() {
   }
   // Show budgeted categories first, then any category with spending this month.
   const budgetRows = budgets
-    .map((b) => ({ ...b, name: catName.get(b.category_id) ?? '—', spent: spentByCat.get(b.category_id) ?? 0 }))
+    .map((b) => ({ ...b, name: catName.get(b.category_id) ?? '-', spent: spentByCat.get(b.category_id) ?? 0 }))
     .sort((a, b) => b.spent / (b.amount || 1) - a.spent / (a.amount || 1))
 
   const recurring = recurringQ.data ?? []
@@ -391,7 +391,7 @@ export function FinanceClient() {
         </div>
         {goals.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-8 text-center text-sm text-zinc-500">
-            No goals yet. Set a target — emergency fund, vacation, new phone — and track your progress.
+            No goals yet. Set a target - emergency fund, vacation, new phone - and track your progress.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -432,7 +432,7 @@ export function FinanceClient() {
       <section>
         <h2 className="mb-2 flex items-center gap-1.5 text-base font-bold text-white"><BarChart3 className="h-4 w-4 text-zinc-400" /> Reports</h2>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {/* Spending by category — this month */}
+          {/* Spending by category - this month */}
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
             <p className="mb-3 text-xs font-medium text-zinc-500">Spending by category · {monthLabel}</p>
             {spendCats.length === 0 ? (
@@ -457,7 +457,7 @@ export function FinanceClient() {
             )}
           </div>
 
-          {/* Income vs spending — last 6 months */}
+          {/* Income vs spending - last 6 months */}
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
             <p className="mb-3 text-xs font-medium text-zinc-500">Income vs spending · last 6 months</p>
             <div className="flex h-36 items-end justify-between gap-2">

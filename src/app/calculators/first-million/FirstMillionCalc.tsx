@@ -195,7 +195,7 @@ export function FirstMillionCalc() {
 
       <h1 className="mb-2 text-3xl font-bold text-zinc-100">First Million Calculator</h1>
       <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
-        Find out at what age you'll reach $1,000,000 — or how much you need to invest monthly
+        Find out at what age you'll reach $1,000,000 - or how much you need to invest monthly
         to get there by a target date.
       </p>
 
@@ -211,7 +211,7 @@ export function FirstMillionCalc() {
             {mode === 'how-long' ? 'How long to reach $1M?' : 'Monthly contribution needed?'}
           </h2>
 
-          {/* Current age — both modes */}
+          {/* Current age - both modes */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-zinc-400">Your current age</label>
             <input type="number" value={age} onChange={e => setAge(e.target.value)}
@@ -220,7 +220,7 @@ export function FirstMillionCalc() {
             />
           </div>
 
-          {/* Initial capital — both modes */}
+          {/* Initial capital - both modes */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-zinc-400">Initial capital ($)</label>
             <div className="relative">
@@ -232,7 +232,7 @@ export function FirstMillionCalc() {
             </div>
           </div>
 
-          {/* Monthly contribution — how-long only */}
+          {/* Monthly contribution - how-long only */}
           {mode === 'how-long' && (
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-zinc-400">Monthly contribution ($)</label>
@@ -246,7 +246,7 @@ export function FirstMillionCalc() {
             </div>
           )}
 
-          {/* Time horizon — how-much only */}
+          {/* Time horizon - how-much only */}
           {mode === 'how-much' && (
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-zinc-400">Time horizon (years)</label>
@@ -300,13 +300,13 @@ export function FirstMillionCalc() {
 
                 return (
                   <>
-                    {/* Hero result — the shareable line */}
+                    {/* Hero result - the shareable line */}
                     <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-6 text-center">
                       <p className="text-[11px] uppercase tracking-widest font-semibold text-amber-500 mb-3">
                         You&apos;ll reach $1,000,000 at age
                       </p>
                       <p className="text-6xl font-extrabold text-amber-400 leading-none">
-                        {currentAge > 0 ? targetAge : '—'}
+                        {currentAge > 0 ? targetAge : '-'}
                       </p>
                       {currentAge > 0 && (
                         <p className="mt-2 text-sm text-zinc-400">
@@ -403,13 +403,13 @@ export function FirstMillionCalc() {
         <p>
           The path to $1,000,000 depends on three variables: how much you start with, how much you
           contribute each month, and your average annual return. The S&P 500 has historically
-          returned around 10% per year before inflation. Starting earlier — even with a small amount —
+          returned around 10% per year before inflation. Starting earlier - even with a small amount -
           makes an enormous difference because of compounding.
         </p>
         <p>
-          Investing $1,000/month from age 25 at 10% gets you to $1M by age 49 — just 24 years.
+          Investing $1,000/month from age 25 at 10% gets you to $1M by age 49 - just 24 years.
           Start at 35 and the same parameters push the milestone to age 56. The 10-year delay costs
-          you 7 extra years of working — that&apos;s the real price of waiting.
+          you 7 extra years of working - that&apos;s the real price of waiting.
         </p>
         <p className="text-xs text-zinc-600">
           For educational purposes only. Not financial advice. Returns are not guaranteed.

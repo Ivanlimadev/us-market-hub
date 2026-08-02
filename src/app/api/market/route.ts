@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getYFBatchQuotes } from '@/lib/yahoo-finance'
 import { cached, cachedStale } from '@/lib/server-cache'
 
-// US market indices — Yahoo Finance format
+// US market indices - Yahoo Finance format
 const INDEX_SYMBOLS = ['^DJI', '^IXIC', '^RUT', '^VIX']
 const INDEX_NAMES: Record<string, string> = {
   '^DJI':  'Dow Jones',
@@ -42,7 +42,7 @@ async function loadMarket() {
   return { indices, blueChips }
 }
 
-// GET /api/market — homepage market overview.
+// GET /api/market - homepage market overview.
 // Shared process-wide cache (single-flight) replaces the old per-IP rate limit:
 // the homepage hits this on every visit, so caching protects Yahoo far better
 // than throttling individual IPs.

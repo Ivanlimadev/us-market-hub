@@ -22,7 +22,7 @@ function StatCard({
   return (
     // Colors written in the site's dark-theme idiom (globals.css inverts the zinc
     // palette in light mode). The header band uses `neutral` (not remapped) so it
-    // stays dark in both themes — the Investidor10 look. No `overflow-hidden` here
+    // stays dark in both themes - the Investidor10 look. No `overflow-hidden` here
     // so the ? tooltip can spill below the card; corners are rounded per-band.
     <div className="rounded-xl border border-zinc-800 shadow-sm">
       <div className="flex items-center justify-center gap-1.5 rounded-t-xl bg-neutral-800 px-2 py-2">
@@ -59,7 +59,7 @@ function BigValue({ children }: { children: ReactNode }) {
   )
 }
 
-const DASH = <span className="text-2xl font-bold text-zinc-500">—</span>
+const DASH = <span className="text-2xl font-bold text-zinc-500">-</span>
 
 export function KeyStatsStrip({
   symbol,
@@ -73,7 +73,7 @@ export function KeyStatsStrip({
 
   if (!data) return null
 
-  // TSX tickers (`.TO`) are quoted in CAD — prefix their money values with C$.
+  // TSX tickers (`.TO`) are quoted in CAD - prefix their money values with C$.
   const cur = symbol.toUpperCase().endsWith('.TO') ? 'C$' : '$'
   const info = data.info
 

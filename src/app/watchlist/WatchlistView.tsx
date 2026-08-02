@@ -17,7 +17,7 @@ function fmtPrice(n: number): string {
 }
 
 function ChangePct({ val }: { val: number | undefined }) {
-  if (val == null) return <span className="text-zinc-600">—</span>
+  if (val == null) return <span className="text-zinc-600">-</span>
   const pos = val >= 0
   return (
     <span className={`inline-flex items-center gap-0.5 text-xs font-semibold ${pos ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -87,7 +87,7 @@ function WatchlistRow({
             <ChangePct val={changePct} />
           </>
         ) : (
-          <p className="text-sm text-zinc-600">—</p>
+          <p className="text-sm text-zinc-600">-</p>
         )}
       </div>
       <div className="flex items-center gap-1 shrink-0">

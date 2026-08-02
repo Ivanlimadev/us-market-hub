@@ -104,7 +104,7 @@ export function MagicNumber({ data }: Props) {
             <span className="text-zinc-500">({fmt$(result.totalInvested)})</span>
             {' '}and each{' '}
             <span className="font-medium text-white">{result.label}ly</span> dividend pays for{' '}
-            <span className="font-bold text-emerald-400">1 new share</span> —
+            <span className="font-bold text-emerald-400">1 new share</span> -
             the snowball runs on its own.
           </p>
         </div>

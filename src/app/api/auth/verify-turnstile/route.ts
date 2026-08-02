@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
-  // 10 verifications per 5 min per IP — prevents token enumeration
+  // 10 verifications per 5 min per IP - prevents token enumeration
   if (!rateLimit(getIp(req), 10, 5 * 60_000)) {
     return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 })
   }

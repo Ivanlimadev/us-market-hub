@@ -3,11 +3,11 @@ import Link from 'next/link'
 import { TrendingUp, Percent, Target, BarChart2, RefreshCw, ArrowUpRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Free Investment Calculators — Stock Market ROI',
+  title: 'Free Investment Calculators - Stock Market ROI',
   description: 'Free financial calculators for US investors: compound interest, DCA, simple interest, first million, and percentage. Plan your investments and see how your money grows.',
   alternates: { canonical: 'https://stockmarketroi.com/calculators' },
   openGraph: {
-    title: 'Free Investment Calculators — Stock Market ROI',
+    title: 'Free Investment Calculators - Stock Market ROI',
     description: 'Free financial calculators for investors: compound interest, DCA, simple interest, first million, and percentage.',
     type: 'website',
   },
@@ -47,7 +47,7 @@ const CALCULATORS = [
     color: 'text-amber-400',
     bg: 'bg-amber-400/10',
     title: 'First Million',
-    description: 'Find out at what age you\'ll reach $1,000,000 — or how much you need to invest monthly to get there by your target date.',
+    description: 'Find out at what age you\'ll reach $1,000,000 - or how much you need to invest monthly to get there by your target date.',
     badge: 'Goal-based',
   },
   {
@@ -56,7 +56,7 @@ const CALCULATORS = [
     color: 'text-blue-400',
     bg: 'bg-blue-400/10',
     title: 'Simple Interest',
-    description: 'Calculate returns on fixed-income investments where interest is applied only to the original principal — no compounding effect.',
+    description: 'Calculate returns on fixed-income investments where interest is applied only to the original principal - no compounding effect.',
     badge: null,
   },
   {
@@ -77,7 +77,7 @@ export default function CalculatorsPage() {
       <h1 className="mb-3 text-3xl font-bold text-zinc-100">Investment Calculators</h1>
       <p className="mb-10 max-w-2xl text-zinc-400 leading-relaxed">
         Free tools to plan your financial future. Whether you're calculating returns, setting goals,
-        or doing quick percentage math — every calculator updates in real time.
+        or doing quick percentage math - every calculator updates in real time.
       </p>
 
       {/* Grid */}
@@ -117,7 +117,7 @@ export default function CalculatorsPage() {
         <h2 className="text-lg font-bold text-zinc-200">Why use financial calculators?</h2>
         <p>
           Understanding the math behind investing is one of the most important steps toward building
-          wealth. Compound interest — often called the "eighth wonder of the world" — turns small,
+          wealth. Compound interest - often called the "eighth wonder of the world" - turns small,
           consistent contributions into life-changing sums over time. Our calculators make that math
           transparent and interactive.
         </p>
@@ -139,8 +139,8 @@ export default function CalculatorsPage() {
         <p>
           Simple interest grows linearly: you earn the same dollar amount every period based solely
           on the original principal. Compound interest snowballs: each period's interest is added to
-          the principal, so future interest is calculated on a larger base. Over 20–30 years, the
-          difference between the two is enormous — and that's exactly what the compound interest
+          the principal, so future interest is calculated on a larger base. Over 20-30 years, the
+          difference between the two is enormous - and that's exactly what the compound interest
           calculator visualizes.
         </p>
       </section>

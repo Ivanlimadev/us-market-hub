@@ -21,7 +21,7 @@ export function Footer() {
               <span translate="no">Stock Market ROI</span>
             </Link>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
-              US stock market data — quotes, charts, earnings, dividends,
+              US stock market data - quotes, charts, earnings, dividends,
               portfolio tracker and market screener.
             </p>
             <p className="text-xs text-zinc-600">

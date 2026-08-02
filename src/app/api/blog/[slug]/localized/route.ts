@@ -15,10 +15,10 @@ function serviceClient() {
 // Google Translate (text mode) can mangle Markdown links like
 // `[Nvidia (NVDA)](/stocks/NVDA)`, breaking our internal ticker links. Swap them
 // for private-use-area sentinels the translator passes through untouched, then
-// restore them afterwards (the link label stays English, which is fine — they're
+// restore them afterwards (the link label stays English, which is fine - they're
 // company/asset names). Also covers images `![alt](url)`.
 //
-// The sentinels are U+E000 / U+E001 — private-use code points that never appear
+// The sentinels are U+E000 / U+E001 - private-use code points that never appear
 // in real content, so they can't collide with numbers like "$126,000" or "2010".
 const SENT_A = String.fromCodePoint(0xe000)
 const SENT_B = String.fromCodePoint(0xe001)
@@ -124,7 +124,7 @@ export async function GET(
       content: restoreLinks(tContent, links),
     }
 
-    // Best-effort cache write — never block the response on it.
+    // Best-effort cache write - never block the response on it.
     await svc
       .from('blog_post_translations')
       .upsert(

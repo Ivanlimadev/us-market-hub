@@ -41,7 +41,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-  // Alert checker — fires store.triggerAlert when prices cross thresholds
+  // Alert checker - fires store.triggerAlert when prices cross thresholds
   useAlertChecker()
 
   // Bell badge: count triggered alerts
@@ -72,7 +72,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav — shrinkable + horizontally scrollable so a crowded
+          {/* Desktop nav - shrinkable + horizontally scrollable so a crowded
               link list never pushes the right-side controls off screen */}
           <nav className="hidden min-w-0 items-center gap-1 overflow-x-auto md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NAV_LINKS.map((link) => (
@@ -90,13 +90,13 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Right side — shrink-0 keeps the Settings gear (last item) pinned
+          {/* Right side - shrink-0 keeps the Settings gear (last item) pinned
               on screen even when the nav link list overflows */}
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {/* Global search */}
             <GlobalSearch />
 
-            {/* Theme toggle — hidden on mobile (available in drawer) */}
+            {/* Theme toggle - hidden on mobile (available in drawer) */}
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
@@ -110,7 +110,7 @@ export function Navbar() {
               </button>
             )}
 
-            {/* Watchlist bell — hidden on mobile (available in drawer) */}
+            {/* Watchlist bell - hidden on mobile (available in drawer) */}
             <button
               onClick={() => router.push('/watchlist')}
               title="Watchlist & Alerts"
@@ -135,7 +135,7 @@ export function Navbar() {
               <span className="sm:hidden">{open ? 'Open' : 'Closed'}</span>
             </span>
 
-            {/* Auth — desktop */}
+            {/* Auth - desktop */}
             {user ? (
               <div className="relative hidden md:block">
                 <button
@@ -178,7 +178,7 @@ export function Navbar() {
               </Link>
             )}
 
-            {/* Settings — top entry point to the account / settings hub */}
+            {/* Settings - top entry point to the account / settings hub */}
             <Link
               href="/account"
               title="Settings"

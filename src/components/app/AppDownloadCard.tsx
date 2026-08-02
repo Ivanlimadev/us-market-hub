@@ -29,7 +29,7 @@ export function AppStoreBadge({ className }: { className?: string }) {
  * wider row for the homepage. Opens the App Store in a new tab.
  */
 export function AppDownloadCard({ variant = 'sidebar' }: { variant?: 'sidebar' | 'hero' | 'banner' | 'dividends' }) {
-  // Dividend-themed app CTA — rich, alive, fills the Dividends section's right column.
+  // Dividend-themed app CTA - rich, alive, fills the Dividends section's right column.
   if (variant === 'dividends') {
     const feats = [
       { icon: Bell,       label: 'Dividend notifications' },
@@ -62,10 +62,10 @@ export function AppDownloadCard({ variant = 'sidebar' }: { variant?: 'sidebar' |
           Get <span className="text-[#c8a45d]">dividend</span> notifications
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-zinc-300">
-          Be alerted when your stocks pay — follow market news for your watchlist and manage your whole financial life, on the go.
+          Be alerted when your stocks pay - follow market news for your watchlist and manage your whole financial life, on the go.
         </p>
 
-        {/* Feature grid — 2 columns */}
+        {/* Feature grid - 2 columns */}
         <ul className="mx-auto mt-5 grid max-w-md grid-cols-1 gap-x-5 gap-y-2.5 text-left text-sm text-zinc-100 sm:grid-cols-2">
           {feats.map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-2.5">
@@ -107,7 +107,7 @@ export function AppDownloadCard({ variant = 'sidebar' }: { variant?: 'sidebar' |
           <div>
             <h2 className="text-lg font-bold text-white sm:text-xl">Track your investments anywhere</h2>
             <p className="mt-1 max-w-md text-sm text-zinc-400">
-              Portfolio, dividends, alerts and AI insights — free on your iPhone.
+              Portfolio, dividends, alerts and AI insights - free on your iPhone.
             </p>
             <Link href="/pro" className="mt-1.5 inline-block text-sm font-semibold text-emerald-400 hover:text-emerald-300">
               See everything you get →
@@ -147,7 +147,7 @@ export function AppDownloadCard({ variant = 'sidebar' }: { variant?: 'sidebar' |
                 override, so they stay light on this fixed-dark banner in both themes */}
             <p className="text-xs font-bold uppercase tracking-widest text-[#e0c283]">Stock Market ROI Pro</p>
             <h2 className="mt-1 text-xl font-extrabold text-neutral-50">
-              All features, <span className="text-[#e0c283]">zero ads</span> — web &amp; app
+              All features, <span className="text-[#e0c283]">zero ads</span> - web &amp; app
             </h2>
             <p className="mt-1.5 max-w-sm text-sm text-neutral-300">
               Unlock every feature, ad-free, across our website and iOS app.

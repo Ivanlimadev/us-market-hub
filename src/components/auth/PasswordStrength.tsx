@@ -4,9 +4,9 @@ interface Rule { label: string; test: (p: string) => boolean }
 
 const RULES: Rule[] = [
   { label: 'At least 8 characters',          test: (p) => p.length >= 8 },
-  { label: 'One uppercase letter (A–Z)',      test: (p) => /[A-Z]/.test(p) },
-  { label: 'One lowercase letter (a–z)',      test: (p) => /[a-z]/.test(p) },
-  { label: 'One number (0–9)',                test: (p) => /\d/.test(p) },
+  { label: 'One uppercase letter (A-Z)',      test: (p) => /[A-Z]/.test(p) },
+  { label: 'One lowercase letter (a-z)',      test: (p) => /[a-z]/.test(p) },
+  { label: 'One number (0-9)',                test: (p) => /\d/.test(p) },
   { label: 'One special character (!@#$…)',   test: (p) => /[^A-Za-z0-9]/.test(p) },
 ]
 

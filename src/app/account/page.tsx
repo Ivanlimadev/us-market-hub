@@ -74,8 +74,8 @@ export default function AccountPage() {
 
   function support() {
     const params = new URLSearchParams({
-      subject: 'Stock Market ROI — Support',
-      body: `Describe your issue here.\n\n——\nAccount: ${user?.email ?? 'guest'}\nUser ID: ${user?.id ?? '—'}\nWeb: Stock Market ROI`,
+      subject: 'Stock Market ROI - Support',
+      body: `Describe your issue here.\n\n--\nAccount: ${user?.email ?? 'guest'}\nUser ID: ${user?.id ?? '-'}\nWeb: Stock Market ROI`,
     })
     window.location.href = `mailto:${SUPPORT_EMAIL}?${params.toString()}`
   }

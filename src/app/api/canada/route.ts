@@ -5,7 +5,7 @@ import { STOCK_NAMES } from '@/lib/stock-universe'
 // Quotes for the home "Canadian Markets" widget. ISR-cached: one refresh / 5 min.
 export const revalidate = 300
 
-// A liquid pool of TSX names — enough to power both the top-by-cap list and the
+// A liquid pool of TSX names - enough to power both the top-by-cap list and the
 // day's gainers/losers. Prices are in CAD.
 const POOL = [
   'RY.TO', 'TD.TO', 'SHOP.TO', 'BN.TO', 'ENB.TO', 'BMO.TO', 'CNR.TO', 'BNS.TO',

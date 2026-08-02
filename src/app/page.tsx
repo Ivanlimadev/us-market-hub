@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { IndexCards } from '@/components/market/IndexCards'
 
 export const metadata: Metadata = {
-  title: 'Stock Market ROI — US Stock Market Data & Analysis',
+  title: 'Stock Market ROI - US Stock Market Data & Analysis',
   description: 'Free US stock market data: quotes, interactive charts, portfolio tracker, stock screener, earnings calendar, dividends, market heatmap and AI-powered analysis.',
   alternates: { canonical: 'https://stockmarketroi.com' },
 }

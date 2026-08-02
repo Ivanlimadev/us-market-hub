@@ -37,7 +37,7 @@ export async function GET() {
     const protocols: DLProtocol[] = await protoRes.json()
     const chains:   DLChain[]    = await chainRes.json()
 
-    // Top 8 DeFi protocols — exclude CEX and bridge aggregators
+    // Top 8 DeFi protocols - exclude CEX and bridge aggregators
     const EXCLUDE_CATEGORIES = new Set(['CEX', 'Bridge Aggregator', 'Uncollateralized Lending'])
     const top8 = protocols
       .filter(p => p.tvl > 1e6 && !EXCLUDE_CATEGORIES.has(p.category))

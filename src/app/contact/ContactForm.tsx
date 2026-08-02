@@ -48,7 +48,7 @@ export function ContactForm() {
       <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 text-center">
         <CheckCircle2 className="mx-auto h-9 w-9 text-emerald-400" />
         <p className="mt-3 text-base font-semibold text-white">Message sent</p>
-        <p className="mt-1 text-sm text-zinc-400">Thanks, {name || 'there'} — we&rsquo;ll reply to {email} within 48 hours.</p>
+        <p className="mt-1 text-sm text-zinc-400">Thanks, {name || 'there'} - we&rsquo;ll reply to {email} within 48 hours.</p>
       </div>
     )
   }

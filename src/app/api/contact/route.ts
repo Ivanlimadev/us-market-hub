@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     | null
   if (!b) return NextResponse.json({ error: 'Invalid request.' }, { status: 400 })
 
-  // Honeypot — real users never fill the hidden 'company' field.
+  // Honeypot - real users never fill the hidden 'company' field.
   if (b.company) return NextResponse.json({ success: true })
 
   const name    = (b.name ?? '').trim().slice(0, 120)
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     from:    'Stock Market ROI <support@stockmarketroi.com>',
     to:      TO,
     replyTo: email,
-    subject: `[Contact] ${subject} — ${name}`,
+    subject: `[Contact] ${subject} - ${name}`,
     text:
       `New contact message from stockmarketroi.com\n\n` +
       `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n`,

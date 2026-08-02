@@ -22,7 +22,7 @@ export function SimilarCoins({ coinId, marketCap }: { coinId: string; marketCap:
 
   const others = markets.filter(c => c.id !== coinId && c.market_cap > 0)
 
-  // Same market-cap tier (0.1× – 10×); fall back to top by MC if fewer than 4 match
+  // Same market-cap tier (0.1× - 10×); fall back to top by MC if fewer than 4 match
   let similar = others
     .filter(c => c.market_cap <= marketCap * 10 && c.market_cap >= marketCap * 0.1)
     .sort((a, b) => b.market_cap - a.market_cap)

@@ -1,6 +1,6 @@
 import { ScreenerView } from '@/app/screener/ScreenerView'
 
-export const metadata = { title: 'US Stocks — Live Quotes & Analysis' }
+export const metadata = { title: 'US Stocks - Live Quotes & Analysis' }
 
 export default function StocksPage() {
   return (

@@ -1,4 +1,4 @@
-// Marketstack API — US Market types
+// Marketstack API - US Market types
 
 export interface MSPagination {
   limit: number

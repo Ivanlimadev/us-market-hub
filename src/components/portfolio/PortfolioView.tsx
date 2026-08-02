@@ -170,7 +170,7 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
         </div>
       </div>
 
-      {/* Dividends row — stocks only */}
+      {/* Dividends row - stocks only */}
       {!isCrypto && (
         <div className="grid grid-cols-2 gap-2 rounded-lg bg-emerald-500/5 border border-emerald-500/10 px-3 py-2">
           <div>
@@ -227,7 +227,7 @@ export function PortfolioView() {
     <div className="space-y-5">
       {/* Tab bar + action */}
       <div className="flex items-center gap-2">
-        {/* Scrollable tab strip — swipe horizontally on mobile */}
+        {/* Scrollable tab strip - swipe horizontally on mobile */}
         <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
           <div className="flex w-max rounded-lg border border-zinc-800 bg-zinc-900 p-1 gap-1">
             {TABS.map(t => (
