@@ -57,19 +57,19 @@ export function EarningsCard({ data }: { data: StockDetailData }) {
           <div className="rounded-lg bg-zinc-800/50 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wider text-zinc-500">EPS (TTM)</p>
             <p className="mt-0.5 font-mono text-sm font-bold text-white">
-              {eps !== null ? `$${eps.toFixed(2)}` : '—'}
+              {eps !== null ? `$${eps.toFixed(2)}` : '-'}
             </p>
           </div>
           <div className="rounded-lg bg-zinc-800/50 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wider text-zinc-500">P/E (TTM)</p>
             <p className="mt-0.5 font-mono text-sm font-bold text-white">
-              {pe !== null ? pe.toFixed(1) : '—'}
+              {pe !== null ? pe.toFixed(1) : '-'}
             </p>
           </div>
           <div className="rounded-lg bg-zinc-800/50 px-3 py-2.5">
             <p className="text-[11px] uppercase tracking-wider text-zinc-500">Fwd P/E</p>
             <p className="mt-0.5 font-mono text-sm font-bold text-white">
-              {forwardPE !== null ? forwardPE.toFixed(1) : '—'}
+              {forwardPE !== null ? forwardPE.toFixed(1) : '-'}
             </p>
           </div>
         </div>

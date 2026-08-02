@@ -4,7 +4,7 @@ import { TOP_STOCKS, ALL_SYMBOLS } from '@/lib/stock-universe'
 import { GLOSSARY_SLUGS } from '@/lib/glossary'
 
 // The sitemap is backed by the Supabase blog_posts table, which changes daily.
-// Left static, the route is prerendered once at build and freezes — and because
+// Left static, the route is prerendered once at build and freezes - and because
 // supabase-js runs on fetch (which Next caches) and deploys never clear .next,
 // the query result stayed frozen at an old snapshot, so new daily posts never
 // entered the sitemap and Google couldn't discover them. force-dynamic makes the

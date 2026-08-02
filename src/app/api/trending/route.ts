@@ -27,7 +27,7 @@ async function loadTrending(): Promise<YFBatchQuote[]> {
   return getYFBatchQuotes(symbols)
 }
 
-// GET /api/trending — Yahoo Finance trending tickers for the US market
+// GET /api/trending - Yahoo Finance trending tickers for the US market
 export async function GET() {
   try {
     const quotes = await cached('trending', 300_000, loadTrending)

@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 
 /**
- * Floating dock — mirrors the app's navigation (Home · Finance · Portfolio ·
+ * Floating dock - mirrors the app's navigation (Home · Finance · Portfolio ·
  * News · Menu). A centered pill fixed at the bottom on all breakpoints. The
  * "Menu" button opens a sheet (bottom sheet on mobile, centered dialog on
  * desktop) with the tools list and a Settings shortcut.
@@ -74,7 +74,7 @@ export function BottomNav() {
 
   return (
     <>
-      {/* Floating dock — centered pill at the bottom on all breakpoints. */}
+      {/* Floating dock - centered pill at the bottom on all breakpoints. */}
       <nav
         className="fixed bottom-1 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-stretch rounded-2xl border border-zinc-800 bg-zinc-950/90 px-1 shadow-xl backdrop-blur-md"
         style={{ marginBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
@@ -107,7 +107,7 @@ export function BottomNav() {
         </button>
       </nav>
 
-      {/* Menu — bottom sheet on mobile, centered dialog on desktop */}
+      {/* Menu - bottom sheet on mobile, centered dialog on desktop */}
       {menuOpen && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center md:items-center md:p-4">
           <div

@@ -34,7 +34,7 @@ async function loadEarnings() {
   const now    = Math.floor(Date.now() / 1000)
   const cutoff = now + 60 * 24 * 3600  // +60 days
 
-  // Single batch call — orders of magnitude faster than 140 individual v10 requests
+  // Single batch call - orders of magnitude faster than 140 individual v10 requests
   const batches = chunk(EARNINGS_STOCKS, 200)
   const allQuotes = (
     await Promise.all(batches.map(b => getYFBatchQuotes(b)))
@@ -62,7 +62,7 @@ async function loadEarnings() {
     .sort((a, b) => a.date.localeCompare(b.date))
 }
 
-// Scans ~150 symbols on Yahoo — by far the heaviest endpoint. The earnings
+// Scans ~150 symbols on Yahoo - by far the heaviest endpoint. The earnings
 // window changes slowly, so cache the computed list process-wide for 10 min
 // (single-flight) instead of re-scanning on every request.
 export async function GET() {

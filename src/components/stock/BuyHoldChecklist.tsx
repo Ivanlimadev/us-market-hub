@@ -103,13 +103,13 @@ export function BuyHoldChecklist({ data }: { data: StockDetailData }) {
       },
       {
         label: 'ROE above 10%',
-        detail: 'Return on equity — measures how efficiently capital is used',
+        detail: 'Return on equity - measures how efficiently capital is used',
         status: check(roe, 10),
         value: roe !== null ? `${roe.toFixed(1)}%` : undefined,
       },
       {
         label: 'Positive profit margin',
-        detail: 'Net profit margin must be positive — company earns more than it spends',
+        detail: 'Net profit margin must be positive - company earns more than it spends',
         status: check(margin, 0),
         value: margin !== null ? `${margin.toFixed(1)}%` : undefined,
       },

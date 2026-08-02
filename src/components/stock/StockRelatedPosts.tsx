@@ -1,4 +1,4 @@
-// v2 — card layout with excerpt + image + read button
+// v2 - card layout with excerpt + image + read button
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'

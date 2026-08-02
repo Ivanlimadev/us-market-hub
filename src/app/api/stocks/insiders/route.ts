@@ -89,7 +89,7 @@ function parseForm4(xml: string): InsiderTx[] {
   if (isOff) roles.push(title || 'Officer')
   if (isDir) roles.push('Director')
   if (isTen) roles.push('10% Owner')
-  const role = roles.join(' · ') || '—'
+  const role = roles.join(' · ') || '-'
 
   const blocks = xml.split('<nonDerivativeTransaction>').slice(1).map(b => b.split('</nonDerivativeTransaction>')[0])
   const out: InsiderTx[] = []

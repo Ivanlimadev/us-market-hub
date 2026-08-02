@@ -18,13 +18,13 @@ export function usePortfolioSync() {
   // On login / user change: sync from Supabase
   useEffect(() => {
     // Wait until auth resolves. During the initial loading window `user` is
-    // null even for signed-in users — clearing here would wipe their data.
+    // null even for signed-in users - clearing here would wipe their data.
     if (loading) return
 
     if (!user) {
       // No signed-in user. If the persisted data belonged to a user (ownerId
       // set), clear it so a previous session's holdings don't show to a guest
-      // on this device — even across page reloads (syncedUserId is in-memory
+      // on this device - even across page reloads (syncedUserId is in-memory
       // only, so we rely on the persisted ownerId here).
       if (store.ownerId !== null) {
         store.clearAll()

@@ -8,7 +8,7 @@ import { SECTORS } from '@/lib/stock-universe'
 import type { YFBatchQuote } from '@/lib/yahoo-finance'
 
 function fmtCap(n: number | null) {
-  if (!n) return '—'
+  if (!n) return '-'
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
   if (n >= 1e9)  return `$${(n / 1e9).toFixed(1)}B`
   if (n >= 1e6)  return `$${(n / 1e6).toFixed(0)}M`
@@ -147,8 +147,8 @@ export function ScreenerView() {
                   ))
                 : filtered.map((s) => {
                     const isUp = s.changePct >= 0
-                    const dy   = s.dividendYield !== null ? (s.dividendYield * 100).toFixed(2) + '%' : '—'
-                    const roe  = s.roe !== null ? (s.roe * 100).toFixed(1) + '%' : '—'
+                    const dy   = s.dividendYield !== null ? (s.dividendYield * 100).toFixed(2) + '%' : '-'
+                    const roe  = s.roe !== null ? (s.roe * 100).toFixed(1) + '%' : '-'
                     return (
                       <tr key={s.symbol} className="border-b border-zinc-800/50 hover:bg-zinc-800/40 transition-colors">
                         <td className="px-4 py-2.5">
@@ -170,10 +170,10 @@ export function ScreenerView() {
                           {fmtCap(s.marketCap)}
                         </td>
                         <td className="hidden px-4 py-2.5 text-right font-mono text-xs text-zinc-400 md:table-cell">
-                          {s.pe !== null && s.pe > 0 ? s.pe.toFixed(1) : '—'}
+                          {s.pe !== null && s.pe > 0 ? s.pe.toFixed(1) : '-'}
                         </td>
                         <td className="hidden px-4 py-2.5 text-right font-mono text-xs text-zinc-400 md:table-cell">
-                          {s.pb !== null ? s.pb.toFixed(2) : '—'}
+                          {s.pb !== null ? s.pb.toFixed(2) : '-'}
                         </td>
                         <td className="px-4 py-2.5 text-right font-mono text-xs text-emerald-400">
                           {dy}
@@ -182,7 +182,7 @@ export function ScreenerView() {
                           {roe}
                         </td>
                         <td className="hidden px-4 py-2.5 text-right font-mono text-xs text-zinc-400 lg:table-cell">
-                          {s.beta !== null ? s.beta.toFixed(2) : '—'}
+                          {s.beta !== null ? s.beta.toFixed(2) : '-'}
                         </td>
                       </tr>
                     )

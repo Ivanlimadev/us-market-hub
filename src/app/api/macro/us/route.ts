@@ -46,10 +46,10 @@ const SERIES: SeriesCfg[] = [
   { id: 'DGS2',          label: '2-Year Treasury Yield',        unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'DGS10',         label: '10-Year Treasury Yield',       unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'DGS30',         label: '30-Year Treasury Yield',       unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
-  { id: 'T10Y2Y',        label: 'Yield Curve (10Y–2Y)',         unit: '%',   section: 'bonds',     direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
+  { id: 'T10Y2Y',        label: 'Yield Curve (10Y-2Y)',         unit: '%',   section: 'bonds',     direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'T10YIE',       label: 'Breakeven Inflation 10Y',      unit: '%',   section: 'bonds',     direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   // ── Financial Markets ─────────────────────────────────────────────────────────
-  { id: 'VIXCLS',        label: 'VIX — Volatility Index',       unit: 'pts', section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
+  { id: 'VIXCLS',        label: 'VIX - Volatility Index',       unit: 'pts', section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'BAMLH0A0HYM2',  label: 'High Yield Spread (OAS)',      unit: '%',   section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'DTWEXBGS',      label: 'US Dollar Index',              unit: 'idx', section: 'markets',   direction:  1, limit: 13, transform: 'raw', frequency: 'm' },
   { id: 'MORTGAGE30US',  label: '30-Year Mortgage Rate',        unit: '%',   section: 'markets',   direction: -1, limit: 13, transform: 'raw', frequency: 'm' },

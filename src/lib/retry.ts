@@ -1,6 +1,6 @@
 // Retries transient failures with exponential backoff.
 // Retries on: network errors, 429, 500, 502, 503, 504.
-// Does NOT retry on: 400, 401, 403, 404 (client errors — retrying won't help).
+// Does NOT retry on: 400, 401, 403, 404 (client errors - retrying won't help).
 
 const RETRYABLE = new Set([429, 500, 502, 503, 504])
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy Policy for Stock Market ROI — how we collect, use and protect your data. Compliant with GDPR, CCPA and Brazilian data protection law.',
+  description: 'Privacy Policy for Stock Market ROI - how we collect, use and protect your data. Compliant with GDPR, CCPA and Brazilian data protection law.',
 }
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
@@ -28,10 +28,10 @@ export default function PrivacyPage() {
           protects information when you use our platform. We comply with the{' '}
           <strong className="text-zinc-200">GDPR (EU Regulation 2016/679)</strong>,{' '}
           <strong className="text-zinc-200">CCPA (California Consumer Privacy Act)</strong> and{' '}
-          <strong className="text-zinc-200">Brazilian Data Protection Law (LGPD — Law No. 13,709/2018)</strong>.
+          <strong className="text-zinc-200">Brazilian Data Protection Law (LGPD - Law No. 13,709/2018)</strong>.
         </p>
         <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-400">
-          We do not sell your personal data. Without an account, no data leaves your browser. When signed in, only your account email, portfolio transactions, watchlist and price alerts are stored — securely in Supabase — and deleted permanently when you delete your account.
+          We do not sell your personal data. Without an account, no data leaves your browser. When signed in, only your account email, portfolio transactions, watchlist and price alerts are stored - securely in Supabase - and deleted permanently when you delete your account.
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
             <p className="font-medium text-zinc-200">2.1 Automatically collected (server side)</p>
             <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-              <li>IP address (anonymized — last octet zeroed — for security and abuse prevention)</li>
+              <li>IP address (anonymized - last octet zeroed - for security and abuse prevention)</li>
               <li>Browser type and version (User-Agent header)</li>
               <li>Pages visited and HTTP status codes (aggregate, non-personal access logs)</li>
               <li>Referrer URL</li>
@@ -79,13 +79,13 @@ export default function PrivacyPage() {
               Account features (Portfolio, Watchlist, Price Alerts) require sign-in. When you use them, the following data is stored securely in <strong className="text-zinc-300">Supabase</strong> (our infrastructure provider, hosted on AWS):
             </p>
             <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-              <li><strong className="text-zinc-300">Email address</strong> — used for authentication only, never shared or used for marketing</li>
-              <li><strong className="text-zinc-300">Portfolio transactions</strong> — symbol, quantity, price, date you entered</li>
-              <li><strong className="text-zinc-300">Watchlist items</strong> — assets you chose to follow</li>
-              <li><strong className="text-zinc-300">Price alerts</strong> — target prices you set per asset</li>
+              <li><strong className="text-zinc-300">Email address</strong> - used for authentication only, never shared or used for marketing</li>
+              <li><strong className="text-zinc-300">Portfolio transactions</strong> - symbol, quantity, price, date you entered</li>
+              <li><strong className="text-zinc-300">Watchlist items</strong> - assets you chose to follow</li>
+              <li><strong className="text-zinc-300">Price alerts</strong> - target prices you set per asset</li>
             </ul>
             <p className="text-xs text-zinc-600 mt-1">
-              All this data is protected by Row-Level Security (RLS) — only you can read or modify your own records. It is permanently deleted when you delete your account via Settings → Delete Account.
+              All this data is protected by Row-Level Security (RLS) - only you can read or modify your own records. It is permanently deleted when you delete your account via Settings → Delete Account.
             </p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-2">
@@ -131,12 +131,12 @@ export default function PrivacyPage() {
               <tr>
                 <td className="py-2 pr-4 font-mono">_ga, _ga_* (Google)</td>
                 <td className="py-2 pr-4">Analytics</td>
-                <td className="py-2">Google Analytics — measures traffic and usage. Loaded only after you accept non-essential cookies.</td>
+                <td className="py-2">Google Analytics - measures traffic and usage. Loaded only after you accept non-essential cookies.</td>
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-mono">__gads, __gpi, IDE (Google)</td>
                 <td className="py-2 pr-4">Advertising</td>
-                <td className="py-2">Google AdSense — serves and measures ads, including personalized ads based on prior visits. Loaded only after you accept advertising cookies.</td>
+                <td className="py-2">Google AdSense - serves and measures ads, including personalized ads based on prior visits. Loaded only after you accept advertising cookies.</td>
               </tr>
             </tbody>
           </table>
@@ -147,7 +147,7 @@ export default function PrivacyPage() {
           keeps non-essential analytics and advertising cookies disabled.
         </p>
         <p>
-          <strong className="text-zinc-200">Advertising — Google AdSense.</strong> We use
+          <strong className="text-zinc-200">Advertising - Google AdSense.</strong> We use
           Google AdSense to display advertising. Google and its certified partners use cookies
           (such as the DoubleClick / <span className="font-mono">IDE</span> cookie) to serve and
           measure ads, including personalized ads based on your prior visits to this and other
@@ -166,18 +166,18 @@ export default function PrivacyPage() {
       <Section id="purpose" title="4. Purpose and Legal Basis">
         <div className="space-y-2">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
-            <p className="font-medium text-zinc-200">Legitimate Interest — LGPD Art. 7(IX) / GDPR Art. 6(1)(f)</p>
+            <p className="font-medium text-zinc-200">Legitimate Interest - LGPD Art. 7(IX) / GDPR Art. 6(1)(f)</p>
             <p className="text-zinc-500">Operating the platform, providing market data, preventing abuse and fraud, maintaining security logs.</p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 space-y-1">
-            <p className="font-medium text-zinc-200">Consent — LGPD Art. 7(I) / GDPR Art. 6(1)(a)</p>
+            <p className="font-medium text-zinc-200">Consent - LGPD Art. 7(I) / GDPR Art. 6(1)(a)</p>
             <p className="text-zinc-500">Non-essential cookies and analytics, only when explicitly accepted via the cookie banner. Freely withdrawable at any time.</p>
           </div>
         </div>
       </Section>
 
       {/* ── 5. Sharing ──────────────────────────────────────────────────── */}
-      <Section id="sharing" title="5. Data Sharing — We Do Not Sell Your Data">
+      <Section id="sharing" title="5. Data Sharing - We Do Not Sell Your Data">
         <p>
           We do not sell, rent, trade or share your personal data with third parties
           for their own commercial purposes. Data may be disclosed only:
@@ -185,7 +185,7 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-1 text-zinc-500">
           <li>When required by a valid court order, law or government authority</li>
           <li>To protect the rights, property or safety of our users or the public</li>
-          <li>In the event of a business transfer (merger, acquisition) — you will be notified</li>
+          <li>In the event of a business transfer (merger, acquisition) - you will be notified</li>
         </ul>
         <p>
           Market data is fetched from Yahoo Finance and Marketstack via server-side API
@@ -243,7 +243,7 @@ export default function PrivacyPage() {
             <strong className="text-zinc-300">email addresses</strong> and{' '}
             <strong className="text-zinc-300">portfolio/watchlist/alert records</strong> of registered users.
             It could <strong className="text-zinc-300">not</strong> expose brokerage credentials, bank accounts,
-            payment data or any financial account access — because we do not collect or store any of those.
+            payment data or any financial account access - because we do not collect or store any of those.
             Row-Level Security (RLS) in Supabase ensures that even a compromised API key
             cannot read another user&apos;s data.
           </p>
@@ -251,7 +251,7 @@ export default function PrivacyPage() {
         <p>
           In the event of a data breach involving personal data, we will notify affected
           users and the relevant data protection authority within the timeframe required
-          by applicable law (LGPD Art. 48 — 72 hours to Brazil's ANPD; GDPR Art. 33 — 72 hours to EU supervisory authority).
+          by applicable law (LGPD Art. 48 - 72 hours to Brazil's ANPD; GDPR Art. 33 - 72 hours to EU supervisory authority).
         </p>
       </Section>
 
@@ -282,25 +282,25 @@ export default function PrivacyPage() {
           </a>. We will respond within <strong className="text-zinc-200">15 business days</strong>.
           You may also file a complaint with the{' '}
           <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
-            ANPD — Brazil's National Data Protection Authority
+            ANPD - Brazil's National Data Protection Authority
           </a>.
         </p>
       </Section>
 
       {/* ── 9. GDPR ─────────────────────────────────────────────────────── */}
-      <Section id="gdpr" title="9. Rights Under GDPR — EU Regulation 2016/679 (European Users)">
+      <Section id="gdpr" title="9. Rights Under GDPR - EU Regulation 2016/679 (European Users)">
         <p>
           If you are located in the European Economic Area (EEA), you have additional
           rights under the General Data Protection Regulation (GDPR):
         </p>
         <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-          <li><strong className="text-zinc-300">Right of access</strong> — obtain a copy of personal data we hold (Art. 15)</li>
-          <li><strong className="text-zinc-300">Right to rectification</strong> — correct inaccurate data (Art. 16)</li>
-          <li><strong className="text-zinc-300">Right to erasure (&quot;right to be forgotten&quot;)</strong> — request deletion (Art. 17)</li>
-          <li><strong className="text-zinc-300">Right to restriction of processing</strong> — limit how we use your data (Art. 18)</li>
-          <li><strong className="text-zinc-300">Right to data portability</strong> — receive data in a portable format (Art. 20)</li>
-          <li><strong className="text-zinc-300">Right to object</strong> — object to processing based on legitimate interest (Art. 21)</li>
-          <li><strong className="text-zinc-300">Rights related to automated decision-making</strong> — we do not use automated decision-making</li>
+          <li><strong className="text-zinc-300">Right of access</strong> - obtain a copy of personal data we hold (Art. 15)</li>
+          <li><strong className="text-zinc-300">Right to rectification</strong> - correct inaccurate data (Art. 16)</li>
+          <li><strong className="text-zinc-300">Right to erasure (&quot;right to be forgotten&quot;)</strong> - request deletion (Art. 17)</li>
+          <li><strong className="text-zinc-300">Right to restriction of processing</strong> - limit how we use your data (Art. 18)</li>
+          <li><strong className="text-zinc-300">Right to data portability</strong> - receive data in a portable format (Art. 20)</li>
+          <li><strong className="text-zinc-300">Right to object</strong> - object to processing based on legitimate interest (Art. 21)</li>
+          <li><strong className="text-zinc-300">Rights related to automated decision-making</strong> - we do not use automated decision-making</li>
         </ul>
         <p>
           You may lodge a complaint with your local EU data protection supervisory authority.
@@ -312,7 +312,7 @@ export default function PrivacyPage() {
       </Section>
 
       {/* ── 10. CCPA ────────────────────────────────────────────────────── */}
-      <Section id="ccpa" title="10. California Consumer Privacy Act (CCPA) — California Residents">
+      <Section id="ccpa" title="10. California Consumer Privacy Act (CCPA) - California Residents">
         <p>
           If you are a California resident, the{' '}
           <strong className="text-zinc-200">California Consumer Privacy Act (CCPA)</strong>{' '}
@@ -321,12 +321,12 @@ export default function PrivacyPage() {
           grant you the following rights:
         </p>
         <ul className="list-disc pl-5 space-y-1 text-zinc-500">
-          <li><strong className="text-zinc-300">Right to Know</strong> — know what personal information we collect, use, disclose or sell</li>
-          <li><strong className="text-zinc-300">Right to Delete</strong> — request deletion of personal information we have collected</li>
-          <li><strong className="text-zinc-300">Right to Correct</strong> — request correction of inaccurate personal information</li>
-          <li><strong className="text-zinc-300">Right to Opt-Out of Sale</strong> — we do not sell personal information; no opt-out required</li>
-          <li><strong className="text-zinc-300">Right to Non-Discrimination</strong> — we will not discriminate against you for exercising your rights</li>
-          <li><strong className="text-zinc-300">Right to Limit Use of Sensitive Personal Information</strong> — we do not collect sensitive personal information as defined by CCPA</li>
+          <li><strong className="text-zinc-300">Right to Know</strong> - know what personal information we collect, use, disclose or sell</li>
+          <li><strong className="text-zinc-300">Right to Delete</strong> - request deletion of personal information we have collected</li>
+          <li><strong className="text-zinc-300">Right to Correct</strong> - request correction of inaccurate personal information</li>
+          <li><strong className="text-zinc-300">Right to Opt-Out of Sale</strong> - we do not sell personal information; no opt-out required</li>
+          <li><strong className="text-zinc-300">Right to Non-Discrimination</strong> - we will not discriminate against you for exercising your rights</li>
+          <li><strong className="text-zinc-300">Right to Limit Use of Sensitive Personal Information</strong> - we do not collect sensitive personal information as defined by CCPA</li>
         </ul>
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
           <p className="text-xs text-zinc-500">
@@ -364,7 +364,7 @@ export default function PrivacyPage() {
           Brazil, we apply the safeguards required by LGPD Art. 33. For transfers
           outside the EEA, we rely on Standard Contractual Clauses (SCCs) or other
           approved mechanisms under GDPR Chapter V. Only minimal server log data is
-          ever transferred — no financial or portfolio data.
+          ever transferred - no financial or portfolio data.
         </p>
       </Section>
 

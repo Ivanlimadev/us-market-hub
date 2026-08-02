@@ -11,7 +11,7 @@ const MAX = 5
 const DEFAULT_SYMBOLS = ['AAPL', 'MSFT', 'NVDA']
 
 function fmtLarge(n: number | null) {
-  if (!n) return '—'
+  if (!n) return '-'
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
   if (n >= 1e9)  return `$${(n / 1e9).toFixed(1)}B`
   return `$${(n / 1e6).toFixed(0)}M`
@@ -26,7 +26,7 @@ function useStockData(symbol: string) {
   })
 }
 
-// Fixed 5 hooks — never changes count, avoids Rules of Hooks violation
+// Fixed 5 hooks - never changes count, avoids Rules of Hooks violation
 function useAllStockData(symbols: string[]) {
   const q0 = useStockData(symbols[0] ?? '')
   const q1 = useStockData(symbols[1] ?? '')
@@ -107,10 +107,10 @@ function MetricRow({ label, values, count }: { label: string; values: (string | 
     <tr className="border-b border-zinc-800/40 hover:bg-zinc-800/20 transition-colors">
       <td className="py-3 pr-4 pl-4 text-xs text-zinc-500 whitespace-nowrap font-medium">{label}</td>
       {values.map((v, i) => (
-        <td key={i} className="px-3 py-3 text-center font-mono text-xs text-zinc-200">{v ?? '—'}</td>
+        <td key={i} className="px-3 py-3 text-center font-mono text-xs text-zinc-200">{v ?? '-'}</td>
       ))}
       {Array.from({ length: MAX - count }).map((_, i) => (
-        <td key={`e-${i}`} className="px-3 py-3 text-center text-xs text-zinc-800">—</td>
+        <td key={`e-${i}`} className="px-3 py-3 text-center text-xs text-zinc-800">-</td>
       ))}
     </tr>
   )

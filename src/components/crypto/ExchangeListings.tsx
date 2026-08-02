@@ -137,7 +137,7 @@ export function ExchangeListings({ coinId }: { coinId: string }) {
                         Buy <ExternalLink className="h-3 w-3" />
                       </a>
                     ) : (
-                      <span className="text-zinc-700">—</span>
+                      <span className="text-zinc-700">-</span>
                     )}
                   </td>
                 </tr>

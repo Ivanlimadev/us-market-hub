@@ -20,7 +20,7 @@ export default function AppDownloadCard() {
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
             Live prices, earnings, valuation and AI insights on the biggest U.S.
-            stocks and crypto — track your portfolio and never watch from the
+            stocks and crypto - track your portfolio and never watch from the
             sidelines again. Free on the App Store.
           </p>
         </div>

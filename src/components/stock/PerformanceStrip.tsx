@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useStockHistory15y, calcPeriodReturns } from '@/lib/hooks/useStockHistory15y'
 
 function ChangeCell({ pct, hasData }: { pct: number; hasData: boolean }) {
-  if (!hasData) return <span className="text-zinc-700 text-xs">—</span>
+  if (!hasData) return <span className="text-zinc-700 text-xs">-</span>
   const isUp = pct >= 0
   return (
     <span className={`text-sm font-semibold tabular-nums ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>

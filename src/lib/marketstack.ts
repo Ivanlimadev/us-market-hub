@@ -13,7 +13,7 @@ import path from 'node:path'
 const BASE_URL = 'https://api.marketstack.com/v1'
 const API_KEY = process.env.MARKETSTACK_API_KEY!
 
-// In-memory cache — expired entries are kept as stale fallback on API failure
+// In-memory cache - expired entries are kept as stale fallback on API failure
 const cache = new Map<string, { data: unknown; expiresAt: number }>()
 
 // Disk mirror of the last good response per key, so the stale fallback SURVIVES
@@ -26,7 +26,7 @@ const diskFile = (key: string) =>
 
 function setCache(key: string, data: unknown, ttlSeconds: number) {
   cache.set(key, { data, expiresAt: Date.now() + ttlSeconds * 1000 })
-  // Fire-and-forget disk write — never let persistence break the request path.
+  // Fire-and-forget disk write - never let persistence break the request path.
   fs.mkdir(DISK_DIR, { recursive: true })
     .then(() => fs.writeFile(diskFile(key), JSON.stringify(data)))
     .catch(() => {})
@@ -55,7 +55,7 @@ async function msGet<T>(
 
   const cacheKey = url.toString().replace(API_KEY, 'KEY')
 
-  // Check cache — keep expired entry in map so it can serve as stale fallback
+  // Check cache - keep expired entry in map so it can serve as stale fallback
   const entry = cache.get(cacheKey)
   if (entry && Date.now() <= entry.expiresAt) return entry.data as T
 
@@ -71,7 +71,7 @@ async function msGet<T>(
     setCache(cacheKey, data, ttlSeconds)
     return data
   } catch (err) {
-    // API failed — serve the last good data rather than crashing the cards.
+    // API failed - serve the last good data rather than crashing the cards.
     // 1) in-memory stale (fastest), 2) disk snapshot (survives restart/deploy).
     if (entry) {
       console.warn(`[Marketstack] in-memory stale fallback for ${endpoint}:`, (err as Error).message)
@@ -99,7 +99,7 @@ export async function getEod(
   return msGet<MSEodResponse>('/eod', { symbols: sym, ...options }, 60)
 }
 
-/** Latest EOD — single trading day for multiple tickers */
+/** Latest EOD - single trading day for multiple tickers */
 export async function getLatestEod(symbols: string | string[]): Promise<MSEodResponse> {
   const sym = Array.isArray(symbols) ? symbols.join(',') : symbols
   return msGet<MSEodResponse>('/eod/latest', { symbols: sym }, 60)

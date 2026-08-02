@@ -5,11 +5,11 @@ import { TrendingUp, Target, CheckCircle } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Most Undervalued Stocks 2026: Cheap US Stocks Worth Buying | Stock Market ROI',
   description:
-    'Our analysts identify the most undervalued US stocks in 2026 — trading below intrinsic value with strong fundamentals and catalysts ahead.',
+    'Our analysts identify the most undervalued US stocks in 2026 - trading below intrinsic value with strong fundamentals and catalysts ahead.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/undervalued-stocks' },
   openGraph: {
     title: 'Most Undervalued Stocks 2026 | Stock Market ROI',
-    description: 'Stocks trading below intrinsic value with strong fundamentals — our 2026 undervalued picks.',
+    description: 'Stocks trading below intrinsic value with strong fundamentals - our 2026 undervalued picks.',
   },
 }
 
@@ -21,7 +21,7 @@ const STOCKS = [
     pe: '~13x',
     sector: 'Financials',
     upside: 'High',
-    verdict: 'The most undervalued blue chip on the market. Berkshire trades at ~1.4x book value with a $180B+ cash hoard — historically a signal that Buffett sees few attractive options and is building dry powder for a downturn opportunity.',
+    verdict: 'The most undervalued blue chip on the market. Berkshire trades at ~1.4x book value with a $180B+ cash hoard - historically a signal that Buffett sees few attractive options and is building dry powder for a downturn opportunity.',
     catalysts: ['$180B+ cash deployment catalyst', 'Insurance float advantage', 'Succession clarity building'],
   },
   {
@@ -41,7 +41,7 @@ const STOCKS = [
     pe: '~18x forward',
     sector: 'Technology',
     upside: 'High',
-    verdict: 'Trading at a discount to peers despite owning the dominant search engine, YouTube, and Google Cloud. The market is pricing in AI search disruption risk — but Gemini integration and Cloud growth suggest Alphabet is adapting faster than feared.',
+    verdict: 'Trading at a discount to peers despite owning the dominant search engine, YouTube, and Google Cloud. The market is pricing in AI search disruption risk - but Gemini integration and Cloud growth suggest Alphabet is adapting faster than feared.',
     catalysts: ['Gemini AI integration in Search', 'Google Cloud growth acceleration', 'Waymo monetization optionality'],
   },
   {
@@ -71,7 +71,7 @@ const STOCKS = [
     pe: '~15x',
     sector: 'Energy',
     upside: 'Medium',
-    verdict: 'Chevron\'s balance sheet is one of the strongest in Big Oil — net debt is minimal and the buyback program is aggressive. The Hess acquisition adds significant deepwater Guyana exposure, a world-class low-cost asset.',
+    verdict: 'Chevron\'s balance sheet is one of the strongest in Big Oil - net debt is minimal and the buyback program is aggressive. The Hess acquisition adds significant deepwater Guyana exposure, a world-class low-cost asset.',
     catalysts: ['Hess/Guyana deepwater production', 'Dividend + buyback returns', 'Low breakeven cost structure'],
   },
   {
@@ -91,7 +91,7 @@ const STOCKS = [
     pe: '~12x forward',
     sector: 'Healthcare',
     upside: 'Medium-High',
-    verdict: 'Keytruda (pembrolizumab) is the world\'s best-selling oncology drug, yet Merck trades at a meaningful discount to pharma peers. The market is overly fixated on Keytruda\'s 2028 patent cliff — Merck has a deep pipeline to offset it.',
+    verdict: 'Keytruda (pembrolizumab) is the world\'s best-selling oncology drug, yet Merck trades at a meaningful discount to pharma peers. The market is overly fixated on Keytruda\'s 2028 patent cliff - Merck has a deep pipeline to offset it.',
     catalysts: ['Keytruda subcutaneous formulation (patent extension)', 'WINREVAIR (pulmonary arterial hypertension)', 'Multiple Phase 3 readouts in 2026'],
   },
 ]
@@ -134,7 +134,7 @@ export default function UndervaluedStocksPage() {
       </h1>
       <p className="mb-2 text-zinc-400 leading-relaxed">
         Stocks trading below their intrinsic value with clear catalysts ahead. Our analysts focus
-        on quality businesses at reasonable prices — not just low P/E stocks.
+        on quality businesses at reasonable prices - not just low P/E stocks.
       </p>
       <p className="mb-8 text-xs text-zinc-600">
         Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} ·
@@ -150,7 +150,7 @@ export default function UndervaluedStocksPage() {
         <p className="text-xs text-zinc-500 leading-relaxed">
           We screen for stocks trading below their 5-year average P/E multiple, with at least one
           identifiable near-term catalyst and a balance sheet strong enough to survive a downturn.
-          We deliberately exclude "value traps" — companies that are cheap because the business is
+          We deliberately exclude "value traps" - companies that are cheap because the business is
           in permanent decline.
         </p>
       </div>

@@ -1,4 +1,4 @@
-// POST /api/blog/rewrite?id=N  — rewrites an existing post with current real data + Tavily
+// POST /api/blog/rewrite?id=N  - rewrites an existing post with current real data + Tavily
 // Preserves slug, ID and SEO links; only updates content, excerpt, seo fields and image.
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js'
 
 export const maxDuration = 60
 
-// Writes (update post content) require the service role — blog_posts RLS grants
+// Writes (update post content) require the service role - blog_posts RLS grants
 // the anon role SELECT only. This route is server-only and CRON_SECRET-protected.
 function serviceClient() {
   return createClient(
@@ -86,11 +86,11 @@ export async function POST(req: NextRequest) {
           n != null && typeof n === 'number' ? `${(n * mult).toFixed(1)}${suffix}` : 'N/A'
 
         realDataBlock = `
-REAL MARKET DATA FOR ${chosenSymbol} (use these exact numbers — do not invent others):
+REAL MARKET DATA FOR ${chosenSymbol} (use these exact numbers - do not invent others):
 Company: ${chosenName}
 Sector: ${(info.sector as string) ?? 'N/A'} | Industry: ${(info.industry as string) ?? 'N/A'}
 Current Price: $${(stockData.currentPrice as number)?.toFixed(2) ?? 'N/A'}
-52-Week Range: $${(info.week52Low as number) ?? 'N/A'} – $${(info.week52High as number) ?? 'N/A'}
+52-Week Range: $${(info.week52Low as number) ?? 'N/A'} - $${(info.week52High as number) ?? 'N/A'}
 Market Cap: ${info.marketCap ? `$${((info.marketCap as number) / 1e9).toFixed(1)}B` : 'N/A'}
 P/E Ratio: ${info.pe ?? 'N/A'} | Forward P/E: ${info.forwardPE ?? 'N/A'} | PEG: ${info.pegRatio ?? 'N/A'}
 Revenue Growth (annual): ${fmt(info.revenueGrowth)}
@@ -113,7 +113,7 @@ Price Target: Mean $${(info.targetMeanPrice as number)?.toFixed(2) ?? 'N/A'} · 
     : `${title} 2026`
   const newsResults = await searchTavily(searchQuery)
   const newsBlock = newsResults ? `
-RECENT NEWS (use these to make the article timely and specific — cite facts naturally in context):
+RECENT NEWS (use these to make the article timely and specific - cite facts naturally in context):
 ${newsResults}
 ` : ''
 
@@ -130,52 +130,52 @@ ${newsResults}
 
 Title: "${title}"
 ${realDataBlock}${newsBlock}
-━━━ LAYER 1 — DATA INTEGRITY ━━━
+━━━ LAYER 1 - DATA INTEGRITY ━━━
 - Use ONLY the exact numbers from the real market data block. Never invent prices, ratios, or percentages.
-- If a metric shows "N/A", say it's not available — never fabricate a number.
+- If a metric shows "N/A", say it's not available - never fabricate a number.
 - When citing numbers from the data block, attribute naturally: "according to Yahoo Finance data", "per SEC filings", "analysts tracked by Yahoo Finance". Only attribute when data came from the block above.
-- Reference specific facts from recent news to make the article timely. Weave them into narrative — never list news as bullets.
+- Reference specific facts from recent news to make the article timely. Weave them into narrative - never list news as bullets.
 
-━━━ LAYER 2 — SEO STRUCTURE ━━━
+━━━ LAYER 2 - SEO STRUCTURE ━━━
 - Identify the primary keyword from the title (the most searched form, e.g. "Apple stock forecast 2026" or "Is AAPL a buy right now").
 - Place the primary keyword naturally in: the opening paragraph, at least one H2, and the seo_title.
 - H2 subheadings must be keyword-rich, not just editorial labels. Instead of "The AI Problem", write "Apple AI Strategy 2026: Real Concern or Overreaction?".
-- Use 3–4 secondary keywords in H2/H3 titles (e.g. "${chosenSymbol} valuation", "${chosenSymbol} analyst target", "${chosenName} earnings ${year}").
+- Use 3-4 secondary keywords in H2/H3 titles (e.g. "${chosenSymbol} valuation", "${chosenSymbol} analyst target", "${chosenName} earnings ${year}").
 
-━━━ LAYER 3 — INTERNAL CTAs (mandatory, 2 total) ━━━
+━━━ LAYER 3 - INTERNAL CTAs (mandatory, 2 total) ━━━
 - Mid-article (after the second H2), insert one contextual CTA as a Markdown link:
   [Track ${chosenName || 'this stock'} live on Stock Market ROI →](https://stockmarketroi.com/stocks/${chosenSymbol || 'SYMBOL'})
 - Near the end (just before the Bottom Line H2), insert one tool CTA:
   [Compare top stocks with our free screener →](https://stockmarketroi.com/screener)
 - These are REQUIRED and are in addition to any other stock links in the body.
 
-━━━ LAYER 4 — STRONG OPINION + EXPERIENCE (E-E-A-T) ━━━
+━━━ LAYER 4 - STRONG OPINION + EXPERIENCE (E-E-A-T) ━━━
 - Take a clear, opinionated position. Don't present both sides without a verdict.
-- Write with the lived-in voice of an investor who has tracked US markets since 2018. In the Bottom Line, use first person ("In my view…", "What I'd watch…") to convey real reasoning and conviction — but NEVER fabricate specific personal trades, entry prices, or returns.
+- Write with the lived-in voice of an investor who has tracked US markets since 2018. In the Bottom Line, use first person ("In my view…", "What I'd watch…") to convey real reasoning and conviction - but NEVER fabricate specific personal trades, entry prices, or returns.
 
 ━━━ STRUCTURE (mandatory blocks, in this exact order) ━━━
-1. Intro hook (2-3 short paragraphs) — no H1, no title.
-2. "## Key Takeaways" — 3 to 5 bullet points with the thesis, the key numbers, and the verdict.
-${chosenSymbol ? `3. A Markdown data table under an H3 like "### ${chosenSymbol} at a Glance" comparing the REAL metrics from the data block (Price, P/E, Forward P/E, PEG, Profit Margin, ROE, Dividend Yield, 52-Week Range, Mean Analyst Target). Use GitHub table syntax: a header row, a |---|---| separator row, then data rows. Use ONLY the real numbers above; write "N/A" where missing.` : '3. (No data table — this is a non-stock topic.)'}
+1. Intro hook (2-3 short paragraphs) - no H1, no title.
+2. "## Key Takeaways" - 3 to 5 bullet points with the thesis, the key numbers, and the verdict.
+${chosenSymbol ? `3. A Markdown data table under an H3 like "### ${chosenSymbol} at a Glance" comparing the REAL metrics from the data block (Price, P/E, Forward P/E, PEG, Profit Margin, ROE, Dividend Yield, 52-Week Range, Mean Analyst Target). Use GitHub table syntax: a header row, a |---|---| separator row, then data rows. Use ONLY the real numbers above; write "N/A" where missing.` : '3. (No data table - this is a non-stock topic.)'}
 4. 4-6 in-depth H2 sections with H3 sub-points: real analysis, comparisons, and scenarios.
 5. The two internal CTAs from LAYER 3.
-6. "## Frequently Asked Questions" — 4 to 5 entries, each formatted as "### <long-tail question>" on its own line followed by a 2-3 sentence answer. Questions must match real search queries.
-7. "## Bottom Line" — the verdict (**BUY**/**HOLD**/**AVOID**) + one specific 12-month prediction (price level or % range with reasoning) + one risk scenario that breaks the thesis. First person.
-8. "## Sources" — a short bullet list of the data sources used (e.g. Yahoo Finance, SEC filings, recent financial news). Generic outlet names only.
+6. "## Frequently Asked Questions" - 4 to 5 entries, each formatted as "### <long-tail question>" on its own line followed by a 2-3 sentence answer. Questions must match real search queries.
+7. "## Bottom Line" - the verdict (**BUY**/**HOLD**/**AVOID**) + one specific 12-month prediction (price level or % range with reasoning) + one risk scenario that breaks the thesis. First person.
+8. "## Sources" - a short bullet list of the data sources used (e.g. Yahoo Finance, SEC filings, recent financial news). Generic outlet names only.
 
 ━━━ FORMATTING ━━━
-- Length: 2,000–2,500 words (be thorough — depth and specificity over filler)
+- Length: 2,000-2,500 words (be thorough - depth and specificity over filler)
 - Open with a hook: a specific data point, counterintuitive insight, or current event angle
 - Write for US investors (USD, ${year} context)
 - Avoid AI clichés: "In today's fast-paced world", "navigating the landscape", "In conclusion", "the picture is nuanced", "it's worth noting"
-- DO NOT include the title as H1 — start directly with the intro paragraph
+- DO NOT include the title as H1 - start directly with the intro paragraph
 - Format: plain Markdown only
 
 At the very end, separated by "---META---":
-- excerpt: 2-3 sentences that hook the reader — open with a specific data point or tension, state the core argument, tease the verdict. Between 220–340 chars. Example: "Lockheed Martin has surged 30% in 2026 on record defense budgets and a $160B backlog. The bull case rests on F-35 production ramp-up and NATO rearmament cycles — but there are two risks every investor must watch. Here's our verdict."
+- excerpt: 2-3 sentences that hook the reader - open with a specific data point or tension, state the core argument, tease the verdict. Between 220-340 chars. Example: "Lockheed Martin has surged 30% in 2026 on record defense budgets and a $160B backlog. The bull case rests on F-35 production ramp-up and NATO rearmament cycles - but there are two risks every investor must watch. Here's our verdict."
 - seo_title: SEO title with primary keyword (max 60 chars)
 - seo_description: meta description (max 155 chars)
-- image_query: 4-6 word Pexels photo search. MUST be specific to the company/topic — include the company name, product, or industry. NEVER use generic phrases like "stock market", "financial growth", "business meeting".`,
+- image_query: 4-6 word Pexels photo search. MUST be specific to the company/topic - include the company name, product, or industry. NEVER use generic phrases like "stock market", "financial growth", "business meeting".`,
     }],
   })
 
@@ -192,7 +192,7 @@ At the very end, separated by "---META---":
   // malformed generation. Require a real article shape before saving.
   if (content.length < 3000 || !/##\s+Bottom Line/i.test(content) || !meta.excerpt) {
     return NextResponse.json(
-      { error: 'Rewrite failed quality check (too short, missing Bottom Line, or missing meta) — post left unchanged', length: content.length },
+      { error: 'Rewrite failed quality check (too short, missing Bottom Line, or missing meta) - post left unchanged', length: content.length },
       { status: 422 },
     )
   }

@@ -73,7 +73,7 @@ function PerformanceCell({ label, val }: { label: string; val: number | null | u
           {isUp ? '+' : ''}{val!.toFixed(2)}%
         </span>
       ) : (
-        <span className="text-zinc-700 text-xs">—</span>
+        <span className="text-zinc-700 text-xs">-</span>
       )}
     </div>
   )
@@ -317,7 +317,7 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <PriceChart bars={Array.isArray(history) ? history : []} isLoading={histLoading} />
       </div>
 
-      {/* Performance strip — below chart, same style as stocks */}
+      {/* Performance strip - below chart, same style as stocks */}
       <CryptoPerformanceStrip md={md} />
 
       <WidgetBoundary label="AI Insight">
@@ -374,7 +374,7 @@ export function CryptoDetailClient({ id }: { id: string }) {
       </WidgetBoundary>
 
 
-      {/* Description — strip HTML tags before rendering to prevent XSS */}
+      {/* Description - strip HTML tags before rendering to prevent XSS */}
       {coin.description && (
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-200">About {coin.name}</h3>

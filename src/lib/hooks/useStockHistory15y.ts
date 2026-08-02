@@ -17,7 +17,7 @@ export interface PeriodReturn {
   hasData: boolean
 }
 
-// Periods to calculate — in days from today
+// Periods to calculate - in days from today
 const PERIODS = [
   { key: '1m',  label: '1 Month',   days: 30  },
   { key: '3m',  label: '3 Months',  days: 91  },
@@ -32,7 +32,7 @@ export function useStockHistory15y(symbol: string) {
   return useQuery<HistoryBar[]>({
     queryKey: ['history-15y', symbol],
     queryFn: async () => {
-      // Use 10Y daily data from Yahoo Finance — properly split-adjusted
+      // Use 10Y daily data from Yahoo Finance - properly split-adjusted
       const res = await fetch(`/api/stocks/${symbol}/history?period=10y`)
       const data = await res.json() as {
         bars?: Array<{ date: string; adj_close?: number | null; close?: number | null }>

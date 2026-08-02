@@ -4,22 +4,22 @@ import { ChevronDown } from 'lucide-react'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 function fmtLarge(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`
   if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`
   return `$${n.toLocaleString()}`
 }
 function fmtPct(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   return `${(n * 100).toFixed(2)}%`
 }
 function fmtNum(n: number | null, decimals = 2): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   return n.toFixed(decimals)
 }
 const fmtPrice = (n: number | null | undefined) =>
-  n != null ? `$${n.toFixed(2)}` : '—'
+  n != null ? `$${n.toFixed(2)}` : '-'
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -44,7 +44,7 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
         { label: 'Forward P/E', value: fmtNum(info?.forwardPE ?? null) },
         { label: 'P/B Ratio', value: fmtNum(info?.priceToBook ?? null) },
         { label: 'PEG Ratio', value: fmtNum(info?.pegRatio ?? null) },
-        { label: 'EPS (TTM)', value: info?.eps != null ? `$${info.eps.toFixed(2)}` : '—' },
+        { label: 'EPS (TTM)', value: info?.eps != null ? `$${info.eps.toFixed(2)}` : '-' },
       ],
     },
     {
@@ -55,17 +55,17 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
         { label: 'Day Low', value: fmtPrice(eod?.low) },
         { label: '52W High', value: fmtPrice(info?.week52High) },
         { label: '52W Low', value: fmtPrice(info?.week52Low) },
-        { label: 'Volume', value: eod?.volume != null ? eod.volume.toLocaleString() : '—' },
-        { label: 'Avg Volume (3M)', value: info?.avgVolume3m ? info.avgVolume3m.toLocaleString() : '—' },
+        { label: 'Volume', value: eod?.volume != null ? eod.volume.toLocaleString() : '-' },
+        { label: 'Avg Volume (3M)', value: info?.avgVolume3m ? info.avgVolume3m.toLocaleString() : '-' },
         { label: 'Beta', value: fmtNum(info?.beta ?? null) },
       ],
     },
     {
       title: 'Dividends',
       rows: [
-        { label: 'Dividend Yield', value: info?.dividendYield ? `${(info.dividendYield * 100).toFixed(2)}%` : '—' },
-        { label: 'Annual Rate', value: info?.dividendRate ? `$${info.dividendRate.toFixed(2)}` : '—' },
-        { label: 'Ex-Div Date', value: info?.exDividendDate ?? '—' },
+        { label: 'Dividend Yield', value: info?.dividendYield ? `${(info.dividendYield * 100).toFixed(2)}%` : '-' },
+        { label: 'Annual Rate', value: info?.dividendRate ? `$${info.dividendRate.toFixed(2)}` : '-' },
+        { label: 'Ex-Div Date', value: info?.exDividendDate ?? '-' },
         { label: 'Payout Ratio', value: fmtPct(info?.payoutRatio ?? null) },
       ],
     },

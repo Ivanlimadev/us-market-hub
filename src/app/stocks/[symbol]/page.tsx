@@ -22,11 +22,11 @@ export async function generateMetadata({
   // Index policy (content-gated): a page is indexable when it actually has real
   // data on it. TOP_STOCKS are always indexable; any other ticker is indexable
   // as long as it has real data (hasSeoData: a live price or a market cap). Only
-  // dead/delisted/dataless tickers stay noindex,follow — so they never become
+  // dead/delisted/dataless tickers stay noindex,follow - so they never become
   // "scaled" thin content. The fetch is deduped with the page body's
   // fetchStockData via Next's request-scoped fetch cache.
   // Delisted tickers still return a stale last price (which passes hasSeoData),
-  // so exclude them explicitly — otherwise their thin, frozen pages get indexed.
+  // so exclude them explicitly - otherwise their thin, frozen pages get indexed.
   let indexable = !isDelisted(upper) && isTopStock(upper)
   if (!indexable && !isDelisted(upper)) {
     const data = await fetchStockData(upper)
@@ -35,16 +35,16 @@ export async function generateMetadata({
 
   return {
     title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
-    description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict — updated daily.`,
+    description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict - updated daily.`,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
     robots: indexable ? undefined : { index: false, follow: true },
     openGraph: {
-      title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
+      title:       `${upper} Stock Analysis ${year} - Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `${upper} Stock Analysis ${year} — Bull Case, Bear Case & Verdict`,
+      title:       `${upper} Stock Analysis ${year} - Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
     },
   }
@@ -59,10 +59,10 @@ export default async function StockPage({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
 
-  // Fetch server-side for SSR — passes as initialData to React Query on client
+  // Fetch server-side for SSR - passes as initialData to React Query on client
   const initialData = await fetchStockData(upper)
 
-  // Unique, data-derived SEO content (intro + FAQ) — only when we have real data.
+  // Unique, data-derived SEO content (intro + FAQ) - only when we have real data.
   const fund = isEtf(upper)
   const hasData = initialData ? hasSeoData(initialData) : false
   const intro = hasData ? buildStockIntro(initialData!, year, fund) : null
@@ -76,7 +76,7 @@ export default async function StockPage({
       '@id':   `https://stockmarketroi.com/stocks/${upper}`,
       url:     `https://stockmarketroi.com/stocks/${upper}`,
       name:    `${upper} Stock Analysis ${year}`,
-      description: `In-depth ${upper} stock analysis for ${year} — fundamentals, valuation and verdict.`,
+      description: `In-depth ${upper} stock analysis for ${year} - fundamentals, valuation and verdict.`,
       isPartOf: { '@id': 'https://stockmarketroi.com' },
       ...(hasData ? { about: { '@id': companyId }, mainEntity: { '@id': companyId } } : {}),
     },
@@ -90,7 +90,7 @@ export default async function StockPage({
     },
   ]
 
-  // Entity schema — tells Google this page is about a specific public company
+  // Entity schema - tells Google this page is about a specific public company
   // (ticker), not an empty blog page. Corporation + tickerSymbol is the
   // accurate, warning-free type for an individual equity.
   if (hasData && initialData) {

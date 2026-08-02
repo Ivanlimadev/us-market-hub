@@ -13,7 +13,7 @@ function fmtUsd(n: number): string {
   return `${sign}$${abs.toFixed(0)}`
 }
 function fmtShares(n: number | null): string {
-  if (n == null) return '—'
+  if (n == null) return '-'
   if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`
   if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`
   return n.toLocaleString()
@@ -122,7 +122,7 @@ export function InsiderTransactions({ symbol }: { symbol: string }) {
                     </td>
                     <td className="py-2.5 text-right tabular-nums text-zinc-300">{fmtShares(t.shares)}</td>
                     <td className="py-2.5 text-right tabular-nums text-zinc-400">
-                      {t.value != null ? fmtUsd(t.value) : '—'}
+                      {t.value != null ? fmtUsd(t.value) : '-'}
                     </td>
                   </tr>
                 ))}

@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, ExternalLink, DollarSign, BarChart2, Wallet, 
 import type { EdgarData, EdgarQuarter, EdgarAnnual, EdgarBalanceSheet, EdgarCapitalReturns } from '@/app/api/stocks/edgar/route'
 
 function fmtB(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   const abs = Math.abs(n)
   const sign = n < 0 ? '-' : ''
   if (abs >= 1e12) return `${sign}$${(abs / 1e12).toFixed(1)}T`
@@ -15,7 +15,7 @@ function fmtB(n: number | null): string {
 }
 
 function fmtEps(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   return `$${n.toFixed(2)}`
 }
 
@@ -102,7 +102,7 @@ function BalanceSheetChart({ bs }: { bs: EdgarBalanceSheet[] }) {
                 </td>
                 <td className="py-2.5 text-right tabular-nums">
                   <span className={currRatio == null ? 'text-zinc-500' : currRatio >= 1 ? 'text-emerald-400' : 'text-orange-400'}>
-                    {currRatio != null ? `${currRatio.toFixed(2)}×` : '—'}
+                    {currRatio != null ? `${currRatio.toFixed(2)}×` : '-'}
                   </span>
                 </td>
               </tr>
@@ -192,7 +192,7 @@ function RdChart({ annual }: { annual: EdgarAnnual[] }) {
                 </td>
                 <td className="py-2.5 text-right tabular-nums">
                   <span className={marginUp === true ? 'text-violet-400' : marginUp === false ? 'text-zinc-400' : 'text-zinc-300'}>
-                    {margin != null ? `${margin.toFixed(1)}%` : '—'}
+                    {margin != null ? `${margin.toFixed(1)}%` : '-'}
                   </span>
                 </td>
               </tr>
@@ -208,7 +208,7 @@ function RdChart({ annual }: { annual: EdgarAnnual[] }) {
 // ── Capital Returns Chart ──────────────────────────────────────────────────
 
 function fmtShares(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`
   if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`
   return n.toLocaleString()
@@ -306,10 +306,10 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
                   {fmtB(c.buybacks)}
                 </td>
                 <td className="py-2.5 text-right tabular-nums text-emerald-400">
-                  {c.dividendsPaid != null ? fmtB(c.dividendsPaid) : '—'}
+                  {c.dividendsPaid != null ? fmtB(c.dividendsPaid) : '-'}
                 </td>
                 <td className="py-2.5 text-right tabular-nums text-zinc-400">
-                  {c.dps != null ? `$${c.dps.toFixed(2)}` : '—'}
+                  {c.dps != null ? `$${c.dps.toFixed(2)}` : '-'}
                 </td>
                 <td className="py-2.5 text-right tabular-nums">
                   <span className={`flex items-center justify-end gap-0.5 font-semibold ${totalUp === true ? 'text-emerald-400' : totalUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
@@ -336,7 +336,7 @@ function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {
 // ── Margins Chart ────────────────────────────────────────────────────────────
 
 function pct(n: number | null): string {
-  return n == null ? '—' : `${(n * 100).toFixed(1)}%`
+  return n == null ? '-' : `${(n * 100).toFixed(1)}%`
 }
 
 function MarginsChart({ annual }: { annual: EdgarAnnual[] }) {
@@ -434,7 +434,7 @@ function FcfChart({ annual }: { annual: EdgarAnnual[] }) {
           return (
             <div key={a.year} className="flex flex-col items-center flex-1 gap-1 group relative">
               <div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:flex whitespace-nowrap rounded bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-200 z-10 border border-zinc-700">
-                {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '—'}
+                {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '-'}
               </div>
               <div className="w-full flex items-end justify-center" style={{ height: '64px' }}>
                 <div
@@ -466,16 +466,16 @@ function FcfChart({ annual }: { annual: EdgarAnnual[] }) {
               <tr key={a.year} className="hover:bg-zinc-800/30 transition-colors">
                 <td className="py-2.5 font-semibold text-zinc-300">{a.label}</td>
                 <td className="py-2.5 text-right tabular-nums text-zinc-300">
-                  {a.operatingCf != null ? `$${(a.operatingCf/1e9).toFixed(1)}B` : '—'}
+                  {a.operatingCf != null ? `$${(a.operatingCf/1e9).toFixed(1)}B` : '-'}
                 </td>
                 <td className="py-2.5 text-right tabular-nums text-red-400">
-                  {a.capex != null ? `-$${Math.abs(a.capex/1e9).toFixed(1)}B` : '—'}
+                  {a.capex != null ? `-$${Math.abs(a.capex/1e9).toFixed(1)}B` : '-'}
                 </td>
                 <td className="py-2.5 text-right tabular-nums">
                   <span className={`flex items-center justify-end gap-0.5 font-semibold ${fcfUp === true ? 'text-emerald-400' : fcfUp === false ? 'text-red-400' : 'text-zinc-300'}`}>
                     {fcfUp === true && <TrendingUp className="h-3 w-3" />}
                     {fcfUp === false && <TrendingDown className="h-3 w-3" />}
-                    {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '—'}
+                    {a.fcf != null ? `$${(a.fcf/1e9).toFixed(1)}B` : '-'}
                   </span>
                 </td>
               </tr>
@@ -594,7 +594,7 @@ export function EarningsHistory({ symbol }: { symbol: string }) {
 
       {!isLoading && !isError && data?.quarters?.length ? (
         <div className="p-5 space-y-4">
-          {/* View selector — scrollable pills on mobile */}
+          {/* View selector - scrollable pills on mobile */}
           <div>
             <p className="text-[10px] uppercase tracking-wider text-zinc-600 mb-2">Select view</p>
             <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>

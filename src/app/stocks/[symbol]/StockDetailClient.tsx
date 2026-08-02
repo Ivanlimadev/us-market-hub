@@ -96,10 +96,10 @@ export function StockDetailClient({
     )
   }
 
-  // fetchStockData uses Promise.allSettled and never returns null — a delisted
+  // fetchStockData uses Promise.allSettled and never returns null - a delisted
   // or unknown symbol yields a degenerate object (price 0, no real fundamentals).
   // Require a live price OR a real market cap; otherwise show a clean notice
-  // instead of a $0 page full of "—" placeholders.
+  // instead of a $0 page full of "-" placeholders.
   const hasData =
     data.currentPrice > 0 ||
     (data.info?.marketCap ?? 0) > 0
@@ -129,7 +129,7 @@ export function StockDetailClient({
           light on the dark band in both themes. */}
       <div className="rounded-2xl bg-neutral-800 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          {/* Identity — shrinks & truncates on mobile so it never overflows the viewport */}
+          {/* Identity - shrinks & truncates on mobile so it never overflows the viewport */}
           <div className="flex min-w-0 flex-1 items-center gap-3 md:flex-none md:gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-neutral-900">
               <Image
@@ -154,11 +154,11 @@ export function StockDetailClient({
                 <h1 className="flex min-w-0 items-baseline text-xl font-bold" style={{ color: '#fafafa' }}>
                   <span className="shrink-0">{symbol}</span>
                   {data.name && data.name !== symbol && (
-                    <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>— {data.name}</span>
+                    <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>- {data.name}</span>
                   )}
                 </h1>
                 {symbol.toUpperCase().endsWith('.TO') && (
-                  <span className="shrink-0 rounded-md bg-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-200" title="Toronto Stock Exchange — prices in Canadian dollars">
+                  <span className="shrink-0 rounded-md bg-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-200" title="Toronto Stock Exchange - prices in Canadian dollars">
                     🇨🇦 CAD
                   </span>
                 )}
@@ -197,7 +197,7 @@ export function StockDetailClient({
       {/* Key-stats card strip */}
       <KeyStatsStrip symbol={symbol} initialData={data} />
 
-      {/* 1 — Price & Performance */}
+      {/* 1 - Price & Performance */}
       <Section title="Price & Performance">
         <WidgetBoundary label="Price Chart">
           <PriceChart
@@ -211,7 +211,7 @@ export function StockDetailClient({
         </WidgetBoundary>
       </Section>
 
-      {/* 2 — Analysis & Verdict */}
+      {/* 2 - Analysis & Verdict */}
       <Section title="Analysis & Verdict">
         <WidgetBoundary label="AI Insight">
           <StockAIInsight symbol={symbol} />
@@ -229,7 +229,7 @@ export function StockDetailClient({
         </Pair>
       </Section>
 
-      {/* 3 — Financials */}
+      {/* 3 - Financials */}
       <Section id="indicators" title="Financials">
         <WidgetBoundary label="Financial Charts">
           <FinancialCharts symbol={symbol} />
@@ -244,7 +244,7 @@ export function StockDetailClient({
         </Pair>
       </Section>
 
-      {/* 4 — SEC Filings & Reported Financials (the two SEC blocks together) */}
+      {/* 4 - SEC Filings & Reported Financials (the two SEC blocks together) */}
       <Section id="results" title="SEC Filings & Reported Financials">
         <WidgetBoundary label="Earnings History">
           <EarningsHistory symbol={symbol} />
@@ -257,7 +257,7 @@ export function StockDetailClient({
         </WidgetBoundary>
       </Section>
 
-      {/* 5 — Dividends & Income */}
+      {/* 5 - Dividends & Income */}
       <Section id="dividends" title="Dividends & Income">
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
           <WidgetBoundary label="Dividends">
@@ -274,22 +274,22 @@ export function StockDetailClient({
         </div>
       </Section>
 
-      {/* 6 — Tools */}
+      {/* 6 - Tools */}
       <Section title="Tools & Simulators">
         <WidgetBoundary label="Growth Comparison">
           <StockGrowthComparison data={data} />
         </WidgetBoundary>
       </Section>
 
-      {/* Discussion — shared with the mobile app */}
+      {/* Discussion - shared with the mobile app */}
       <CommentsSection entityType="stock" entityId={symbol} />
 
-      {/* 7 — Discover (related content at the end) */}
+      {/* 7 - Discover (related content at the end) */}
       <Section title="Discover">
         <WidgetBoundary label="Related Assets">
           <RelatedAssets symbol={symbol} sector={data.info?.sector ?? null} />
         </WidgetBoundary>
-        {/* Server-rendered sector peer links — crawlable in initial HTML (SEO) */}
+        {/* Server-rendered sector peer links - crawlable in initial HTML (SEO) */}
         {relatedLinks}
         <WidgetBoundary label="Related Articles">
           <StockRelatedPosts symbol={symbol} />
@@ -303,15 +303,15 @@ export function StockDetailClient({
 
       <AppDownloadCard variant="hero" />
 
-      {/* SEO intro — moved to the end so the mobile page opens on the chart/data,
+      {/* SEO intro - moved to the end so the mobile page opens on the chart/data,
           not a wall of text (kept indexable, just lower on the page). */}
       {seoIntro}
 
       {seoFaq}
 
       <p className="rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 text-[11px] leading-relaxed text-zinc-500">
-        <strong className="text-zinc-400">Disclaimer:</strong> This page — including any buy/hold/avoid view,
-        fair value or price estimate — is generated from market data for informational and educational
+        <strong className="text-zinc-400">Disclaimer:</strong> This page - including any buy/hold/avoid view,
+        fair value or price estimate - is generated from market data for informational and educational
         purposes only and does <strong className="text-zinc-400">not constitute financial, investment or
         trading advice</strong>. Data may be delayed or inaccurate. Always do your own research and consult
         a licensed financial advisor before making any investment decision.

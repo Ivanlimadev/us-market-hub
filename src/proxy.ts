@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// In-memory rate limit store — persists across requests on VPS (single Node.js process)
+// In-memory rate limit store - persists across requests on VPS (single Node.js process)
 const store = new Map<string, { count: number; resetAt: number }>()
 
 function allow(key: string, max: number, windowMs: number): boolean {
@@ -33,7 +33,7 @@ function getIp(req: NextRequest): string {
   )
 }
 
-// Bucket: group by IP + route prefix (not full path — avoids per-symbol keys)
+// Bucket: group by IP + route prefix (not full path - avoids per-symbol keys)
 function bucket(ip: string, pathname: string): string {
   const prefix = pathname.split('/').slice(0, 4).join('/')
   return `${ip}|${prefix}`
@@ -62,14 +62,14 @@ export function proxy(req: NextRequest) {
 
   const ip = getIp(req)
 
-  // Routes that call multiple external APIs simultaneously — tighter limit
+  // Routes that call multiple external APIs simultaneously - tighter limit
   const isHeavy =
     pathname.startsWith('/api/screener') ||
     pathname.startsWith('/api/batch-quotes') ||
     pathname.startsWith('/api/stocks/') && pathname.endsWith('/insight') ||
     pathname.startsWith('/api/crypto/') && pathname.endsWith('/insight')
 
-  // Blog admin routes — very low limit (should only be called by cron)
+  // Blog admin routes - very low limit (should only be called by cron)
   const isBlogAdmin =
     pathname.startsWith('/api/blog/generate') ||
     pathname.startsWith('/api/blog/rewrite') ||

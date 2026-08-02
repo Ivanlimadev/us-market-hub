@@ -110,7 +110,7 @@ export default function RegisterPage() {
             <TrendingUp className="h-10 w-10 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">Create your account</h1>
-          <p className="text-sm text-zinc-400">Join Stock Market ROI — it&apos;s free</p>
+          <p className="text-sm text-zinc-400">Join Stock Market ROI - it&apos;s free</p>
         </div>
 
         {/* Form */}

@@ -47,7 +47,7 @@ const SERIES_META: Record<string, SeriesMeta> = {
   CPIAUCSL: {
     label: 'CPI Inflation (YoY)', unit: '%', section: 'inflation', direction: -1,
     transform: 'yoy',
-    description: 'Índice de Preços ao Consumidor — variação anual. Mede a variação média mensal no preço de bens e serviços. Meta informal do Fed é 2%. Usado para ajuste de TIPS, previdência social e contratos indexados.',
+    description: 'Índice de Preços ao Consumidor - variação anual. Mede a variação média mensal no preço de bens e serviços. Meta informal do Fed é 2%. Usado para ajuste de TIPS, previdência social e contratos indexados.',
   },
   CPILFESL: {
     label: 'Core CPI (ex Food & Energy)', unit: '%', section: 'inflation', direction: -1,
@@ -57,17 +57,17 @@ const SERIES_META: Record<string, SeriesMeta> = {
   PCEPILFE: {
     label: 'Core PCE (Fed Target)', unit: '%', section: 'inflation', direction: -1,
     transform: 'yoy',
-    description: 'Índice de Preços PCE Core — a medida de inflação preferida do Fed. Meta explícita: 2% ao ano. Tende a rodar 0.2-0.3pp abaixo do Core CPI. Principal driver das decisões do FOMC sobre juros.',
+    description: 'Índice de Preços PCE Core - a medida de inflação preferida do Fed. Meta explícita: 2% ao ano. Tende a rodar 0.2-0.3pp abaixo do Core CPI. Principal driver das decisões do FOMC sobre juros.',
   },
   MICH: {
     label: 'Inflation Expectations 1Y', unit: '%', section: 'inflation', direction: -1,
     transform: 'raw',
-    description: 'Expectativa mediana de inflação para os próximos 12 meses — pesquisa mensal de Sentimento do Consumidor da Universidade de Michigan. O Fed monitora este indicador de perto porque expectativas desancoradas são auto-realizáveis: consumidores que esperam inflação mais alta exigem salários maiores e compram antecipadamente, acelerando a inflação. Usado explicitamente pelo FOMC em suas projeções e comunicados. Leituras acima de 4% historicamente levam o Fed a adotar postura mais hawkish.',
+    description: 'Expectativa mediana de inflação para os próximos 12 meses - pesquisa mensal de Sentimento do Consumidor da Universidade de Michigan. O Fed monitora este indicador de perto porque expectativas desancoradas são auto-realizáveis: consumidores que esperam inflação mais alta exigem salários maiores e compram antecipadamente, acelerando a inflação. Usado explicitamente pelo FOMC em suas projeções e comunicados. Leituras acima de 4% historicamente levam o Fed a adotar postura mais hawkish.',
   },
   GDPC1: {
     label: 'Real GDP (YoY)', unit: '%', section: 'growth', direction: 1,
     transform: 'yoy_4',
-    description: 'Produto Interno Bruto real ajustado por inflação — variação anual. Medida mais abrangente da atividade econômica. Dois trimestres consecutivos negativos definem recessão técnica. Divulgado trimestralmente com revisões.',
+    description: 'Produto Interno Bruto real ajustado por inflação - variação anual. Medida mais abrangente da atividade econômica. Dois trimestres consecutivos negativos definem recessão técnica. Divulgado trimestralmente com revisões.',
   },
   INDPRO: {
     label: 'Industrial Production (MoM)', unit: '%', section: 'growth', direction: 1,
@@ -77,7 +77,7 @@ const SERIES_META: Record<string, SeriesMeta> = {
   RSXFS: {
     label: 'Retail Sales (MoM)', unit: '%', section: 'consumer', direction: 1,
     transform: 'mom_pct',
-    description: 'Vendas no varejo — variação mensal. Representa ~70% do PIB americano via consumo das famílias. Indicador leading-coincident da demanda doméstica. Surpresas positivas fortalecem o dólar e pressionam yields.',
+    description: 'Vendas no varejo - variação mensal. Representa ~70% do PIB americano via consumo das famílias. Indicador leading-coincident da demanda doméstica. Surpresas positivas fortalecem o dólar e pressionam yields.',
   },
   UMCSENT: {
     label: 'Consumer Sentiment', unit: 'pts', section: 'consumer', direction: 1,
@@ -97,7 +97,7 @@ const SERIES_META: Record<string, SeriesMeta> = {
   DGS10: {
     label: '10-Year Treasury Yield', unit: '%', section: 'bonds', direction: -1,
     transform: 'raw', frequency: 'm',
-    description: 'Yield do Tesouro americano de 10 anos — benchmark global. Referência para hipotecas 30 anos, dívida corporativa e valuation de ações (taxa de desconto). Movimento reflete inflação esperada + crescimento + prêmio de risco.',
+    description: 'Yield do Tesouro americano de 10 anos - benchmark global. Referência para hipotecas 30 anos, dívida corporativa e valuation de ações (taxa de desconto). Movimento reflete inflação esperada + crescimento + prêmio de risco.',
   },
   DGS30: {
     label: '30-Year Treasury Yield', unit: '%', section: 'bonds', direction: -1,
@@ -112,7 +112,7 @@ const SERIES_META: Record<string, SeriesMeta> = {
   T10YIE: {
     label: 'Breakeven Inflation 10Y', unit: '%', section: 'bonds', direction: -1,
     transform: 'raw', frequency: 'm',
-    description: 'Taxa de inflação implícita no mercado de bonds para os próximos 10 anos — calculada como a diferença entre o yield do Treasury nominal de 10 anos (DGS10) e o yield do TIPS de 10 anos (título indexado à inflação). Indica o que o mercado de títulos precifica como inflação média futura. Acima de 2.5% sinaliza pressão inflacionária crescente e pode levar o Fed a manter juros elevados por mais tempo. É um dos indicadores de expectativas de inflação mais confiáveis por ser market-implied, sem viés de survey.',
+    description: 'Taxa de inflação implícita no mercado de bonds para os próximos 10 anos - calculada como a diferença entre o yield do Treasury nominal de 10 anos (DGS10) e o yield do TIPS de 10 anos (título indexado à inflação). Indica o que o mercado de títulos precifica como inflação média futura. Acima de 2.5% sinaliza pressão inflacionária crescente e pode levar o Fed a manter juros elevados por mais tempo. É um dos indicadores de expectativas de inflação mais confiáveis por ser market-implied, sem viés de survey.',
   },
   HOUST: {
     label: 'Housing Starts', unit: 'K', section: 'housing', direction: 1,
@@ -122,24 +122,24 @@ const SERIES_META: Record<string, SeriesMeta> = {
   M2SL: {
     label: 'M2 Money Supply (YoY)', unit: '%', section: 'money', direction: 1,
     transform: 'yoy',
-    description: 'Crescimento anual da oferta monetária M2 (caixa + depósitos + fundos money market). Expansão excessiva (>10% YoY) é inflacionária a médio prazo. Contração (negativa) é historicamente rara e deflacionária — ocorreu em 2022-2023.',
+    description: 'Crescimento anual da oferta monetária M2 (caixa + depósitos + fundos money market). Expansão excessiva (>10% YoY) é inflacionária a médio prazo. Contração (negativa) é historicamente rara e deflacionária - ocorreu em 2022-2023.',
   },
 
   // ── Financial Markets ────────────────────────────────────────────────────────
   VIXCLS: {
-    label: 'VIX — Volatility Index', unit: 'pts', section: 'markets', direction: -1,
+    label: 'VIX - Volatility Index', unit: 'pts', section: 'markets', direction: -1,
     transform: 'raw', frequency: 'm',
-    description: 'Índice de Volatilidade CBOE — mede a volatilidade implícita esperada do S&P 500 para os próximos 30 dias, derivada dos preços de opções. Apelidado de "índice do medo". Abaixo de 15 = mercado complacente. Entre 20–30 = stress moderado. Acima de 30 = crise/pânico. Spike repentino é sinal clássico de aversão a risco e capitulação de portfólios.',
+    description: 'Índice de Volatilidade CBOE - mede a volatilidade implícita esperada do S&P 500 para os próximos 30 dias, derivada dos preços de opções. Apelidado de "índice do medo". Abaixo de 15 = mercado complacente. Entre 20-30 = stress moderado. Acima de 30 = crise/pânico. Spike repentino é sinal clássico de aversão a risco e capitulação de portfólios.',
   },
   BAMLH0A0HYM2: {
     label: 'High Yield Spread (OAS)', unit: '%', section: 'markets', direction: -1,
     transform: 'raw', frequency: 'm',
-    description: 'Option-Adjusted Spread dos títulos corporativos High Yield (junk bonds) sobre Treasuries equivalentes — ICE BofA. Mede o prêmio de risco de crédito do mercado. Abaixo de 3%: ambiente favorável ao crédito. Acima de 5%: stress significativo. Acima de 8%: nível de crise (2008, 2020). Spread em expansão antecede recessões em 6–12 meses.',
+    description: 'Option-Adjusted Spread dos títulos corporativos High Yield (junk bonds) sobre Treasuries equivalentes - ICE BofA. Mede o prêmio de risco de crédito do mercado. Abaixo de 3%: ambiente favorável ao crédito. Acima de 5%: stress significativo. Acima de 8%: nível de crise (2008, 2020). Spread em expansão antecede recessões em 6-12 meses.',
   },
   DTWEXBGS: {
     label: 'US Dollar Index', unit: 'idx', section: 'markets', direction: 1,
     transform: 'raw', frequency: 'm',
-    description: 'Índice amplo do dólar americano ponderado pelo comércio (Nominal Broad U.S. Dollar Index — proxy do DXY). Alta do dólar aperta condições financeiras globais, pressiona commodities (cotadas em USD), comprime lucros das multinacionais americanas e gera estresse em países emergentes com dívida em USD. Queda favorece exportações e ativos de risco.',
+    description: 'Índice amplo do dólar americano ponderado pelo comércio (Nominal Broad U.S. Dollar Index - proxy do DXY). Alta do dólar aperta condições financeiras globais, pressiona commodities (cotadas em USD), comprime lucros das multinacionais americanas e gera estresse em países emergentes com dívida em USD. Queda favorece exportações e ativos de risco.',
   },
   MORTGAGE30US: {
     label: '30-Year Mortgage Rate', unit: '%', section: 'markets', direction: -1,
@@ -149,14 +149,14 @@ const SERIES_META: Record<string, SeriesMeta> = {
   SP500: {
     label: 'S&P 500 Index', unit: 'pts', section: 'markets', direction: 1,
     transform: 'raw', frequency: 'm',
-    description: 'Nível de fechamento mensal do índice S&P 500 — benchmark do mercado americano de ações composto pelas 500 maiores empresas listadas nos EUA. Representa ~80% da capitalização de mercado americana total. Reflete expectativas de lucros corporativos futuros descontados pela taxa de juros (DGS10). Queda sustentada >20% define mercado de baixa (bear market). Analistas monitoram junto com EPS (lucros por ação), múltiplo P/E forward e o spread de crédito para avaliar se a valorização está fundamentada.',
+    description: 'Nível de fechamento mensal do índice S&P 500 - benchmark do mercado americano de ações composto pelas 500 maiores empresas listadas nos EUA. Representa ~80% da capitalização de mercado americana total. Reflete expectativas de lucros corporativos futuros descontados pela taxa de juros (DGS10). Queda sustentada >20% define mercado de baixa (bear market). Analistas monitoram junto com EPS (lucros por ação), múltiplo P/E forward e o spread de crédito para avaliar se a valorização está fundamentada.',
   },
 
   // ── Leading Indicators ───────────────────────────────────────────────────────
   RECPROUSM156N: {
     label: 'NY Fed Recession Probability', unit: '%', section: 'leading', direction: -1,
     transform: 'raw',
-    description: 'Probabilidade suavizada de recessão calculada pelo NY Fed usando o spread entre os yields do Treasury de 10 anos e 3 meses. O modelo acertou todas as recessões americanas desde 1960, com antecedência de 6–18 meses. Leituras acima de 30% são historicamente consistentes com recessão iminente. Acima de 50% = recessão quase certa segundo o modelo.',
+    description: 'Probabilidade suavizada de recessão calculada pelo NY Fed usando o spread entre os yields do Treasury de 10 anos e 3 meses. O modelo acertou todas as recessões americanas desde 1960, com antecedência de 6-18 meses. Leituras acima de 30% são historicamente consistentes com recessão iminente. Acima de 50% = recessão quase certa segundo o modelo.',
   },
   PERMIT: {
     label: 'Building Permits', unit: 'K', section: 'leading', direction: 1,
@@ -173,19 +173,19 @@ const SERIES_META: Record<string, SeriesMeta> = {
   JTSJOL: {
     label: 'Job Openings (JOLTS)', unit: 'K', section: 'labor', direction: 1,
     transform: 'raw',
-    description: 'Total de vagas de emprego abertas nos EUA ao fim do mês (pesquisa mensal JOLTS do BLS, em milhares). Ratio vagas/desempregados acima de 1.0 indica mercado apertado e poder de barganha dos trabalhadores. Pico histórico: ~12 milhões em 2022. Fed observa esta série como indicador de demanda por trabalho. Queda sustentada antecipa aumento do desemprego com 6–9 meses de defasagem.',
+    description: 'Total de vagas de emprego abertas nos EUA ao fim do mês (pesquisa mensal JOLTS do BLS, em milhares). Ratio vagas/desempregados acima de 1.0 indica mercado apertado e poder de barganha dos trabalhadores. Pico histórico: ~12 milhões em 2022. Fed observa esta série como indicador de demanda por trabalho. Queda sustentada antecipa aumento do desemprego com 6-9 meses de defasagem.',
   },
   JTSQUR: {
     label: 'Quits Rate', unit: '%', section: 'labor', direction: 1,
     transform: 'raw',
-    description: 'Taxa de demissões voluntárias mensais como percentual do total de trabalhadores (pesquisa JOLTS). Alta taxa de quits (acima de 3%) indica alta confiança dos trabalhadores em conseguir emprego melhor — mercado aquecido. Fed e analistas usam como proxy de pressão salarial: trabalhadores que pedem demissão conseguem aumentos maiores. Queda antecipa desaceleração dos salários e possível resfriamento do PCE.',
+    description: 'Taxa de demissões voluntárias mensais como percentual do total de trabalhadores (pesquisa JOLTS). Alta taxa de quits (acima de 3%) indica alta confiança dos trabalhadores em conseguir emprego melhor - mercado aquecido. Fed e analistas usam como proxy de pressão salarial: trabalhadores que pedem demissão conseguem aumentos maiores. Queda antecipa desaceleração dos salários e possível resfriamento do PCE.',
   },
 
   // ── Fiscal Policy ────────────────────────────────────────────────────────────
   WALCL: {
     label: 'Fed Balance Sheet', unit: 'T', section: 'fiscal', direction: 1,
     transform: 'raw', frequency: 'm', postScale: 0.000001,
-    description: 'Total de ativos do balanço patrimonial do Federal Reserve em trilhões de dólares. Expande durante QE (Quantitative Easing) via compra de Treasuries e MBS — injeta liquidez no sistema financeiro e suprime os yields. Contrai durante QT (Quantitative Tightening) — remove liquidez e sobe yields. Maior fonte de liquidez sistêmica global. Pico: ~$8.9T (2022). Analistas monitoram a taxa de contração mensal.',
+    description: 'Total de ativos do balanço patrimonial do Federal Reserve em trilhões de dólares. Expande durante QE (Quantitative Easing) via compra de Treasuries e MBS - injeta liquidez no sistema financeiro e suprime os yields. Contrai durante QT (Quantitative Tightening) - remove liquidez e sobe yields. Maior fonte de liquidez sistêmica global. Pico: ~$8.9T (2022). Analistas monitoram a taxa de contração mensal.',
   },
   GFDEGDQ188S: {
     label: 'Federal Debt / GDP', unit: '%', section: 'fiscal', direction: -1,
@@ -197,19 +197,19 @@ const SERIES_META: Record<string, SeriesMeta> = {
   CSUSHPISA: {
     label: 'Case-Shiller HPI (YoY)', unit: '%', section: 'housing', direction: 1,
     transform: 'yoy',
-    description: 'Variação anual do índice S&P/Case-Shiller de preços de imóveis residenciais nos EUA (cobertura nacional). Alta acima do crescimento da renda aumenta risco de bolha e reduz acessibilidade. Queda sustentada (como 2008–2011: –35%) gera efeito riqueza negativo, stress bancário via hipotecas subaquáticas e contração do consumo. Série trimestral com defasagem de ~2 meses na divulgação.',
+    description: 'Variação anual do índice S&P/Case-Shiller de preços de imóveis residenciais nos EUA (cobertura nacional). Alta acima do crescimento da renda aumenta risco de bolha e reduz acessibilidade. Queda sustentada (como 2008-2011: -35%) gera efeito riqueza negativo, stress bancário via hipotecas subaquáticas e contração do consumo. Série trimestral com defasagem de ~2 meses na divulgação.',
   },
   HSN1F: {
     label: 'New Home Sales', unit: 'K', section: 'housing', direction: 1,
     transform: 'raw',
-    description: 'Vendas mensais de novas residências unifamiliares nos EUA (taxa anual sazonalmente ajustada, em milhares). Leading indicator do mercado imobiliário — reflete compras de imóveis ainda em construção. Muito sensível às taxas hipotecárias: aumento de 1pp na taxa 30Y tipicamente reduz vendas em 10–20%. Queda sustentada abaixo de 500K sinaliza retração no setor de construção residencial.',
+    description: 'Vendas mensais de novas residências unifamiliares nos EUA (taxa anual sazonalmente ajustada, em milhares). Leading indicator do mercado imobiliário - reflete compras de imóveis ainda em construção. Muito sensível às taxas hipotecárias: aumento de 1pp na taxa 30Y tipicamente reduz vendas em 10-20%. Queda sustentada abaixo de 500K sinaliza retração no setor de construção residencial.',
   },
 
   // ── Commodities ──────────────────────────────────────────────────────────────
   DCOILWTICO: {
     label: 'WTI Crude Oil', unit: '$', section: 'commodities', direction: -1,
     transform: 'raw', frequency: 'm',
-    description: 'Preço médio mensal do petróleo bruto West Texas Intermediate (WTI) em dólares por barril — benchmark de referência do mercado americano. Componente direto da inflação via energia (gasolina, diesel, aviação). Alta de US$10/barril adiciona aproximadamente 0.3pp ao CPI headline. Preços elevados comprimem as margens de empresas intensivas em energia e reduzem a renda disponível dos consumidores. Principais drivers: OPEP+ (oferta), crescimento chinês (demanda), estoques semanais do EIA e geopolítica.',
+    description: 'Preço médio mensal do petróleo bruto West Texas Intermediate (WTI) em dólares por barril - benchmark de referência do mercado americano. Componente direto da inflação via energia (gasolina, diesel, aviação). Alta de US$10/barril adiciona aproximadamente 0.3pp ao CPI headline. Preços elevados comprimem as margens de empresas intensivas em energia e reduzem a renda disponível dos consumidores. Principais drivers: OPEP+ (oferta), crescimento chinês (demanda), estoques semanais do EIA e geopolítica.',
   },
   PCOPPUSDM: {
     label: 'Copper ($/lb)', unit: '$', section: 'commodities', direction: 1,

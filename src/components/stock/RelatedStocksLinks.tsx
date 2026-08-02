@@ -5,13 +5,13 @@ import { getSector, STOCK_UNIVERSE, STOCK_NAMES, isDelisted } from '@/lib/stock-
  * Server-rendered internal links to sector peers.
  *
  * Unlike <RelatedAssets> (client component, live prices, links only appear after
- * a React Query fetch), these anchors are in the initial SSR HTML — so Googlebot
+ * a React Query fetch), these anchors are in the initial SSR HTML - so Googlebot
  * sees them on first crawl. That gives every ticker page real inbound/outbound
  * internal links and lets Google discover + prioritize the long-tail pages
- * instead of leaving them as sitemap-only orphans ("Discovered – not indexed").
+ * instead of leaving them as sitemap-only orphans ("Discovered - not indexed").
  *
  * Peers are a rotating window of the sector *around* the current symbol (not the
- * first N), so link equity spreads across the whole sector — every ticker, incl.
+ * first N), so link equity spreads across the whole sector - every ticker, incl.
  * the long tail, gets inbound links from its neighbours. Lowercase paths match
  * each page's canonical, avoiding a 301 hop that wastes crawl budget.
  */

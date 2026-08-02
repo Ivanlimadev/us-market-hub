@@ -13,7 +13,7 @@ const EXTRA_DIV = [
 
 const DIV_STOCKS = [...new Set([...ALL_SYMBOLS, ...EXTRA_DIV])]
 
-// In-memory cache — 3 hours (dividend calendars don't change frequently)
+// In-memory cache - 3 hours (dividend calendars don't change frequently)
 let cache: { data: YFDivEvent[]; ts: number } | null = null
 const CACHE_TTL = 3 * 60 * 60 * 1000
 

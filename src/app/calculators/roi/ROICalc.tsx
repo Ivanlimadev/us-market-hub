@@ -17,7 +17,7 @@ interface CalcResult {
   finalValue:     number
   totalGain:      number
   roi:            number        // total %
-  cagr:           number | null // annualized — null if no period
+  cagr:           number | null // annualized - null if no period
   multiple:       number        // FV / IV
   yearsDecimal:   number
   spReturn:       number | null // S&P 500 total return for same period (10%/yr)
@@ -138,7 +138,7 @@ export function ROICalc() {
       <h1 className="mb-2 text-3xl font-bold text-zinc-100">ROI Calculator</h1>
       <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
         Calculate your Return on Investment for any asset. Enter an investment value or a specific
-        stock trade — and see your annualized return (CAGR) compared against the S&P 500.
+        stock trade - and see your annualized return (CAGR) compared against the S&P 500.
       </p>
 
       {/* Mode toggle */}
@@ -201,7 +201,7 @@ export function ROICalc() {
             </>
           )}
 
-          {/* Holding period — shared */}
+          {/* Holding period - shared */}
           <div className="flex flex-col gap-1.5">
             <Label>
               Holding period
@@ -365,7 +365,7 @@ export function ROICalc() {
                 </div>
               )}
 
-              {/* Break-even panel — only when loss */}
+              {/* Break-even panel - only when loss */}
               {result.breakEven !== null && (
                 <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
                   <p className="mb-1 text-sm font-semibold text-red-400">Break-even recovery needed</p>
@@ -376,7 +376,7 @@ export function ROICalc() {
                     Your investment is at {usd(result.finalValue)}. To recover to your original{' '}
                     {usd(result.initialValue)}, it needs to rise{' '}
                     <strong className="text-zinc-300">+{Math.abs(result.breakEven).toFixed(2)}%</strong> from
-                    its current value. Losses always require a larger percentage gain to recover —
+                    its current value. Losses always require a larger percentage gain to recover -
                     a 50% drop needs a 100% gain just to break even.
                   </p>
                 </div>
@@ -406,7 +406,7 @@ export function ROICalc() {
           <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-orange-300">
             ROI = (Final Value − Initial Value) / Initial Value × 100
           </code>.
-          A 50% ROI means you turned $10,000 into $15,000. Simple — but it doesn&apos;t tell you
+          A 50% ROI means you turned $10,000 into $15,000. Simple - but it doesn&apos;t tell you
           how <em>fast</em> you got there.
         </p>
 
@@ -417,7 +417,7 @@ export function ROICalc() {
             CAGR = (FV / IV)^(1/years) − 1
           </code>.
           A 50% total ROI over 10 years is a modest 4.1%/yr CAGR.
-          The same 50% over 2 years is a 22.5%/yr CAGR — an exceptional performance.
+          The same 50% over 2 years is a 22.5%/yr CAGR - an exceptional performance.
           CAGR lets you compare any investment on an equal footing.
         </p>
 
@@ -425,7 +425,7 @@ export function ROICalc() {
         <p>
           The S&P 500 has returned roughly 10%/yr before inflation over long periods. This is the
           benchmark most professional fund managers fail to beat consistently. If your CAGR exceeds
-          10%, you&apos;re outperforming the market — and likely most actively managed funds.
+          10%, you&apos;re outperforming the market - and likely most actively managed funds.
           If not, a low-cost index ETF (like VOO or SPY) may be worth considering.
         </p>
 

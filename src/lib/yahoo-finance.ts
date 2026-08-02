@@ -1,4 +1,4 @@
-// Yahoo Finance unofficial client — crumb-based auth, server-side only
+// Yahoo Finance unofficial client - crumb-based auth, server-side only
 import { withRetry, HttpError } from '@/lib/retry'
 
 let _crumb: string | null = null
@@ -41,7 +41,7 @@ function cbAllow(): boolean {
     }
     return false
   }
-  // half-open: only one probe at a time — treat as allowed
+  // half-open: only one probe at a time - treat as allowed
   return true
 }
 // ──────────────────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ export async function yfGetPublic(url: string): Promise<Record<string, unknown>>
 }
 
 async function yfGet(url: string): Promise<Record<string, unknown>> {
-  if (!cbAllow()) throw new Error('[YF] circuit open — skipping request')
+  if (!cbAllow()) throw new Error('[YF] circuit open - skipping request')
 
   try {
     const result = await withRetry(async () => {
@@ -86,7 +86,7 @@ async function yfGet(url: string): Promise<Record<string, unknown>> {
         headers: { 'User-Agent': 'Mozilla/5.0', Cookie: cookie },
       })
       if (!res.ok) {
-        // 401 means crumb expired — invalidate session so next attempt refreshes
+        // 401 means crumb expired - invalidate session so next attempt refreshes
         if (res.status === 401) {
           _crumb = null
           _cookies = null
@@ -286,7 +286,7 @@ export interface YFFinancials {
   cagr5yNetIncome: number | null
 }
 
-// YF returns { raw: 0, fmt: null } for unavailable line items — treat as null
+// YF returns { raw: 0, fmt: null } for unavailable line items - treat as null
 function rawFin(obj: unknown): number | null {
   const v = raw(obj)
   return v === null || v === 0 ? null : v
@@ -361,7 +361,7 @@ export interface YFChartBar {
   high: number
   low: number
   close: number
-  adj_close: number   // split + dividend adjusted — use for charts & performance
+  adj_close: number   // split + dividend adjusted - use for charts & performance
   volume: number
 }
 
@@ -457,7 +457,7 @@ export async function getYFDividends(symbol: string): Promise<YFDividend[]> {
 // ── Intraday bars (5m/15m interval, today only) ────────────────────────────
 
 export interface YFIntradayBar {
-  timestamp: number // Unix seconds — UTCTimestamp for lightweight-charts
+  timestamp: number // Unix seconds - UTCTimestamp for lightweight-charts
   value: number
 }
 
@@ -516,7 +516,7 @@ export interface YFBatchQuote {
   industry: string | null
   eps: number | null
   // Earnings calendar
-  earningsTimestamp: number | null      // Unix seconds — next earnings date
+  earningsTimestamp: number | null      // Unix seconds - next earnings date
   earningsTimestampEnd: number | null   // End of earnings window
 }
 

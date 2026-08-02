@@ -5,7 +5,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // Every table that holds user-owned rows (keyed by user_id). Deleting an
 // auth user does NOT cascade to these (no FK cascade exists), so we must
-// clear them explicitly — otherwise account deletion orphans the user's data
+// clear them explicitly - otherwise account deletion orphans the user's data
 // (privacy / right-to-erasure violation). Keep this list in sync when adding
 // any new user-scoped table.
 const USER_TABLES = [
@@ -29,7 +29,7 @@ const USER_TABLES = [
 ] as const
 
 export async function DELETE(req: NextRequest) {
-  // 3 attempts per hour per IP — this action is irreversible
+  // 3 attempts per hour per IP - this action is irreversible
   if (!rateLimit(getIp(req), 3, 60 * 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
@@ -41,7 +41,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  // Service role — deletes across tables and the auth user. Scoped strictly to
+  // Service role - deletes across tables and the auth user. Scoped strictly to
   // this authenticated user's id on every statement (no cross-user reach).
   const admin = createAdmin(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

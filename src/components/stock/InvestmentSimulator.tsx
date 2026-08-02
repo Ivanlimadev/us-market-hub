@@ -133,7 +133,7 @@ export function InvestmentSimulator({ data }: Props) {
                   Price Only
                 </p>
                 <p className="font-mono text-xl font-bold text-white leading-tight">
-                  {result?.withoutDiv != null ? fmt$(result.withoutDiv) : '—'}
+                  {result?.withoutDiv != null ? fmt$(result.withoutDiv) : '-'}
                 </p>
                 {pctWithout != null && (
                   <p className={`mt-1 text-sm font-semibold tabular-nums ${
@@ -154,7 +154,7 @@ export function InvestmentSimulator({ data }: Props) {
                   + Div. Reinvested
                 </p>
                 <p className="font-mono text-xl font-bold text-white leading-tight">
-                  {result?.withDiv != null ? fmt$(result.withDiv) : '—'}
+                  {result?.withDiv != null ? fmt$(result.withDiv) : '-'}
                 </p>
                 {pctWith != null && (
                   <p className={`mt-1 text-sm font-semibold tabular-nums ${

@@ -46,7 +46,7 @@ export function HeroSearch() {
   const [open, setOpen] = useState(false)
   const [hi, setHi] = useState(0)
 
-  // Shared with the Navbar's GlobalSearch (same queryKey) — no duplicate fetch.
+  // Shared with the Navbar's GlobalSearch (same queryKey) - no duplicate fetch.
   const { data: cryptoData } = useQuery<CryptoMarket[]>({
     queryKey: ['crypto-markets'],
     queryFn: () => fetch('/api/crypto/markets?limit=250').then((r) => r.json()),
@@ -103,7 +103,7 @@ export function HeroSearch() {
       if (S.startsWith(q)) return 1 // typing the start of the ticker
       if (N.startsWith(q)) return 2 // typing the start of the company name
       // Typing PAST the ticker (e.g. "GOOGLE" → GOOGL). Ranked below a real name
-      // match so "apple" keeps AAPL above APP. Length guard avoids 1–2 char noise.
+      // match so "apple" keeps AAPL above APP. Length guard avoids 1-2 char noise.
       if (q.startsWith(S) && S.length >= 3) return 3
       if (S.includes(q) || N.includes(q)) return 4
       return 99

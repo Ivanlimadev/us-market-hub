@@ -49,13 +49,13 @@ export function IndexCards() {
           <div key={idx.symbol} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
             <p className="text-xs font-medium text-zinc-400">{idx.label}</p>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {q ? q.price.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'}
+              {q ? q.price.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '-'}
             </p>
             <div className="mt-1">
               {q ? (
                 <ChangeBadge value={q.changePct} />
               ) : (
-                <span className="text-xs text-zinc-500">—</span>
+                <span className="text-xs text-zinc-500">-</span>
               )}
             </div>
           </div>

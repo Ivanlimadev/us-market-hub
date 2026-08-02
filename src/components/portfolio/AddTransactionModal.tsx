@@ -278,7 +278,7 @@ export function AddTransactionModal({ onClose, defaultSymbol, defaultName, defau
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-5">
-          {/* Asset type toggle — only show when no default symbol and no default type locked in */}
+          {/* Asset type toggle - only show when no default symbol and no default type locked in */}
           {!defaultSymbol && !defaultAssetType && (
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -332,7 +332,7 @@ export function AddTransactionModal({ onClose, defaultSymbol, defaultName, defau
             )}
           </div>
 
-          {/* Transaction fields — show after asset is selected */}
+          {/* Transaction fields - show after asset is selected */}
           {selectedAsset && (
             <>
               {/* Buy / Sell toggle */}

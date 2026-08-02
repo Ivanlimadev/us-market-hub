@@ -1,4 +1,4 @@
-// US Eastern Time market hours: Mon–Fri 09:30–16:00 ET
+// US Eastern Time market hours: Mon-Fri 09:30-16:00 ET
 
 export function isMarketOpen(): boolean {
   const now = new Date()

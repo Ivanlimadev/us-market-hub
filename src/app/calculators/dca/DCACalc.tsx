@@ -155,7 +155,7 @@ export function DCACalc() {
       <h1 className="mb-2 text-3xl font-bold text-zinc-100">DCA Calculator</h1>
       <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
         Dollar-Cost Averaging means investing a fixed amount at regular intervals regardless of
-        market price. See how consistent contributions compound over time — and how DCA compares
+        market price. See how consistent contributions compound over time - and how DCA compares
         to putting the same total in as a lump sum on day one.
       </p>
 
@@ -304,7 +304,7 @@ export function DCACalc() {
               {/* DCA vs Lump Sum */}
               <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
                 <p className="mb-4 text-sm font-semibold text-zinc-300">
-                  DCA vs. Lump Sum — same money, different timing
+                  DCA vs. Lump Sum - same money, different timing
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {/* DCA side */}
@@ -352,7 +352,7 @@ export function DCACalc() {
                         <span className="text-emerald-400 font-semibold">
                           Lump sum wins by {usd(diff)}.
                         </span>{' '}
-                        In a steadily rising market, money invested earlier has more time to compound — that&apos;s why lump sum often outperforms. DCA&apos;s advantage: you don&apos;t need the full amount upfront, and you avoid the risk of investing everything at a market peak.
+                        In a steadily rising market, money invested earlier has more time to compound - that&apos;s why lump sum often outperforms. DCA&apos;s advantage: you don&apos;t need the full amount upfront, and you avoid the risk of investing everything at a market peak.
                       </>
                     ) : (
                       <>
@@ -423,8 +423,8 @@ export function DCACalc() {
       <section className="mt-14 space-y-5 border-t border-zinc-800 pt-10 text-sm leading-relaxed text-zinc-400">
         <h2 className="text-base font-bold text-zinc-200">What is Dollar-Cost Averaging (DCA)?</h2>
         <p>
-          Dollar-Cost Averaging is the strategy of investing a fixed amount at regular intervals —
-          weekly, bi-weekly, or monthly — regardless of whether the market is up or down.
+          Dollar-Cost Averaging is the strategy of investing a fixed amount at regular intervals -
+          weekly, bi-weekly, or monthly - regardless of whether the market is up or down.
           When prices drop, your fixed amount buys <em>more</em> shares. When prices rise, you buy
           fewer. Over time, this naturally lowers your average cost per share compared to trying to
           time the market.
@@ -433,14 +433,14 @@ export function DCACalc() {
         <p>
           Research (including a Vanguard study across US, UK, and Australian markets) shows that
           lump sum investing outperforms DCA roughly{' '}
-          <strong className="text-zinc-300">2 out of 3 times</strong> in a trending market —
+          <strong className="text-zinc-300">2 out of 3 times</strong> in a trending market -
           because money invested earlier has more time to compound. But this assumes you already
           have the full lump sum available, which most people don&apos;t.
         </p>
         <p>
           DCA&apos;s real advantages: you can start <strong className="text-zinc-300">immediately</strong>{' '}
           with whatever you have; you build a consistent saving habit; and you remove the
-          psychological burden of &quot;waiting for the right moment&quot; — a moment that research
+          psychological burden of &quot;waiting for the right moment&quot; - a moment that research
           shows investors almost always mis-time.
         </p>
         <h2 className="text-base font-bold text-zinc-200">Weekly vs. monthly DCA</h2>
@@ -448,7 +448,7 @@ export function DCACalc() {
           More frequent contributions slightly reduce the average cost basis by spreading purchases
           across more price points. In practice, the difference between weekly and monthly DCA is
           small. Monthly is most common because it aligns with salary cycles. Bi-weekly aligns with
-          US bi-weekly paychecks — a popular choice for automatic payroll investing.
+          US bi-weekly paychecks - a popular choice for automatic payroll investing.
         </p>
         <p className="text-xs text-zinc-600">
           For educational purposes only. Not financial advice. Past returns do not guarantee future results.

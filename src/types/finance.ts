@@ -1,4 +1,4 @@
-// Personal finance manager (manual-only) — shared types.
+// Personal finance manager (manual-only) - shared types.
 
 export type AccountType =
   | 'checking' | 'savings' | 'cash' | 'credit_card' | 'investment' | 'loan' | 'other'
@@ -35,7 +35,7 @@ export const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: 'other',       label: 'Other' },
 ]
 
-// Credit cards and loans represent money owed — they reduce net worth.
+// Credit cards and loans represent money owed - they reduce net worth.
 export const LIABILITY_TYPES: AccountType[] = ['credit_card', 'loan']
 
 export type CategoryKind = 'expense' | 'income'

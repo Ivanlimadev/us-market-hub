@@ -15,7 +15,7 @@ const PERIOD_MAP: Record<string, { range: string; interval: string }> = {
   '2y':  { range: '2y',   interval: '1d' },
   '5y':  { range: '5y',   interval: '1d' },
   '10y': { range: '10y',  interval: '1d' },
-  '15y': { range: 'max',  interval: '1d' }, // returns monthly for full history — correct adj prices
+  '15y': { range: 'max',  interval: '1d' }, // returns monthly for full history - correct adj prices
 }
 
 // GET /api/stocks/[symbol]/history?period=1y

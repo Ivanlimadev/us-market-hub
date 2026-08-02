@@ -88,7 +88,7 @@ export async function GET(
   const fmt = (n: number | null | undefined, suffix = '%') =>
     n != null ? `${n.toFixed(2)}${suffix}` : 'N/A'
 
-  const prompt = `You are a crypto analyst. Analyze ${coin.name} (${coin.symbol?.toUpperCase()}) using only the data below and return ONLY valid JSON — no markdown, no explanation, nothing else.
+  const prompt = `You are a crypto analyst. Analyze ${coin.name} (${coin.symbol?.toUpperCase()}) using only the data below and return ONLY valid JSON - no markdown, no explanation, nothing else.
 
 Data:
 Price: $${md.current_price?.toFixed ? md.current_price.toFixed(4) : 'N/A'}

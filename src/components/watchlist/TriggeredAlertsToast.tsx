@@ -60,7 +60,7 @@ export function TriggeredAlertsToast() {
             <Bell className="h-4 w-4 mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold">
-                {alert.symbol} — Alert Triggered!
+                {alert.symbol} - Alert Triggered!
               </p>
               <p className="text-[11px] opacity-80 mt-0.5">{msg}</p>
             </div>

@@ -6,7 +6,7 @@ import type { YFFinancials, YFFinancialRow } from '@/lib/yahoo-finance'
 // ── helpers ────────────────────────────────────────────────────────────────
 
 function fmtLarge(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   const abs = Math.abs(n)
   const sign = n < 0 ? '-' : ''
   if (abs >= 1e12) return `${sign}$${(abs / 1e12).toFixed(2)}T`
@@ -16,12 +16,12 @@ function fmtLarge(n: number | null): string {
 }
 
 function fmtPct(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   return `${n >= 0 ? '' : '-'}${Math.abs(n).toFixed(1)}%`
 }
 
 function fmtCagr(n: number | null): string {
-  if (n === null) return '—'
+  if (n === null) return '-'
   return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
 }
 
@@ -63,7 +63,7 @@ function BarChart({
   const nums   = values.filter((v): v is number => v !== null)
   const max    = Math.max(...nums.map(Math.abs), 0.001)
 
-  // Bar width scales with number of bars — narrow for many bars, wider for few
+  // Bar width scales with number of bars - narrow for many bars, wider for few
   const barMaxW = rows.length <= 6 ? 48 : rows.length <= 12 ? 36 : 26
 
   return (

@@ -10,7 +10,7 @@ import { CookieBanner } from '@/components/layout/CookieBanner'
 
 const GA_ID = 'G-XV8QGQ8JS9'
 // AdSense publisher. Kept as an env override, but defaults to the real pub id
-// so the AdSense loader + verification meta are present site-wide — Google must
+// so the AdSense loader + verification meta are present site-wide - Google must
 // detect the code to review/approve the account. No ads serve until the account
 // is approved (and consent granted via Consent Mode below).
 const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? 'ca-pub-7113858977365190'
@@ -23,11 +23,11 @@ const SITE_URL = 'https://stockmarketroi.com'
 export const metadata: Metadata = {
   // apple-itunes-app → native Smart App Banner on iOS Safari (app id 6785098951)
   other: { google: 'notranslate', 'google-adsense-account': ADSENSE_CLIENT, 'apple-itunes-app': 'app-id=6785098951' },
-  // Google Search Console — URL-prefix property verification (renders the
+  // Google Search Console - URL-prefix property verification (renders the
   // <meta name="google-site-verification"> tag site-wide).
   verification: { google: 'a5W-rL6VY-JoCL7rU_ZyKVnaOqPcmtX-T4xzle74T2c' },
   title: {
-    default:  'Stock Market ROI — US Stock Market Data & Analysis',
+    default:  'Stock Market ROI - US Stock Market Data & Analysis',
     template: '%s | Stock Market ROI',
   },
   description:
@@ -38,12 +38,12 @@ export const metadata: Metadata = {
     locale:      'en_US',
     type:        'website',
     url:         SITE_URL,
-    title:       'Stock Market ROI — US Stock Market Data & Analysis',
+    title:       'Stock Market ROI - US Stock Market Data & Analysis',
     description: 'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Stock Market ROI — US Stock Market Data & Analysis',
+    title:       'Stock Market ROI - US Stock Market Data & Analysis',
     description: 'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   },
 }
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning translate="no">
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
-        {/* Google Consent Mode v2 — defaults must run before GA/AdSense tags.
+        {/* Google Consent Mode v2 - defaults must run before GA/AdSense tags.
             Honors a returning visitor's stored choice; the cookie banner updates it. */}
         <Script id="consent-default" strategy="beforeInteractive">{`
           window.dataLayer = window.dataLayer || [];

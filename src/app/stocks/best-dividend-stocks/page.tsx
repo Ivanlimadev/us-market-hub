@@ -5,7 +5,7 @@ import { TrendingUp, DollarSign, CheckCircle } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Best Dividend Stocks 2026: Top 10 High-Yield US Picks | Stock Market ROI',
   description:
-    'Our analysts rank the 10 best dividend stocks for 2026 — high yield, consistent payout growth, and solid fundamentals. Updated monthly.',
+    'Our analysts rank the 10 best dividend stocks for 2026 - high yield, consistent payout growth, and solid fundamentals. Updated monthly.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/best-dividend-stocks' },
   openGraph: {
     title: 'Best Dividend Stocks 2026 | Stock Market ROI',
@@ -29,7 +29,7 @@ const STOCKS = [
     name: 'Realty Income',
     yield: '5.5%',
     sector: 'REITs',
-    verdict: 'The gold standard of monthly-pay dividend stocks. Realty Income pays dividends every month and has raised them for 30+ consecutive years — ideal for income-focused portfolios.',
+    verdict: 'The gold standard of monthly-pay dividend stocks. Realty Income pays dividends every month and has raised them for 30+ consecutive years - ideal for income-focused portfolios.',
     pros: ['Monthly dividend payments', '30+ year dividend growth', 'Investment-grade balance sheet'],
   },
   {
@@ -38,7 +38,7 @@ const STOCKS = [
     name: 'Philip Morris International',
     yield: '5.0%',
     sector: 'Consumer Staples',
-    verdict: 'High yield with a credible transition story. PMI is rapidly growing its smoke-free products (IQOS, ZYN), which now represent over 40% of revenue — reducing long-term regulatory risk.',
+    verdict: 'High yield with a credible transition story. PMI is rapidly growing its smoke-free products (IQOS, ZYN), which now represent over 40% of revenue - reducing long-term regulatory risk.',
     pros: ['~5% yield with consistent raises', 'Smoke-free pivot gaining traction', 'Pricing power'],
   },
   {
@@ -56,7 +56,7 @@ const STOCKS = [
     name: 'Coca-Cola',
     yield: '3.1%',
     sector: 'Consumer Staples',
-    verdict: 'The definitive defensive dividend stock. Coca-Cola has paid and raised its dividend for 62 consecutive years. Buffett owns it for a reason — pricing power and global distribution are unmatched.',
+    verdict: 'The definitive defensive dividend stock. Coca-Cola has paid and raised its dividend for 62 consecutive years. Buffett owns it for a reason - pricing power and global distribution are unmatched.',
     pros: ['62-year dividend growth (Dividend King)', 'Global brand moat', 'Inflation-resistant pricing'],
   },
   {
@@ -74,7 +74,7 @@ const STOCKS = [
     name: 'Procter & Gamble',
     yield: '2.5%',
     sector: 'Consumer Staples',
-    verdict: 'Low yield but exceptional reliability. P&G has raised dividends for 68 consecutive years — the longest streak on this list. Portfolio staple for risk-averse income investors.',
+    verdict: 'Low yield but exceptional reliability. P&G has raised dividends for 68 consecutive years - the longest streak on this list. Portfolio staple for risk-averse income investors.',
     pros: ['68-year growth streak (Dividend King)', 'Recession-proof demand', 'Iconic brand portfolio'],
   },
   {
@@ -101,7 +101,7 @@ const STOCKS = [
     name: 'Realty Income',
     yield: '4.1%',
     sector: 'Healthcare',
-    verdict: 'Medical device giant with 47 consecutive years of dividend growth. Abbott\'s diverse portfolio — diagnostics, devices, nutrition, pharmaceuticals — provides earnings stability across cycles.',
+    verdict: 'Medical device giant with 47 consecutive years of dividend growth. Abbott\'s diverse portfolio - diagnostics, devices, nutrition, pharmaceuticals - provides earnings stability across cycles.',
     pros: ['47-year growth streak', 'Diverse healthcare segments', 'Consistent organic growth'],
   },
 ]
@@ -115,7 +115,7 @@ const FINAL_STOCKS = [
     name: 'Abbott Laboratories',
     yield: '2.0%',
     sector: 'Healthcare',
-    verdict: 'Medical device giant with 52 consecutive years of dividend growth. Abbott\'s diverse portfolio — diagnostics, devices, nutrition, pharmaceuticals — provides earnings stability across cycles.',
+    verdict: 'Medical device giant with 52 consecutive years of dividend growth. Abbott\'s diverse portfolio - diagnostics, devices, nutrition, pharmaceuticals - provides earnings stability across cycles.',
     pros: ['52-year growth streak', 'Diverse healthcare segments', 'Consistent organic growth'],
   },
 ]

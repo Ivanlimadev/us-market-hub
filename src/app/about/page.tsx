@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Mail, TrendingUp, BarChart2, Calendar, Layers, ShieldCheck, BookOpen, Award } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About — Ivan Lima, Founder',
+  title: 'About - Ivan Lima, Founder',
   description: 'Ivan Lima is the founder of Stock Market ROI. Systems Analysis & Development student and active US stock market investor since 2018.',
   alternates: { canonical: 'https://stockmarketroi.com/about' },
 }
@@ -13,14 +13,14 @@ const FEATURES = [
   { icon: BarChart2,   title: 'Interactive Charts',    desc: 'Intraday and historical charts from 1 day to 15 years.' },
   { icon: Calendar,    title: 'Earnings & Dividends',  desc: 'Upcoming earnings and dividend calendars for S&P 500 stocks.' },
   { icon: Layers,      title: 'Portfolio Tracker',     desc: 'Track your holdings with P&L and allocation charts.' },
-  { icon: ShieldCheck, title: 'Privacy First',         desc: 'Portfolio data stays in your browser — nothing sent to our servers.' },
+  { icon: ShieldCheck, title: 'Privacy First',         desc: 'Portfolio data stays in your browser - nothing sent to our servers.' },
 ]
 
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-screen-md px-4 py-12 space-y-12">
 
-      {/* Author card — E-E-A-T */}
+      {/* Author card - E-E-A-T */}
       <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
         <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Founder & Author</p>
         <div className="flex items-start gap-5">
@@ -38,7 +38,7 @@ export default function AboutPage() {
               Systems Analysis &amp; Development student and active US stock market investor since 2018.
               Ivan built Stock Market ROI to give retail investors direct access to the same data and
               analytical tools he wished existed when he started. Every article on this site is written
-              from the perspective of someone with real skin in the game — tracking earnings, reading
+              from the perspective of someone with real skin in the game - tracking earnings, reading
               SEC filings, and following market cycles for over eight years.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-1">

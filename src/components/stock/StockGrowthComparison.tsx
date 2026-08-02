@@ -14,7 +14,7 @@ import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 /**
  * Investidor10-style growth comparison. Multi-line total-return chart (log scale)
- * of the stock vs three groups — similar stocks (peers, by sector), major
+ * of the stock vs three groups - similar stocks (peers, by sector), major
  * indexes, and commodities. Each result card toggles its line; the stock's line
  * is fixed. A "dividends reinvested / price only" switch flips between adjusted
  * and raw close. Data is live from the history API (auto-refreshed by React Query).
@@ -68,7 +68,7 @@ function toBars(json: { bars?: Array<{ date: string; adj_close?: number | null; 
  * The stock page fires ~a dozen history calls at once; the upstream (and our
  * 30 req/min limiter) throttles bursts and returns 429/502 or an empty list for
  * a few symbols. A plain fetch().json() swallows that, so React Query never
- * retries and those cards stick on "—". Throwing lets the `retry: 2` backoff
+ * retries and those cards stick on "-". Throwing lets the `retry: 2` backoff
  * refill them once the burst clears.
  */
 async function fetchBars(symbol: string): Promise<Bar[]> {
@@ -176,7 +176,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   }), [assets, normalized, numAmount])
 
   // Flat list of exactly 10 comparison assets (page stock first, then peers /
-  // indexes / commodities) — rendered as one 2-column grid, no category headers.
+  // indexes / commodities) - rendered as one 2-column grid, no category headers.
   const compareRows = useMemo(() => rows.slice(0, 10), [rows])
 
   const stockRow = rows.find((r) => r.key === symbol)
@@ -328,13 +328,13 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
                 <option key={p.key} value={p.key}>{p.desc}</option>
               ))}
             </select>
-            {/* Reinvest dividends — green when on, gray when off. Compact so all three fit one line. */}
+            {/* Reinvest dividends - green when on, gray when off. Compact so all three fit one line. */}
             <button
               type="button"
               role="switch"
               aria-checked={reinvest}
               onClick={() => setReinvest((r) => !r)}
-              title={reinvest ? 'Dividends reinvested (total return) — click for price only' : 'Price change only — click to reinvest dividends'}
+              title={reinvest ? 'Dividends reinvested (total return) - click for price only' : 'Price change only - click to reinvest dividends'}
               className={`h-9 shrink-0 whitespace-nowrap rounded-lg border px-2 text-xs font-semibold transition-colors ${reinvest ? '' : 'border-zinc-700 bg-zinc-800 text-zinc-400'}`}
               style={reinvest ? { borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.12)', color: '#10b981' } : undefined}
             >
@@ -344,7 +344,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
           <span>you would have:</span>
         </div>
 
-        {/* Investidor10-style: one flat 2-column grid of comparison assets — 5 per
+        {/* Investidor10-style: one flat 2-column grid of comparison assets - 5 per
             column. Colored ticker pill + value below, hairline between rows. Click a
             card to toggle its line on the chart (the page's stock is fixed on). */}
         <div className="grid grid-cols-2 gap-x-2 border-t border-zinc-800/60">
@@ -368,7 +368,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
                   {r.key}
                 </span>
                 <span className="font-mono text-sm font-bold text-white">
-                  {r.value != null ? fmt$(r.value) : '—'}
+                  {r.value != null ? fmt$(r.value) : '-'}
                 </span>
               </button>
             )

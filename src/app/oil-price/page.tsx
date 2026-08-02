@@ -19,7 +19,7 @@ const AFFECTS = [
   { label: 'Gas & fuel prices', note: 'Crude is the main input in what you pay at the pump.' },
   { label: 'Inflation', note: 'Energy feeds straight into CPI and the cost of everything.' },
   { label: 'Energy stocks', note: 'Exxon, Chevron & drillers rise and fall with crude.' },
-  { label: 'Airlines & transport', note: 'Fuel is a huge cost — cheap oil helps, dear oil hurts.' },
+  { label: 'Airlines & transport', note: 'Fuel is a huge cost - cheap oil helps, dear oil hurts.' },
 ]
 
 function Section({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
@@ -50,16 +50,16 @@ async function getPrice(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `Oil Price Today — Live WTI Crude Oil Chart & Price ${year}`,
-    description: `Live crude oil price (WTI) and interactive chart. See the oil price today per barrel, what moves it — OPEC, supply, demand and geopolitics — updated in real time.`,
+    title:       `Oil Price Today - Live WTI Crude Oil Chart & Price ${year}`,
+    description: `Live crude oil price (WTI) and interactive chart. See the oil price today per barrel, what moves it - OPEC, supply, demand and geopolitics - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
-      title:       `Oil Price Today — Live WTI Crude Oil Chart & Price ${year}`,
-      description: `Track the WTI crude oil price in real time: interactive chart and what moves oil — OPEC, supply, demand and geopolitics.`,
+      title:       `Oil Price Today - Live WTI Crude Oil Chart & Price ${year}`,
+      description: `Track the WTI crude oil price in real time: interactive chart and what moves oil - OPEC, supply, demand and geopolitics.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `Oil Price Today — Live WTI Crude Oil Chart & Price ${year}`,
+      title:       `Oil Price Today - Live WTI Crude Oil Chart & Price ${year}`,
       description: `Track the WTI crude oil price in real time and see what moves it.`,
     },
   }
@@ -75,8 +75,8 @@ export default async function OilPage() {
   const prevClose = q?.prevClose ?? value ?? 0
   const changePct = value != null && prevClose ? ((value - prevClose) / prevClose) * 100 : null
   const up        = (changePct ?? 0) >= 0
-  const valueStr  = value != null ? usd(value) : '—'
-  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '—'
+  const valueStr  = value != null ? usd(value) : '-'
+  const changeStr = changePct != null ? `${up ? '+' : ''}${changePct.toFixed(2)}%` : '-'
 
   const faqs = [
     {
@@ -95,11 +95,11 @@ export default async function OilPage() {
     },
     {
       q: 'Why does the oil price matter for stocks?',
-      a: 'Oil ripples through the whole market. Rising crude lifts energy stocks like ExxonMobil and Chevron but squeezes airlines, shippers and consumers, and it pushes up inflation — which can force central banks to keep rates higher. Cheap oil does the reverse.',
+      a: 'Oil ripples through the whole market. Rising crude lifts energy stocks like ExxonMobil and Chevron but squeezes airlines, shippers and consumers, and it pushes up inflation - which can force central banks to keep rates higher. Cheap oil does the reverse.',
     },
     {
       q: 'Why does oil affect inflation?',
-      a: 'Energy is an input to almost everything — transport, manufacturing, food. When crude rises, those costs pass through to prices across the economy, lifting headline inflation. That is why an oil spike often shows up in the next CPI report.',
+      a: 'Energy is an input to almost everything - transport, manufacturing, food. When crude rises, those costs pass through to prices across the economy, lifting headline inflation. That is why an oil spike often shows up in the next CPI report.',
     },
   ]
 
@@ -110,7 +110,7 @@ export default async function OilPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `Oil Price Today — Live WTI Crude Oil Chart & Price ${year}`,
+        name:    `Oil Price Today - Live WTI Crude Oil Chart & Price ${year}`,
         description: 'Live WTI crude oil price and chart, and what moves oil.',
         isPartOf: { '@id': BASE },
       },
@@ -199,7 +199,7 @@ export default async function OilPage() {
               <h3 className="mb-1.5 text-sm font-semibold text-zinc-200">What drives the oil price?</h3>
               <p>
                 Supply, demand and geopolitics. OPEC+ output cuts or increases, US shale production, and conflict or
-                sanctions set supply; global growth — especially China — sets demand. Because oil is priced in dollars, a
+                sanctions set supply; global growth - especially China - sets demand. Because oil is priced in dollars, a
                 stronger{' '}
                 <Link href="/dxy" className="text-emerald-400 hover:text-emerald-300">US dollar</Link>{' '}
                 tends to push crude lower, and a weaker one lifts it.
@@ -218,7 +218,7 @@ export default async function OilPage() {
               <p>
                 Energy is an input to nearly everything, so a spike in crude lifts inflation and can keep interest rates
                 higher for longer. Rising oil boosts energy stocks like ExxonMobil and Chevron but pressures airlines,
-                shippers and consumers — one reason a sharp oil move can swing the whole market.
+                shippers and consumers - one reason a sharp oil move can swing the whole market.
               </p>
             </div>
           </div>
@@ -258,7 +258,7 @@ export default async function OilPage() {
 
         <p className="text-[11px] leading-relaxed text-zinc-600">
           Data via Yahoo Finance (NYMEX CL=F, continuous), updated in real time during market hours. For informational
-          purposes only — not financial advice.
+          purposes only - not financial advice.
         </p>
       </div>
     </>

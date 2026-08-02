@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Author } from '@/lib/authors';
 
 /**
- * Author card — compact by default, expands on tap to reveal the full bio and
+ * Author card - compact by default, expands on tap to reveal the full bio and
  * (when available) social links. The full bio text is always rendered in the
  * DOM (only visually clamped when collapsed), so it stays available for
  * E-E-A-T / SEO. Driven by the post's resolved {@link Author}.

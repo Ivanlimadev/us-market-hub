@@ -49,12 +49,12 @@ export async function POST(req: NextRequest) {
             },
             {
               type: 'text',
-              text: `Extract expense data from this receipt image. Return ONLY valid JSON — no markdown, no explanation:
+              text: `Extract expense data from this receipt image. Return ONLY valid JSON - no markdown, no explanation:
 {
   "amount": <total amount as number, or null>,
   "date": <"YYYY-MM-DD" or null>,
   "merchant": <store/restaurant name as string, or null>,
-  "category": <one of: "Food & Dining", "Shopping", "Transportation", "Entertainment", "Health", "Utilities", "Travel", "Other" — or null>,
+  "category": <one of: "Food & Dining", "Shopping", "Transportation", "Entertainment", "Health", "Utilities", "Travel", "Other" - or null>,
   "note": <brief 1-line description, or null>
 }`,
             },

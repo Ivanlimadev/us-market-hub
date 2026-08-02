@@ -1,5 +1,5 @@
 // Server-only: fetches stock data for SSR/ISR in page.tsx
-// Same logic as /api/stocks/[symbol]/route.ts — kept in sync manually.
+// Same logic as /api/stocks/[symbol]/route.ts - kept in sync manually.
 import { getLatestIntraday } from '@/lib/marketstack'
 import { getYFSummary, getYFDividends } from '@/lib/yahoo-finance'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
@@ -11,12 +11,12 @@ const BASE   = 'https://api.marketstack.com/v1'
 // The VPS runs a long-lived Node process (PM2 `next start`), so module memory
 // survives across requests and ISR revalidations. When the upstreams (Yahoo +
 // Marketstack) momentarily fail, we return the last usable snapshot instead of
-// an empty one. This keeps stock pages from blanking out — an empty render sets
+// an empty one. This keeps stock pages from blanking out - an empty render sets
 // `hasSeoData=false` → noindex → the page drops out of Google. Bridging the gap
 // with stale-but-real data keeps the page indexable until the next good fetch.
 type Cached = { data: StockDetailData; ts: number }
 const lastGood = new Map<string, Cached>()
-const LAST_GOOD_TTL_MS = 24 * 60 * 60 * 1000 // 24h — long enough to ride out a
+const LAST_GOOD_TTL_MS = 24 * 60 * 60 * 1000 // 24h - long enough to ride out a
 // throttle window, short enough that a truly delisted ticker eventually clears.
 
 // Matches hasSeoData(): a snapshot is "usable" if it has a price or a market cap.
@@ -109,7 +109,7 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
     }
     return freshCached(sym) ?? result
   } catch {
-    // Total failure — fall back to the last good snapshot rather than a blank page.
+    // Total failure - fall back to the last good snapshot rather than a blank page.
     return freshCached(sym)
   }
 }

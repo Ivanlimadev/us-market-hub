@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Loader2 } from 'lucide-react'
 
 /**
- * Auth callback page — handles both PKCE (code) and implicit (hash) flows.
+ * Auth callback page - handles both PKCE (code) and implicit (hash) flows.
  *
  * PKCE  → Supabase appends ?code=xxx to this URL → we exchange it server-
  *          side via exchangeCodeForSession, then redirect.
@@ -27,14 +27,14 @@ function CallbackContent() {
     const redirect = (path: string) => router.replace(path)
 
     if (code) {
-      // PKCE flow — exchange the code for a session
+      // PKCE flow - exchange the code for a session
       supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
         redirect(error ? `/auth/reset-password?error=invalid_link` : next)
       })
       return
     }
 
-    // Implicit flow — the browser client detects the hash automatically.
+    // Implicit flow - the browser client detects the hash automatically.
     // Listen for the session event, then redirect.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session && (event === 'SIGNED_IN' || event === 'PASSWORD_RECOVERY' || event === 'TOKEN_REFRESHED')) {
@@ -51,7 +51,7 @@ function CallbackContent() {
       }
     })
 
-    // Timeout fallback — if nothing resolved after 5s, something went wrong.
+    // Timeout fallback - if nothing resolved after 5s, something went wrong.
     const timeout = setTimeout(() => {
       subscription.unsubscribe()
       redirect(`/auth/reset-password?error=invalid_link`)

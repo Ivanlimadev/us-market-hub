@@ -110,25 +110,25 @@ export function DividendsSection({ data }: { data: StockDetailData }) {
           <div>
             <p className="text-[11px] text-zinc-500 uppercase tracking-wider">Current DY</p>
             <p className="text-lg font-bold text-emerald-400">
-              {currentDY ? `${(currentDY * 100).toFixed(2)}%` : '—'}
+              {currentDY ? `${(currentDY * 100).toFixed(2)}%` : '-'}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-zinc-500 uppercase tracking-wider">5Y Avg Annual</p>
             <p className="text-lg font-bold text-white">
-              {fiveYearAvgDY > 0 ? fmt$(fiveYearAvgDY) : '—'}
+              {fiveYearAvgDY > 0 ? fmt$(fiveYearAvgDY) : '-'}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-zinc-500 uppercase tracking-wider">Last Payment</p>
             <p className="text-lg font-bold text-white">
-              {lastDiv ? fmt$(lastDiv.dividend) : '—'}
+              {lastDiv ? fmt$(lastDiv.dividend) : '-'}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-zinc-500 uppercase tracking-wider">Ex-Date</p>
             <p className="text-lg font-bold text-white">
-              {lastDiv ? fmtDate(lastDiv.date.split('T')[0]) : '—'}
+              {lastDiv ? fmtDate(lastDiv.date.split('T')[0]) : '-'}
             </p>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function DividendsSection({ data }: { data: StockDetailData }) {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <span className="text-zinc-400 text-xs">
-                    {row.yieldPct != null ? `${row.yieldPct.toFixed(2)}%` : '—'}
+                    {row.yieldPct != null ? `${row.yieldPct.toFixed(2)}%` : '-'}
                   </span>
                 </td>
               </tr>

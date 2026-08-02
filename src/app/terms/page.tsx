@@ -44,9 +44,9 @@ export default function TermsPage() {
       </Section>
 
       {/* ── 2. No Advice ────────────────────────────────────────────────── */}
-      <Section id="no-advice" title="2. No Financial, Investment or Legal Advice — SEC / FINRA Notice">
+      <Section id="no-advice" title="2. No Financial, Investment or Legal Advice - SEC / FINRA Notice">
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
-          <p className="font-semibold text-amber-400">⚠ Important — Read Carefully</p>
+          <p className="font-semibold text-amber-400">⚠ Important - Read Carefully</p>
           <p>
             <strong className="text-zinc-200">Stock Market ROI is not registered as an
             investment adviser, broker-dealer, financial planner or any other financial
@@ -55,9 +55,9 @@ export default function TermsPage() {
             securities regulator.
           </p>
           <p>
-            All content on this platform — including but not limited to stock quotes,
+            All content on this platform - including but not limited to stock quotes,
             charts, screener results, rankings, portfolio calculations, earnings data and
-            market commentary — is provided for <strong className="text-zinc-200">
+            market commentary - is provided for <strong className="text-zinc-200">
             informational and educational purposes only</strong>. Nothing on this platform
             constitutes, or should be interpreted as, a recommendation, solicitation or
             offer to buy or sell any security, financial instrument or investment product.
@@ -76,8 +76,8 @@ export default function TermsPage() {
         <p>
           Market data is sourced from third-party providers (Yahoo Finance, Marketstack)
           and may be delayed, incomplete, inaccurate or unavailable. We make{' '}
-          <strong className="text-zinc-200">no representations or warranties</strong> —
-          express or implied — regarding the accuracy, completeness, timeliness,
+          <strong className="text-zinc-200">no representations or warranties</strong> -
+          express or implied - regarding the accuracy, completeness, timeliness,
           reliability or fitness for any purpose of any data displayed on this platform.
         </p>
         <p>
@@ -87,7 +87,7 @@ export default function TermsPage() {
       </Section>
 
       {/* ── 4. AS IS Warranty Disclaimer ────────────────────────────────── */}
-      <Section id="warranty" title="4. Disclaimer of Warranties — &quot;AS IS&quot;">
+      <Section id="warranty" title="4. Disclaimer of Warranties - &quot;AS IS&quot;">
         <p>
           THE PLATFORM AND ALL ITS CONTENT ARE PROVIDED{' '}
           <strong className="text-zinc-200">&quot;AS IS&quot; AND &quot;AS AVAILABLE&quot;</strong>{' '}
@@ -156,7 +156,7 @@ export default function TermsPage() {
           TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, STOCK MARKET ROI AND ITS
           OWNERS, DEVELOPERS AND AFFILIATES SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT,
           INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES ARISING FROM
-          OR RELATED TO YOUR USE OF — OR INABILITY TO USE — THIS PLATFORM, INCLUDING BUT
+          OR RELATED TO YOUR USE OF - OR INABILITY TO USE - THIS PLATFORM, INCLUDING BUT
           NOT LIMITED TO:
         </p>
         <ul className="list-disc pl-5 space-y-1 text-zinc-500">
@@ -210,7 +210,7 @@ export default function TermsPage() {
       </Section>
 
       {/* ── 11. DMCA ────────────────────────────────────────────────────── */}
-      <Section id="dmca" title="11. DMCA — Copyright Infringement Notice">
+      <Section id="dmca" title="11. DMCA - Copyright Infringement Notice">
         <p>
           We respect intellectual property rights. If you believe that content on this
           platform infringes your copyright under the{' '}
@@ -236,7 +236,7 @@ export default function TermsPage() {
       </Section>
 
       {/* ── 12. Arbitration + Class Action Waiver ───────────────────────── */}
-      <Section id="arbitration" title="12. Dispute Resolution — Arbitration and Class Action Waiver">
+      <Section id="arbitration" title="12. Dispute Resolution - Arbitration and Class Action Waiver">
         <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-4 space-y-3">
           <p className="font-semibold text-zinc-200">12.1 Binding Arbitration</p>
           <p>
@@ -310,7 +310,7 @@ export default function TermsPage() {
           any non-waivable consumer rights you may have under your local law.
         </p>
         <p>
-          Applicable Brazilian statutes include: Brazilian Data Protection Law (LGPD — Law No. 13,709/2018),
+          Applicable Brazilian statutes include: Brazilian Data Protection Law (LGPD - Law No. 13,709/2018),
           Brazilian Consumer Protection Code (Law No. 8,078/1990) and the Brazilian Internet Civil Framework
           (Law No. 12,965/2014).
         </p>

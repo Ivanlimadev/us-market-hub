@@ -40,7 +40,7 @@ function LatestPosts({ posts }: { posts: SidebarPost[] }) {
   )
 }
 
-/** Sidebar shown on every blog post — most-searched stocks + latest posts. */
+/** Sidebar shown on every blog post - most-searched stocks + latest posts. */
 export function BlogSidebar({ latest }: { latest: SidebarPost[] }) {
   return (
     <aside className="mt-10 space-y-6 lg:mt-0 lg:sticky lg:top-20 lg:self-start">

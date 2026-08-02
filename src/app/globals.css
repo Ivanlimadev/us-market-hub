@@ -57,7 +57,7 @@ html.light {
   --color-blue-400:    oklch(54.6% 0.245 262.881);
 }
 
-/* text-white is invisible on the now-light backgrounds — make it dark */
+/* text-white is invisible on the now-light backgrounds - make it dark */
 html.light .text-white {
   color: oklch(14.1% 0.005 285.823) !important;
 }

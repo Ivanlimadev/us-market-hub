@@ -4,7 +4,7 @@ import type { FundingRateItem } from '@/app/api/crypto/funding/route'
 
 function fmtCountdown(ms: number): string {
   const diff = ms - Date.now()
-  if (diff <= 0) return '—'
+  if (diff <= 0) return '-'
   const h = Math.floor(diff / 3_600_000)
   const m = Math.floor((diff % 3_600_000) / 60_000)
   return h > 0 ? `${h}h ${m}m` : `${m}m`

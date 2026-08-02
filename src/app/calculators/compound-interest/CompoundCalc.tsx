@@ -267,8 +267,8 @@ export function CompoundCalc() {
                 {/* Interest/invested bar */}
                 <div className="mt-4 space-y-1.5">
                   <div className="flex justify-between text-[11px] text-zinc-500">
-                    <span>Invested — {(100 - interestPct).toFixed(1)}%</span>
-                    <span>Interest earned — {interestPct.toFixed(1)}%</span>
+                    <span>Invested - {(100 - interestPct).toFixed(1)}%</span>
+                    <span>Interest earned - {interestPct.toFixed(1)}%</span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
                     <div
@@ -327,10 +327,10 @@ export function CompoundCalc() {
         <h2 className="text-base font-bold text-zinc-200">Which rate should I use?</h2>
         <p>
           The <strong className="text-zinc-300">S&P 500</strong> has historically returned ~10%/year
-          before inflation over long periods — use this for an all-equity US index fund scenario.
+          before inflation over long periods - use this for an all-equity US index fund scenario.
           A <strong className="text-zinc-300">balanced growth</strong> portfolio (stocks + bonds) is
           closer to 7%. <strong className="text-zinc-300">High-yield savings accounts (HYSA)</strong> are
-          currently paying around 4–5% with FDIC insurance and zero market risk.
+          currently paying around 4-5% with FDIC insurance and zero market risk.
           <strong className="text-zinc-300"> Bonds</strong> historically return ~4% annualized.
         </p>
         <h2 className="text-base font-bold text-zinc-200">Formula used</h2>
