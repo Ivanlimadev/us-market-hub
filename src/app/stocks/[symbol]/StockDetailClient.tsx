@@ -291,6 +291,15 @@ export function StockDetailClient({
         </WidgetBoundary>
         {/* Server-rendered sector peer links - crawlable in initial HTML (SEO) */}
         {relatedLinks}
+        <Link
+          href={`/stocks/${symbol.toLowerCase()}/options`}
+          className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 transition-colors hover:border-zinc-700"
+        >
+          <span className="text-sm font-semibold text-zinc-200">
+            View {symbol} options chain (calls, puts &amp; IV)
+          </span>
+          <span className="text-[#c8a45d]">→</span>
+        </Link>
         <WidgetBoundary label="Related Articles">
           <StockRelatedPosts symbol={symbol} />
         </WidgetBoundary>
