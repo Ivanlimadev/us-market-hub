@@ -22,6 +22,7 @@ const NAV_LINKS = [
   { href: '/crypto', label: 'Crypto' },
   { href: '/dxy', label: 'Dollar' },
   { href: '/finance', label: 'Finance' },
+  { href: '/glossary', label: 'Glossary' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/rankings', label: 'Rankings' },
   { href: '/screener', label: 'Screener' },

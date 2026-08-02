@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { TOP_STOCKS, ALL_SYMBOLS } from '@/lib/stock-universe'
+import { GLOSSARY_SLUGS } from '@/lib/glossary'
 
 // The sitemap is backed by the Supabase blog_posts table, which changes daily.
 // Left static, the route is prerendered once at build and freezes — and because
@@ -28,6 +29,7 @@ const STATIC_ROUTES = [
   { url: '/oil-price',                   priority: 0.75, changeFrequency: 'daily'   },
   { url: '/compare',                     priority: 0.6,  changeFrequency: 'weekly'  },
   { url: '/calendar',                    priority: 0.6,  changeFrequency: 'daily'   },
+  { url: '/glossary',                    priority: 0.7,  changeFrequency: 'monthly' },
   // Editorial ranking pages
   { url: '/stocks/best-dividend-stocks', priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/undervalued-stocks',   priority: 0.85, changeFrequency: 'monthly' },
@@ -137,6 +139,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: topSet.has(symbol) ? 0.8 : 0.6,
   }))
 
+  // Glossary term pages (evergreen definitions).
+  const glossaryUrls: MetadataRoute.Sitemap = GLOSSARY_SLUGS.map((slug) => ({
+    url: `${BASE}/glossary/${slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
   // Only the top coins are listed; obscure ones are noindex to stay focused.
   const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.slice(0, 100).map((id) => ({
     url: `${BASE}/crypto/${id}`,
@@ -168,5 +178,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // silently skip if Supabase unavailable
   }
 
-  return [...staticUrls, ...stockUrls, ...cryptoUrls, ...blogUrls]
+  return [...staticUrls, ...stockUrls, ...cryptoUrls, ...glossaryUrls, ...blogUrls]
 }
