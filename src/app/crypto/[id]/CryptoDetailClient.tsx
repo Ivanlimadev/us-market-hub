@@ -332,28 +332,33 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <CryptoBlogPosts />
       </WidgetBoundary>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Stats: stacked full-width cards, with stats in an internal 2-column
+          grid so they fill the width instead of stretching into sparse rows. */}
+      <div className="space-y-4">
         {/* Market Stats */}
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Market Stats</h3>
-          <StatRow label="Market Cap" value={fmt(md.market_cap)} />
-          <StatRow label="24h Volume" value={fmt(md.total_volume)} />
-          <StatRow label="24h High" value={fmtPrice(md.high_24h)} />
-          <StatRow label="24h Low" value={fmtPrice(md.low_24h)} />
-          <StatRow label="Circulating Supply" value={`${(md.circulating_supply / 1e6).toFixed(2)}M ${coin.symbol.toUpperCase()}`} />
-          <StatRow label="Max Supply" value={md.max_supply ? `${(md.max_supply / 1e6).toFixed(2)}M` : '∞'} />
+          <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+            <StatRow label="Market Cap" value={fmt(md.market_cap)} />
+            <StatRow label="24h Volume" value={fmt(md.total_volume)} />
+            <StatRow label="24h High" value={fmtPrice(md.high_24h)} />
+            <StatRow label="24h Low" value={fmtPrice(md.low_24h)} />
+            <StatRow label="Circulating Supply" value={`${(md.circulating_supply / 1e6).toFixed(2)}M ${coin.symbol.toUpperCase()}`} />
+            <StatRow label="Max Supply" value={md.max_supply ? `${(md.max_supply / 1e6).toFixed(2)}M` : '∞'} />
+          </div>
         </div>
 
         {/* All-Time Records */}
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">All-Time Records</h3>
-          <StatRow label="ATH" value={fmtPrice(md.ath)} />
-          <StatRow label="ATH Change" value={<PctBadge val={md.ath_change_percentage} />} />
-          <StatRow label="ATH Date" value={new Date(md.ath_date).toLocaleDateString()} />
-          <StatRow label="ATL" value={fmtPrice(md.atl)} />
-          <StatRow label="ATL Change" value={<PctBadge val={md.atl_change_percentage} />} />
-          <StatRow label="ATL Date" value={new Date(md.atl_date).toLocaleDateString()} />
+          <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+            <StatRow label="ATH" value={fmtPrice(md.ath)} />
+            <StatRow label="ATH Change" value={<PctBadge val={md.ath_change_percentage} />} />
+            <StatRow label="ATH Date" value={new Date(md.ath_date).toLocaleDateString()} />
+            <StatRow label="ATL" value={fmtPrice(md.atl)} />
+            <StatRow label="ATL Change" value={<PctBadge val={md.atl_change_percentage} />} />
+            <StatRow label="ATL Date" value={new Date(md.atl_date).toLocaleDateString()} />
+          </div>
         </div>
       </div>
 
