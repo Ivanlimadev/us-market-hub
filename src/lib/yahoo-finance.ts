@@ -121,6 +121,7 @@ export interface YFSummary {
   // Identity
   longName: string | null
   exchangeName: string | null
+  quoteType: string | null   // EQUITY | ETF | MUTUALFUND | INDEX | ...
   sector: string | null
   industry: string | null
   description: string | null
@@ -207,6 +208,7 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     regularMarketChangePercent: raw(priceModule.regularMarketChangePercent),
     longName: (priceModule.longName as string) ?? (priceModule.shortName as string) ?? null,
     exchangeName: (priceModule.exchangeName as string) ?? (priceModule.fullExchangeName as string) ?? null,
+    quoteType: (priceModule.quoteType as string) ?? null,
     sector: (profile.sector as string) ?? null,
     industry: (profile.industry as string) ?? null,
     description: (profile.longBusinessSummary as string) ?? null,
@@ -254,7 +256,7 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
 function emptyYFSummary(): YFSummary {
   return {
     regularMarketPrice: null, regularMarketPreviousClose: null, regularMarketChangePercent: null,
-    longName: null, exchangeName: null,
+    longName: null, exchangeName: null, quoteType: null,
     sector: null, industry: null, description: null, website: null,
     employees: null, country: null, city: null, marketCap: null,
     pe: null, eps: null, priceToBook: null, forwardPE: null, pegRatio: null,
