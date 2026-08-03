@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '@/lib/glossary'
 
 export const metadata: Metadata = {
-  title: 'Stock Market Glossary: Key Ratios & Terms Explained | Stock Market ROI',
+  title: 'Stock Market Glossary: Key Ratios & Terms Explained',
   description:
     'Plain-English definitions of the stock market metrics that matter: P/E, P/B, PEG, dividend yield, EPS, ROE, market cap, beta and more. With formulas and examples.',
   alternates: { canonical: 'https://stockmarketroi.com/glossary' },

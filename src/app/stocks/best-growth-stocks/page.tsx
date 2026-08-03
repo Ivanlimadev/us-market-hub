@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { TrendingUp, Zap, CheckCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Best Growth Stocks 2026: Top US Stocks for Long-Term Investors | Stock Market ROI',
+  title: 'Best Growth Stocks 2026: Top US Stocks for Long-Term Investors',
   description:
     'Top growth stocks to buy in 2026. Our analysts rank the best high-growth US companies by revenue growth, market opportunity, and competitive positioning.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/best-growth-stocks' },

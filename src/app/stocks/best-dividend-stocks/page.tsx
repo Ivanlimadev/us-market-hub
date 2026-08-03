@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { TrendingUp, DollarSign, CheckCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Best Dividend Stocks 2026: Top 10 High-Yield US Picks | Stock Market ROI',
+  title: 'Best Dividend Stocks 2026: Top 10 High-Yield US Picks',
   description:
     'Our analysts rank the 10 best dividend stocks for 2026 - high yield, consistent payout growth, and solid fundamentals. Updated monthly.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/best-dividend-stocks' },

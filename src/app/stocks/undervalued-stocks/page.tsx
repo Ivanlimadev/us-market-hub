@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { TrendingUp, Target, CheckCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Best Undervalued Stocks to Buy in 2026 (Cheap, High-Quality Picks) | Stock Market ROI',
+  title: 'Best Undervalued Stocks to Buy in 2026 (Cheap, High-Quality Picks)',
   description:
     'The best undervalued US stocks to buy in 2026: quality companies trading below fair value with strong fundamentals and real upside. See the top picks.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/undervalued-stocks' },

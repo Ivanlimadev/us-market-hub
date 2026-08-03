@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { TrendingUp, Percent, Target, BarChart2, RefreshCw, ArrowUpRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Free Investment Calculators - Stock Market ROI',
+  title: 'Free Investment Calculators',
   description: 'Free financial calculators for US investors: compound interest, DCA, simple interest, first million, and percentage. Plan your investments and see how your money grows.',
   alternates: { canonical: 'https://stockmarketroi.com/calculators' },
   openGraph: {
