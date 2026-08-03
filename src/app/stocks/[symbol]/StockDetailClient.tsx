@@ -46,9 +46,9 @@ function Section({ id, title, children }: { id?: string; title: string; children
   )
 }
 
-/** Two cards side-by-side on desktop, stacked on mobile (top-aligned). */
+/** Cards stacked full-width, one below another (Investidor10-style). */
 function Pair({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">{children}</div>
+  return <div className="space-y-5">{children}</div>
 }
 
 export function StockDetailClient({
@@ -271,21 +271,17 @@ export function StockDetailClient({
         </>
       )}
 
-      {/* 5 - Dividends & Income */}
+      {/* 5 - Dividends & Income (stacked full-width, Investidor10-style) */}
       <Section id="dividends" title="Dividends & Income">
-        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
-          <WidgetBoundary label="Dividends">
-            <DividendsSection data={data} />
-          </WidgetBoundary>
-          <div className="flex flex-col gap-5">
-            <WidgetBoundary label="Magic Number">
-              <MagicNumber data={data} />
-            </WidgetBoundary>
-            <WidgetBoundary label="Dividend Calculator">
-              <DividendCalculator data={data} />
-            </WidgetBoundary>
-          </div>
-        </div>
+        <WidgetBoundary label="Dividends">
+          <DividendsSection data={data} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Magic Number">
+          <MagicNumber data={data} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Dividend Calculator">
+          <DividendCalculator data={data} />
+        </WidgetBoundary>
       </Section>
 
       {/* 6 - Tools */}
