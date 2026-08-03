@@ -20,6 +20,7 @@ export interface StockDetailData {
   dividends: Array<{ date: string; dividend: number; symbol: string }>
   splits: Array<{ date: string; split_factor: number; symbol: string }>
   info: {
+    quoteType: string | null
     sector: string | null; industry: string | null; description: string | null
     website: string | null; employees: number | null; country: string | null
     city: string | null; marketCap: number | null; pe: number | null

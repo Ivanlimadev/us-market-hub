@@ -122,6 +122,14 @@ export function StockDetailClient({
     )
   }
 
+  // ETFs, funds and indices have no company financials, SEC filings or insider
+  // data, so the company-only sections come back empty (a wall of "--"). Hide
+  // them when the asset is not an operating company (quoteType from Yahoo).
+  const isFund =
+    data.info?.quoteType === 'ETF' ||
+    data.info?.quoteType === 'MUTUALFUND' ||
+    data.info?.quoteType === 'INDEX'
+
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
       {/* Investidor10-style dark header band: identity + quick-nav (center) + actions.
@@ -229,33 +237,39 @@ export function StockDetailClient({
         </Pair>
       </Section>
 
-      {/* 3 - Financials */}
-      <Section id="indicators" title="Financials">
-        <WidgetBoundary label="Financial Charts">
-          <FinancialCharts symbol={symbol} />
-        </WidgetBoundary>
-        <Pair>
-          <WidgetBoundary label="Fundamentals">
-            <FundamentalsCard data={data} />
-          </WidgetBoundary>
-          <WidgetBoundary label="Earnings">
-            <EarningsCard data={data} />
-          </WidgetBoundary>
-        </Pair>
-      </Section>
+      {/* 3 & 4 - Company-only sections. Hidden for ETFs/funds/indices, which have
+          no financials, SEC filings, earnings history or insider data. */}
+      {!isFund && (
+        <>
+          {/* 3 - Financials */}
+          <Section id="indicators" title="Financials">
+            <WidgetBoundary label="Financial Charts">
+              <FinancialCharts symbol={symbol} />
+            </WidgetBoundary>
+            <Pair>
+              <WidgetBoundary label="Fundamentals">
+                <FundamentalsCard data={data} />
+              </WidgetBoundary>
+              <WidgetBoundary label="Earnings">
+                <EarningsCard data={data} />
+              </WidgetBoundary>
+            </Pair>
+          </Section>
 
-      {/* 4 - SEC Filings & Reported Financials (the two SEC blocks together) */}
-      <Section id="results" title="SEC Filings & Reported Financials">
-        <WidgetBoundary label="Earnings History">
-          <EarningsHistory symbol={symbol} />
-        </WidgetBoundary>
-        <WidgetBoundary label="SEC Filings">
-          <SecFilings symbol={symbol} />
-        </WidgetBoundary>
-        <WidgetBoundary label="Insider Transactions">
-          <InsiderTransactions symbol={symbol} />
-        </WidgetBoundary>
-      </Section>
+          {/* 4 - SEC Filings & Reported Financials (the two SEC blocks together) */}
+          <Section id="results" title="SEC Filings & Reported Financials">
+            <WidgetBoundary label="Earnings History">
+              <EarningsHistory symbol={symbol} />
+            </WidgetBoundary>
+            <WidgetBoundary label="SEC Filings">
+              <SecFilings symbol={symbol} />
+            </WidgetBoundary>
+            <WidgetBoundary label="Insider Transactions">
+              <InsiderTransactions symbol={symbol} />
+            </WidgetBoundary>
+          </Section>
+        </>
+      )}
 
       {/* 5 - Dividends & Income */}
       <Section id="dividends" title="Dividends & Income">
