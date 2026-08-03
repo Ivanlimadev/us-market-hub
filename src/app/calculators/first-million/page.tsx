@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { FirstMillionCalc } from './FirstMillionCalc'
 
 export const metadata: Metadata = {
-  title: 'First Million Calculator - Stock Market ROI',
+  title: 'First Million Calculator',
   description: 'Calculate how long it takes to reach $1,000,000 - or find out what monthly investment you need to get there by your target date. Free tool for US investors.',
   alternates: { canonical: 'https://stockmarketroi.com/calculators/first-million' },
   openGraph: {

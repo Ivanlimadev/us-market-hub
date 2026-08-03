@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { DCACalc } from './DCACalc'
 
 export const metadata: Metadata = {
-  title: 'DCA Calculator - Dollar-Cost Averaging | Stock Market ROI',
+  title: 'DCA Calculator - Dollar-Cost Averaging',
   description: 'Free Dollar-Cost Averaging (DCA) calculator. Simulate weekly, bi-weekly, or monthly investments over time and compare DCA vs lump sum investing - with a full year-by-year breakdown.',
   alternates: { canonical: 'https://stockmarketroi.com/calculators/dca' },
   openGraph: {

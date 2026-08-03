@@ -4,7 +4,7 @@ import { Bell, Sparkles, Calculator, Wallet, BarChart3, Newspaper, LineChart, Pi
 import { APP_STORE_URL, AppStoreBadge } from '@/components/app/AppDownloadCard'
 
 export const metadata: Metadata = {
-  title: 'Get the App - Stock Market ROI',
+  title: 'Get the App',
   description:
     'Dividend & price alerts, AI insights, financial calculators, portfolio tracking and more - free on your iPhone. Download Stock Market ROI.',
   alternates: { canonical: 'https://stockmarketroi.com/pro' },
