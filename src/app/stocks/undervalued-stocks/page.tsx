@@ -3,13 +3,13 @@ import Link from 'next/link'
 import { TrendingUp, Target, CheckCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Most Undervalued Stocks 2026: Cheap US Stocks Worth Buying | Stock Market ROI',
+  title: 'Best Undervalued Stocks to Buy in 2026 (Cheap, High-Quality Picks) | Stock Market ROI',
   description:
-    'Our analysts identify the most undervalued US stocks in 2026 - trading below intrinsic value with strong fundamentals and catalysts ahead.',
+    'The best undervalued US stocks to buy in 2026: quality companies trading below fair value with strong fundamentals and real upside. See the top picks.',
   alternates: { canonical: 'https://stockmarketroi.com/stocks/undervalued-stocks' },
   openGraph: {
-    title: 'Most Undervalued Stocks 2026 | Stock Market ROI',
-    description: 'Stocks trading below intrinsic value with strong fundamentals - our 2026 undervalued picks.',
+    title: 'Best Undervalued Stocks to Buy in 2026 | Stock Market ROI',
+    description: 'The best undervalued US stocks for 2026: quality companies below fair value with real upside.',
   },
 }
 
