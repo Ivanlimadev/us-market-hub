@@ -75,7 +75,7 @@ export default async function GlossaryTermPage({
           },
           {
             '@type': 'Question',
-            name: `What is a good ${t.term}?`,
+            name: t.goodValueLabel ?? `What is a good ${t.term}?`,
             acceptedAnswer: { '@type': 'Answer', text: t.goodValue },
           },
         ],
@@ -124,7 +124,7 @@ export default async function GlossaryTermPage({
         </section>
 
         <section>
-          <h2 className="mb-2 text-lg font-bold text-zinc-100">What is a good {t.term}?</h2>
+          <h2 className="mb-2 text-lg font-bold text-zinc-100">{t.goodValueLabel ?? `What is a good ${t.term}?`}</h2>
           <p>{t.goodValue}</p>
         </section>
 

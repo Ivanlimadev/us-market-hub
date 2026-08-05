@@ -6,12 +6,13 @@ export interface GlossaryTerm {
   slug: string
   term: string
   fullName?: string
-  category: 'Valuation' | 'Profitability' | 'Dividends' | 'Size' | 'Risk'
+  category: 'Valuation' | 'Profitability' | 'Dividends' | 'Size' | 'Risk' | 'Filings'
   short: string            // one-liner: meta description + AEO answer
   definition: string       // main paragraph
   formula?: string
   example: string
   goodValue: string
+  goodValueLabel?: string  // heading for the goodValue section (default "What is a good X?"); e.g. "What to look for" for filing types
   related: string[]        // slugs of related terms
   tool: { href: string; label: string }
 }
@@ -168,6 +169,86 @@ export const GLOSSARY: GlossaryTerm[] = [
     related: ['pe-ratio', 'ps-ratio', 'market-cap'],
     tool: { href: '/screener', label: 'Screen stocks by EV/EBITDA' },
   },
+  {
+    slug: '10-k',
+    term: '10-K',
+    fullName: 'Annual Report (Form 10-K)',
+    category: 'Filings',
+    short: 'A public company\'s comprehensive annual report filed with the SEC.',
+    definition:
+      'The 10-K is the single most important document a public company files each year. It is a detailed annual report submitted to the SEC covering the business, its risk factors, management\'s discussion of results, and full audited financial statements. If you read only one filing on a company, read its 10-K.',
+    example:
+      'Apple\'s 10-K breaks out revenue by product (iPhone, Services, Mac), lists its risk factors, and includes audited financials for the fiscal year.',
+    goodValueLabel: 'What to look for',
+    goodValue:
+      'Focus on three parts: the Risk Factors (what could go wrong), Management\'s Discussion and Analysis (how management explains the numbers), and the financial statements (the actual results). Comparing this year\'s wording to last year\'s often reveals changes in tone before they show up in the price.',
+    related: ['10-q', '8-k', 'sec-edgar', 'eps'],
+    tool: { href: '/stocks/aapl', label: 'See real SEC filings on a stock page' },
+  },
+  {
+    slug: '10-q',
+    term: '10-Q',
+    fullName: 'Quarterly Report (Form 10-Q)',
+    category: 'Filings',
+    short: 'A public company\'s quarterly financial report filed with the SEC.',
+    definition:
+      'The 10-Q is the quarterly version of the 10-K. Filed three times a year (the fourth quarter is folded into the annual 10-K), it gives an updated but unaudited look at a company\'s financials and any material changes since the last report. It is how investors track a company between annual reports.',
+    example:
+      'A retailer\'s second-quarter 10-Q shows whether sales held up over the summer and updates its outlook for the rest of the year.',
+    goodValueLabel: 'What to look for',
+    goodValue:
+      'Watch the trend versus the prior quarter and the same quarter a year earlier, plus any updated guidance or new risk disclosures. Because a 10-Q is unaudited, treat surprising figures with a little caution until the annual 10-K confirms them.',
+    related: ['10-k', '8-k', 'eps'],
+    tool: { href: '/stocks/aapl', label: 'See real SEC filings on a stock page' },
+  },
+  {
+    slug: '8-k',
+    term: '8-K',
+    fullName: 'Current Report (Form 8-K)',
+    category: 'Filings',
+    short: 'The filing companies use to announce major events between quarterly reports.',
+    definition:
+      'An 8-K is the SEC\'s way of keeping investors informed about material events as they happen, instead of waiting for the next quarterly report. Companies file one for things like earnings releases, executive changes, acquisitions or other significant news. It is the fastest official signal that something important just happened.',
+    example:
+      'When a company hires a new CEO or agrees to a merger, it files an 8-K within a few business days.',
+    goodValueLabel: 'Why it matters',
+    goodValue:
+      '8-Ks are where market-moving news often appears first in official form. Following a company\'s 8-K filings can tip you off to earnings, leadership changes or deals before the story is fully digested by the market.',
+    related: ['10-k', '10-q', 'form-4'],
+    tool: { href: '/stocks/aapl', label: 'See real SEC filings on a stock page' },
+  },
+  {
+    slug: 'form-4',
+    term: 'Form 4',
+    fullName: 'Insider Trading Report (Form 4)',
+    category: 'Filings',
+    short: 'The filing that discloses when company insiders buy or sell their own stock.',
+    definition:
+      'A Form 4 is filed with the SEC when a company insider, such as an executive or director, buys or sells shares of their own company. It must be filed within two business days of the trade. Investors watch these closely because insiders know their business better than anyone, so their buying and selling can be a meaningful signal.',
+    example:
+      'If a CEO buys $1 million of their own stock and files a Form 4, many investors read it as a vote of confidence.',
+    goodValueLabel: 'How to read it',
+    goodValue:
+      'Insider buying is generally a stronger signal than selling, since insiders sell for many reasons (taxes, diversification) but usually buy for only one: they expect the stock to rise. Look for clusters of buying by several insiders, which is far more meaningful than a single trade.',
+    related: ['8-k', '10-k', 'sec-edgar'],
+    tool: { href: '/stocks/aapl', label: 'See insider transactions on a stock page' },
+  },
+  {
+    slug: 'sec-edgar',
+    term: 'SEC EDGAR',
+    fullName: 'SEC EDGAR Database',
+    category: 'Filings',
+    short: 'The SEC\'s free public database of every filing US public companies submit.',
+    definition:
+      'EDGAR (Electronic Data Gathering, Analysis, and Retrieval) is the US Securities and Exchange Commission\'s official system where every public company\'s filings are stored and made freely available. Every 10-K, 10-Q, 8-K and Form 4 lives in EDGAR, making it the primary source of truth for company disclosures.',
+    example:
+      'Searching a company\'s name on SEC EDGAR pulls up its complete filing history, from annual reports to insider trades.',
+    goodValueLabel: 'How to use it',
+    goodValue:
+      'EDGAR is comprehensive but not user-friendly. The fastest approach is to know which form you want (10-K for the annual picture, 8-K for breaking news, Form 4 for insider trades) and search by company. Or skip the raw database and read the key filings already surfaced on each company\'s stock page.',
+    related: ['10-k', '10-q', '8-k', 'form-4'],
+    tool: { href: '/stocks/aapl', label: 'See SEC filings on a stock page' },
+  },
 ]
 
 export const GLOSSARY_CATEGORIES: GlossaryTerm['category'][] = [
@@ -176,6 +257,7 @@ export const GLOSSARY_CATEGORIES: GlossaryTerm['category'][] = [
   'Dividends',
   'Size',
   'Risk',
+  'Filings',
 ]
 
 export const GLOSSARY_SLUGS = GLOSSARY.map((t) => t.slug)
