@@ -1,4 +1,4 @@
-// v2 - card layout with excerpt + image + read button
+// v3 - compact card grid (portal-style): smaller cards, more posts, no long summary
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -8,31 +8,10 @@ import { BookOpen, ArrowRight } from 'lucide-react'
 interface Post {
   slug: string
   title: string
-  excerpt: string | null
-  content: string | null
   category: string
   image_url: string | null
   image_alt: string | null
   published_at: string | null
-}
-
-function buildSummary(post: Post): string {
-  // Use first real paragraph from content (strip markdown), fallback to excerpt
-  if (post.content) {
-    const paragraph = post.content
-      .split('\n')
-      .map(l => l.trim())
-      .find(l => l.length > 60 && !l.startsWith('#') && !l.startsWith('!') && !l.startsWith('|'))
-    if (paragraph) {
-      return paragraph
-        .replace(/\*\*(.+?)\*\*/g, '$1')
-        .replace(/\*(.+?)\*/g, '$1')
-        .replace(/\[(.+?)\]\(.+?\)/g, '$1')
-        .replace(/`(.+?)`/g, '$1')
-        .slice(0, 420)
-    }
-  }
-  return post.excerpt ?? ''
 }
 
 function timeAgo(iso: string | null): string {
@@ -49,7 +28,7 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
   const { data: posts, isLoading } = useQuery<Post[]>({
     queryKey: ['stock-related-posts', symbol],
     queryFn: async () => {
-      const r = await fetch(`/api/blog/by-ticker?ticker=${encodeURIComponent(symbol)}&limit=3`)
+      const r = await fetch(`/api/blog/by-ticker?ticker=${encodeURIComponent(symbol)}&limit=6`)
       if (!r.ok) throw new Error('Failed')
       return r.json()
     },
@@ -64,14 +43,13 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
           <BookOpen className="h-4 w-4 text-violet-400" />
           <h2 className="text-sm font-semibold text-zinc-200">Related Articles</h2>
         </div>
-        <div className="space-y-4">
-          {[1, 2].map(i => (
-            <div key={i} className="animate-pulse rounded-xl border border-zinc-800 overflow-hidden">
-              <div className="h-36 w-full bg-zinc-800" />
-              <div className="p-4 space-y-2">
-                <div className="h-3 w-3/4 rounded bg-zinc-800" />
-                <div className="h-3 w-full rounded bg-zinc-700" />
-                <div className="h-3 w-5/6 rounded bg-zinc-700" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="animate-pulse overflow-hidden rounded-lg border border-zinc-800">
+              <div className="aspect-[16/10] w-full bg-zinc-800" />
+              <div className="space-y-1.5 p-2.5">
+                <div className="h-2.5 w-full rounded bg-zinc-700" />
+                <div className="h-2.5 w-2/3 rounded bg-zinc-700" />
               </div>
             </div>
           ))}
@@ -95,63 +73,43 @@ export function StockRelatedPosts({ symbol }: { symbol: string }) {
         </Link>
       </div>
 
-      <ul className="space-y-4">
+      {/* Compact grid: small cards, more posts visible at once (portal-style) */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {posts.map(post => (
-          <li key={post.slug} className="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900 hover:border-zinc-700 transition-colors">
-            {/* Image */}
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            className="group flex flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 transition-colors hover:border-violet-500/40"
+          >
             {post.image_url ? (
-              <div className="relative h-40 w-full">
+              <div className="relative aspect-[16/10] w-full">
                 <Image
                   src={post.image_url}
                   alt={post.image_alt ?? post.title}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 600px"
+                  sizes="(max-width: 640px) 50vw, 240px"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 to-transparent" />
-                <span className="absolute bottom-2 left-3 rounded-full bg-violet-500/80 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                <span className="absolute left-1.5 top-1.5 rounded bg-violet-500/80 px-1.5 py-0.5 text-[9px] font-semibold text-white backdrop-blur-sm">
                   {post.category}
                 </span>
               </div>
             ) : (
-              <div className="flex h-32 w-full items-center justify-center bg-zinc-800">
-                <BookOpen className="h-8 w-8 text-zinc-600" />
+              <div className="flex aspect-[16/10] w-full items-center justify-center bg-zinc-800">
+                <BookOpen className="h-6 w-6 text-zinc-600" />
               </div>
             )}
-
-            {/* Content */}
-            <div className="p-4 space-y-3">
-              <div className="flex items-center gap-2">
-                {!post.image_url && (
-                  <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-semibold text-violet-400">
-                    {post.category}
-                  </span>
-                )}
-                {post.published_at && (
-                  <span className="text-[11px] text-zinc-500">{timeAgo(post.published_at)}</span>
-                )}
-              </div>
-
-              <h3 className="text-sm font-semibold leading-snug text-zinc-100 line-clamp-2">
+            <div className="flex flex-1 flex-col p-2.5">
+              <h3 className="line-clamp-2 text-xs font-semibold leading-snug text-zinc-100 group-hover:text-white">
                 {post.title}
               </h3>
-
-              {buildSummary(post) && (
-                <p className="text-xs leading-relaxed text-zinc-400 line-clamp-5">
-                  {buildSummary(post)}
-                </p>
+              {post.published_at && (
+                <span className="mt-auto pt-1.5 text-[10px] text-zinc-500">{timeAgo(post.published_at)}</span>
               )}
-
-              <Link
-                href={`/blog/${post.slug}`}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 px-3 py-1.5 text-xs font-semibold text-violet-400 hover:bg-violet-500/20 hover:text-violet-300 transition-colors"
-              >
-                Read full article <ArrowRight className="h-3 w-3" />
-              </Link>
             </div>
-          </li>
+          </Link>
         ))}
-      </ul>
+      </div>
     </section>
   )
 }
