@@ -153,23 +153,62 @@ function markdownToHtml(md: string): string {
     .replace(/^(?!\s*<)(.*\S.*)$/gm, '<p class="text-zinc-300 leading-relaxed my-4">$1</p>')
 }
 
-// Extracts the FAQ section (## Frequently Asked Questions → ### question / answer)
-// so the page can emit FAQPage structured data for rich results.
+// Strip markdown to plain text for JSON-LD answer values (links -> text, drop
+// emphasis/heading/list/table syntax, collapse whitespace).
+function stripMd(s: string): string {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^\s*[-*]\s+/gm, '')
+    .replace(/[*_`>#]/g, '')
+    .replace(/\|/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+// Cap a long answer at a sentence boundary so the FAQ value stays concise.
+function capSentence(s: string, max = 600): string {
+  if (s.length <= max) return s
+  const cut = s.slice(0, max)
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '))
+  return (stop > max * 0.5 ? cut.slice(0, stop + 1) : cut).trim()
+}
+
+// Builds FAQPage entries from the post so AI engines and Google rich results can
+// lift ready-made Q&A. Two sources, deduped:
+//   1) a dedicated "## Frequently Asked Questions" section (### question / answer)
+//   2) ANY H2 heading phrased as a question (ends with "?"), whose answer is the
+//      visible body up to the next heading. #2 lets ~a third of posts emit FAQ
+//      structured data with no manual FAQ section.
 function extractFaq(md: string): { question: string; answer: string }[] {
   const out: { question: string; answer: string }[] = []
-  const head = md.match(/\n##\s+(?:Frequently Asked Questions|FAQs?)\b.*/i)
-  if (!head || head.index == null) return out
-  let section = md.slice(head.index + head[0].length)
-  const nextH2 = section.search(/\n##\s/)
-  if (nextH2 !== -1) section = section.slice(0, nextH2)
-  const re = /\n###\s+(.+?)\s*\n([\s\S]*?)(?=\n###\s|$)/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(section)) !== null) {
-    const question = m[1].trim()
-    const answer = m[2].replace(/\s+/g, ' ').trim()
-    if (question && answer) out.push({ question, answer })
+  const seen = new Set<string>()
+  const add = (q: string, a: string) => {
+    const question = q.trim()
+    const answer = capSentence(stripMd(a))
+    const key = question.toLowerCase().replace(/\s+/g, ' ')
+    if (question && answer && !seen.has(key)) {
+      seen.add(key)
+      out.push({ question, answer })
+    }
   }
-  return out
+
+  // 1) Dedicated FAQ section.
+  const head = md.match(/\n##\s+(?:Frequently Asked Questions|FAQs?)\b.*/i)
+  if (head && head.index != null) {
+    let section = md.slice(head.index + head[0].length)
+    const nextH2 = section.search(/\n##\s/)
+    if (nextH2 !== -1) section = section.slice(0, nextH2)
+    const re = /\n###\s+(.+?)\s*\n([\s\S]*?)(?=\n###\s|$)/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(section)) !== null) add(m[1], m[2])
+  }
+
+  // 2) Question-style H2 headings anywhere in the post.
+  const qh2 = /\n##\s+([^\n]*\?)\s*\n([\s\S]*?)(?=\n#{2,3}\s|$)/g
+  let h: RegExpExecArray | null
+  while ((h = qh2.exec(md)) !== null) add(h[1], h[2])
+
+  return out.slice(0, 8)
 }
 
 function readingTime(content: string): number {
