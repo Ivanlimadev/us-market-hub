@@ -340,6 +340,7 @@ ${realDataBlock}${newsBlock}
 - Place the primary keyword naturally in: the opening paragraph, at least one H2, and the seo_title.
 - H2 subheadings must be keyword-rich, not just editorial labels. Instead of "The AI Problem", write "Apple AI Strategy 2026: Real Concern or Overreaction?".
 - Use 3-4 secondary keywords in H2/H3 titles (e.g. "${chosenSymbol} valuation", "${chosenSymbol} analyst target", "${chosenName} earnings ${year}").
+- GEO (AI-answer optimization): phrase at least 2-3 of the main H2 section headings as the exact natural question a reader would ask, ending with "?", and answer it directly in the FIRST sentence beneath the heading. These question headings are auto-harvested into FAQPage structured data and are what AI answer engines (ChatGPT, Perplexity, Google AI Overviews) lift and cite. Example: instead of "Apple's Valuation", write "Is Apple stock overvalued in ${year}?". This is separate from, and in addition to, the dedicated FAQ section below.
 
 ━━━ LAYER 3 - INTERNAL CTAs (mandatory, 2 total) ━━━
 - Mid-article (after the second H2), insert one contextual CTA as a Markdown link:
