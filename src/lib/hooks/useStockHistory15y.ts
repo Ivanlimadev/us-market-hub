@@ -1,5 +1,6 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
+import { fetchHistoryBars, type RawBar } from './useHistoryBars'
 
 export interface HistoryBar {
   date: string
@@ -29,22 +30,20 @@ const PERIODS = [
 ]
 
 export function useStockHistory15y(symbol: string) {
-  return useQuery<HistoryBar[]>({
-    queryKey: ['history-15y', symbol],
-    queryFn: async () => {
-      // Use 10Y daily data from Yahoo Finance - properly split-adjusted
-      const res = await fetch(`/api/stocks/${symbol}/history?period=10y`)
-      const data = await res.json() as {
-        bars?: Array<{ date: string; adj_close?: number | null; close?: number | null }>
-      }
-      return (data.bars ?? [])
-        .map((b) => ({
-          date: b.date.split('T')[0],
-          close: b.adj_close ?? b.close ?? 0,
-        }))
-        .filter((b) => b.close > 0)
-    },
+  // Shares the canonical `['stock-history', symbol, '10y']` cache entry with the
+  // growth-comparison chart, so the page's own symbol is fetched only once.
+  // `select` maps the raw bars to this hook's split/dividend-adjusted shape
+  // without touching the shared cache.
+  return useQuery<RawBar[], Error, HistoryBar[]>({
+    queryKey: ['stock-history', symbol, '10y'],
+    queryFn: () => fetchHistoryBars(symbol, '10y'),
+    select: (bars) =>
+      bars
+        .map((b) => ({ date: b.date, close: b.adjClose }))
+        .filter((b) => b.close > 0),
+    enabled: !!symbol,
     staleTime: 5 * 60_000,
+    retry: 2,
   })
 }
 

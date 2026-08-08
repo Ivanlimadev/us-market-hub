@@ -11,6 +11,7 @@ import {
 } from 'lightweight-charts'
 import { SECTOR_PEERS, DEFAULT_PEERS } from '@/components/stock/RelatedAssets'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
+import { useHistoryBars, fetchHistoryBars, type RawBar } from '@/lib/hooks/useHistoryBars'
 
 /**
  * Investidor10-style growth comparison. Multi-line total-return chart (log scale)
@@ -43,7 +44,7 @@ const COMMODITIES = [
   { key: 'CPER', label: 'Copper', color: '#c2410c' },
 ]
 
-interface Bar { date: string; close: number; adjClose: number }
+type Bar = RawBar
 type Point = { time: UTCTimestamp; value: number }
 type TipItem = { key: string; label: string; color: string; value: number }
 type Tip = { left: number; date: string; items: TipItem[] }
@@ -57,37 +58,6 @@ function fmtPct(n: number) {
 function fmtDate(t: UTCTimestamp) {
   return new Date((t as number) * 1000).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
-function toBars(json: { bars?: Array<{ date: string; adj_close?: number | null; close?: number | null }> }): Bar[] {
-  return (json.bars ?? [])
-    .map((b) => ({ date: b.date.split('T')[0], close: b.close ?? 0, adjClose: b.adj_close ?? b.close ?? 0 }))
-    .filter((b) => b.close > 0)
-}
-
-/**
- * Fetch 10y bars, THROWING on a bad/empty response so React Query retries it.
- * The stock page fires ~a dozen history calls at once; the upstream (and our
- * 30 req/min limiter) throttles bursts and returns 429/502 or an empty list for
- * a few symbols. A plain fetch().json() swallows that, so React Query never
- * retries and those cards stick on "-". Throwing lets the `retry: 2` backoff
- * refill them once the burst clears.
- */
-async function fetchBars(symbol: string): Promise<Bar[]> {
-  const res = await fetch(`/api/stocks/${symbol}/history?period=10y`)
-  if (!res.ok) throw new Error(`history ${symbol}: HTTP ${res.status}`)
-  const bars = toBars(await res.json())
-  if (bars.length === 0) throw new Error(`history ${symbol}: empty`)
-  return bars
-}
-
-/** 10y daily history keeping BOTH raw close and adjusted close (for the reinvest switch). */
-function useHist(symbol: string) {
-  return useQuery<Bar[]>({
-    queryKey: ['gc-hist', symbol],
-    staleTime: 5 * 60_000,
-    queryFn: () => fetchBars(symbol),
-  })
-}
-
 /** Index each series to 100 at the period start (log-scale friendly, always > 0). */
 function normalize(bars: Bar[] | undefined, days: number, reinvest: boolean): Point[] {
   if (!bars?.length) return []
@@ -114,27 +84,57 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   const period = PERIODS.find((p) => p.key === periodKey) ?? PERIODS[3]
   const days = period.days
 
+  // Defer the ~12 benchmark/peer history fetches until this section scrolls near
+  // the viewport, so they stay off the initial page load / LCP path. If the user
+  // never scrolls down here, they are never fetched at all. The value cards still
+  // fill in normally the moment the section comes into view.
+  const rootRef = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    if (inView) return
+    const el = rootRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '300px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [inView])
+
   const peers = useMemo(
     () => (sector ? SECTOR_PEERS[sector] ?? DEFAULT_PEERS : DEFAULT_PEERS).filter((s) => s !== symbol).slice(0, 3),
     [sector, symbol],
   )
 
-  const { data: stockBars, isLoading } = useHist(symbol)
-  const { data: spyBars } = useHist('SPY')
-  const { data: qqqBars } = useHist('QQQ')
-  const { data: diaBars } = useHist('DIA')
-  const { data: iwmBars } = useHist('IWM')
-  const { data: gldBars } = useHist('GLD')
-  const { data: slvBars } = useHist('SLV')
-  const { data: usoBars } = useHist('USO')
-  const { data: cperBars } = useHist('CPER')
+  // Page symbol: fetched at 10y and SHARED with the returns table's canonical
+  // cache (same query key), so it downloads once. Sliced to the selected period
+  // client-side in `normalize`.
+  const { data: stockBars, isLoading } = useHistoryBars(symbol, '10y')
+  // Benchmarks + peers: fetch only the SELECTED period (default 5Y) instead of a
+  // fixed 10y, AND only once the section is in view (see `inView` above), so the
+  // default page load carries none of this until the user scrolls to it.
+  const { data: spyBars } = useHistoryBars('SPY', periodKey, inView)
+  const { data: qqqBars } = useHistoryBars('QQQ', periodKey, inView)
+  const { data: diaBars } = useHistoryBars('DIA', periodKey, inView)
+  const { data: iwmBars } = useHistoryBars('IWM', periodKey, inView)
+  const { data: gldBars } = useHistoryBars('GLD', periodKey, inView)
+  const { data: slvBars } = useHistoryBars('SLV', periodKey, inView)
+  const { data: usoBars } = useHistoryBars('USO', periodKey, inView)
+  const { data: cperBars } = useHistoryBars('CPER', periodKey, inView)
 
   const { data: peerBars } = useQuery({
-    queryKey: ['gc-peers', peers.join(',')],
-    enabled: peers.length > 0,
+    queryKey: ['gc-peers', peers.join(','), periodKey],
+    enabled: inView && peers.length > 0,
     staleTime: 5 * 60_000,
+    retry: 2,
     queryFn: async (): Promise<Record<string, Bar[]>> => {
-      const entries = await Promise.all(peers.map(async (p) => [p, await fetchBars(p)] as const))
+      const entries = await Promise.all(peers.map(async (p) => [p, await fetchHistoryBars(p, periodKey)] as const))
       return Object.fromEntries(entries)
     },
   })
@@ -266,7 +266,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   }, [assets, normalized, visible])
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+    <div ref={rootRef} className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
       {/* Header */}
       <div className="border-b border-zinc-800 px-5 py-4">
         <div className="flex items-center gap-1.5">
