@@ -86,11 +86,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }
           } catch (e) {}
         `}</Script>
+        {/* GA + AdSense are heavy (~1.15MB combined) and not needed for first paint.
+            lazyOnload defers them until the browser is idle (after the load event),
+            keeping them off the initial/interactive critical path. The gtag()
+            function and dataLayer are defined in the beforeInteractive consent
+            script above, so any queued config/event calls still fire in order once
+            gtag.js loads. */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="ga-init" strategy="afterInteractive">{`
+        <Script id="ga-init" strategy="lazyOnload">{`
           gtag('js', new Date());
           gtag('config', '${GA_ID}');
         `}</Script>
@@ -98,7 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Script
             id="adsense"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             crossOrigin="anonymous"
           />
         )}
