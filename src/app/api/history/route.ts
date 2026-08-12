@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getEod } from '@/lib/marketstack'
-import { parseSymbol, badRequest, dateSchema, limitSchema } from '@/lib/validate'
+import { getYFChart } from '@/lib/yahoo-finance'
+import { parseSymbol, badRequest } from '@/lib/validate'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
-// GET /api/history?symbol=AAPL&from=2024-01-01&to=2025-01-01&limit=365
+// Yahoo chart ranges we allow (kept small and safe).
+const VALID_RANGES = new Set(['1mo', '3mo', '6mo', 'ytd', '1y', '2y', '5y', '10y', 'max'])
+
+// GET /api/history?symbol=AAPL&range=1y
+// Legacy endpoint, now backed by Yahoo Finance (was Marketstack). Returns
+// { bars: YFChartBar[] } with daily open/high/low/close/adj_close/volume.
 export async function GET(req: NextRequest) {
   if (!rateLimit(getIp(req), 30, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -13,29 +18,16 @@ export async function GET(req: NextRequest) {
 
   const r = parseSymbol(searchParams.get('symbol'))
   if (!r.ok) return badRequest(r.error)
-  const symbol = r.value
 
-  const fromParsed = dateSchema.safeParse(searchParams.get('from') ?? undefined)
-  const toParsed   = dateSchema.safeParse(searchParams.get('to') ?? undefined)
-  const limitParsed = limitSchema.safeParse(searchParams.get('limit') ?? undefined)
-
-  if (!fromParsed.success) return badRequest('Invalid from date (YYYY-MM-DD)')
-  if (!toParsed.success)   return badRequest('Invalid to date (YYYY-MM-DD)')
-
-  const from  = fromParsed.data
-  const to    = toParsed.data
-  const limit = limitParsed.success ? limitParsed.data : 365
+  const rangeParam = searchParams.get('range') ?? '1y'
+  const range = VALID_RANGES.has(rangeParam) ? rangeParam : '1y'
 
   try {
-    const data = await getEod(symbol, {
-      date_from: from,
-      date_to: to,
-      limit,
-    })
-    return NextResponse.json(data, {
+    const bars = await getYFChart(r.value, range, '1d')
+    return NextResponse.json({ bars }, {
       headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
     })
-  } catch (err: unknown) {
-        return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
+  } catch {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 502 })
   }
 }

@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getLatestEod, getLatestIntraday } from '@/lib/marketstack'
+import { getYFBatchQuotes } from '@/lib/yahoo-finance'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
 const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
-const VALID_INTERVALS = new Set(['1min', '5min', '10min', '15min', '30min', '1hour'])
 
-// GET /api/quotes?symbols=AAPL,MSFT,NVDA&type=eod|intraday
+// GET /api/quotes?symbols=AAPL,MSFT,NVDA
+// Legacy endpoint, now backed by Yahoo Finance (was Marketstack). Returns the
+// current quote for each symbol as { data: YFBatchQuote[] }.
 export async function GET(req: NextRequest) {
   if (!rateLimit(getIp(req), 30, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
-  const { searchParams } = req.nextUrl
-  const raw      = searchParams.get('symbols') ?? ''
-  const type     = searchParams.get('type') === 'eod' ? 'eod' : 'intraday'
-  const interval = VALID_INTERVALS.has(searchParams.get('interval') ?? '')
-    ? (searchParams.get('interval') as '1min' | '5min' | '10min')
-    : '5min'
 
+  const raw = req.nextUrl.searchParams.get('symbols') ?? ''
   const symbols = raw.split(',').map(s => s.trim().toUpperCase()).filter(s => TICKER_RE.test(s))
 
   if (!symbols.length) {
@@ -24,15 +20,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    if (type === 'intraday') {
-      const data = await getLatestIntraday(symbols, interval)
-      return NextResponse.json(data, {
-        headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
-      })
-    }
-
-    const data = await getLatestEod(symbols)
-    return NextResponse.json(data, {
+    const data = await getYFBatchQuotes(symbols)
+    return NextResponse.json({ data }, {
       headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch {
