@@ -10,6 +10,7 @@ import { DominanceChart } from '@/components/crypto/DominanceChart'
 import { DefiTVLWidget } from '@/components/crypto/DefiTVLWidget'
 import { FundingRates }    from '@/components/crypto/FundingRates'
 import { LongShortRatio } from '@/components/crypto/LongShortRatio'
+import { CryptoLatestArticles } from '@/components/crypto/CryptoLatestArticles'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 
 export const metadata: Metadata = {
@@ -71,6 +72,8 @@ export default function CryptoPage() {
       <WidgetBoundary label="Crypto Table">
         <CryptoTable />
       </WidgetBoundary>
+
+      <CryptoLatestArticles />
       </main>
     </>
   )
