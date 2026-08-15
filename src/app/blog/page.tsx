@@ -42,7 +42,6 @@ export default async function BlogPage({
     .select('slug, title, excerpt, category, image_url, image_alt, published_at')
     .eq('status', 'published')
     .order('published_at', { ascending: false })
-    .limit(24)
 
   if (category && category !== 'All') {
     query = query.eq('category', category)
