@@ -62,6 +62,11 @@ export function SecFilings({ symbol }: { symbol: string }) {
   const filtered = expanded ? all : all.slice(0, 8)
   const hasMore = all.length > 8
 
+  // Don't render section if no filings found
+  if (!isLoading && all.length === 0) {
+    return null
+  }
+
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
       {/* Header */}
@@ -93,25 +98,19 @@ export function SecFilings({ symbol }: { symbol: string }) {
       {/* Cards grid */}
       {!isLoading && (
         <div className="p-4">
-          {filtered.length === 0 ? (
-            <p className="py-6 text-center text-xs text-zinc-500">No filings found.</p>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 gap-2">
-                {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
-              </div>
-              {hasMore && (
-                <button
-                  onClick={() => setExpanded(v => !v)}
-                  className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-800 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
-                >
-                  {expanded
-                    ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</>
-                    : <><ChevronDown className="h-3.5 w-3.5" /> Show all {all.length} filings</>
-                  }
-                </button>
-              )}
-            </>
+          <div className="grid grid-cols-2 gap-2">
+            {filtered.map((f, i) => <FilingCard key={i} f={f} />)}
+          </div>
+          {hasMore && (
+            <button
+              onClick={() => setExpanded(v => !v)}
+              className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-800 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+            >
+              {expanded
+                ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</>
+                : <><ChevronDown className="h-3.5 w-3.5" /> Show all {all.length} filings</>
+              }
+            </button>
           )}
         </div>
       )}
