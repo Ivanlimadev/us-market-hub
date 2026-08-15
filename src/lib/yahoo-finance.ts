@@ -521,9 +521,6 @@ export interface YFBatchQuote {
   sector: string | null
   industry: string | null
   eps: number | null
-  // Earnings calendar
-  earningsTimestamp: number | null      // Unix seconds - next earnings date
-  earningsTimestampEnd: number | null   // End of earnings window
 }
 
 function num(v: unknown): number | null {
@@ -537,7 +534,7 @@ export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[
     'trailingPE', 'forwardPE', 'priceToBook', 'trailingAnnualDividendYield',
     'returnOnEquity', 'beta', 'fiftyTwoWeekHigh', 'fiftyTwoWeekLow',
     'regularMarketVolume', 'averageDailyVolume3Month', 'sector', 'industry', 'longName', 'shortName',
-    'epsCurrentYear', 'earningsTimestamp', 'earningsTimestampEnd',
+    'epsCurrentYear',
   ].join(',')
 
   const data = await yfGet(
@@ -567,8 +564,6 @@ export async function getYFBatchQuotes(symbols: string[]): Promise<YFBatchQuote[
     sector: (q.sector as string | null) ?? null,
     industry: (q.industry as string | null) ?? null,
     eps: num(q.epsCurrentYear),
-    earningsTimestamp: num(q.earningsTimestamp),
-    earningsTimestampEnd: num(q.earningsTimestampEnd),
   }))
 }
 
