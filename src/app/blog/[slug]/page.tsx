@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
+import { PageTracker } from '@/components/PageTracker'
 import { fetchStockData } from '@/lib/stock-server'
 import { cgCoin } from '@/lib/coingecko'
 import type { CryptoDetail } from '@/types/crypto'
@@ -360,8 +361,10 @@ export default async function BlogPostPage({
     : null
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
+    <>
+      <PageTracker path={`/blog/${post.slug}`} />
+      <main className="mx-auto max-w-6xl px-4 py-10">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(breadcrumbLd) }} />
       {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(faqLd) }} />}
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
@@ -648,6 +651,7 @@ export default async function BlogPostPage({
 
       <BlogSidebar latest={latestPosts} />
       </div>{/* /grid */}
-    </main>
+      </main>
+    </>
   )
 }
