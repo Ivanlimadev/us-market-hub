@@ -4,21 +4,36 @@ Sistema completo para monitorar tráfego do site e receber alertas automáticos.
 
 ## 📊 Analytics Dashboard
 
-Acesse `/analytics` para visualizar:
+Acesse com sua chave de API:
+
+```
+https://stockmarketroi.com/analytics?key=YOUR_API_KEY
+```
+
+**Visualiza:**
 - Total de page views
 - Split dispositivos (desktop/mobile)
 - Distribuição de browsers
 - Top 10 páginas mais visitadas
 
+**Configurar chave:**
+```bash
+# .env.local
+ANALYTICS_API_KEY=seu-secret-key-muito-seguro
 ```
-https://stockmarketroi.com/analytics
+
+**Gerar uma chave segura:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ## 📤 Export Logs
 
+**Requer API key!**
+
 ### JSON Format
 ```bash
-curl https://stockmarketroi.com/api/admin/logs/export?format=json
+curl https://stockmarketroi.com/api/admin/logs/export?format=json&key=YOUR_API_KEY
 ```
 
 Retorna:
@@ -41,7 +56,7 @@ Retorna:
 
 ### CSV Format
 ```bash
-curl https://stockmarketroi.com/api/admin/logs/export?format=csv -o logs.csv
+curl https://stockmarketroi.com/api/admin/logs/export?format=csv&key=YOUR_API_KEY -o logs.csv
 ```
 
 Retorna arquivo CSV pronto para importar no Excel/Google Sheets.
@@ -67,7 +82,7 @@ Sistema automático que monitora tráfego e alerta se cair abaixo de um limite.
 
 ```bash
 # Checar tráfego agora
-curl https://stockmarketroi.com/api/admin/traffic-check
+curl https://stockmarketroi.com/api/admin/traffic-check?key=YOUR_API_KEY
 ```
 
 Retorna:
@@ -102,7 +117,7 @@ jobs:
     steps:
       - name: Check traffic
         run: |
-          curl -f https://stockmarketroi.com/api/admin/traffic-check
+          curl -f "https://stockmarketroi.com/api/admin/traffic-check?key=${{ secrets.ANALYTICS_API_KEY }}"
 ```
 
 **Opção 2: Cron on VPS**
@@ -115,7 +130,7 @@ ssh seu-user@seu-vps.com
 crontab -e
 
 # Adicionar (roda a cada hora)
-0 * * * * curl -s https://stockmarketroi.com/api/admin/traffic-check
+0 * * * * curl -s "https://stockmarketroi.com/api/admin/traffic-check?key=YOUR_API_KEY"
 ```
 
 ## 📈 Traffic Metrics

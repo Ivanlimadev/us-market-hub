@@ -1,16 +1,30 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { checkTrafficMetrics, logAlert, sendEmailAlert } from '@/lib/traffic-alerts'
 
 /**
  * Check current traffic levels and send alerts if needed
  *
- * This endpoint should be called by a cron job every hour:
- *   curl https://stockmarketroi.com/api/admin/traffic-check
+ * Requires API key: ?key=YOUR_API_KEY
  *
- * Or set up via GitHub Actions cron workflow
+ * Usage:
+ *   curl https://stockmarketroi.com/api/admin/traffic-check?key=YOUR_API_KEY
+ *
+ * Set ANALYTICS_API_KEY in .env.local
  */
 
-export async function GET() {
+function validateApiKey(key: string | null): boolean {
+  const validKey = process.env.ANALYTICS_API_KEY
+  if (!validKey) return false
+  return key === validKey
+}
+
+export async function GET(req: NextRequest) {
+  const key = req.nextUrl.searchParams.get('key')
+
+  // Check API key
+  if (!validateApiKey(key)) {
+    return NextResponse.json({ error: 'Unauthorized. Missing or invalid API key.' }, { status: 403 })
+  }
   try {
     // Mock data - in production, calculate from actual logs
     const viewsLastHour = 65

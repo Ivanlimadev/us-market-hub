@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { generateMockAnalytics } from '@/lib/log-parser'
 import { PageTracker } from '@/components/PageTracker'
 
@@ -8,7 +9,43 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }, // Don't index analytics page
 }
 
-export default async function AnalyticsPage() {
+// Validate API key from searchParams
+function validateApiKey(key: string | null): boolean {
+  const validKey = process.env.ANALYTICS_API_KEY
+  if (!validKey) {
+    console.warn('[Analytics] ANALYTICS_API_KEY not set in .env')
+    return false
+  }
+  return key === validKey
+}
+
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ key?: string }>
+}) {
+  const { key } = await searchParams
+
+  // Check API key
+  if (!validateApiKey(key ?? null)) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-zinc-950">
+        <div className="max-w-md rounded-xl border border-red-500/30 bg-red-500/5 p-8 text-center space-y-4">
+          <h1 className="text-2xl font-bold text-red-400">🔐 Unauthorized</h1>
+          <p className="text-sm text-zinc-400">
+            This dashboard requires an API key.
+          </p>
+          <code className="block text-xs bg-zinc-900 p-3 rounded text-zinc-300 break-all">
+            https://stockmarketroi.com/analytics?key=YOUR_API_KEY
+          </code>
+          <p className="text-xs text-zinc-600">
+            Set ANALYTICS_API_KEY in .env.local
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   const analytics = generateMockAnalytics()
 
   const deviceData = [

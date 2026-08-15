@@ -4,14 +4,17 @@ import { NextRequest, NextResponse } from 'next/server'
  * Export server logs in CSV or JSON format
  *
  * Usage:
- *   GET /api/admin/logs/export?format=csv  → Downloads CSV file
- *   GET /api/admin/logs/export?format=json → Returns JSON
+ *   GET /api/admin/logs/export?format=csv&key=YOUR_API_KEY
+ *   GET /api/admin/logs/export?format=json&key=YOUR_API_KEY
  *
- * Note: In production, this should:
- * 1. Read actual logs from PM2 or a log file
- * 2. Require authentication (API key or session)
- * 3. Support filtering by date range, path, IP, etc.
+ * Requires ANALYTICS_API_KEY in .env.local
  */
+
+function validateApiKey(key: string | null): boolean {
+  const validKey = process.env.ANALYTICS_API_KEY
+  if (!validKey) return false
+  return key === validKey
+}
 
 interface LogEntry {
   timestamp: string
@@ -93,6 +96,13 @@ function logsToCSV(logs: LogEntry[]): string {
 
 export async function GET(req: NextRequest) {
   const format = req.nextUrl.searchParams.get('format') || 'json'
+  const key = req.nextUrl.searchParams.get('key')
+
+  // Check API key
+  if (!validateApiKey(key)) {
+    return NextResponse.json({ error: 'Unauthorized. Missing or invalid API key.' }, { status: 403 })
+  }
+
   const logs = getMockLogs()
 
   if (format === 'csv') {
