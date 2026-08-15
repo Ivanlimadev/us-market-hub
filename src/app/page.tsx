@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { IndexCards } from '@/components/market/IndexCards'
+import { PageTracker } from '@/components/PageTracker'
 
 export const metadata: Metadata = {
   // absolute so the layout template does not append a second "| Stock Market ROI"
@@ -21,8 +22,10 @@ import { CanadaSection } from '@/components/market/CanadaSection'
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
-      <HeroSearch />
+    <>
+      <PageTracker path="/" />
+      <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
+        <HeroSearch />
 
       <div>
         <h2 className="text-2xl font-bold text-white">US Markets</h2>
@@ -67,6 +70,7 @@ export default function HomePage() {
       <WidgetBoundary label="Crypto Markets">
         <CryptoHomeWidget />
       </WidgetBoundary>
-    </div>
+      </div>
+    </>
   )
 }
