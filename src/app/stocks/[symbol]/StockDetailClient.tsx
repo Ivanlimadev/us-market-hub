@@ -12,6 +12,7 @@ import { CompanyInfo } from '@/components/stock/CompanyInfo'
 import { RelatedAssets } from '@/components/stock/RelatedAssets'
 import { MagicNumber } from '@/components/stock/MagicNumber'
 import { DividendCalculator } from '@/components/stock/DividendCalculator'
+import { CompoundCalc } from '@/app/calculators/compound-interest/CompoundCalc'
 import { FinancialCharts } from '@/components/stock/FinancialCharts'
 import { FairValueCard } from '@/components/stock/FairValueCard'
 import { AnalystRatingsCard } from '@/components/stock/AnalystRatingsCard'
@@ -288,6 +289,9 @@ export function StockDetailClient({
       <Section title="Tools & Simulators">
         <WidgetBoundary label="Growth Comparison">
           <StockGrowthComparison data={data} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Compound Interest Projection">
+          <CompoundCalc embedded />
         </WidgetBoundary>
       </Section>
 

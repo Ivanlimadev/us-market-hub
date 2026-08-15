@@ -129,7 +129,7 @@ function Toggle<T extends string>({ options, value, onChange }: {
   )
 }
 
-export function CompoundCalc() {
+export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
   const [principal,  setPrincipal]  = useState('10000')
   const [rate,       setRate]       = useState('10')
   const [rateMode,   setRateMode]   = useState<RateMode>('annual')
@@ -154,18 +154,22 @@ export function CompoundCalc() {
   const activePreset = RATE_PRESETS.find(p => p.value === rate && p.mode === rateMode)?.label ?? null
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <nav className="mb-6 text-xs text-zinc-500">
-        <Link href="/calculators" className="hover:text-zinc-300 transition-colors">Calculators</Link>
-        <span className="mx-1.5">›</span>
-        <span className="text-zinc-300">Compound Interest</span>
-      </nav>
+    <div className={embedded ? '' : 'mx-auto max-w-4xl px-4 py-10'}>
+      {!embedded && (
+        <>
+          <nav className="mb-6 text-xs text-zinc-500">
+            <Link href="/calculators" className="hover:text-zinc-300 transition-colors">Calculators</Link>
+            <span className="mx-1.5">›</span>
+            <span className="text-zinc-300">Compound Interest</span>
+          </nav>
 
-      <h1 className="mb-2 text-3xl font-bold text-zinc-100">Compound Interest Calculator</h1>
-      <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
-        See how your investments grow exponentially over time. Includes initial capital, monthly
-        contributions, and a full year-by-year breakdown.
-      </p>
+          <h1 className="mb-2 text-3xl font-bold text-zinc-100">Compound Interest Calculator</h1>
+          <p className="mb-8 max-w-2xl text-zinc-400 leading-relaxed">
+            See how your investments grow exponentially over time. Includes initial capital, monthly
+            contributions, and a full year-by-year breakdown.
+          </p>
+        </>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         {/* ── Inputs ── */}
