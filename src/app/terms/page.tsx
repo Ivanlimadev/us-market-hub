@@ -289,15 +289,33 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      {/* ── 15. Privacy ─────────────────────────────────────────────────── */}
-      <Section id="privacy" title="15. Privacy">
+      {/* ── 15. Privacy & Data Collection ────────────────────────────────── */}
+      <Section id="privacy" title="15. Privacy & Data Collection">
         <p>
-          Your use of this platform is also governed by our{' '}
+          Your use of this platform is governed by our{' '}
           <Link href="/privacy" className="text-emerald-400 hover:text-emerald-300">
             Privacy Policy
           </Link>
-          , which is incorporated by reference into these Terms. The Privacy Policy covers
-          compliance with Brazilian data protection law (LGPD), GDPR (EU) and CCPA (California).
+          , which is incorporated by reference into these Terms.
+        </p>
+        <p>
+          <strong className="text-zinc-200">Data collection and tracking:</strong> We use the
+          following third-party services that collect usage data:
+        </p>
+        <ul className="list-disc pl-5 space-y-1 text-zinc-500">
+          <li><strong className="text-zinc-200">Google Analytics</strong> - measures traffic and user behavior (via cookies: <span className="font-mono">_ga</span>, <span className="font-mono">_ga_*</span>)</li>
+          <li><strong className="text-zinc-200">Google AdSense</strong> - serves and measures advertising (via cookies: <span className="font-mono">__gads</span>, <span className="font-mono">__gpi</span>, <span className="font-mono">IDE</span>)</li>
+          <li><strong className="text-zinc-200">Google Search Console</strong> - monitors search performance and indexing</li>
+        </ul>
+        <p>
+          Non-essential cookies (analytics and advertising) are loaded <strong className="text-zinc-200">only after you explicitly accept them</strong> via
+          the cookie banner. You can withdraw consent at any time by choosing &quot;Essential only&quot;
+          in the cookie banner or by clearing your browser&apos;s site data.
+        </p>
+        <p>
+          For full details on data collection, cookies, your privacy rights and opt-out options,
+          please see our <Link href="/privacy" className="text-emerald-400 hover:text-emerald-300">Privacy Policy</Link>.
+          It covers compliance with Brazilian data protection law (LGPD), GDPR (EU) and CCPA (California).
         </p>
       </Section>
 
