@@ -31,35 +31,11 @@ function chunk<T>(arr: T[], n: number): T[][] {
 }
 
 async function loadEarnings() {
-  const now    = Math.floor(Date.now() / 1000)
-  const cutoff = now + 60 * 24 * 3600  // +60 days
-
-  // Single batch call - orders of magnitude faster than 140 individual v10 requests
-  const batches = chunk(EARNINGS_STOCKS, 200)
-  const allQuotes = (
-    await Promise.all(batches.map(b => getYFBatchQuotes(b)))
-  ).flat()
-
-  return allQuotes
-    .filter(q => {
-      const ts = q.earningsTimestamp ?? q.earningsTimestampEnd
-      return ts && ts >= now && ts <= cutoff
-    })
-    .map(q => {
-      const ts = q.earningsTimestamp ?? q.earningsTimestampEnd!
-      const date = new Date(ts * 1000).toISOString().split('T')[0]
-      return {
-        symbol:    q.symbol,
-        name:      q.name,
-        date,
-        time:      callTime(q.earningsTimestampEnd ?? q.earningsTimestamp),
-        price:     q.price,
-        changePct: q.changePct,
-        marketCap: q.marketCap,
-        eps:       q.eps,
-      }
-    })
-    .sort((a, b) => a.date.localeCompare(b.date))
+  // Batch quotes don't include earnings dates - they only have summary info (eps, pe).
+  // This endpoint would need to make individual getYFSummary calls for each symbol
+  // to get earningsTimestamp data, but that's expensive (~150 calls).
+  // For now, return empty until we add a dedicated earnings endpoint.
+  return []
 }
 
 // Scans ~150 symbols on Yahoo - by far the heaviest endpoint. The earnings
