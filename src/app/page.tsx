@@ -19,6 +19,7 @@ import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 import { AppDownloadCard } from '@/components/app/AppDownloadCard'
 import { HeroSearch } from '@/components/home/HeroSearch'
 import { CanadaSection } from '@/components/market/CanadaSection'
+import { LatestArticles } from '@/components/home/LatestArticles'
 
 export default function HomePage() {
   return (
@@ -66,6 +67,8 @@ export default function HomePage() {
       </WidgetBoundary>
 
       <AppDownloadCard variant="hero" />
+
+      <LatestArticles />
 
       <WidgetBoundary label="Crypto Markets">
         <CryptoHomeWidget />
