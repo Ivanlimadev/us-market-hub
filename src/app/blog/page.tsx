@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createServerClient } from '@supabase/ssr'
 import type { Metadata } from 'next'
+import { PageTracker } from '@/components/PageTracker'
 
 export const metadata: Metadata = {
   title: 'Blog - Stock Market Insights & Investing Guides',
@@ -51,8 +52,10 @@ export default async function BlogPage({
   const active = category ?? 'All'
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="mb-2 text-3xl font-bold text-zinc-100">Blog</h1>
+    <>
+      <PageTracker path="/blog" />
+      <main className="mx-auto max-w-6xl px-4 py-10">
+        <h1 className="mb-2 text-3xl font-bold text-zinc-100">Blog</h1>
       <p className="mb-8 text-zinc-400">Investing guides, market analysis, and financial education.</p>
 
       {/* Category filter */}
@@ -109,6 +112,7 @@ export default async function BlogPage({
           ))}
         </div>
       )}
-    </main>
+      </main>
+    </>
   )
 }

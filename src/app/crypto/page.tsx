@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PageTracker } from '@/components/PageTracker'
 import { GlobalCryptoStats } from '@/components/crypto/GlobalCryptoStats'
 import { CryptoHeatmap } from '@/components/crypto/CryptoHeatmap'
 import { CryptoTable } from '@/components/crypto/CryptoTable'
@@ -19,9 +20,11 @@ export const metadata: Metadata = {
 
 export default function CryptoPage() {
   return (
-    <main className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-white">Cryptocurrency Market</h1>
+    <>
+      <PageTracker path="/crypto" />
+      <main className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
+        <div>
+          <h1 className="text-xl font-bold text-white">Cryptocurrency Market</h1>
         <p className="text-sm text-zinc-500 mt-0.5">
           Live prices via Kraken · Market data via CoinGecko · DeFi via DefiLlama
         </p>
@@ -68,6 +71,7 @@ export default function CryptoPage() {
       <WidgetBoundary label="Crypto Table">
         <CryptoTable />
       </WidgetBoundary>
-    </main>
+      </main>
+    </>
   )
 }

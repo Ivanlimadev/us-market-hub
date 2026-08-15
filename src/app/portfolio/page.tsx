@@ -1,4 +1,5 @@
 import { PortfolioView } from '@/components/portfolio/PortfolioView'
+import { PageTracker } from '@/components/PageTracker'
 
 export const metadata = {
   title: 'My Portfolio',
@@ -8,14 +9,17 @@ export const metadata = {
 
 export default function PortfolioPage() {
   return (
-    <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-white">My Portfolio</h1>
+    <>
+      <PageTracker path="/portfolio" />
+      <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">My Portfolio</h1>
         <p className="text-sm text-zinc-400">
           Prices update automatically · Average cost calculated per position
         </p>
       </div>
       <PortfolioView />
-    </div>
+      </div>
+    </>
   )
 }

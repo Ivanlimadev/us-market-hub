@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { TrendingUp, Percent, Target, BarChart2, RefreshCw, ArrowUpRight } from 'lucide-react'
+import { PageTracker } from '@/components/PageTracker'
 
 export const metadata: Metadata = {
   title: 'Free Investment Calculators',
@@ -72,9 +73,11 @@ const CALCULATORS = [
 
 export default function CalculatorsPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      {/* Header */}
-      <h1 className="mb-3 text-3xl font-bold text-zinc-100">Investment Calculators</h1>
+    <>
+      <PageTracker path="/calculators" />
+      <main className="mx-auto max-w-5xl px-4 py-10">
+        {/* Header */}
+        <h1 className="mb-3 text-3xl font-bold text-zinc-100">Investment Calculators</h1>
       <p className="mb-10 max-w-2xl text-zinc-400 leading-relaxed">
         Free tools to plan your financial future. Whether you're calculating returns, setting goals,
         or doing quick percentage math - every calculator updates in real time.
@@ -144,6 +147,7 @@ export default function CalculatorsPage() {
           calculator visualizes.
         </p>
       </section>
-    </main>
+      </main>
+    </>
   )
 }
