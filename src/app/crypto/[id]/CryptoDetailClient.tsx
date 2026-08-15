@@ -10,6 +10,7 @@ import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
 import type { CryptoDetail, CryptoHistoryBar } from '@/types/crypto'
 import { SupplyCard }        from '@/components/crypto/SupplyCard'
+import { ATHCard }           from '@/components/crypto/ATHCard'
 import { ExchangeListings }  from '@/components/crypto/ExchangeListings'
 import { SimilarCoins }      from '@/components/crypto/SimilarCoins'
 import { ROICalculator }     from '@/components/crypto/ROICalculator'
@@ -364,6 +365,10 @@ export function CryptoDetailClient({ id }: { id: string }) {
 
       <WidgetBoundary label="Supply">
         <SupplyCard coin={coin} />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="All-Time High">
+        <ATHCard coin={coin} />
       </WidgetBoundary>
 
       <WidgetBoundary label="ROI Calculator">
