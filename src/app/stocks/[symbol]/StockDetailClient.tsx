@@ -167,6 +167,11 @@ export function StockDetailClient({
                     <span className="ml-2 truncate text-base font-normal" style={{ color: '#d4d4d4' }}>- {data.name}</span>
                   )}
                 </h1>
+                {data.info?.quoteType && data.info.quoteType !== 'EQUITY' && (
+                  <span className="shrink-0 rounded-md bg-blue-900/40 border border-blue-700/50 px-2 py-0.5 text-[10px] font-bold text-blue-300" title={data.info.quoteType}>
+                    {data.info.quoteType === 'ETF' ? '📊 ETF' : data.info.quoteType}
+                  </span>
+                )}
                 {symbol.toUpperCase().endsWith('.TO') && (
                   <span className="shrink-0 rounded-md bg-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-200" title="Toronto Stock Exchange - prices in Canadian dollars">
                     🇨🇦 CAD
