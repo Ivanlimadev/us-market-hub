@@ -28,7 +28,7 @@ export interface StockDetailData {
     pegRatio: number | null; beta: number | null; week52High: number | null
     week52Low: number | null; avgVolume3m: number | null; dividendYield: number | null
     dividendRate: number | null; exDividendDate: string | null; dividendDate: string | null; payoutRatio: number | null
-    nextEarningsDate: string | null; bookValue: number | null
+    nextEarningsDate: string | null; earningsTimestamp: number | null; earningsTimestampEnd: number | null; bookValue: number | null
     profitMargin: number | null; operatingMargin: number | null; roe: number | null
     roa: number | null; revenueGrowth: number | null; earningsGrowth: number | null
     totalRevenue: number | null; totalDebt: number | null; debtToEquity: number | null

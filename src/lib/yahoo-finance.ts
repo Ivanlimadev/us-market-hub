@@ -150,6 +150,8 @@ export interface YFSummary {
   payoutRatio: number | null
   // Upcoming events
   nextEarningsDate: string | null
+  earningsTimestamp: number | null    // Unix seconds - next earnings date
+  earningsTimestampEnd: number | null // End of earnings window
   // Extra valuation
   bookValue: number | null
   // Profitability
@@ -200,7 +202,7 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
   const priceModule = (result.price ?? {}) as Record<string, unknown>
   const cal = ((result.calendarEvents as Record<string, unknown> | undefined) ?? {}) as Record<string, unknown>
   const calEarnings = (cal.earnings as Record<string, unknown> | undefined) ?? {}
-  const earningsDates = (calEarnings.earningsDate as Array<{ fmt?: string }> | undefined) ?? []
+  const earningsDates = (calEarnings.earningsDate as Array<{ fmt?: string; raw?: number }> | undefined) ?? []
 
   return {
     regularMarketPrice: raw(priceModule.regularMarketPrice),
@@ -233,6 +235,8 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     dividendDate: fmt(cal.dividendDate),
     payoutRatio: raw(detail.payoutRatio),
     nextEarningsDate: earningsDates[0]?.fmt ?? null,
+    earningsTimestamp: num(earningsDates[0]?.raw),
+    earningsTimestampEnd: num((calEarnings.earningsDateEnd as Array<{ raw?: number }> | undefined)?.[0]?.raw),
     bookValue: raw(stats.bookValue),
     profitMargin: raw(fin.profitMargins),
     operatingMargin: raw(fin.operatingMargins),
@@ -262,7 +266,7 @@ function emptyYFSummary(): YFSummary {
     pe: null, eps: null, priceToBook: null, forwardPE: null, pegRatio: null,
     beta: null, week52High: null, week52Low: null, avgVolume10d: null, avgVolume3m: null,
     dividendYield: null, dividendRate: null, exDividendDate: null, dividendDate: null, payoutRatio: null,
-    nextEarningsDate: null, bookValue: null,
+    nextEarningsDate: null, earningsTimestamp: null, earningsTimestampEnd: null, bookValue: null,
     profitMargin: null, operatingMargin: null, roe: null, roa: null,
     revenueGrowth: null, earningsGrowth: null, totalRevenue: null,
     totalDebt: null, debtToEquity: null, currentRatio: null, freeCashflow: null,
