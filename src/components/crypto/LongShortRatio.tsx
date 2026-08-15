@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import type { LongShortItem } from '@/app/api/crypto/longshort/route'
 
@@ -14,6 +15,20 @@ const COIN_ICONS: Record<string, string> = {
   LINK: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
   TON:  'https://assets.coingecko.com/coins/images/17980/small/ton_symbol.png',
   SUI:  'https://assets.coingecko.com/coins/images/26375/small/sui-ocean-square.png',
+}
+
+const SYMBOL_TO_ID: Record<string, string> = {
+  BTC:  'bitcoin',
+  ETH:  'ethereum',
+  SOL:  'solana',
+  BNB:  'binancecoin',
+  XRP:  'ripple',
+  DOGE: 'dogecoin',
+  ADA:  'cardano',
+  AVAX: 'avalanche-2',
+  LINK: 'chainlink',
+  TON:  'the-open-network',
+  SUI:  'sui',
 }
 
 function Sentiment({ longPct }: { longPct: number }) {
@@ -85,9 +100,12 @@ export function LongShortRatio() {
             <span className="w-28 text-right">Ratio</span>
           </div>
 
-          {data.map(item => (
-            <div
+          {data.map(item => {
+            const coinId = SYMBOL_TO_ID[item.symbol] || item.symbol.toLowerCase()
+            return (
+            <Link
               key={item.symbol}
+              href={`/crypto/${coinId}`}
               className="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 px-5 py-2.5 hover:bg-zinc-800/30 transition-colors"
             >
               {/* Coin + sentiment */}
@@ -135,8 +153,9 @@ export function LongShortRatio() {
                 </span>
                 <span className="text-[10px] text-zinc-600 ml-1">L/S</span>
               </div>
-            </div>
-          ))}
+            </Link>
+          )
+          })}
         </div>
       )}
     </div>

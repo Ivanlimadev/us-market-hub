@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import type { FundingRateItem } from '@/app/api/crypto/funding/route'
 
@@ -56,6 +57,21 @@ const COIN_ICONS: Record<string, string> = {
   TON:  'https://assets.coingecko.com/coins/images/17980/small/ton_symbol.png',
   SUI:  'https://assets.coingecko.com/coins/images/26375/small/sui-ocean-square.png',
   PEPE: 'https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg',
+}
+
+const SYMBOL_TO_ID: Record<string, string> = {
+  BTC:  'bitcoin',
+  ETH:  'ethereum',
+  SOL:  'solana',
+  BNB:  'binancecoin',
+  XRP:  'ripple',
+  DOGE: 'dogecoin',
+  ADA:  'cardano',
+  AVAX: 'avalanche-2',
+  LINK: 'chainlink',
+  TON:  'the-open-network',
+  SUI:  'sui',
+  PEPE: 'pepe',
 }
 
 export function FundingRates() {
@@ -132,9 +148,11 @@ export function FundingRates() {
               item.ratePct >= -0.003 ? 'text-zinc-400' :
               'text-emerald-400'
 
+            const coinId = SYMBOL_TO_ID[item.symbol] || item.symbol.toLowerCase()
             return (
-              <div
+              <Link
                 key={item.symbol}
+                href={`/crypto/${coinId}`}
                 className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-x-4 px-5 py-2.5 hover:bg-zinc-800/30 transition-colors"
               >
                 {/* Coin */}
@@ -172,7 +190,7 @@ export function FundingRates() {
                 <span className="w-16 text-right text-xs text-zinc-500 tabular-nums">
                   {fmtCountdown(item.nextFunding)}
                 </span>
-              </div>
+              </Link>
             )
           })}
         </div>
