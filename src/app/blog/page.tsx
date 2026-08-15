@@ -94,11 +94,12 @@ export default async function BlogPage({
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
               )}
               <div className="flex flex-1 flex-col p-5">
                 <span className="mb-2 text-xs font-medium text-emerald-400">{post.category}</span>
-                <h2 className="mb-2 text-base font-semibold leading-snug text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                <h2 className="mb-2 text-base font-semibold leading-snug text-zinc-100 group-hover:text-white transition-colors">
                   {post.title}
                 </h2>
                 <p className="line-clamp-3 text-sm text-zinc-400">{post.excerpt}</p>

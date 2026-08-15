@@ -63,6 +63,7 @@ export function RelatedTabs({
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         )}
         <div className="p-5">
@@ -97,6 +98,7 @@ export function RelatedTabs({
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
               ) : (
                 <div className="h-28 w-full bg-zinc-800" />
