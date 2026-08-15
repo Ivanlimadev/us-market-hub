@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { CryptoDetailClient } from './CryptoDetailClient'
 import CommentsSection from '@/components/comments/CommentsSection'
+import { PageTracker } from '@/components/PageTracker'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
@@ -89,6 +90,7 @@ export default async function CryptoDetailPage({
 
   return (
     <>
+      <PageTracker path={`/crypto/${id}`} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

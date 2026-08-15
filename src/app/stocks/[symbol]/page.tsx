@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { StockDetailClient } from './StockDetailClient'
 import { fetchStockData } from '@/lib/stock-server'
+import { PageTracker } from '@/components/PageTracker'
 import { isTopStock, isEtf, isDelisted } from '@/lib/stock-universe'
 import { buildStockIntro, buildStockFaqs, hasSeoData } from '@/lib/stock-seo'
 import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
@@ -142,6 +143,7 @@ export default async function StockPage({
 
   return (
     <>
+      <PageTracker path={`/stocks/${upper.toLowerCase()}`} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
