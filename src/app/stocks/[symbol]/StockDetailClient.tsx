@@ -18,6 +18,7 @@ import { FairValueCard } from '@/components/stock/FairValueCard'
 import { AnalystRatingsCard } from '@/components/stock/AnalystRatingsCard'
 import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
+import { EarningsTimeBadge } from '@/components/stock/EarningsTimeBadge'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
@@ -218,6 +219,14 @@ export function StockDetailClient({
         <WidgetBoundary label="Performance">
           <PerformanceStrip symbol={symbol} />
         </WidgetBoundary>
+        {data.info?.earningsTimestamp && (
+          <WidgetBoundary label="Earnings Alert">
+            <EarningsTimeBadge
+              earningsTimestamp={data.info.earningsTimestamp}
+              earningsTimestampEnd={data.info.earningsTimestampEnd}
+            />
+          </WidgetBoundary>
+        )}
       </Section>
 
       {/* 2 - Analysis & Verdict */}
