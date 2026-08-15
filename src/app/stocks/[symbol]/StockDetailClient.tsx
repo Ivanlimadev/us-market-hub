@@ -34,6 +34,7 @@ import { InsiderTransactions } from '@/components/stock/InsiderTransactions'
 import CommentsSection from '@/components/comments/CommentsSection'
 import { StockAIInsight } from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts } from '@/components/stock/StockRelatedPosts'
+import { FeaturedAnalysis } from '@/components/stock/FeaturedAnalysis'
 import { WidgetBoundary } from '@/components/ui/WidgetBoundary'
 import type { ReactNode } from 'react'
 
@@ -331,6 +332,17 @@ export function StockDetailClient({
         <WidgetBoundary label="Related Articles">
           <StockRelatedPosts symbol={symbol} />
         </WidgetBoundary>
+
+        {/* Featured analysis for NVDA */}
+        {symbol === 'NVDA' && (
+          <FeaturedAnalysis
+            symbol="NVDA"
+            title="Nvidia Stock Analysis 2026: NVDA Valuation, Earnings & Buy Rating"
+            excerpt="Is Nvidia a generational buy or a bubble? Deep dive into NVDA's competitive moat, valuation, and whether it's worth the price."
+            href="/blog/nvidia-stock-analysis-2026"
+          />
+        )}
+
         <div id="company" className="scroll-mt-24">
           <WidgetBoundary label="Company Info">
             <CompanyInfo data={data} />
