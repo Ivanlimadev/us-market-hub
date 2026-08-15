@@ -329,10 +329,6 @@ export function CryptoDetailClient({ id }: { id: string }) {
         <StockRelatedPosts symbol={coin.symbol.toUpperCase()} />
       </WidgetBoundary>
 
-      <WidgetBoundary label="Latest Crypto Analysis">
-        <CryptoBlogPosts />
-      </WidgetBoundary>
-
       {/* Stats: stacked full-width cards, with stats in an internal 2-column
           grid so they fill the width instead of stretching into sparse rows. */}
       <div className="space-y-4">
@@ -404,6 +400,10 @@ export function CryptoDetailClient({ id }: { id: string }) {
           ))}
         </div>
       )}
+
+      <WidgetBoundary label="Latest Crypto Analysis">
+        <CryptoBlogPosts />
+      </WidgetBoundary>
 
       <AppDownloadCard variant="hero" />
 
