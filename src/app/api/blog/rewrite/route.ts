@@ -161,14 +161,15 @@ ${chosenSymbol ? `3. A Markdown data table under an H3 like "### ${chosenSymbol}
 4. 4-6 in-depth H2 sections with H3 sub-points: real analysis, comparisons, and scenarios.
 5. The two internal CTAs from LAYER 3.
 6. "## Frequently Asked Questions" - 4 to 5 entries, each formatted as "### <long-tail question>" on its own line followed by a 2-3 sentence answer. Questions must match real search queries.
-7. "## Bottom Line" - the verdict (**BUY**/**HOLD**/**AVOID**) + one specific 12-month prediction (price level or % range with reasoning) + one risk scenario that breaks the thesis. First person.
+7. A conclusion with the verdict (**BUY**/**HOLD**/**AVOID**) + one specific 12-month prediction (price level or % range with reasoning) + one risk scenario that breaks the thesis. First person. IMPORTANT: do NOT always title this "## Bottom Line". Vary the heading each time, rotating natural labels like "## The Verdict", "## My Take", "## So, Is ${chosenSymbol || 'It'} Worth It?", "## Where This Leaves Us", or occasionally close with no conclusion heading at all. Never reuse the same conclusion format.
 8. "## Sources" - a short bullet list of the data sources used (e.g. Yahoo Finance, SEC filings, recent financial news). Generic outlet names only.
 
 ━━━ FORMATTING ━━━
 - Length: 2,000-2,500 words (be thorough - depth and specificity over filler)
 - Open with a hook: a specific data point, counterintuitive insight, or current event angle
 - Write for US investors (USD, ${year} context)
-- Avoid AI clichés: "In today's fast-paced world", "navigating the landscape", "In conclusion", "the picture is nuanced", "it's worth noting"
+- Avoid AI clichés and tells: em dashes (use commas or periods instead), "In today's fast-paced world", "navigating the landscape", "In conclusion", "the picture is nuanced", "it's worth noting", "delve", "unlock", "game-changer", and starting many sentences with "Here is" or "Here's".
+- Vary the structure so posts never read as a template: change the conclusion heading (see block 7), vary how sections and sentences open, and vary paragraph rhythm. No two posts should share the same skeleton.
 - DO NOT include the title as H1 - start directly with the intro paragraph
 - Format: plain Markdown only
 
