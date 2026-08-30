@@ -237,9 +237,12 @@ export function StockDetailClient({
 
       {/* 2 - Analysis & Verdict */}
       <Section title="Analysis & Verdict">
-        <WidgetBoundary label="AI Insight">
-          <StockAIInsight symbol={symbol} />
-        </WidgetBoundary>
+        {/* Temporarily disabled - Anthropic API 502 errors */}
+        {false && (
+          <WidgetBoundary label="AI Insight">
+            <StockAIInsight symbol={symbol} />
+          </WidgetBoundary>
+        )}
         <WidgetBoundary label="Analyst Ratings">
           <AnalystRatingsCard data={data} />
         </WidgetBoundary>
