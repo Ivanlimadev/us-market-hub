@@ -7,6 +7,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { Footer } from '@/components/layout/Footer'
 import { CookieBanner } from '@/components/layout/CookieBanner'
+import { PushPrompt } from '@/components/layout/PushPrompt'
 
 const GA_ID = 'G-XV8QGQ8JS9'
 // AdSense publisher. Kept as an env override, but defaults to the real pub id
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <BottomNav />
           <CookieBanner />
+          <PushPrompt />
         </Providers>
       </body>
     </html>
