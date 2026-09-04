@@ -17,6 +17,7 @@ import { ROICalculator }     from '@/components/crypto/ROICalculator'
 import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 import { StockAIInsight }      from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts }   from '@/components/stock/StockRelatedPosts'
+import { CompanyStoryCard }     from '@/components/stock/CompanyStoryCard'
 import { CryptoBlogPosts }     from '@/components/crypto/CryptoBlogPosts'
 import { AppDownloadCard }      from '@/components/app/AppDownloadCard'
 
@@ -323,6 +324,11 @@ export function CryptoDetailClient({ id }: { id: string }) {
 
       <WidgetBoundary label="AI Insight">
         <StockAIInsight symbol={coin.id} apiPath={`/api/crypto/${coin.id}/insight`} />
+      </WidgetBoundary>
+
+      {/* "The Story of X" biography card (only for coins with a long-form history post) */}
+      <WidgetBoundary label="Coin Story">
+        <CompanyStoryCard symbol={coin.id} />
       </WidgetBoundary>
 
       <WidgetBoundary label="Related Articles">

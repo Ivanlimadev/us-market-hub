@@ -31,6 +31,19 @@ const STORIES: Record<string, Story> = {
     preview:
       'Apple’s story is the ultimate business epic. Founded on April 1, 1976 by Steve Jobs, Steve Wozniak and Ronald Wayne in a Los Altos garage, it struck gold with the Apple II before going public in 1980. But by 1997 Apple was roughly 90 days from bankruptcy, saved only when Steve Jobs returned and rival Microsoft invested $150 million to keep it alive. What followed was the greatest comeback in business history: the iMac, the iPod, and in 2007 the iPhone, which created the modern world. From a garage to the first company worth over $4 trillion, no journey in business is quite like it.',
   },
+  // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
+  BITCOIN: {
+    company: 'Bitcoin',
+    slug: 'bitcoin-complete-history-2008-2026-whitepaper-to-today',
+    preview:
+      'Bitcoin’s story reads like a thriller. On October 31, 2008, amid the global financial crisis, someone using the name Satoshi Nakamoto published a 9-page whitepaper proposing money no bank or government could control. The genesis block was mined in January 2009. From the famous 10,000-BTC pizza in 2010 to the collapse of Mt. Gox, the 2017 mania, the FTX crash, and the 2024 spot-ETF revolution that pushed it past $100,000, Bitcoin has been declared dead hundreds of times, and come back stronger every time. This is the complete story of the asset that started a financial revolution, and its creator who vanished.',
+  },
+  PEPE: {
+    company: 'Pepe',
+    slug: 'pepe-coin-complete-history-2023-2026-memecoin-frog',
+    preview:
+      'Of all the strange stories in crypto, few are stranger than Pepe. It is a token based on a cartoon frog meme, with no product, no company, and no promises other than being a meme. Launched in April 2023 with no pre-sale, it rocketed to a $1.6 billion market cap within weeks. By December 2024 it hit an all-time high and briefly topped $11 billion, worth more than some real companies, before crashing roughly 85% in 2025. This is the complete, honest story of PEPE: how a joke token became one of the most famous memecoins in history, and why it is one of the riskiest bets in all of crypto.',
+  },
 }
 
 export function CompanyStoryCard({ symbol }: { symbol: string }) {
