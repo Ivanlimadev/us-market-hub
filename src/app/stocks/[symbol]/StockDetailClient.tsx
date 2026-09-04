@@ -20,6 +20,7 @@ import { BuyHoldChecklist } from '@/components/stock/BuyHoldChecklist'
 import { EarningsCard } from '@/components/stock/EarningsCard'
 import { EarningsTimeBadge } from '@/components/stock/EarningsTimeBadge'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
+import { CompanyStoryCard } from '@/components/stock/CompanyStoryCard'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
@@ -212,6 +213,11 @@ export function StockDetailClient({
 
       {/* Key-stats card strip */}
       <KeyStatsStrip symbol={symbol} initialData={data} />
+
+      {/* "The Story of X" biography card (only for tickers with a long-form history post) */}
+      <WidgetBoundary label="Company Story">
+        <CompanyStoryCard symbol={symbol} />
+      </WidgetBoundary>
 
       {/* 1 - Price & Performance */}
       <Section title="Price & Performance">
