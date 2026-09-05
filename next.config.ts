@@ -16,7 +16,7 @@ const CSP = [
   // Fonts: self only
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget + YouTube video embeds (blog posts)
-  "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.safeframe.googlesyndication.com",
+  "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.safeframe.googlesyndication.com https://*.adtrafficquality.google",
   // Connections: self + all external APIs used + Google Analytics + Sentry
   "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.adtrafficquality.google",
   "object-src 'none'",
