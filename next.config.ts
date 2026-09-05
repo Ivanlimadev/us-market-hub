@@ -12,7 +12,7 @@ const CSP = [
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
-  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi https://icons.llamao.fi https://*.supabase.co https://lh3.googleusercontent.com https://images.pexels.com https://www.pexels.com https://*.googlesyndication.com https://*.g.doubleclick.net https://www.google.com",
+  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi https://icons.llamao.fi https://*.supabase.co https://lh3.googleusercontent.com https://images.pexels.com https://www.pexels.com https://*.googlesyndication.com https://*.g.doubleclick.net https://www.google.com https://*.adtrafficquality.google",
   // Fonts: self only
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget + YouTube video embeds (blog posts)
