@@ -50,6 +50,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Of all the strange stories in crypto, few are stranger than Pepe. It is a token based on a cartoon frog meme, with no product, no company, and no promises other than being a meme. Launched in April 2023 with no pre-sale, it rocketed to a $1.6 billion market cap within weeks. By December 2024 it hit an all-time high and briefly topped $11 billion, worth more than some real companies, before crashing roughly 85% in 2025. This is the complete, honest story of PEPE: how a joke token became one of the most famous memecoins in history, and why it is one of the riskiest bets in all of crypto.',
   },
+  ETHEREUM: {
+    company: 'Ethereum',
+    slug: 'ethereum-complete-history-2013-2026-vitalik-buterin-world-computer',
+    preview:
+      'Bitcoin proved you could move money without a bank. But a teenage programmer named Vitalik Buterin wanted more: a blockchain that could run any program. In late 2013, at just 19, he wrote the Ethereum whitepaper, introducing the smart contract, code that executes automatically with no bank or court to enforce it. After a 2014 crowdsale and a 2015 launch, Ethereum survived the devastating 2016 DAO hack (which split it from Ethereum Classic) and went on to power DeFi, NFTs and most of modern crypto. In 2022 it pulled off "The Merge," cutting its energy use by over 99%. This is the complete story of crypto’s world computer and the young genius who built it.',
+  },
 }
 
 export function CompanyStoryCard({ symbol }: { symbol: string }) {
