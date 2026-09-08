@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
     .from('blog_posts')
     .select('slug, title, excerpt, content, category, image_url, image_alt, published_at, tickers, author_slug')
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .contains('tickers', [ticker])
     .order('published_at', { ascending: false })
     .limit(limit)
