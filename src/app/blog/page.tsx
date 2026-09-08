@@ -42,6 +42,7 @@ export default async function BlogPage({
     .from('blog_posts')
     .select('slug, title, excerpt, category, image_url, image_alt, published_at')
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
 
   if (category && category !== 'All') {

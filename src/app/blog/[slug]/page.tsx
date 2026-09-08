@@ -59,6 +59,7 @@ export async function generateMetadata(
     .select('title, seo_title, seo_description, image_url')
     .eq('slug', slug)
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .single()
 
   if (!data) return {}
@@ -245,6 +246,7 @@ export default async function BlogPostPage({
     .select('*')
     .eq('slug', slug)
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .single<Post>()
 
   if (!post) notFound()
@@ -286,6 +288,7 @@ export default async function BlogPostPage({
     .from('blog_posts')
     .select('slug, title, excerpt, image_url, image_alt, category')
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .eq('category', post.category)
     .neq('slug', slug)
     .order('published_at', { ascending: false })
@@ -298,6 +301,7 @@ export default async function BlogPostPage({
       .from('blog_posts')
       .select('slug, title, excerpt, image_url, image_alt, category')
       .eq('status', 'published')
+      .lte('published_at', new Date().toISOString())
       .neq('slug', slug)
       .not('slug', 'in', `(${related.map(p => `"${p.slug}"`).join(',')})`)
       .order('published_at', { ascending: false })
@@ -309,6 +313,7 @@ export default async function BlogPostPage({
     .from('blog_posts')
     .select('slug, title, excerpt, image_url, image_alt, category')
     .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .neq('slug', slug)
     .order('published_at', { ascending: false })
     .limit(4)
