@@ -31,6 +31,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Apple’s story is the ultimate business epic. Founded on April 1, 1976 by Steve Jobs, Steve Wozniak and Ronald Wayne in a Los Altos garage, it struck gold with the Apple II before going public in 1980. But by 1997 Apple was roughly 90 days from bankruptcy, saved only when Steve Jobs returned and rival Microsoft invested $150 million to keep it alive. What followed was the greatest comeback in business history: the iMac, the iPod, and in 2007 the iPhone, which created the modern world. From a garage to the first company worth over $4 trillion, no journey in business is quite like it.',
   },
+  MCD: {
+    company: 'McDonald’s',
+    slug: 'mcdonalds-complete-history-1940-2026-brothers-kroc-empire',
+    preview:
+      'The story of McDonald’s is not really about hamburgers. In 1940 brothers Richard and Maurice McDonald opened a drive-in in San Bernardino, California, and in 1948 reinvented it with the "Speedee Service System," effectively inventing fast food. Then a milkshake-machine salesman named Ray Kroc saw an empire the brothers never imagined. He founded the McDonald’s Corporation in 1955 and, guided by the insight that the company was really "in the real estate business," turned a burger stand into a global cash machine. After buying out the brothers in 1961 and going public in 1965, McDonald’s grew into a 40,000-restaurant empire and one of the market’s most reliable dividend stocks. This is the complete story of the Golden Arches.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
