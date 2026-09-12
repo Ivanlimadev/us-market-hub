@@ -37,6 +37,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'The story of McDonald’s is not really about hamburgers. In 1940 brothers Richard and Maurice McDonald opened a drive-in in San Bernardino, California, and in 1948 reinvented it with the "Speedee Service System," effectively inventing fast food. Then a milkshake-machine salesman named Ray Kroc saw an empire the brothers never imagined. He founded the McDonald’s Corporation in 1955 and, guided by the insight that the company was really "in the real estate business," turned a burger stand into a global cash machine. After buying out the brothers in 1961 and going public in 1965, McDonald’s grew into a 40,000-restaurant empire and one of the market’s most reliable dividend stocks. This is the complete story of the Golden Arches.',
   },
+  MSFT: {
+    company: 'Microsoft',
+    slug: 'microsoft-complete-history-1975-2026-basic-to-ai-empire',
+    preview:
+      'Microsoft’s story is really two stories. Founded on April 4, 1975 by childhood friends Bill Gates and Paul Allen, it made one of the shrewdest deals in business history: licensing MS-DOS to IBM in 1980 while keeping the right to sell it to everyone else, which put its software at the heart of the entire PC industry. Windows and Office turned that into a near-monopoly, drawing a landmark antitrust case settled in 2001. Then came a lost decade under Steve Ballmer, missing both search and mobile. But in 2014 Satya Nadella engineered one of the greatest comebacks ever, betting on the cloud (Azure) and later becoming OpenAI’s biggest backer. From a dorm-room idea to a $3.7 trillion AI titan, this is the complete story of Microsoft.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
