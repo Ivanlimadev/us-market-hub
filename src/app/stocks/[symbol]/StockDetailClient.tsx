@@ -21,6 +21,7 @@ import { EarningsCard } from '@/components/stock/EarningsCard'
 import { EarningsTimeBadge } from '@/components/stock/EarningsTimeBadge'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
 import { CompanyStoryCard } from '@/components/stock/CompanyStoryCard'
+import { BacktestSnapshotCard } from '@/components/stock/BacktestSnapshotCard'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
 import { AlertButton } from '@/components/watchlist/AlertButton'
@@ -214,18 +215,12 @@ export function StockDetailClient({
       {/* Key-stats card strip */}
       <KeyStatsStrip symbol={symbol} initialData={data} />
 
-      {/* Backtest CTA - deep-links to the calculator prefilled with this ticker.
-          Just a Link (no compute) so the asset page stays light. */}
-      <Link
-        href={`/calculators/backtest?symbol=${symbol.toLowerCase()}`}
-        className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-5 py-3 transition-colors hover:border-[#c8a45d]/50"
-      >
-        <span className="text-sm text-zinc-300">
-          <span className="font-semibold text-white">Backtest {symbol}</span>
-          <span className="hidden sm:inline"> - see how $10k or a monthly plan would have performed</span>
-        </span>
-        <span className="text-sm font-semibold text-[#c8a45d]">Run backtest →</span>
-      </Link>
+      {/* Backtest Snapshot card - runs a default $10k buy & hold inline and links
+          to the full calculator. Isolated in a WidgetBoundary; renders null on
+          any failure so it can never break the page. */}
+      <WidgetBoundary label="Backtest Snapshot">
+        <BacktestSnapshotCard symbol={symbol} />
+      </WidgetBoundary>
 
       {/* "The Story of X" biography card (only for tickers with a long-form history post) */}
       <WidgetBoundary label="Company Story">
