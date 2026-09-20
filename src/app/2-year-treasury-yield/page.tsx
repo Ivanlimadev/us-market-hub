@@ -50,6 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Live 2-year US Treasury yield chart and rate. See the 2-year yield today, how it tracks Fed policy, and the 2s10s spread that has warned of every recent recession.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
+      images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
       title:       `2-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 2-year US Treasury yield in real time: the market’s best read on Fed policy, plus the 2s10s recession signal.`,
     },

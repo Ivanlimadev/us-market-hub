@@ -54,6 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Live gold price and interactive chart. See the price of gold today per ounce, what moves it, and why gold trades as an inflation hedge and safe haven - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
+      images: ['https://stockmarketroi.com/opengraph-image'],
       title:       `Gold Price Today - Live Chart & Price per Ounce ${year}`,
       description: `Track the gold price in real time: interactive chart and what moves gold - the dollar, real rates and safe-haven demand.`,
     },
