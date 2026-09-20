@@ -54,6 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Live crude oil price (WTI) and interactive chart. See the oil price today per barrel, what moves it - OPEC, supply, demand and geopolitics - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
+      images: ['https://images.pexels.com/photos/87236/pexels-photo-87236.jpeg'],
       title:       `Oil Price Today - Live WTI Crude Oil Chart & Price ${year}`,
       description: `Track the WTI crude oil price in real time: interactive chart and what moves oil - OPEC, supply, demand and geopolitics.`,
     },

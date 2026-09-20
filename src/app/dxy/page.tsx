@@ -56,6 +56,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Live US Dollar Index (DXY) chart and price. See what the dollar index is today, which currencies are in the basket, and what makes the dollar rise or fall - updated in real time.`,
     alternates:  { canonical: `${BASE}/dxy` },
     openGraph: {
+      images: ['https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg'],
       title:       `US Dollar Index (DXY) - Live Chart & Price ${year}`,
       description: `Track the US Dollar Index (DXY) in real time: interactive chart, the six currencies in the basket, and what moves the dollar.`,
     },

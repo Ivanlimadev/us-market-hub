@@ -52,6 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Live 10-year US Treasury yield chart and rate. See the 10-year yield today, what moves it, and why it drives mortgage rates, stocks and the dollar - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
+      images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
       title:       `10-Year Treasury Yield - Live Chart & Rate ${year}`,
       description: `Track the 10-year US Treasury yield in real time: interactive chart and what moves the most important interest rate in markets.`,
     },

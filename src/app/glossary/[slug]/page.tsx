@@ -23,6 +23,7 @@ export async function generateMetadata({
     description: t.short,
     alternates: { canonical: `https://stockmarketroi.com/glossary/${t.slug}` },
     openGraph: {
+      images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
       title: `${label} Explained`,
       description: t.short,
       type: 'article',
