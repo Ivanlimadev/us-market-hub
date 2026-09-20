@@ -2,16 +2,56 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { runBacktest, type Bar, type Strategy, type BacktestResult } from '@/lib/backtest'
+import { runBacktest, type Bar, type Strategy, type BacktestConfig, type BacktestResult } from '@/lib/backtest'
 
 const RANGES = ['1y', '2y', '5y', '10y'] as const
 type Range = (typeof RANGES)[number]
-
 const BENCHMARK = 'SPY'
 
 const usd = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
 const pct = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
+
+// Which configurable condition fields each strategy exposes.
+type Field = { key: keyof BacktestConfig; label: string; def: number }
+const STRATEGIES: { id: Strategy; name: string; blurb: string; fields: Field[] }[] = [
+  { id: 'lumpSum', name: 'Buy & Hold', blurb: 'Invest once and hold the whole time.', fields: [] },
+  { id: 'dca', name: 'Dollar-Cost Averaging', blurb: 'Invest a fixed amount every month.', fields: [{ key: 'monthly', label: 'Monthly ($)', def: 500 }] },
+  {
+    id: 'maCrossover',
+    name: 'Moving Average Crossover',
+    blurb: 'Buy when the fast average crosses above the slow one; sell when it crosses back below.',
+    fields: [
+      { key: 'fastPeriod', label: 'Fast MA (days)', def: 50 },
+      { key: 'slowPeriod', label: 'Slow MA (days)', def: 200 },
+    ],
+  },
+  {
+    id: 'trendFilter',
+    name: 'Trend Filter',
+    blurb: 'Hold while price is above a long moving average; move to cash when it drops below.',
+    fields: [{ key: 'maPeriod', label: 'MA period (days)', def: 200 }],
+  },
+  {
+    id: 'buyDip',
+    name: 'Buy the Dip',
+    blurb: 'Buy when price falls a set % below its peak; sell when it recovers a set % above your entry.',
+    fields: [
+      { key: 'dipPct', label: 'Dip to buy (%)', def: 10 },
+      { key: 'exitPct', label: 'Gain to sell (%)', def: 15 },
+    ],
+  },
+  {
+    id: 'rsi',
+    name: 'RSI (Oversold / Overbought)',
+    blurb: 'Buy when RSI falls below the oversold level; sell when it rises above the overbought level.',
+    fields: [
+      { key: 'rsiPeriod', label: 'RSI period', def: 14 },
+      { key: 'rsiOversold', label: 'Buy below', def: 30 },
+      { key: 'rsiOverbought', label: 'Sell above', def: 70 },
+    ],
+  },
+]
 
 async function fetchBars(symbol: string, range: Range): Promise<Bar[]> {
   const res = await fetch(`/api/history?symbol=${encodeURIComponent(symbol)}&range=${range}`)
@@ -23,22 +63,40 @@ async function fetchBars(symbol: string, range: Range): Promise<Bar[]> {
 export function BacktestCalc() {
   const params = useSearchParams()
   const [symbol, setSymbol] = useState('AAPL')
-  const [strategy, setStrategy] = useState<Strategy>('lumpSum')
-  const [initial, setInitial] = useState('10000')
-  const [monthly, setMonthly] = useState('500')
+  const [strategyId, setStrategyId] = useState<Strategy>('lumpSum')
   const [range, setRange] = useState<Range>('10y')
+  const [initial, setInitial] = useState('10000')
+  // condition params keyed by field name, seeded with each strategy's defaults
+  const [conds, setConds] = useState<Record<string, number>>({})
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<BacktestResult | null>(null)
-  const [benchmark, setBenchmark] = useState<BacktestResult | null>(null)
+  const [benchSpy, setBenchSpy] = useState<BacktestResult | null>(null)
+  const [benchHold, setBenchHold] = useState<BacktestResult | null>(null)
   const [ranSymbol, setRanSymbol] = useState('')
+  const [ranStrategy, setRanStrategy] = useState<Strategy>('lumpSum')
 
-  // Deep-link prefill: /calculators/backtest?symbol=AAPL (from asset pages).
+  const strat = STRATEGIES.find((s) => s.id === strategyId)!
+  const isSignal = !['lumpSum', 'dca'].includes(strategyId)
+
   useEffect(() => {
     const s = params.get('symbol')
     if (s) setSymbol(s.toUpperCase())
   }, [params])
+
+  // Seed condition defaults whenever the strategy changes.
+  useEffect(() => {
+    const next: Record<string, number> = {}
+    for (const f of strat.fields) next[f.key as string] = f.def
+    setConds(next)
+  }, [strategyId]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const buildCfg = useCallback((): BacktestConfig => {
+    const cfg: BacktestConfig = { strategy: strategyId, initial: Math.max(0, Number(initial) || 0) }
+    for (const f of strat.fields) (cfg as unknown as Record<string, number>)[f.key as string] = Number(conds[f.key as string] ?? f.def)
+    return cfg
+  }, [strategyId, initial, conds, strat])
 
   const run = useCallback(async () => {
     const sym = symbol.trim().toUpperCase()
@@ -46,44 +104,39 @@ export function BacktestCalc() {
     setLoading(true)
     setError(null)
     try {
-      const cfg = {
-        strategy,
-        initial: Math.max(0, Number(initial) || 0),
-        monthly: strategy === 'dca' ? Math.max(0, Number(monthly) || 0) : 0,
-      }
-      const [bars, benchBars] = await Promise.all([
-        fetchBars(sym, range),
-        fetchBars(BENCHMARK, range),
-      ])
+      const cfg = buildCfg()
+      const [bars, spyBars] = await Promise.all([fetchBars(sym, range), fetchBars(BENCHMARK, range)])
       const r = runBacktest(bars, cfg)
       if (!r) {
         setResult(null)
-        setBenchmark(null)
         setError(`No historical data for "${sym}". Check the ticker and try again.`)
         return
       }
       setResult(r)
-      setBenchmark(runBacktest(benchBars, cfg))
+      // Benchmarks: buy & hold the same asset (the key "did timing beat holding?" line)
+      // and buy & hold the S&P 500, both with the same starting capital.
+      setBenchHold(runBacktest(bars, { strategy: 'lumpSum', initial: cfg.initial }))
+      setBenchSpy(runBacktest(spyBars, { strategy: 'lumpSum', initial: cfg.initial }))
       setRanSymbol(sym)
+      setRanStrategy(cfg.strategy)
     } catch {
       setResult(null)
-      setBenchmark(null)
       setError(`Could not load data for "${sym}". Check the ticker and try again.`)
     } finally {
       setLoading(false)
     }
-  }, [symbol, strategy, initial, monthly, range])
+  }, [symbol, range, buildCfg])
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="text-2xl font-bold sm:text-3xl">Backtest Calculator</h1>
       <p className="mt-2 text-sm text-zinc-400">
-        Test how a strategy would have performed on any stock or ETF using real historical data.
-        Compare buy &amp; hold or dollar-cost averaging against the S&amp;P 500.
+        Test any stock or ETF against a real strategy using historical data. Pick a rule, set the conditions,
+        and see how it would have performed versus simply buying and holding.
       </p>
 
-      {/* Inputs */}
       <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+        {/* Ticker + period */}
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ticker</span>
@@ -103,9 +156,7 @@ export function BacktestCalc() {
                   key={r}
                   onClick={() => setRange(r)}
                   className={`flex-1 rounded-lg border px-2 py-2 text-sm ${
-                    range === r
-                      ? 'border-[#c8a45d] bg-[#c8a45d]/10 text-[#c8a45d]'
-                      : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                    range === r ? 'border-[#c8a45d] bg-[#c8a45d]/10 text-[#c8a45d]' : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
                   }`}
                 >
                   {r}
@@ -115,36 +166,28 @@ export function BacktestCalc() {
           </label>
         </div>
 
+        {/* Strategy select */}
         <div className="mt-4">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Strategy</span>
-          <div className="mt-1 flex gap-1">
-            <button
-              onClick={() => setStrategy('lumpSum')}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm ${
-                strategy === 'lumpSum'
-                  ? 'border-[#c8a45d] bg-[#c8a45d]/10 text-[#c8a45d]'
-                  : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
-              }`}
-            >
-              Lump Sum (Buy &amp; Hold)
-            </button>
-            <button
-              onClick={() => setStrategy('dca')}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm ${
-                strategy === 'dca'
-                  ? 'border-[#c8a45d] bg-[#c8a45d]/10 text-[#c8a45d]'
-                  : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
-              }`}
-            >
-              Dollar-Cost Averaging
-            </button>
-          </div>
+          <select
+            value={strategyId}
+            onChange={(e) => setStrategyId(e.target.value as Strategy)}
+            className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-[#c8a45d]"
+          >
+            {STRATEGIES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1.5 text-xs text-zinc-500">{strat.blurb}</p>
         </div>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        {/* Amount + condition params */}
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <label className="block">
             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              {strategy === 'lumpSum' ? 'Amount invested' : 'Starting amount'}
+              {strategyId === 'dca' ? 'Starting ($)' : 'Amount ($)'}
             </span>
             <input
               type="number"
@@ -153,17 +196,17 @@ export function BacktestCalc() {
               className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-[#c8a45d]"
             />
           </label>
-          {strategy === 'dca' && (
-            <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Monthly contribution</span>
+          {strat.fields.map((f) => (
+            <label key={f.key as string} className="block">
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">{f.label}</span>
               <input
                 type="number"
-                value={monthly}
-                onChange={(e) => setMonthly(e.target.value)}
+                value={conds[f.key as string] ?? f.def}
+                onChange={(e) => setConds((c) => ({ ...c, [f.key as string]: Number(e.target.value) }))}
                 className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-[#c8a45d]"
               />
             </label>
-          )}
+          ))}
         </div>
 
         <button
@@ -176,15 +219,14 @@ export function BacktestCalc() {
         {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
       </div>
 
-      {/* Results */}
       {result && (
         <div className="mt-6 space-y-5">
           <p className="text-sm text-zinc-400">
-            {ranSymbol} · {new Date(result.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}{' '}
-            to {new Date(result.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+            {ranSymbol} · {STRATEGIES.find((s) => s.id === ranStrategy)?.name} ·{' '}
+            {new Date(result.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} to{' '}
+            {new Date(result.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           </p>
 
-          {/* Headline cards */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Final Value" value={usd(result.finalValue)} accent />
             <Stat label="Total Invested" value={usd(result.totalInvested)} />
@@ -192,42 +234,67 @@ export function BacktestCalc() {
             <Stat label="Profit" value={usd(result.totalReturn)} good={result.totalReturn >= 0} />
           </div>
 
-          {/* Equity curve vs benchmark */}
-          {benchmark && <EquityChart a={result} b={benchmark} label={ranSymbol} />}
+          {benchHold && <EquityChart a={result} b={benchHold} label={`${ranSymbol} strategy`} bLabel={`Buy & Hold ${ranSymbol}`} />}
 
-          {/* Benchmark comparison */}
-          {benchmark && (
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm">
-              <div className="flex items-center justify-between">
+          {/* Benchmarks */}
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm">
+            {benchHold && ['maCrossover', 'buyDip', 'rsi', 'trendFilter', 'dca'].includes(ranStrategy) && (
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
                 <span className="text-zinc-400">
-                  Same strategy on <strong className="text-zinc-200">{BENCHMARK}</strong> (S&amp;P 500)
+                  vs just buying &amp; holding <strong className="text-zinc-200">{ranSymbol}</strong>
                 </span>
-                <span className={benchmark.returnPct >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                  {usd(benchmark.finalValue)} ({pct(benchmark.returnPct)})
+                <span className={benchHold.returnPct >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                  {usd(benchHold.finalValue)} ({pct(benchHold.returnPct)})
                 </span>
               </div>
+            )}
+            {benchSpy && (
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-zinc-400">
+                  vs Buy &amp; Hold <strong className="text-zinc-200">S&amp;P 500</strong>
+                </span>
+                <span className={benchSpy.returnPct >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                  {usd(benchSpy.finalValue)} ({pct(benchSpy.returnPct)})
+                </span>
+              </div>
+            )}
+            {benchHold && isSignal && (
               <p className="mt-2 text-xs text-zinc-500">
-                {ranSymbol} {result.returnPct >= benchmark.returnPct ? 'beat' : 'trailed'} the S&amp;P 500 by{' '}
-                {Math.abs(result.returnPct - benchmark.returnPct).toFixed(1)} percentage points over this period.
+                Your {STRATEGIES.find((s) => s.id === ranStrategy)?.name} strategy{' '}
+                {result.returnPct >= benchHold.returnPct ? 'beat' : 'trailed'} simply holding {ranSymbol} by{' '}
+                {Math.abs(result.returnPct - benchHold.returnPct).toFixed(1)} points. Most timing strategies
+                struggle to beat buy &amp; hold after you account for the days they sit in cash.
               </p>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Stat label="Asset CAGR" value={pct(result.cagr)} good={result.cagr >= 0} small />
+            <Stat label="CAGR" value={pct(result.cagr)} good={result.cagr >= 0} small />
             <Stat label="Max Drawdown" value={`${result.maxDrawdown.toFixed(1)}%`} good={false} small />
             <Stat label="Volatility" value={`${result.volatility.toFixed(1)}%`} small />
-            <Stat
-              label="Best / Worst Yr"
-              value={
-                result.bestYear && result.worstYear
-                  ? `${pct(result.bestYear.pct)} / ${pct(result.worstYear.pct)}`
-                  : '-'
-              }
-              small
-            />
+            {isSignal ? (
+              <Stat label="Trades" value={`${result.trades ?? 0}`} small />
+            ) : (
+              <Stat
+                label="Best / Worst Yr"
+                value={result.bestYear && result.worstYear ? `${pct(result.bestYear.pct)} / ${pct(result.worstYear.pct)}` : '-'}
+                small
+              />
+            )}
           </div>
+
+          {isSignal && (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label="Win Rate" value={result.winRatePct != null ? `${result.winRatePct.toFixed(0)}%` : '-'} small />
+              <Stat label="Time in Market" value={`${(result.timeInMarketPct ?? 0).toFixed(0)}%`} small />
+              <Stat
+                label="Best / Worst Yr"
+                value={result.bestYear && result.worstYear ? `${pct(result.bestYear.pct)} / ${pct(result.worstYear.pct)}` : '-'}
+                small
+              />
+            </div>
+          )}
 
           {/* Year-by-year */}
           <div className="overflow-hidden rounded-2xl border border-zinc-800">
@@ -235,7 +302,7 @@ export function BacktestCalc() {
               <thead className="bg-zinc-900 text-xs uppercase tracking-wider text-zinc-500">
                 <tr>
                   <th className="px-4 py-2 text-left">Year</th>
-                  <th className="px-4 py-2 text-right">Invested</th>
+                  {!isSignal && <th className="px-4 py-2 text-right">Invested</th>}
                   <th className="px-4 py-2 text-right">Value</th>
                   <th className="px-4 py-2 text-right">Return</th>
                 </tr>
@@ -244,11 +311,9 @@ export function BacktestCalc() {
                 {result.rows.map((r) => (
                   <tr key={r.year}>
                     <td className="px-4 py-2">{r.year}</td>
-                    <td className="px-4 py-2 text-right text-zinc-400">{usd(r.invested)}</td>
+                    {!isSignal && <td className="px-4 py-2 text-right text-zinc-400">{usd(r.invested)}</td>}
                     <td className="px-4 py-2 text-right">{usd(r.value)}</td>
-                    <td className={`px-4 py-2 text-right ${r.returnPct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {pct(r.returnPct)}
-                    </td>
+                    <td className={`px-4 py-2 text-right ${r.returnPct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{pct(r.returnPct)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -256,22 +321,22 @@ export function BacktestCalc() {
           </div>
 
           <p className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4 text-xs leading-relaxed text-zinc-500">
-            <strong className="text-zinc-400">Important:</strong> This backtest is for educational purposes
-            only and is not financial advice or a prediction of future results. It uses split- and
-            dividend-adjusted closing prices but does <strong>not</strong> account for trading fees, taxes,
-            slippage or bid/ask spreads. Historical data is delayed and may contain errors. Past performance
-            does not guarantee future results. Always do your own research before investing.
+            <strong className="text-zinc-400">Important:</strong> This backtest is for educational purposes only
+            and is not financial advice or a prediction of future results. It uses split- and dividend-adjusted
+            closing prices but does <strong>not</strong> account for trading fees, taxes, slippage or bid/ask
+            spreads, which hit active strategies hardest. Historical data is delayed and may contain errors.
+            Past performance does not guarantee future results.
           </p>
 
           <div className="flex flex-wrap gap-3 text-sm">
             <Link href={`/stocks/${ranSymbol.toLowerCase()}`} className="text-[#c8a45d] hover:underline">
               View {ranSymbol} analysis →
             </Link>
-            <Link href="/screener" className="text-[#c8a45d] hover:underline">
-              Find stocks with our Screener →
+            <Link href="/blog/how-to-backtest-a-stock-beginners-guide-2026" className="text-[#c8a45d] hover:underline">
+              How to backtest a stock →
             </Link>
-            <Link href="/calculators/dca" className="text-[#c8a45d] hover:underline">
-              DCA Calculator →
+            <Link href="/screener" className="text-[#c8a45d] hover:underline">
+              Stock Screener →
             </Link>
           </div>
         </div>
@@ -280,21 +345,8 @@ export function BacktestCalc() {
   )
 }
 
-function Stat({
-  label,
-  value,
-  accent,
-  good,
-  small,
-}: {
-  label: string
-  value: string
-  accent?: boolean
-  good?: boolean
-  small?: boolean
-}) {
-  const color =
-    good === true ? 'text-emerald-400' : good === false ? 'text-red-400' : accent ? 'text-[#c8a45d]' : 'text-zinc-100'
+function Stat({ label, value, accent, good, small }: { label: string; value: string; accent?: boolean; good?: boolean; small?: boolean }) {
+  const color = good === true ? 'text-emerald-400' : good === false ? 'text-red-400' : accent ? 'text-[#c8a45d]' : 'text-zinc-100'
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">{label}</div>
@@ -303,8 +355,7 @@ function Stat({
   )
 }
 
-/** Minimal, dependency-free SVG line chart of two equity curves (normalized width). */
-function EquityChart({ a, b, label }: { a: BacktestResult; b: BacktestResult; label: string }) {
+function EquityChart({ a, b, label, bLabel }: { a: BacktestResult; b: BacktestResult; label: string; bLabel: string }) {
   const W = 640
   const H = 180
   const pad = 4
@@ -312,7 +363,6 @@ function EquityChart({ a, b, label }: { a: BacktestResult; b: BacktestResult; la
   const max = Math.max(...all, 1)
   const min = Math.min(...all, 0)
   const span = max - min || 1
-
   const path = (eq: { value: number }[]) => {
     const n = eq.length
     if (n < 2) return ''
@@ -324,16 +374,11 @@ function EquityChart({ a, b, label }: { a: BacktestResult; b: BacktestResult; la
       })
       .join(' ')
   }
-
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
       <div className="mb-2 flex gap-4 text-xs">
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2 w-4 rounded bg-[#c8a45d]" /> {label}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2 w-4 rounded bg-zinc-500" /> S&amp;P 500 (SPY)
-        </span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded bg-[#c8a45d]" /> {label}</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded bg-zinc-500" /> {bLabel}</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none">
         <path d={path(b.equity)} fill="none" stroke="#71717a" strokeWidth="1.5" />
