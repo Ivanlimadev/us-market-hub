@@ -47,8 +47,28 @@ export function BacktestSnapshotCard({ symbol }: { symbol: string }) {
     }
   }, [symbol])
 
-  // Silent when there is nothing meaningful to show.
-  if (state === 'empty') return null
+  // On failure/no-data, degrade to a simple CTA link instead of disappearing -
+  // so the card is always present on the asset page, never silently missing.
+  if (state === 'empty') {
+    return (
+      <div className="rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-900/40 p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-[#c8a45d]" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#c8a45d]">Backtest Snapshot</span>
+        </div>
+        <p className="text-sm text-zinc-300">
+          See how a lump sum or a monthly plan in {symbol} would have performed.
+        </p>
+        <Link
+          href={`/calculators/backtest?symbol=${symbol.toLowerCase()}`}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#c8a45d] px-4 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-[#d9b86e]"
+        >
+          Run a backtest
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+    )
+  }
 
   const years = result ? Math.round(result.years) : 10
 
