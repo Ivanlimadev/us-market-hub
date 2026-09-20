@@ -34,6 +34,16 @@ export const metadata: Metadata = {
   description:
     'Track US stocks, ETFs and indices. Portfolio tracker, screener, dividends and market heatmap.',
   metadataBase: new URL(SITE_URL),
+  // max-image-preview:large is required for Google Discover eligibility (Discover
+  // is image-heavy and only surfaces pages that allow a large image preview).
+  // Applied site-wide; page-level metadata inherits unless it overrides robots.
+  robots: {
+    index: true,
+    follow: true,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+    'max-video-preview': -1,
+  },
   openGraph: {
     siteName:    'Stock Market ROI',
     locale:      'en_US',
