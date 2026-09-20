@@ -43,6 +43,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Microsoft’s story is really two stories. Founded on April 4, 1975 by childhood friends Bill Gates and Paul Allen, it made one of the shrewdest deals in business history: licensing MS-DOS to IBM in 1980 while keeping the right to sell it to everyone else, which put its software at the heart of the entire PC industry. Windows and Office turned that into a near-monopoly, drawing a landmark antitrust case settled in 2001. Then came a lost decade under Steve Ballmer, missing both search and mobile. But in 2014 Satya Nadella engineered one of the greatest comebacks ever, betting on the cloud (Azure) and later becoming OpenAI’s biggest backer. From a dorm-room idea to a $3.7 trillion AI titan, this is the complete story of Microsoft.',
   },
+  NU: {
+    company: 'Nubank',
+    slug: 'nubank-complete-history-2013-2026-david-velez-purple-card-empire',
+    preview:
+      'Nubank was born from one man’s frustration with Brazil’s banks. David Vélez, a Colombian Stanford MBA working at Sequoia, was shocked that just five banks controlled 80% of the Brazilian market, charging brutal fees and offering terrible service behind bulletproof glass. So in 2013 he built the opposite: a no-fee purple credit card run entirely from a phone. With co-founders Cristina Junqueira (ex-Itaú) and Edward Wible, and backing from Sequoia and later Warren Buffett, that single card grew into the largest digital bank outside Asia. After a blockbuster 2021 NYSE IPO, Nubank now serves around 139 million customers, turns billion-dollar quarterly profits, and has launched in the US. This is the complete story of the purple-card empire.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
