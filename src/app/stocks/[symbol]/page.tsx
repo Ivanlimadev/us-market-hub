@@ -38,7 +38,13 @@ export async function generateMetadata({
     title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
     description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict - updated daily.`,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
-    robots: indexable ? undefined : { index: false, follow: true },
+    // Explicit robots (not `undefined`): an undefined value suppresses the root
+    // layout's robots tag, which would drop max-image-preview:large and make the
+    // page ineligible for Google Discover. Indexable pages must carry the large
+    // image preview; dead/dataless tickers stay noindex,follow.
+    robots: indexable
+      ? { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 }
+      : { index: false, follow: true },
     openGraph: {
       title:       `${upper} Stock Analysis ${year} - Bull Case, Bear Case & Verdict`,
       description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,

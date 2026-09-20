@@ -43,7 +43,11 @@ export async function generateMetadata({
     title:      `${name} (${symbol}) Price, Chart & Analysis ${year}`,
     description:`${name} live price, market cap, chart, ROI calculator, exchange listings and in-depth analysis for ${year}.`,
     alternates: { canonical: `https://stockmarketroi.com/crypto/${id}` },
-    robots: INDEXED_CRYPTO.has(id) ? undefined : { index: false, follow: true },
+    // Explicit robots (not `undefined`): undefined would suppress the root
+    // max-image-preview:large tag and drop Google Discover eligibility.
+    robots: INDEXED_CRYPTO.has(id)
+      ? { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 }
+      : { index: false, follow: true },
     openGraph: {
       title:       `${name} (${symbol}) Crypto Analysis ${year}`,
       description: `Live ${name} price, market stats, historical ROI and exchange listings.`,
