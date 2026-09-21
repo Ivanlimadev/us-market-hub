@@ -49,6 +49,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Nubank was born from one man’s frustration with Brazil’s banks. David Vélez, a Colombian Stanford MBA working at Sequoia, was shocked that just five banks controlled 80% of the Brazilian market, charging brutal fees and offering terrible service behind bulletproof glass. So in 2013 he built the opposite: a no-fee purple credit card run entirely from a phone. With co-founders Cristina Junqueira (ex-Itaú) and Edward Wible, and backing from Sequoia and later Warren Buffett, that single card grew into the largest digital bank outside Asia. After a blockbuster 2021 NYSE IPO, Nubank now serves around 139 million customers, turns billion-dollar quarterly profits, and has launched in the US. This is the complete story of the purple-card empire.',
   },
+  PBR: {
+    company: 'Petrobras',
+    slug: 'petrobras-complete-history-1953-2026-oil-is-ours-pre-salt-lava-jato-pbr',
+    preview:
+      'Few companies are as tied to a nation as Petrobras is to Brazil. Born in 1953 from the nationalist cry "O petróleo é nosso" (the oil is ours), President Getúlio Vargas gave it a state monopoly over Brazil’s oil. It mastered deepwater drilling, and in 2006 struck one of the century’s biggest discoveries: the "pré-sal," billions of barrels buried under the ocean floor, briefly making it one of the world’s most valuable companies. Then came the fall: the 2014 Lava Jato scandal, Brazil’s largest ever, with roughly $3 billion in bribes, crashing the stock and toppling politicians. Petrobras rebuilt into a dividend powerhouse, but the government still controls it, so politics is always part of PBR. This is the complete story.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
