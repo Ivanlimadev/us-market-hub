@@ -55,6 +55,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Few companies are as tied to a nation as Petrobras is to Brazil. Born in 1953 from the nationalist cry "O petróleo é nosso" (the oil is ours), President Getúlio Vargas gave it a state monopoly over Brazil’s oil. It mastered deepwater drilling, and in 2006 struck one of the century’s biggest discoveries: the "pré-sal," billions of barrels buried under the ocean floor, briefly making it one of the world’s most valuable companies. Then came the fall: the 2014 Lava Jato scandal, Brazil’s largest ever, with roughly $3 billion in bribes, crashing the stock and toppling politicians. Petrobras rebuilt into a dividend powerhouse, but the government still controls it, so politics is always part of PBR. This is the complete story.',
   },
+  VALE: {
+    company: 'Vale',
+    slug: 'vale-complete-history-1942-2026-iron-ore-giant-china-brumadinho-vale',
+    preview:
+      'Vale is a company of extraordinary scale and painful contradictions. Founded by the Brazilian government in 1942 as Companhia Vale do Rio Doce to develop the iron ore of Minas Gerais, it was privatized in 1997 and unleashed as a global competitor. Then history handed it China: as the country industrialized, its endless hunger for steel made Vale, sitting on the high-grade Carajás ore, the world’s largest iron ore producer. But its modern story is inseparable from tragedy: the 2015 Mariana disaster and, above all, the 2019 Brumadinho dam collapse that killed 270 people, the worst industrial accident in Brazil’s history. Today Vale is a cyclical, high-dividend mining giant tied to China, still repairing its reputation. This is the complete story.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
