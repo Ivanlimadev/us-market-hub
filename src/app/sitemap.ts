@@ -49,6 +49,10 @@ const STATIC_ROUTES = [
   { url: '/calculators/first-million',          priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/calculators/simple-interest',        priority: 0.75, changeFrequency: 'monthly' },
   { url: '/calculators/percentage',             priority: 0.75, changeFrequency: 'monthly' },
+  { url: '/calculators/backtest',               priority: 0.8,  changeFrequency: 'monthly' },
+  // Google Web Stories (AMP)
+  { url: '/web-stories/the-story-of-nvidia',    priority: 0.7,  changeFrequency: 'monthly' },
+  { url: '/web-stories/the-story-of-nubank',    priority: 0.7,  changeFrequency: 'monthly' },
   { url: '/about',                              priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/contact',                            priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/privacy',                     priority: 0.3,  changeFrequency: 'monthly' },
