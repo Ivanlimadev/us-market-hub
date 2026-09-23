@@ -8,6 +8,7 @@ export const dynamic = 'force-static'
 
 const BASE = 'https://stockmarketroi.com'
 const PUBLISHER_LOGO = `${BASE}/ivan-lima.jpg` // square-ish brand logo (AMP requires publisher-logo-src)
+const GA_ID = 'G-XV8QGQ8JS9' // same GA4 property as the main site (layout.tsx)
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -44,6 +45,7 @@ function renderStory(story: WebStory): string {
   <meta charset="utf-8">
   <script async src="https://cdn.ampproject.org/v0.js"></script>
   <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
+  <script async custom-element="amp-story-auto-analytics" src="https://cdn.ampproject.org/v0/amp-story-auto-analytics-0.1.js"></script>
   <title>${esc(story.title)} | ${esc(story.publisher)}</title>
   <meta name="description" content="${esc(story.title)} - a visual story from ${esc(story.publisher)}.">
   <link rel="canonical" href="${storyUrl}">
@@ -68,6 +70,7 @@ function renderStory(story: WebStory): string {
     publisher="${esc(story.publisher)}"
     publisher-logo-src="${PUBLISHER_LOGO}"
     poster-portrait-src="${poster}">${pages}
+    <amp-story-auto-analytics gtag-id="${GA_ID}"></amp-story-auto-analytics>
   </amp-story>
 </body>
 </html>`
