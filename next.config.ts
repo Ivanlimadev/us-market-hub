@@ -40,7 +40,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        // Global strict headers - excludes /web-stories, which are AMP documents
+        // that need the ampproject CDN and must be framable by Google's viewer.
+        source: '/((?!web-stories/).*)',
         headers: [
           { key: 'X-Frame-Options',            value: 'DENY' },
           { key: 'X-Content-Type-Options',      value: 'nosniff' },
@@ -51,6 +53,33 @@ const nextConfig: NextConfig = {
           { key: 'Cross-Origin-Resource-Policy',      value: 'same-origin' },
           { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
           { key: 'Content-Security-Policy',           value: CSP },
+        ],
+      },
+      {
+        // Google Web Stories (AMP): allow the ampproject runtime + framing by
+        // Google's Web Story viewer. Keeps HSTS/nosniff but relaxes the strict
+        // CSP and drops X-Frame-Options so the AMP runtime can load and render.
+        source: '/web-stories/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options',     value: 'nosniff' },
+          { key: 'Referrer-Policy',            value: 'strict-origin-when-cross-origin' },
+          { key: 'Strict-Transport-Security',  value: 'max-age=31536000; includeSubDomains' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' https://cdn.ampproject.org",
+              "style-src 'unsafe-inline' https://cdn.ampproject.org",
+              "img-src 'self' data: https://images.pexels.com https://stockmarketroi.com https://cdn.ampproject.org",
+              "font-src data: https://cdn.ampproject.org https://fonts.gstatic.com",
+              "connect-src 'self' https://cdn.ampproject.org https://*.ampproject.org",
+              "frame-src https://cdn.ampproject.org",
+              "frame-ancestors 'self' https://*.google.com https://*.ampproject.org https://cdn.ampproject.org",
+              "object-src 'none'",
+              "base-uri 'self'",
+            ].join('; '),
+          },
         ],
       },
     ]
