@@ -84,7 +84,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
   return new Response(renderStory(story), {
     headers: {
       'content-type': 'text/html; charset=utf-8',
-      'cache-control': 'public, max-age=3600, s-maxage=86400',
+      // Short browser cache so a stale copy from before a fix expires quickly;
+      // Google caches the story on its own side regardless.
+      'cache-control': 'public, max-age=60, s-maxage=600, stale-while-revalidate=60',
     },
   })
 }
