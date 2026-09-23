@@ -162,7 +162,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Only the top coins are listed; obscure ones are noindex to stay focused.
-  const cryptoUrls: MetadataRoute.Sitemap = TOP_CRYPTO.slice(0, 100).map((id) => ({
+  // Dedupe: the curated list can repeat an id across sector blocks (e.g.
+  // immutable-x, band-protocol), which would emit duplicate <loc> entries.
+  const cryptoIds = [...new Set(TOP_CRYPTO)].slice(0, 100)
+  const cryptoUrls: MetadataRoute.Sitemap = cryptoIds.map((id) => ({
     url: `${BASE}/crypto/${id}`,
     lastModified: now,
     changeFrequency: 'daily',
