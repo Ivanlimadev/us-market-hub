@@ -61,6 +61,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Vale is a company of extraordinary scale and painful contradictions. Founded by the Brazilian government in 1942 as Companhia Vale do Rio Doce to develop the iron ore of Minas Gerais, it was privatized in 1997 and unleashed as a global competitor. Then history handed it China: as the country industrialized, its endless hunger for steel made Vale, sitting on the high-grade Carajás ore, the world’s largest iron ore producer. But its modern story is inseparable from tragedy: the 2015 Mariana disaster and, above all, the 2019 Brumadinho dam collapse that killed 270 people, the worst industrial accident in Brazil’s history. Today Vale is a cyclical, high-dividend mining giant tied to China, still repairing its reputation. This is the complete story.',
   },
+  AMZN: {
+    company: 'Amazon',
+    slug: 'amazon-complete-history-1994-2026-garage-bookstore-to-everything-store-aws',
+    preview:
+      'Amazon began in 1994 as an online bookstore run from a rented Seattle garage, its business plan written by Jeff Bezos on a cross-country drive. After a 1997 IPO, Bezos followed a radical "Get Big Fast" strategy, plowing every dollar into growth and refusing to show a profit for years. Amazon survived a 90%+ crash in the dot-com bust, expanded into the "everything store," and made two moves that cemented its dominance: Prime (2005) and, crucially, AWS (2006), a cloud "side project" that became the company’s secret profit engine and the top cloud platform on Earth. It crossed $1 trillion in 2018 and now, past $2.7 trillion, AWS sits at the center of the AI boom. This is the complete story.',
+  },
   // Crypto (keyed by CoinGecko id, uppercased): shown on /crypto/[id] pages.
   BITCOIN: {
     company: 'Bitcoin',
