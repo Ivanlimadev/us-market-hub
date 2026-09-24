@@ -193,4 +193,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(259027), heading: 'The fallout', text: 'A R$41 billion hole, the largest bank fraud in Brazil’s history.' },
     ],
   },
+  'morgan-stanley-brazil-2026': {
+    slug: 'morgan-stanley-brazil-2026',
+    title: 'Wall Street Bets on Brazil',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'morgan-stanley-overweight-brazil-stocks-2026-election-ibovespa-ewz',
+    slides: [
+      { image: px(16010153), heading: 'Wall Street Bets on Brazil', text: 'Morgan Stanley just turned bullish on Brazilian stocks.' },
+      { image: px(12903168), heading: 'The call', text: 'It raised Brazil to “overweight,” its most constructive rating.' },
+      { image: px(6801648), heading: 'The target', text: 'Base case: the Ibovespa at 240,000, about +31% in reais by mid-2027.' },
+      { image: px(5849557), heading: 'Why now', text: 'Falling interest rates could channel tens of billions into local stocks.' },
+      { image: px(7412095), heading: 'The swing', text: 'One event decides it all: the October 4, 2026 election.' },
+      { image: px(210607), heading: 'The catch', text: 'The same setup carries a bear case, a drop of about 42%.' },
+    ],
+  },
 }

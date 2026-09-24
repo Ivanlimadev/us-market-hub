@@ -63,6 +63,7 @@ const STATIC_ROUTES = [
   { url: '/web-stories/the-story-of-bitcoin',      priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/the-story-of-ethereum',     priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/the-story-of-banco-master', priority: 0.7, changeFrequency: 'monthly' },
+  { url: '/web-stories/morgan-stanley-brazil-2026',  priority: 0.7, changeFrequency: 'monthly' },
   { url: '/about',                              priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/contact',                            priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/privacy',                     priority: 0.3,  changeFrequency: 'monthly' },
