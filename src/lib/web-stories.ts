@@ -221,4 +221,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(210607), heading: 'The catch', text: 'Near records at about $5 trillion, a lot of good news is already priced in.' },
     ],
   },
+  'yields-vs-stocks-2026': {
+    slug: 'yields-vs-stocks-2026',
+    title: 'Yields Hit a 2007 High. Stocks Won’t Break.',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'stock-market-today-september-24-2026-yields-2007-high-stocks-resilient',
+    slides: [
+      { image: px(6120214), heading: 'Yields Hit a 2007 High', text: 'The 10-year Treasury yield is near 5.18%, the highest since 2007.' },
+      { image: px(6801648), heading: 'But stocks won’t break', text: 'The S&P, Nasdaq and Dow are all holding near record highs.' },
+      { image: px(12903168), heading: 'Why yields are rising', text: 'Hotter inflation has markets bracing for the Fed, not rate cuts.' },
+      { image: px(534216), heading: 'Why stocks hold', text: 'Resilient earnings, the AI boom, and a fear gauge under 15.' },
+      { image: px(210607), heading: 'The tension', text: 'Both signals cannot be right forever. Something has to give.' },
+      { image: px(6120214), heading: 'What to watch', text: 'The 10-year yield is the tell for the market’s next big move.' },
+    ],
+  },
 }
