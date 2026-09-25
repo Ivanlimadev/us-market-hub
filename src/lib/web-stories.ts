@@ -207,4 +207,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(210607), heading: 'The catch', text: 'The same setup carries a bear case, a drop of about 42%.' },
     ],
   },
+  'apple-stock-rally-2026': {
+    slug: 'apple-stock-rally-2026',
+    title: 'Why Apple Stock Is Near a Record High',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'apple-aapl-stock-rally-record-high-iphone-services-2026',
+    slides: [
+      { image: px(788946), heading: 'Apple Near a Record High', text: 'AAPL is back near its all-time high, around $338.' },
+      { image: px(6801648), heading: 'The rally', text: 'Up more than 20% in three months, and about 42% in a year.' },
+      { image: px(1294886), heading: 'The engine', text: 'Strong iPhone 17 demand reassured a nervous market.' },
+      { image: px(205421), heading: 'The other engine', text: 'Services keeps compounding in the mid-teens: high-margin and sticky.' },
+      { image: px(12903168), heading: 'The proof', text: 'Nine straight earnings beats, and a smooth handoff to a new CEO.' },
+      { image: px(210607), heading: 'The catch', text: 'Near records at about $5 trillion, a lot of good news is already priced in.' },
+    ],
+  },
 }
