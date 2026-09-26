@@ -120,10 +120,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
         {/* Microsoft Clarity - heatmaps and session recordings (Bing/Clarity).
-            Must load early (afterInteractive, not lazyOnload): with lazyOnload
-            Clarity's init raced and failed ("a[c] is not a function"), so no
-            session data was collected. */}
-        <Script id="clarity" strategy="afterInteractive">{`
+            NOTE: the Script id must NOT be "clarity" - an element with id="clarity"
+            is exposed as window.clarity (named element access), which clobbers
+            Clarity's own global so its snippet ("window.clarity = window.clarity ||
+            fn") keeps the DOM element and the tag throws "a[c] is not a function",
+            collecting nothing. Use a non-colliding id. */}
+        <Script id="ms-clarity" strategy="afterInteractive">{`
           (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
