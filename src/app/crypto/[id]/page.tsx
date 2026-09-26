@@ -2,10 +2,23 @@ import type { Metadata } from 'next'
 import { CryptoDetailClient } from './CryptoDetailClient'
 import CommentsSection from '@/components/comments/CommentsSection'
 import { PageTracker } from '@/components/PageTracker'
+import { cgCoin } from '@/lib/coingecko'
+import type { CryptoDetail } from '@/types/crypto'
+import { buildCryptoIntro, buildCryptoFaqs, hasCryptoSeoData } from '@/lib/crypto-seo'
+import { StockSeoIntro, StockFaqSection } from '@/components/stock/StockFaq'
 
 // ISR: render on first request, cache and revalidate every 60 seconds
 export const revalidate = 60
 export const dynamicParams = true
+
+// Deduped with the page body via cgCoin's in-memory cache; safe to call twice.
+async function getCoin(id: string): Promise<CryptoDetail | null> {
+  try {
+    return await cgCoin(id)
+  } catch {
+    return null
+  }
+}
 
 // Only top coins are indexed; obscure ones are noindex to keep the crawlable
 // footprint focused (mirrors the stock-page policy for search/AdSense quality).
@@ -37,11 +50,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id }  = await params
   const name    = id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ')
-  const symbol  = id.slice(0, 4).toUpperCase()
   const year    = new Date().getFullYear()
+  const coin    = await getCoin(id)
+  // Real ticker (e.g. bitcoin -> BTC), not a crude slice of the slug (BITC).
+  const symbol  = coin?.symbol ? coin.symbol.toUpperCase() : id.slice(0, 4).toUpperCase()
   return {
     title:      `${name} (${symbol}) Price, Chart & Analysis ${year}`,
-    description:`${name} live price, market cap, chart, ROI calculator, exchange listings and in-depth analysis for ${year}.`,
+    description:`${name} (${symbol}) live price, market cap, chart, ROI calculator, exchange listings and in-depth analysis for ${year}.`,
     alternates: { canonical: `https://stockmarketroi.com/crypto/${id}` },
     // Explicit robots (not `undefined`): undefined would suppress the root
     // max-image-preview:large tag and drop Google Discover eligibility.
@@ -67,30 +82,46 @@ export default async function CryptoDetailPage({
 }) {
   const { id } = await params
   const name   = id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ')
-  const symbol = id.slice(0, 4).toUpperCase()
   const year   = new Date().getFullYear()
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebPage',
-        '@id':   `https://stockmarketroi.com/crypto/${id}`,
-        url:     `https://stockmarketroi.com/crypto/${id}`,
-        name:    `${name} (${symbol}) Price & Analysis ${year}`,
-        description: `Live ${name} price, market cap, ROI calculator and in-depth analysis.`,
-        isPartOf: { '@id': 'https://stockmarketroi.com' },
-      },
-      {
-        '@type':           'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',   item: 'https://stockmarketroi.com' },
-          { '@type': 'ListItem', position: 2, name: 'Crypto', item: 'https://stockmarketroi.com/crypto' },
-          { '@type': 'ListItem', position: 3, name: name,     item: `https://stockmarketroi.com/crypto/${id}` },
-        ],
-      },
-    ],
+  // Server-side coin data (deduped with generateMetadata) powers unique SEO
+  // copy, FAQs and FAQPage structured data - the same treatment stock pages get.
+  const coin   = await getCoin(id)
+  const symbol = coin?.symbol ? coin.symbol.toUpperCase() : id.slice(0, 4).toUpperCase()
+  const hasData = coin ? hasCryptoSeoData(coin) : false
+  const intro  = hasData && coin ? buildCryptoIntro(coin) : null
+  const faqs   = hasData && coin ? buildCryptoFaqs(coin) : []
+
+  const graph: object[] = [
+    {
+      '@type': 'WebPage',
+      '@id':   `https://stockmarketroi.com/crypto/${id}`,
+      url:     `https://stockmarketroi.com/crypto/${id}`,
+      name:    `${name} (${symbol}) Price & Analysis ${year}`,
+      description: `Live ${name} price, market cap, ROI calculator and in-depth analysis.`,
+      isPartOf: { '@id': 'https://stockmarketroi.com' },
+    },
+    {
+      '@type':           'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home',   item: 'https://stockmarketroi.com' },
+        { '@type': 'ListItem', position: 2, name: 'Crypto', item: 'https://stockmarketroi.com/crypto' },
+        { '@type': 'ListItem', position: 3, name: name,     item: `https://stockmarketroi.com/crypto/${id}` },
+      ],
+    },
+  ]
+  if (faqs.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    })
   }
+
+  const jsonLd = { '@context': 'https://schema.org', '@graph': graph }
 
   return (
     <>
@@ -100,6 +131,14 @@ export default async function CryptoDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <CryptoDetailClient id={id} />
+
+      {(intro || faqs.length > 0) && (
+        <div className="mx-auto max-w-screen-xl space-y-6 px-4 pb-4">
+          {intro && <StockSeoIntro text={intro} />}
+          {faqs.length > 0 && <StockFaqSection faqs={faqs} symbol={symbol} />}
+        </div>
+      )}
+
       <div className="mx-auto max-w-screen-xl px-4 pb-8">
         <CommentsSection entityType="crypto" entityId={id} />
       </div>
