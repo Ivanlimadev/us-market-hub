@@ -15,14 +15,16 @@ const esc = (s: string) =>
 
 function renderStory(story: WebStory): string {
   const storyUrl = `${BASE}/web-stories/${story.slug}`
-  const articleUrl = `${BASE}/blog/${story.articleSlug}`
+  // CTA target: an asset page (ctaHref) when provided, otherwise the source blog post.
+  const articleUrl = story.ctaHref ? `${BASE}${story.ctaHref}` : `${BASE}/blog/${story.articleSlug}`
+  const ctaLabel = story.ctaLabel ?? 'Read the full story'
   const poster = story.slides[0].image
 
   const pages = story.slides
     .map((slide, i) => {
       const isLast = i === story.slides.length - 1
       const cta = isLast
-        ? `<amp-story-cta-layer><a href="${articleUrl}" class="cta">Read the full story &rarr;</a></amp-story-cta-layer>`
+        ? `<amp-story-cta-layer><a href="${articleUrl}" class="cta">${esc(ctaLabel)} &rarr;</a></amp-story-cta-layer>`
         : ''
       return `
     <amp-story-page id="p${i}">
