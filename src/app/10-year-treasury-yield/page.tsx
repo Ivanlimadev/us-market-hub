@@ -48,17 +48,17 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `10-Year Treasury Yield - Live Chart & Rate Today ${year}`,
-    description: `Live 10-year US Treasury yield chart and rate. See the 10-year yield today, what moves it, and why it drives mortgage rates, stocks and the dollar - updated in real time.`,
+    title:       `10-Year Treasury Yield (US10Y): Live Chart & Rate ${year}`,
+    description: `Live 10-year US Treasury yield (US10Y) chart and rate. See the 10-year yield today, what moves it, and why it drives mortgage rates, stocks and the dollar - updated in real time.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
       images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
-      title:       `10-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `10-Year Treasury Yield (US10Y): Live Chart & Rate ${year}`,
       description: `Track the 10-year US Treasury yield in real time: interactive chart and what moves the most important interest rate in markets.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `10-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `10-Year Treasury Yield (US10Y): Live Chart & Rate ${year}`,
       description: `Track the 10-year US Treasury yield in real time and see why it drives mortgages, stocks and the dollar.`,
     },
   }
@@ -113,7 +113,7 @@ export default async function TenYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `10-Year Treasury Yield - Live Chart & Rate ${year}`,
+        name:    `10-Year Treasury Yield (US10Y): Live Chart & Rate ${year}`,
         description: 'Live 10-year US Treasury yield chart and rate, and what moves the benchmark interest rate.',
         isPartOf: { '@id': BASE },
       },

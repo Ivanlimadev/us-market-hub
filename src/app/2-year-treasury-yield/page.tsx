@@ -46,17 +46,17 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `2-Year Treasury Yield - Live Chart & Rate Today ${year}`,
-    description: `Live 2-year US Treasury yield chart and rate. See the 2-year yield today, how it tracks Fed policy, and the 2s10s spread that has warned of every recent recession.`,
+    title:       `2-Year Treasury Yield (US2Y): Live Chart & Rate ${year}`,
+    description: `Live 2-year US Treasury yield (US2Y) chart and rate. See the 2-year yield today, how it tracks Fed policy, and the 2s10s spread that has warned of every recent recession.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
       images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
-      title:       `2-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `2-Year Treasury Yield (US2Y): Live Chart & Rate ${year}`,
       description: `Track the 2-year US Treasury yield in real time: the market’s best read on Fed policy, plus the 2s10s recession signal.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `2-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `2-Year Treasury Yield (US2Y): Live Chart & Rate ${year}`,
       description: `Track the 2-year US Treasury yield in real time - the market’s best read on where the Fed is headed.`,
     },
   }
@@ -107,7 +107,7 @@ export default async function TwoYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `2-Year Treasury Yield - Live Chart & Rate ${year}`,
+        name:    `2-Year Treasury Yield (US2Y): Live Chart & Rate ${year}`,
         description: 'Live 2-year US Treasury yield chart and rate, Fed expectations, and the 2s10s recession signal.',
         isPartOf: { '@id': BASE },
       },
