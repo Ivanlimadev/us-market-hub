@@ -119,8 +119,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             crossOrigin="anonymous"
           />
         )}
-        {/* Microsoft Clarity - heatmaps and session recordings (Bing/Clarity). */}
-        <Script id="clarity" strategy="lazyOnload">{`
+        {/* Microsoft Clarity - heatmaps and session recordings (Bing/Clarity).
+            Must load early (afterInteractive, not lazyOnload): with lazyOnload
+            Clarity's init raced and failed ("a[c] is not a function"), so no
+            session data was collected. */}
+        <Script id="clarity" strategy="afterInteractive">{`
           (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
