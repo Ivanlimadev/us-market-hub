@@ -18,6 +18,7 @@ import { WidgetBoundary }    from '@/components/ui/WidgetBoundary'
 import { StockAIInsight }      from '@/components/stock/StockAIInsight'
 import { StockRelatedPosts }   from '@/components/stock/StockRelatedPosts'
 import { CompanyStoryCard }     from '@/components/stock/CompanyStoryCard'
+import { NewsletterCta }        from '@/components/NewsletterCta'
 import { CryptoBlogPosts }     from '@/components/crypto/CryptoBlogPosts'
 import { AppDownloadCard }      from '@/components/app/AppDownloadCard'
 
@@ -409,6 +410,10 @@ export function CryptoDetailClient({ id }: { id: string }) {
 
       <WidgetBoundary label="Latest Crypto Analysis">
         <CryptoBlogPosts />
+      </WidgetBoundary>
+
+      <WidgetBoundary label="Newsletter">
+        <NewsletterCta />
       </WidgetBoundary>
 
       <AppDownloadCard variant="hero" />
