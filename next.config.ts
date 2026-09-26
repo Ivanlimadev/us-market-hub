@@ -8,17 +8,17 @@ const CSP = [
   // googlesyndication/googleadservices hosts the CSP silently blocks AdSense → 0
   // ad impressions.
   // 'unsafe-eval' removed — Next.js 15 App Router does not require it in production.
-  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.clarity.ms https://*.clarity.ms",
   // Styles: self + inline (Tailwind/CSS-in-JS)
   "style-src 'self' 'unsafe-inline'",
   // Images: self + data URIs + external logo/chart/news sources
-  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi https://icons.llamao.fi https://*.supabase.co https://lh3.googleusercontent.com https://images.pexels.com https://www.pexels.com https://*.googlesyndication.com https://*.g.doubleclick.net https://www.google.com https://*.adtrafficquality.google",
+  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com https://s.yimg.com https://logo.clearbit.com https://financialmodelingprep.com https://assets.parqet.com https://cdn.snapi.dev https://images.financialmodelingprep.com https://icons.llama.fi https://icons.llamao.fi https://*.supabase.co https://lh3.googleusercontent.com https://images.pexels.com https://www.pexels.com https://*.googlesyndication.com https://*.g.doubleclick.net https://www.google.com https://*.adtrafficquality.google https://*.clarity.ms https://c.bing.com",
   // Fonts: self only
   "font-src 'self'",
   // Frames: Cloudflare Turnstile widget + YouTube video embeds (blog posts)
   "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.safeframe.googlesyndication.com https://*.adtrafficquality.google",
   // Connections: self + all external APIs used + Google Analytics + Sentry
-  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.adtrafficquality.google",
+  "connect-src 'self' https://*.supabase.co https://api.coingecko.com https://api.marketstack.com https://stocknewsapi.com https://api.llama.fi https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://api.alternative.me wss://*.kraken.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://*.adtrafficquality.google https://*.clarity.ms https://c.bing.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -119,6 +119,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             crossOrigin="anonymous"
           />
         )}
+        {/* Microsoft Clarity - heatmaps and session recordings (Bing/Clarity). */}
+        <Script id="clarity" strategy="lazyOnload">{`
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "yod79j9fuk");
+        `}</Script>
         <Providers>
           <Navbar />
           {/* bottom padding keeps content/footer clear of the floating dock (all sizes) */}
