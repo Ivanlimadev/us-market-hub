@@ -20,40 +20,50 @@ export async function generateMetadata({
   const upper = symbol.toUpperCase()
   const year  = new Date().getFullYear()
 
-  // Index policy (content-gated): a page is indexable when it actually has real
-  // data on it. TOP_STOCKS are always indexable; any other ticker is indexable
-  // as long as it has real data (hasSeoData: a live price or a market cap). Only
-  // dead/delisted/dataless tickers stay noindex,follow - so they never become
-  // "scaled" thin content. The fetch is deduped with the page body's
-  // fetchStockData via Next's request-scoped fetch cache.
-  // Delisted tickers still return a stale last price (which passes hasSeoData),
-  // so exclude them explicitly - otherwise their thin, frozen pages get indexed.
-  let indexable = !isDelisted(upper) && isTopStock(upper)
-  if (!indexable && !isDelisted(upper)) {
-    const data = await fetchStockData(upper)
-    indexable = data ? hasSeoData(data) : false
-  }
+  // Fetch once (deduped with the page body via Next's request-scoped fetch
+  // cache) so the title and description can be built from the real company name
+  // and sector, instead of one template repeated across every ticker.
+  const data = await fetchStockData(upper)
+
+  // Index policy (content-gated): TOP_STOCKS are always indexable; any other
+  // ticker is indexable only when it has real data (hasSeoData). Delisted or
+  // dataless tickers stay noindex,follow so they never become "scaled" thin
+  // content.
+  const indexable =
+    !isDelisted(upper) && (isTopStock(upper) || (data ? hasSeoData(data) : false))
+
+  const isFund = isEtf(upper)
+  const name   = data?.name && data.name.toUpperCase() !== upper ? data.name : null
+  const label  = name ? `${name} (${upper})` : upper
+  const sector = data?.info?.sector ? `${data.info.sector} ` : ''
+
+  // Rotate the descriptive tail deterministically by ticker so titles are not a
+  // single duplicated template across the whole universe.
+  const hooks = isFund
+    ? ['ETF Price & Analysis', 'ETF Price & Holdings', 'ETF Overview & Holdings']
+    : ['Stock Forecast & Analysis', 'Stock Price & Forecast', 'Stock Analysis & Fair Value', 'Stock Price Target & Outlook']
+  let hh = 0
+  for (let i = 0; i < upper.length; i++) hh = (hh * 31 + upper.charCodeAt(i)) >>> 0
+  const hook = hooks[hh % hooks.length]
+
+  const title = `${label} ${hook} (${year})`
+  const description = isFund
+    ? `${label} ETF analysis for ${year}: price, holdings, performance and whether it fits your portfolio. Updated daily.`
+    : `${label} ${sector}stock analysis for ${year}: valuation, fundamentals, dividend, bull vs bear case and our buy, hold or avoid verdict. Updated daily.`
+  const social = `${label}: fundamentals, bull and bear case, and our verdict for ${year}.`
 
   return {
-    title:       `${upper} Stock Analysis ${year}: Is It a Buy or Overvalued?`,
-    description: `${upper} stock analysis for ${year}: bull case, bear case, fair value, key financials and our buy/hold/avoid verdict - updated daily.`,
+    title,
+    description,
     alternates:  { canonical: `https://stockmarketroi.com/stocks/${symbol.toLowerCase()}` },
     // Explicit robots (not `undefined`): an undefined value suppresses the root
     // layout's robots tag, which would drop max-image-preview:large and make the
-    // page ineligible for Google Discover. Indexable pages must carry the large
-    // image preview; dead/dataless tickers stay noindex,follow.
+    // page ineligible for Google Discover. Dataless tickers stay noindex,follow.
     robots: indexable
       ? { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 }
       : { index: false, follow: true },
-    openGraph: {
-      title:       `${upper} Stock Analysis ${year} - Bull Case, Bear Case & Verdict`,
-      description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
-    },
-    twitter: {
-      card:        'summary_large_image',
-      title:       `${upper} Stock Analysis ${year} - Bull Case, Bear Case & Verdict`,
-      description: `Fundamental analysis of ${upper}: growth, valuation, profitability, and whether it's a buy or avoid in ${year}.`,
-    },
+    openGraph: { title, description: social },
+    twitter:   { card: 'summary_large_image', title, description: social },
   }
 }
 

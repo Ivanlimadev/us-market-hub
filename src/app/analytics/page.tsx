@@ -76,7 +76,7 @@ export default async function AnalyticsPage({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
             <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">Total Page Views</p>
-            <p className="text-3xl font-bold text-emerald-400">{analytics.totalViews.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-emerald-400">{analytics.totalViews.toLocaleString('en-US')}</p>
           </div>
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
             <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">Unique Pages Tracked</p>
@@ -99,7 +99,7 @@ export default async function AnalyticsPage({
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-zinc-300">{device.name}</span>
                   <span className="text-sm font-semibold text-zinc-400">
-                    {device.value.toLocaleString()} ({((device.value / analytics.totalViews) * 100).toFixed(1)}%)
+                    {device.value.toLocaleString('en-US')} ({((device.value / analytics.totalViews) * 100).toFixed(1)}%)
                   </span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
@@ -125,7 +125,7 @@ export default async function AnalyticsPage({
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-zinc-300">{browser.name}</span>
                   <span className="text-sm font-semibold text-zinc-400">
-                    {browser.value.toLocaleString()} ({((browser.value / analytics.totalViews) * 100).toFixed(1)}%)
+                    {browser.value.toLocaleString('en-US')} ({((browser.value / analytics.totalViews) * 100).toFixed(1)}%)
                   </span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
@@ -151,11 +151,11 @@ export default async function AnalyticsPage({
                     <code className="text-sm font-mono text-zinc-300">{page.path}</code>
                   </div>
                   <div className="text-xs text-zinc-600 ml-8 mt-1">
-                    {page.devices.desktop.toLocaleString()} desktop · {page.devices.mobile.toLocaleString()} mobile
+                    {page.devices.desktop.toLocaleString('en-US')} desktop · {page.devices.mobile.toLocaleString('en-US')} mobile
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-emerald-400">{page.count.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-emerald-400">{page.count.toLocaleString('en-US')}</p>
                   <p className="text-xs text-zinc-600">views</p>
                 </div>
               </div>

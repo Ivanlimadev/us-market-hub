@@ -15,7 +15,7 @@ function fmtCap(n: number): string {
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)} trillion`
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)} billion`
   if (n >= 1e6) return `$${(n / 1e6).toFixed(0)} million`
-  return `$${n.toLocaleString()}`
+  return `$${n.toLocaleString('en-US')}`
 }
 
 function capTier(n: number): string {

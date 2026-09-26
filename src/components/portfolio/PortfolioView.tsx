@@ -97,7 +97,7 @@ function HoldingCard({ h, divThisMonth, divAllTime }: {
       if (n >= 1)    return n.toLocaleString('en-US', { maximumFractionDigits: 8 })
       return n.toFixed(8)
     }
-    return n.toLocaleString()
+    return n.toLocaleString('en-US')
   }
 
   return (

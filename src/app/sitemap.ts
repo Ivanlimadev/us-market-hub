@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { TOP_STOCKS, ALL_SYMBOLS } from '@/lib/stock-universe'
+import { TOP_STOCKS } from '@/lib/stock-universe'
 import { GLOSSARY_SLUGS } from '@/lib/glossary'
 
 // The sitemap is backed by the Supabase blog_posts table, which changes daily.
@@ -172,15 +172,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // highest priority; the rest are indexed only when their page has real data
   // (content-gated in generateMetadata), so listing them here just aids
   // discovery of the newly-indexable pages without creating "scaled content".
-  const topSet = new Set(TOP_STOCKS)
-  const stockUrls: MetadataRoute.Sitemap = ALL_SYMBOLS.map((symbol) => ({
-    // Lowercase to match the canonical URL on each stock page
-    // (page.tsx uses symbol.toLowerCase()). Emitting uppercase here made Google
-    // treat the sitemap URL as a non-canonical "alternate" and skip indexing.
+  // Only the curated TOP_STOCKS are submitted. The long-tail universe pages stay
+  // index,follow and discoverable via internal links, but flooding the sitemap
+  // with ~1,000 near-identical templated pages on a young domain just produced
+  // "Discovered - currently not indexed" at scale and diluted crawl budget. We
+  // focus the sitemap on the names that can actually rank. Lowercase to match
+  // the canonical URL on each stock page (page.tsx uses symbol.toLowerCase()).
+  const stockUrls: MetadataRoute.Sitemap = TOP_STOCKS.map((symbol) => ({
     url: `${BASE}/stocks/${symbol.toLowerCase()}`,
     lastModified: now,
     changeFrequency: 'daily',
-    priority: topSet.has(symbol) ? 0.8 : 0.6,
+    priority: 0.8,
   }))
 
   // Glossary term pages (evergreen definitions).
@@ -194,7 +196,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Only the top coins are listed; obscure ones are noindex to stay focused.
   // Dedupe: the curated list can repeat an id across sector blocks (e.g.
   // immutable-x, band-protocol), which would emit duplicate <loc> entries.
-  const cryptoIds = [...new Set(TOP_CRYPTO)].slice(0, 100)
+  // Trimmed to the top 50 to keep the sitemap focused on rankable pages.
+  const cryptoIds = [...new Set(TOP_CRYPTO)].slice(0, 50)
   const cryptoUrls: MetadataRoute.Sitemap = cryptoIds.map((id) => ({
     url: `${BASE}/crypto/${id}`,
     lastModified: now,
