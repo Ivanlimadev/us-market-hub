@@ -86,6 +86,12 @@ const STORIES: Record<string, Story> = {
     preview:
       'Bitcoin proved you could move money without a bank. But a teenage programmer named Vitalik Buterin wanted more: a blockchain that could run any program. In late 2013, at just 19, he wrote the Ethereum whitepaper, introducing the smart contract, code that executes automatically with no bank or court to enforce it. After a 2014 crowdsale and a 2015 launch, Ethereum survived the devastating 2016 DAO hack (which split it from Ethereum Classic) and went on to power DeFi, NFTs and most of modern crypto. In 2022 it pulled off "The Merge," cutting its energy use by over 99%. This is the complete story of crypto’s world computer and the young genius who built it.',
   },
+  AAVE: {
+    company: 'Aave',
+    slug: 'aave-rwa-tokenization-defi-lending-institutional-adoption-2026',
+    preview:
+      'Aave is the closest thing decentralized finance has to a bank, except there is no bank. It began in 2017 as ETHLend, built by Finnish founder Stani Kulechov, and rebranded to Aave, the Finnish word for "ghost," before its lending protocol went live in 2020. The idea was radical: let anyone lend or borrow crypto through software instead of a bank, with no forms, no credit checks and no permission, all governed by holders of the AAVE token. It grew into the largest lending protocol in crypto, crossing $1 trillion in cumulative loans by 2026, launching its own stablecoin (GHO) and shipping V4. Now it is chasing something bigger: real-world assets. Through Horizon, its institutional platform built with Centrifuge, Circle and VanEck, Aave wants to become the credit layer where tokenized Treasuries and Wall Street liquidity meet DeFi’s always-on markets. This is the story of DeFi’s biggest bank, and its boldest bet yet.',
+  },
 }
 
 export function CompanyStoryCard({ symbol }: { symbol: string }) {
