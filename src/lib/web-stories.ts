@@ -20,7 +20,10 @@ export interface WebStory {
   title: string
   publisher: string
   /** The full article this story summarizes; used for the closing CTA. */
-  articleSlug: string
+  articleSlug?: string
+  /** Optional CTA override: link to an asset page (e.g. /crypto/bitcoin or /stocks/aapl) instead of a blog post. */
+  ctaHref?: string
+  ctaLabel?: string
   slides: StorySlide[]
 }
 
@@ -247,6 +250,21 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(205421), heading: 'Horizon: the bridge', text: 'Aave’s institutional platform lets funds borrow against tokenized Treasuries.' },
       { image: px(6120214), heading: 'The big bet', text: 'Aave wants to be the credit layer of a tokenized Wall Street.' },
       { image: px(730547), heading: 'The catch', text: 'It is still early: adoption is tiny versus TradFi, and regulation sets the pace.' },
+    ],
+  },
+  'what-if-1000-bitcoin': {
+    slug: 'what-if-1000-bitcoin',
+    title: 'What If You Invested $1,000 in Bitcoin?',
+    publisher: 'Stock Market ROI',
+    ctaHref: '/crypto/bitcoin',
+    ctaLabel: 'Try your own number on the Bitcoin page',
+    slides: [
+      { image: px(730547), heading: 'What If You Invested $1,000 in Bitcoin?', text: 'The answer says a lot about the last decade.' },
+      { image: px(5980743), heading: 'Rewind to 2016', text: 'Ten years ago, one Bitcoin cost about $600.' },
+      { image: px(7788009), heading: 'The result', text: 'That $1,000 would be worth roughly $138,000 by 2026.' },
+      { image: px(6801648), heading: 'But it was a wild ride', text: 'Bitcoin crashed more than 80% several times along the way.' },
+      { image: px(8369648), heading: 'Past returns are not a promise', text: 'What happened once is never guaranteed to happen again.' },
+      { image: px(843700), heading: 'Run your own numbers', text: 'Pick any amount and any date on the live Bitcoin page.' },
     ],
   },
 }
