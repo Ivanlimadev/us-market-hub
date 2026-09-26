@@ -642,4 +642,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(730547), heading: 'See the real number', text: 'Check the live price and history on the Bitcoin Cash page.' },
     ],
   },
+  'wall-street-vs-consumers-2026': {
+    slug: 'wall-street-vs-consumers-2026',
+    title: 'Wall Street Is Calm. Consumers Are Not.',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'stock-market-week-wall-street-calm-consumers-inflation-warning-september-2026',
+    slides: [
+      { image: px(6120214), heading: 'Wall Street Is Calm. Consumers Are Not.', text: 'A split screen worth paying attention to.' },
+      { image: px(6801648), heading: 'The calm', text: 'Stocks closed the week near records, with the fear gauge under 15.' },
+      { image: px(264636), heading: 'Now look closer', text: 'US consumer sentiment just crashed to 48.1, near recession levels.' },
+      { image: px(6770610), heading: 'The inflation fear', text: 'One-year inflation expectations jumped to 4.6%, the highest since June.' },
+      { image: px(210607), heading: 'The tell: gold', text: 'Gold pushed to a record near $4,320. That is the market buying insurance.' },
+      { image: px(12903168), heading: 'So what now?', text: 'The gap between Wall Street and Main Street is unusually wide.' },
+    ],
+  },
 }
