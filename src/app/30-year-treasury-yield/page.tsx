@@ -46,17 +46,17 @@ async function getYield(): Promise<{ value: number; prevClose: number } | null> 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear()
   return {
-    title:       `30-Year Treasury Yield - Live Chart & Rate Today ${year}`,
-    description: `Live 30-year US Treasury yield chart and rate. See the 30-year yield today, what moves the long bond, and why it drives mortgages and long-term inflation expectations.`,
+    title:       `30-Year Treasury Yield (US30Y): Live Chart & Rate ${year}`,
+    description: `Live 30-year US Treasury yield (US30Y) chart and rate. See the 30-year yield today, what moves the long bond, and why it drives mortgages and long-term inflation expectations.`,
     alternates:  { canonical: `${BASE}${PATH}` },
     openGraph: {
       images: ['https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg'],
-      title:       `30-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `30-Year Treasury Yield (US30Y): Live Chart & Rate ${year}`,
       description: `Track the 30-year US Treasury yield (the "long bond") in real time: interactive chart and what moves it.`,
     },
     twitter: {
       card:        'summary_large_image',
-      title:       `30-Year Treasury Yield - Live Chart & Rate ${year}`,
+      title:       `30-Year Treasury Yield (US30Y): Live Chart & Rate ${year}`,
       description: `Track the 30-year US Treasury yield (the long bond) in real time and see what moves it.`,
     },
   }
@@ -107,7 +107,7 @@ export default async function ThirtyYearYieldPage() {
         '@type': 'WebPage',
         '@id':   `${BASE}${PATH}`,
         url:     `${BASE}${PATH}`,
-        name:    `30-Year Treasury Yield - Live Chart & Rate ${year}`,
+        name:    `30-Year Treasury Yield (US30Y): Live Chart & Rate ${year}`,
         description: 'Live 30-year US Treasury yield chart and rate, and what moves the long bond.',
         isPartOf: { '@id': BASE },
       },
