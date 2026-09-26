@@ -60,8 +60,8 @@ export function GlobalCryptoStats() {
       <StatCard label="24h Volume" value={fmt(data?.total_volume_usd ?? 0)} />
       <StatCard label="BTC Dominance" value={`${(data?.btc_dominance ?? 0).toFixed(1)}%`} />
       <StatCard label="ETH Dominance" value={`${(data?.eth_dominance ?? 0).toFixed(1)}%`} />
-      <StatCard label="Active Coins" value={(data?.active_cryptocurrencies ?? 0).toLocaleString()} />
-      <StatCard label="Exchanges" value={(data?.markets ?? 0).toLocaleString()} />
+      <StatCard label="Active Coins" value={(data?.active_cryptocurrencies ?? 0).toLocaleString('en-US')} />
+      <StatCard label="Exchanges" value={(data?.markets ?? 0).toLocaleString('en-US')} />
     </div>
   )
 }

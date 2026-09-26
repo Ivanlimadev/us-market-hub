@@ -49,7 +49,7 @@ export function CompanyInfo({ data }: { data: StockDetailData }) {
             <div>
               <p className="text-[10px] text-zinc-600">Employees</p>
               <p className="text-xs font-medium text-zinc-300">
-                {info.employees.toLocaleString()}
+                {info.employees.toLocaleString('en-US')}
               </p>
             </div>
           </div>

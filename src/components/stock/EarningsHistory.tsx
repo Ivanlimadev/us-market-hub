@@ -11,7 +11,7 @@ function fmtB(n: number | null): string {
   if (abs >= 1e12) return `${sign}$${(abs / 1e12).toFixed(1)}T`
   if (abs >= 1e9)  return `${sign}$${(abs / 1e9).toFixed(1)}B`
   if (abs >= 1e6)  return `${sign}$${(abs / 1e6).toFixed(0)}M`
-  return `${sign}$${abs.toLocaleString()}`
+  return `${sign}$${abs.toLocaleString('en-US')}`
 }
 
 function fmtEps(n: number | null): string {
@@ -211,7 +211,7 @@ function fmtShares(n: number | null): string {
   if (n === null) return '-'
   if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`
   if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`
-  return n.toLocaleString()
+  return n.toLocaleString('en-US')
 }
 
 function CapitalReturnsChart({ cr }: { cr: EdgarCapitalReturns[] }) {

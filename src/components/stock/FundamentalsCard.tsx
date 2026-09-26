@@ -8,7 +8,7 @@ function fmtLarge(n: number | null): string {
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`
   if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`
-  return `$${n.toLocaleString()}`
+  return `$${n.toLocaleString('en-US')}`
 }
 function fmtPct(n: number | null): string {
   if (n === null) return '-'
@@ -55,8 +55,8 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
         { label: 'Day Low', value: fmtPrice(eod?.low) },
         { label: '52W High', value: fmtPrice(info?.week52High) },
         { label: '52W Low', value: fmtPrice(info?.week52Low) },
-        { label: 'Volume', value: eod?.volume != null ? eod.volume.toLocaleString() : '-' },
-        { label: 'Avg Volume (3M)', value: info?.avgVolume3m ? info.avgVolume3m.toLocaleString() : '-' },
+        { label: 'Volume', value: eod?.volume != null ? eod.volume.toLocaleString('en-US') : '-' },
+        { label: 'Avg Volume (3M)', value: info?.avgVolume3m ? info.avgVolume3m.toLocaleString('en-US') : '-' },
         { label: 'Beta', value: fmtNum(info?.beta ?? null) },
       ],
     },

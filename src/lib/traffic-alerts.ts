@@ -61,7 +61,7 @@ export function generateAlertMessage(metrics: TrafficMetrics): string {
 [Traffic Alert] ${metrics.status.toUpperCase()}
 ${metrics.message}
 
-Time: ${new Date(metrics.timestamp).toLocaleString()}
+Time: ${new Date(metrics.timestamp).toLocaleString('en-US')}
 Views (last 24h): ${metrics.viewsLastDay}
 Views (last 1h): ${metrics.viewsLastHour}
 

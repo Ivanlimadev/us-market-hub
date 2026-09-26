@@ -5,14 +5,14 @@ function fmtSupply(n: number, sym: string): string {
   if (n >= 1e12) return `${(n / 1e12).toFixed(2)}T ${sym}`
   if (n >= 1e9)  return `${(n / 1e9).toFixed(2)}B ${sym}`
   if (n >= 1e6)  return `${(n / 1e6).toFixed(2)}M ${sym}`
-  return `${n.toLocaleString()} ${sym}`
+  return `${n.toLocaleString('en-US')} ${sym}`
 }
 
 function fmtUSD(n: number): string {
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
   if (n >= 1e9)  return `$${(n / 1e9).toFixed(2)}B`
   if (n >= 1e6)  return `$${(n / 1e6).toFixed(2)}M`
-  return `$${n.toLocaleString()}`
+  return `$${n.toLocaleString('en-US')}`
 }
 
 export function SupplyCard({ coin }: { coin: CryptoDetail }) {
