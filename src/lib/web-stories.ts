@@ -235,4 +235,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(6120214), heading: 'What to watch', text: 'The 10-year yield is the tell for the market’s next big move.' },
     ],
   },
+  'aave-tokenization-2026': {
+    slug: 'aave-tokenization-2026',
+    title: 'Aave: DeFi’s Bridge to Wall Street',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'aave-rwa-tokenization-defi-lending-institutional-adoption-2026',
+    slides: [
+      { image: px(8369648), heading: 'DeFi’s Biggest Bank Meets Wall Street', text: 'Aave is bridging crypto lending to tokenized real-world assets.' },
+      { image: px(6801648), heading: 'A bank with no bank', text: 'Aave has originated over $1 trillion in loans, with no branch or banker.' },
+      { image: px(12903168), heading: 'Tokenization is here', text: 'Over $32 billion of real-world assets now live on-chain, led by BlackRock.' },
+      { image: px(205421), heading: 'Horizon: the bridge', text: 'Aave’s institutional platform lets funds borrow against tokenized Treasuries.' },
+      { image: px(6120214), heading: 'The big bet', text: 'Aave wants to be the credit layer of a tokenized Wall Street.' },
+      { image: px(730547), heading: 'The catch', text: 'It is still early: adoption is tiny versus TradFi, and regulation sets the pace.' },
+    ],
+  },
 }
