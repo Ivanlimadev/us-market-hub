@@ -66,6 +66,7 @@ const STATIC_ROUTES = [
   { url: '/web-stories/morgan-stanley-brazil-2026',  priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/apple-stock-rally-2026',       priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/yields-vs-stocks-2026',        priority: 0.7, changeFrequency: 'monthly' },
+  { url: '/web-stories/aave-tokenization-2026',       priority: 0.7, changeFrequency: 'monthly' },
   { url: '/about',                              priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/contact',                            priority: 0.4,  changeFrequency: 'monthly' },
   { url: '/privacy',                     priority: 0.3,  changeFrequency: 'monthly' },
