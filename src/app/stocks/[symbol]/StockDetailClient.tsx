@@ -21,6 +21,7 @@ import { EarningsCard } from '@/components/stock/EarningsCard'
 import { EarningsTimeBadge } from '@/components/stock/EarningsTimeBadge'
 import { KeyStatsStrip } from '@/components/stock/KeyStatsStrip'
 import { CompanyStoryCard } from '@/components/stock/CompanyStoryCard'
+import { NewsletterCta } from '@/components/NewsletterCta'
 import { BacktestSnapshotCard } from '@/components/stock/BacktestSnapshotCard'
 import { AddTransactionModal } from '@/components/portfolio/AddTransactionModal'
 import { WatchlistButton } from '@/components/watchlist/WatchlistButton'
@@ -326,6 +327,11 @@ export function StockDetailClient({
           <CompoundCalc embedded />
         </WidgetBoundary>
       </Section>
+
+      {/* Free-newsletter capture (Substack) - low-friction return mechanism */}
+      <WidgetBoundary label="Newsletter">
+        <NewsletterCta />
+      </WidgetBoundary>
 
       {/* Discussion - shared with the mobile app */}
       <CommentsSection entityType="stock" entityId={symbol} />

@@ -16,6 +16,7 @@ import { BlogSidebar } from './BlogSidebar'
 import AuthorByline from '@/components/blog/AuthorByline'
 import CommentsSection from '@/components/comments/CommentsSection'
 import AppDownloadCard from '@/components/blog/AppDownloadCard'
+import { NewsletterCta } from '@/components/NewsletterCta'
 
 interface Post {
   slug: string
@@ -424,6 +425,10 @@ export default async function BlogPostPage({
         className="prose max-w-none"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+
+      <div className="my-8">
+        <NewsletterCta />
+      </div>
 
       <AppDownloadCard />
 
