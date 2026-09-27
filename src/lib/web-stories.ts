@@ -656,4 +656,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(12903168), heading: 'So what now?', text: 'The gap between Wall Street and Main Street is unusually wide.' },
     ],
   },
+  'asia-ai-chip-boom-2026': {
+    slug: 'asia-ai-chip-boom-2026',
+    title: 'Asia’s AI Chip Boom',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'asia-market-week-in-review-japan-korea-ai-chips-china-september-26-2026',
+    slides: [
+      { image: px(236093), heading: 'Asia’s AI Chip Boom', text: 'Japan and Korea just ripped higher. China sat it out.' },
+      { image: px(373543), heading: 'Japan surged', text: 'The Nikkei jumped about 4.5% to near record highs.' },
+      { image: px(2582937), heading: 'Korea led the charge', text: 'The KOSPI ripped 5.4% toward 7,000, powered by memory chips.' },
+      { image: px(6801648), heading: 'One big trade', text: 'Samsung and SK Hynix lift Seoul; Tokyo’s chip makers follow.' },
+      { image: px(534216), heading: 'China sat it out', text: 'Shanghai was flat and Hong Kong fell. A different market.' },
+      { image: px(8369648), heading: 'The catch', text: 'It is a boom in one theme. Narrow rallies can turn fast.' },
+    ],
+  },
 }
