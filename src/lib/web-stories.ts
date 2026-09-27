@@ -670,4 +670,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(8369648), heading: 'The catch', text: 'It is a boom in one theme. Narrow rallies can turn fast.' },
     ],
   },
+  'meta-muse-charm-2026': {
+    slug: 'meta-muse-charm-2026',
+    title: 'Meta Put AI on a Keychain',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'meta-muse-charm-ai-keychain-connect-2026-what-it-means-meta-stock',
+    slides: [
+      { image: px(8386440), heading: 'Meta Put AI on a Keychain', text: 'Meet the Muse Charm, unveiled at Connect 2026.' },
+      { image: px(3861969), heading: 'What it is', text: 'A pendant-sized AI agent with a 2-inch screen. No phone needed.' },
+      { image: px(373543), heading: 'The move', text: 'Meta beat OpenAI to a mainstream consumer AI device.' },
+      { image: px(8369648), heading: 'The money', text: 'Keep the agent free, then take a cut of what it buys for you.' },
+      { image: px(6801648), heading: 'The stock', text: 'META is up more than 25% since the reveal, near a record high.' },
+      { image: px(12903168), heading: 'The catch', text: 'No price yet, and AI gadgets have flopped before.' },
+    ],
+  },
 }
