@@ -118,7 +118,7 @@ function extractCeo(officers: unknown): string | null {
   if (!Array.isArray(officers)) return null
   const list = officers as Array<{ name?: string; title?: string }>
   const ceo = list.find((o) => /chief executive|ceo/i.test(o.title ?? ''))
-  return ceo?.name ?? null
+  return ceo?.name ? ceo.name.replace(/\s+/g, ' ').trim() : null
 }
 
 export interface YFSummary {
