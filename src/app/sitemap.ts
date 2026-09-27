@@ -69,6 +69,7 @@ const STATIC_ROUTES = [
   { url: '/web-stories/aave-tokenization-2026',       priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/what-if-1000-bitcoin',         priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/wall-street-vs-consumers-2026', priority: 0.7, changeFrequency: 'monthly' },
+  { url: '/web-stories/asia-ai-chip-boom-2026',         priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/what-if-1000-apple',          priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/what-if-1000-microsoft',      priority: 0.7, changeFrequency: 'monthly' },
   { url: '/web-stories/what-if-1000-nvidia-stock',   priority: 0.7, changeFrequency: 'monthly' },
