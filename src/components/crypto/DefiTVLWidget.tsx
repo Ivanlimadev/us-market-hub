@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import type { DefiTVLData } from '@/app/api/defi/tvl/route'
+import type { DefiTVLData } from '@/lib/defillama'
 
 function fmt(n: number) {
   if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`

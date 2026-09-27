@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, TrendingDown, ExternalLink, Users } from 'lucide-react'
-import type { InsiderData, InsiderTx } from '@/app/api/stocks/insiders/route'
+import type { InsiderData, InsiderTx } from '@/lib/insiders'
 
 function fmtUsd(n: number): string {
   const abs = Math.abs(n)
