@@ -1,4 +1,4 @@
-import { Globe, Users, MapPin, Building2 } from 'lucide-react'
+import { Globe, Users, MapPin, Building2, UserCog } from 'lucide-react'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 export function CompanyInfo({ data }: { data: StockDetailData }) {
@@ -51,6 +51,15 @@ export function CompanyInfo({ data }: { data: StockDetailData }) {
               <p className="text-xs font-medium text-zinc-300">
                 {info.employees.toLocaleString('en-US')}
               </p>
+            </div>
+          </div>
+        )}
+        {info.ceo && (
+          <div className="flex items-center gap-2">
+            <UserCog className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+            <div>
+              <p className="text-[10px] text-zinc-600">CEO</p>
+              <p className="text-xs font-medium text-zinc-300">{info.ceo}</p>
             </div>
           </div>
         )}

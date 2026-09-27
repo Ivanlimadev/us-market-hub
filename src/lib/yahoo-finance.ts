@@ -113,6 +113,14 @@ function fmt(obj: unknown): string | null {
   return null
 }
 
+// Pull the CEO's name out of Yahoo's assetProfile.companyOfficers array.
+function extractCeo(officers: unknown): string | null {
+  if (!Array.isArray(officers)) return null
+  const list = officers as Array<{ name?: string; title?: string }>
+  const ceo = list.find((o) => /chief executive|ceo/i.test(o.title ?? ''))
+  return ceo?.name ?? null
+}
+
 export interface YFSummary {
   // Real-time price (prefer these over Marketstack for currentPrice)
   regularMarketPrice: number | null
@@ -129,6 +137,7 @@ export interface YFSummary {
   employees: number | null
   country: string | null
   city: string | null
+  ceo: string | null
   // Valuation
   marketCap: number | null
   pe: number | null
@@ -136,6 +145,10 @@ export interface YFSummary {
   priceToBook: number | null
   forwardPE: number | null
   pegRatio: number | null
+  priceToSales: number | null
+  enterpriseValue: number | null
+  evToEbitda: number | null
+  evToRevenue: number | null
   // Performance
   beta: number | null
   week52High: number | null
@@ -157,6 +170,8 @@ export interface YFSummary {
   // Profitability
   profitMargin: number | null
   operatingMargin: number | null
+  grossMargin: number | null
+  ebitdaMargin: number | null
   roe: number | null
   roa: number | null
   revenueGrowth: number | null
@@ -164,8 +179,13 @@ export interface YFSummary {
   // Balance sheet
   totalRevenue: number | null
   totalDebt: number | null
+  totalCash: number | null
+  ebitda: number | null
   debtToEquity: number | null
   currentRatio: number | null
+  quickRatio: number | null
+  revenuePerShare: number | null
+  operatingCashflow: number | null
   freeCashflow: number | null
   // Analyst consensus
   recommendationKey: string | null
@@ -177,7 +197,7 @@ export interface YFSummary {
 
 export async function getYFSummary(symbol: string): Promise<YFSummary> {
   const modules = [
-    'summaryProfile',
+    'assetProfile',
     'defaultKeyStatistics',
     'summaryDetail',
     'financialData',
@@ -195,7 +215,7 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
 
   if (!result) return emptyYFSummary()
 
-  const profile = (result.summaryProfile ?? {}) as Record<string, unknown>
+  const profile = (result.assetProfile ?? result.summaryProfile ?? {}) as Record<string, unknown>
   const detail = (result.summaryDetail ?? {}) as Record<string, unknown>
   const stats = (result.defaultKeyStatistics ?? {}) as Record<string, unknown>
   const fin = (result.financialData ?? {}) as Record<string, unknown>
@@ -218,12 +238,17 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     employees: (profile.fullTimeEmployees as number) ?? null,
     country: (profile.country as string) ?? null,
     city: (profile.city as string) ?? null,
+    ceo: extractCeo(profile.companyOfficers),
     marketCap: raw(detail.marketCap),
     pe: raw(detail.trailingPE),
     eps: raw(stats.trailingEps),
     priceToBook: raw(detail.priceToBook),
     forwardPE: raw(detail.forwardPE),
     pegRatio: raw(stats.pegRatio),
+    priceToSales: raw(detail.priceToSalesTrailing12Months),
+    enterpriseValue: raw(stats.enterpriseValue),
+    evToEbitda: raw(stats.enterpriseToEbitda),
+    evToRevenue: raw(stats.enterpriseToRevenue),
     beta: raw(detail.beta),
     week52High: raw(detail.fiftyTwoWeekHigh),
     week52Low: raw(detail.fiftyTwoWeekLow),
@@ -240,14 +265,21 @@ export async function getYFSummary(symbol: string): Promise<YFSummary> {
     bookValue: raw(stats.bookValue),
     profitMargin: raw(fin.profitMargins),
     operatingMargin: raw(fin.operatingMargins),
+    grossMargin: raw(fin.grossMargins),
+    ebitdaMargin: raw(fin.ebitdaMargins),
     roe: raw(fin.returnOnEquity),
     roa: raw(fin.returnOnAssets),
     revenueGrowth: raw(fin.revenueGrowth),
     earningsGrowth: raw(fin.earningsGrowth),
     totalRevenue: raw(fin.totalRevenue),
     totalDebt: raw(fin.totalDebt),
+    totalCash: raw(fin.totalCash),
+    ebitda: raw(fin.ebitda),
     debtToEquity: raw(fin.debtToEquity),
     currentRatio: raw(fin.currentRatio),
+    quickRatio: raw(fin.quickRatio),
+    revenuePerShare: raw(fin.revenuePerShare),
+    operatingCashflow: raw(fin.operatingCashflow),
     freeCashflow: raw(fin.freeCashflow),
     recommendationKey: (fin.recommendationKey as string) ?? null,
     targetMeanPrice: raw(fin.targetMeanPrice),
@@ -262,14 +294,16 @@ function emptyYFSummary(): YFSummary {
     regularMarketPrice: null, regularMarketPreviousClose: null, regularMarketChangePercent: null,
     longName: null, exchangeName: null, quoteType: null,
     sector: null, industry: null, description: null, website: null,
-    employees: null, country: null, city: null, marketCap: null,
+    employees: null, country: null, city: null, ceo: null, marketCap: null,
     pe: null, eps: null, priceToBook: null, forwardPE: null, pegRatio: null,
+    priceToSales: null, enterpriseValue: null, evToEbitda: null, evToRevenue: null,
     beta: null, week52High: null, week52Low: null, avgVolume10d: null, avgVolume3m: null,
     dividendYield: null, dividendRate: null, exDividendDate: null, dividendDate: null, payoutRatio: null,
     nextEarningsDate: null, earningsTimestamp: null, earningsTimestampEnd: null, bookValue: null,
-    profitMargin: null, operatingMargin: null, roe: null, roa: null,
+    profitMargin: null, operatingMargin: null, grossMargin: null, ebitdaMargin: null, roe: null, roa: null,
     revenueGrowth: null, earningsGrowth: null, totalRevenue: null,
-    totalDebt: null, debtToEquity: null, currentRatio: null, freeCashflow: null,
+    totalDebt: null, totalCash: null, ebitda: null, debtToEquity: null, currentRatio: null,
+    quickRatio: null, revenuePerShare: null, operatingCashflow: null, freeCashflow: null,
     recommendationKey: null, targetMeanPrice: null, targetHighPrice: null, targetLowPrice: null, numberOfAnalystOpinions: null,
   }
 }
