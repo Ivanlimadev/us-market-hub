@@ -10,7 +10,7 @@ const VALID_RANGES = new Set(['1mo', '3mo', '6mo', 'ytd', '1y', '2y', '5y', '10y
 // Legacy endpoint, now backed by Yahoo Finance (was Marketstack). Returns
 // { bars: YFChartBar[] } with daily open/high/low/close/adj_close/volume.
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  if (!(await rateLimit(getIp(req), 30, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

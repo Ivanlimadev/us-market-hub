@@ -8,7 +8,7 @@ const TICKER_RE = /^\^?[A-Z0-9.\-]{1,10}$/
 // Legacy endpoint, now backed by Yahoo Finance (was Marketstack). Returns the
 // current quote for each symbol as { data: YFBatchQuote[] }.
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  if (!(await rateLimit(getIp(req), 30, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

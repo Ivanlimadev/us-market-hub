@@ -16,7 +16,7 @@ const VALID_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as co
 type ValidMime = typeof VALID_MIMES[number]
 
 export async function POST(req: NextRequest) {
-  if (!rateLimit(getIp(req), 10, 60 * 60_000)) {
+  if (!(await rateLimit(getIp(req), 10, 60 * 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

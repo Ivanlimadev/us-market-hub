@@ -36,7 +36,7 @@ export async function GET(
 ) {
   const { id } = await params
 
-  if (!rateLimit(getIp(req), 10, 60 * 60 * 1000)) {
+  if (!(await rateLimit(getIp(req), 10, 60 * 60 * 1000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

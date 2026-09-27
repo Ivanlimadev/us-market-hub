@@ -5,7 +5,7 @@ import { parseSymbol, badRequest } from '@/lib/validate'
 
 // GET /api/intraday?symbol=AAPL&interval=5min&from=2025-06-11T09:30:00&limit=100
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  if (!(await rateLimit(getIp(req), 30, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

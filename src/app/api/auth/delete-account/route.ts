@@ -30,7 +30,7 @@ const USER_TABLES = [
 
 export async function DELETE(req: NextRequest) {
   // 3 attempts per hour per IP - this action is irreversible
-  if (!rateLimit(getIp(req), 3, 60 * 60_000)) {
+  if (!(await rateLimit(getIp(req), 3, 60 * 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

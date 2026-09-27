@@ -5,7 +5,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/tickers?search=apple&exchange=XNAS&limit=20
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 20, 60_000)) {
+  if (!(await rateLimit(getIp(req), 20, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
   const { searchParams } = req.nextUrl

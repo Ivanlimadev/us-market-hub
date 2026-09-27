@@ -8,7 +8,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(req: NextRequest) {
   // 3 messages per 10 min per IP.
-  if (!rateLimit(getIp(req), 3, 10 * 60_000)) {
+  if (!(await rateLimit(getIp(req), 3, 10 * 60_000))) {
     return NextResponse.json({ error: 'Too many messages. Please try again later.' }, { status: 429 })
   }
 

@@ -8,7 +8,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit'
 // web_push_tokens (service-role only) and are delivered by notify-blog-posts.
 export async function POST(req: NextRequest) {
   // 10 subscribes/min per IP — plenty for a real user, blocks abuse.
-  if (!rateLimit(getIp(req), 10, 60_000)) {
+  if (!(await rateLimit(getIp(req), 10, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

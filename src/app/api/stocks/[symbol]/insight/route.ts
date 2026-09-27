@@ -59,7 +59,7 @@ export async function GET(
   }
 
   // 10 req/hour per IP (cached responses don't count against this)
-  if (!rateLimit(getIp(req), 10, 60 * 60 * 1000)) {
+  if (!(await rateLimit(getIp(req), 10, 60 * 60 * 1000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 

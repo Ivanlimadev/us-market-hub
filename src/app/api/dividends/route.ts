@@ -5,7 +5,7 @@ import { parseSymbol, badRequest } from '@/lib/validate'
 
 // GET /api/dividends?symbol=AAPL&limit=20
 export async function GET(req: NextRequest) {
-  if (!rateLimit(getIp(req), 30, 60_000)) {
+  if (!(await rateLimit(getIp(req), 30, 60_000))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
