@@ -23,16 +23,17 @@ export interface StockDetailData {
     quoteType: string | null
     sector: string | null; industry: string | null; description: string | null
     website: string | null; employees: number | null; country: string | null
-    city: string | null; marketCap: number | null; pe: number | null
+    city: string | null; ceo: string | null; marketCap: number | null; pe: number | null
     eps: number | null; priceToBook: number | null; forwardPE: number | null
-    pegRatio: number | null; beta: number | null; week52High: number | null
+    pegRatio: number | null; priceToSales: number | null; enterpriseValue: number | null
+    evToEbitda: number | null; evToRevenue: number | null; beta: number | null; week52High: number | null
     week52Low: number | null; avgVolume3m: number | null; dividendYield: number | null
     dividendRate: number | null; exDividendDate: string | null; dividendDate: string | null; payoutRatio: number | null
     nextEarningsDate: string | null; earningsTimestamp: number | null; earningsTimestampEnd: number | null; bookValue: number | null
-    profitMargin: number | null; operatingMargin: number | null; roe: number | null
+    profitMargin: number | null; operatingMargin: number | null; grossMargin: number | null; ebitdaMargin: number | null; roe: number | null
     roa: number | null; revenueGrowth: number | null; earningsGrowth: number | null
-    totalRevenue: number | null; totalDebt: number | null; debtToEquity: number | null
-    currentRatio: number | null; freeCashflow: number | null
+    totalRevenue: number | null; totalDebt: number | null; totalCash: number | null; ebitda: number | null; debtToEquity: number | null
+    currentRatio: number | null; quickRatio: number | null; revenuePerShare: number | null; operatingCashflow: number | null; freeCashflow: number | null
     recommendationKey: string | null; targetMeanPrice: number | null
     targetHighPrice: number | null; targetLowPrice: number | null
     numberOfAnalystOpinions: number | null

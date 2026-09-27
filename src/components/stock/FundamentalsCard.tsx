@@ -35,16 +35,27 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
   const info = data.info
   const eod = data.latestEod
 
+  const netDebt =
+    info?.totalDebt != null && info?.totalCash != null
+      ? info.totalDebt - info.totalCash
+      : null
+
   const sections: { title: string; rows: { label: string; value: string }[] }[] = [
     {
       title: 'Valuation',
       rows: [
         { label: 'Market Cap', value: fmtLarge(info?.marketCap ?? null) },
+        { label: 'Enterprise Value', value: fmtLarge(info?.enterpriseValue ?? null) },
         { label: 'P/E Ratio', value: fmtNum(info?.pe ?? null) },
         { label: 'Forward P/E', value: fmtNum(info?.forwardPE ?? null) },
+        { label: 'P/S Ratio', value: fmtNum(info?.priceToSales ?? null) },
         { label: 'P/B Ratio', value: fmtNum(info?.priceToBook ?? null) },
         { label: 'PEG Ratio', value: fmtNum(info?.pegRatio ?? null) },
+        { label: 'EV / EBITDA', value: fmtNum(info?.evToEbitda ?? null) },
+        { label: 'EV / Revenue', value: fmtNum(info?.evToRevenue ?? null) },
         { label: 'EPS (TTM)', value: info?.eps != null ? `$${info.eps.toFixed(2)}` : '-' },
+        { label: 'Book Value / Share', value: info?.bookValue != null ? `$${info.bookValue.toFixed(2)}` : '-' },
+        { label: 'Revenue / Share', value: info?.revenuePerShare != null ? `$${info.revenuePerShare.toFixed(2)}` : '-' },
       ],
     },
     {
@@ -72,8 +83,10 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
     {
       title: 'Profitability',
       rows: [
-        { label: 'Profit Margin', value: fmtPct(info?.profitMargin ?? null) },
+        { label: 'Gross Margin', value: fmtPct(info?.grossMargin ?? null) },
         { label: 'Operating Margin', value: fmtPct(info?.operatingMargin ?? null) },
+        { label: 'EBITDA Margin', value: fmtPct(info?.ebitdaMargin ?? null) },
+        { label: 'Profit Margin', value: fmtPct(info?.profitMargin ?? null) },
         { label: 'ROE', value: fmtPct(info?.roe ?? null) },
         { label: 'ROA', value: fmtPct(info?.roa ?? null) },
         { label: 'Revenue Growth', value: fmtPct(info?.revenueGrowth ?? null) },
@@ -84,9 +97,14 @@ export function FundamentalsCard({ data }: { data: StockDetailData }) {
       title: 'Balance Sheet',
       rows: [
         { label: 'Total Revenue', value: fmtLarge(info?.totalRevenue ?? null) },
+        { label: 'EBITDA', value: fmtLarge(info?.ebitda ?? null) },
+        { label: 'Total Cash', value: fmtLarge(info?.totalCash ?? null) },
         { label: 'Total Debt', value: fmtLarge(info?.totalDebt ?? null) },
+        { label: 'Net Debt', value: fmtLarge(netDebt) },
         { label: 'Debt / Equity', value: fmtNum(info?.debtToEquity ?? null) },
         { label: 'Current Ratio', value: fmtNum(info?.currentRatio ?? null) },
+        { label: 'Quick Ratio', value: fmtNum(info?.quickRatio ?? null) },
+        { label: 'Operating Cash Flow', value: fmtLarge(info?.operatingCashflow ?? null) },
         { label: 'Free Cash Flow', value: fmtLarge(info?.freeCashflow ?? null) },
       ],
     },

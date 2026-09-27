@@ -35,13 +35,20 @@ function shortDate(date: string, isQuarterly: boolean): string {
   return String(d.getFullYear())
 }
 
-type MetricKey = 'revenue' | 'netIncome' | 'netMargin'
+type MetricKey = 'revenue' | 'grossProfit' | 'operatingIncome' | 'netIncome' | 'netMargin'
 
 const METRICS: { key: MetricKey; label: string; fmt: (n: number | null) => string }[] = [
-  { key: 'revenue',    label: 'Revenue',      fmt: fmtLarge },
-  { key: 'netIncome',  label: 'Net Income',   fmt: fmtLarge },
-  { key: 'netMargin',  label: 'Net Margin',   fmt: fmtPct  },
+  { key: 'revenue',         label: 'Revenue',          fmt: fmtLarge },
+  { key: 'grossProfit',     label: 'Gross Profit',     fmt: fmtLarge },
+  { key: 'operatingIncome', label: 'Operating Income', fmt: fmtLarge },
+  { key: 'netIncome',       label: 'Net Income',       fmt: fmtLarge },
+  { key: 'netMargin',       label: 'Net Margin',       fmt: fmtPct  },
 ]
+
+// The bottom summary strip stays compact - show the 3 headline figures only.
+const SUMMARY_METRICS = METRICS.filter((m) =>
+  m.key === 'revenue' || m.key === 'netIncome' || m.key === 'netMargin'
+)
 
 // ── bar chart ──────────────────────────────────────────────────────────────
 
@@ -222,7 +229,7 @@ export function FinancialCharts({ symbol }: { symbol: string }) {
       {/* Latest values summary row */}
       {!isLoading && hasData && (
         <div className="grid grid-cols-3 border-t border-zinc-800">
-          {METRICS.map((m, i) => {
+          {SUMMARY_METRICS.map((m, i) => {
             const latestRow = rows[rows.length - 1]
             const val = latestRow?.[m.key] as number | null
             const isPos = val === null || val >= 0
