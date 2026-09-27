@@ -684,4 +684,18 @@ export const WEB_STORIES: Record<string, WebStory> = {
       { image: px(12903168), heading: 'The catch', text: 'No price yet, and AI gadgets have flopped before.' },
     ],
   },
+  'microsoft-products-money-2026': {
+    slug: 'microsoft-products-money-2026',
+    title: 'What Actually Makes Microsoft’s Money',
+    publisher: 'Stock Market ROI',
+    articleSlug: 'microsoft-products-list-and-top-10-revenue-generators-2026',
+    slides: [
+      { image: px(1148820), heading: 'What Makes Microsoft’s Money', text: 'A $3.8 trillion giant with hundreds of products.' },
+      { image: px(236093), heading: 'Azure is number one', text: 'Its cloud crossed $100 billion in revenue, up 41%.' },
+      { image: px(205421), heading: 'Office is number two', text: 'Microsoft 365 for business brings in about $102 billion.' },
+      { image: px(534216), heading: 'The famous ones are smaller', text: 'Windows, Xbox, LinkedIn and Bing are dwarfed by cloud and Office.' },
+      { image: px(6801648), heading: 'Where the profit lives', text: 'Cloud and software carry a roughly 45% operating margin.' },
+      { image: px(6120214), heading: 'The real Microsoft', text: 'A cloud and software company, with an AI layer on top.' },
+    ],
+  },
 }
