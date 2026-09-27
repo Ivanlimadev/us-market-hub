@@ -5,6 +5,7 @@ import {
   OracleFetchError,
   type OracleResponse,
 } from '@/lib/oracle/types'
+import { signPayload } from '@/lib/oracle/signing'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/oracle/[key]?<params>
@@ -37,17 +38,33 @@ export async function GET(
 
   try {
     const r = await adapter.fetch(query)
-    const body: OracleResponse<unknown> = {
-      data: r.data,
-      meta: {
-        key: adapter.key,
-        source: adapter.meta.source,
-        license: adapter.meta.license,
-        asOf: r.asOf,
-        fetchedAt: new Date().toISOString(),
-        confidence: r.confidence,
-      },
+    const fetchedAt = new Date().toISOString()
+
+    const meta: OracleResponse<unknown>['meta'] = {
+      key: adapter.key,
+      source: adapter.meta.source,
+      license: adapter.meta.license,
+      asOf: r.asOf,
+      fetchedAt,
+      confidence: r.confidence,
     }
+
+    // Sign the canonical payload so consumers can prove authenticity.
+    const sig = signPayload({
+      key: meta.key,
+      source: meta.source,
+      license: meta.license,
+      asOf: meta.asOf,
+      fetchedAt,
+      data: r.data,
+    })
+    if (sig) {
+      meta.signature = sig.signature
+      meta.publicKey = sig.publicKey
+      meta.alg = sig.alg
+    }
+
+    const body: OracleResponse<unknown> = { data: r.data, meta }
     return NextResponse.json(body, {
       headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
     })

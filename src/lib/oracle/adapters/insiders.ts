@@ -15,6 +15,7 @@ export const insidersAdapter: OracleAdapter<{ symbol?: string }, InsiderData> = 
     source: 'SEC EDGAR',
     license: 'green',
     status: 'live',
+    toll: 0.01,
     params: [{ name: 'symbol', required: true, type: 'string' }],
   },
   async fetch({ symbol }) {

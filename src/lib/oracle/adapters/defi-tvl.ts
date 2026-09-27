@@ -11,6 +11,7 @@ export const defiTvlAdapter: OracleAdapter<Record<string, never>, DefiTVLData> =
     source: 'DefiLlama',
     license: 'green',
     status: 'live',
+    toll: 0.002,
     params: [],
   },
   async fetch() {

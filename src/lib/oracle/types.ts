@@ -26,6 +26,10 @@ export interface AdapterMeta {
   source: string
   license: License
   status: AdapterStatus
+  /** Per-call toll in USDC. 0 = free (discovery loss-leader). Starting points,
+   *  not market-validated; adjust with real demand. Payment is not yet
+   *  enforced — this only advertises the price in the catalog. */
+  toll: number
   params: ParamSpec[]
 }
 
@@ -56,6 +60,11 @@ export interface OracleResponse<T> {
     fetchedAt: string
     confidence?: number
     ttl?: number
+    // Ed25519 signature over the canonical payload; present when the oracle
+    // signing key is configured. Lets any consumer prove authenticity.
+    signature?: string
+    publicKey?: string
+    alg?: 'ed25519'
   }
 }
 

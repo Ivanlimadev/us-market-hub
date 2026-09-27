@@ -53,6 +53,7 @@ export const backtestAdapter: OracleAdapter<BacktestParams, BacktestResult> = {
     source: 'compute:backtest',
     license: 'green',
     status: 'live',
+    toll: 0.05,
     params: [
       { name: 'symbol', required: true, type: 'string' },
       { name: 'strategy', required: true, type: 'lumpSum|dca|maCrossover|buyDip|rsi|trendFilter' },

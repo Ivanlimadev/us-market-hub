@@ -32,6 +32,7 @@ export const calculatorAdapter: OracleAdapter<CalcParams, unknown> = {
     source: 'compute:calculators',
     license: 'green',
     status: 'live',
+    toll: 0,
     params: [
       { name: 'type', required: true, type: 'compound|simple|roi|dca|firstMillion' },
       { name: 'principal', required: false, type: 'number (compound/simple/firstMillion)' },

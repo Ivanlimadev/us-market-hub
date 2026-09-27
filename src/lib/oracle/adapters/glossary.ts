@@ -14,6 +14,7 @@ export const glossaryAdapter: OracleAdapter<
     source: 'own content',
     license: 'green',
     status: 'live',
+    toll: 0,
     params: [{ name: 'slug', required: false, type: 'string (omit to list all)' }],
   },
   async fetch({ slug }) {
