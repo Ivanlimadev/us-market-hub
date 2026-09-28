@@ -391,10 +391,17 @@ At the very end, separated by "---META---":
     if (m) meta[m[1]] = m[2].trim()
   }
 
-  // Safety: never publish a refusal, truncated, or malformed generation.
-  if (content.length < 3000 || !/##\s+Bottom Line/i.test(content) || !meta.excerpt) {
+  // Safety: never publish a refusal, truncated, or malformed generation. The
+  // conclusion heading is intentionally varied by the prompt (it is no longer
+  // always "## Bottom Line"), so requiring that literal string here would reject
+  // exactly the posts that followed the instruction. Check for a real conclusion
+  // instead: an explicit BUY/HOLD/AVOID verdict, or the mandatory "## Sources"
+  // closing block (which also covers non-stock macro posts that carry no verdict).
+  const hasConclusion =
+    /\*\*\s*(BUY|HOLD|AVOID)\s*\*\*/i.test(content) || /##\s+Sources/i.test(content)
+  if (content.length < 3000 || !hasConclusion || !meta.excerpt) {
     return NextResponse.json(
-      { error: 'Generation failed quality check (too short, missing Bottom Line, or missing meta) - nothing published', length: content.length },
+      { error: 'Generation failed quality check (too short, missing verdict/sources conclusion, or missing meta) - nothing published', length: content.length },
       { status: 422 },
     )
   }
