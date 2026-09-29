@@ -6,6 +6,14 @@ import {
   type OracleResponse,
 } from '@/lib/oracle/types'
 import { signPayload } from '@/lib/oracle/signing'
+import {
+  x402Mode,
+  buildRequirements,
+  paymentRequired,
+  verifyPayment,
+  settlementHeader,
+  type Settlement,
+} from '@/lib/oracle/x402'
 import { rateLimit, getIp } from '@/lib/rate-limit'
 
 // GET /api/oracle/[key]?<params>
@@ -32,6 +40,28 @@ export async function GET(
       { error: 'not publicly distributable yet', key, license: adapter.meta.license },
       { status: 403 },
     )
+  }
+
+  // x402 payment gate. Skipped when mode is off or the adapter is free
+  // (toll === 0). When on, the client must present a valid PAYMENT-SIGNATURE;
+  // otherwise we answer 402 with the payment requirements.
+  const mode = x402Mode()
+  let settlement: Settlement | null = null
+  if (mode !== 'off' && adapter.meta.toll > 0) {
+    const reqs = buildRequirements(adapter, req.url)
+    const paySig = req.headers.get('payment-signature') ?? ''
+    if (!paySig) {
+      const { body, header } = paymentRequired(reqs)
+      return NextResponse.json(body, { status: 402, headers: { 'PAYMENT-REQUIRED': header } })
+    }
+    settlement = await verifyPayment(paySig, mode)
+    if (!settlement.ok) {
+      const { body, header } = paymentRequired(reqs)
+      return NextResponse.json(
+        { ...body, error: settlement.error ?? 'payment verification failed' },
+        { status: 402, headers: { 'PAYMENT-REQUIRED': header } },
+      )
+    }
   }
 
   const query = Object.fromEntries(new URL(req.url).searchParams.entries())
@@ -65,9 +95,12 @@ export async function GET(
     }
 
     const body: OracleResponse<unknown> = { data: r.data, meta }
-    return NextResponse.json(body, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
-    })
+    const headers: Record<string, string> = {
+      'Cache-Control': 's-maxage=300, stale-while-revalidate=600',
+    }
+    // Attach the settlement receipt when a payment was processed.
+    if (settlement) headers['PAYMENT-RESPONSE'] = settlementHeader(settlement)
+    return NextResponse.json(body, { headers })
   } catch (err) {
     if (err instanceof OracleParamError || err instanceof OracleFetchError) {
       return NextResponse.json({ error: err.message }, { status: err.status })
