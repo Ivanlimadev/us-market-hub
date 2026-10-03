@@ -35,6 +35,7 @@ const STATIC_ROUTES = [
   { url: '/stocks/undervalued-stocks',   priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/best-growth-stocks',   priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/brazil',               priority: 0.85, changeFrequency: 'daily'   },
+  { url: '/stocks/canada',               priority: 0.85, changeFrequency: 'daily'   },
   // Comparison landing pages
   { url: '/compare/nvda-vs-amd',         priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/compare/aapl-vs-msft',        priority: 0.8,  changeFrequency: 'monthly' },
@@ -174,7 +175,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Sitemap stock set: the curated US TOP_STOCKS (priority 0.8) plus the full
-  // Brazilian (B3 `.SA`) universe (priority 0.6). The US long-tail is kept OUT
+  // Brazilian (B3 `.SA`) and Canadian (TSX `.TO`) universes (priority 0.6). The US long-tail is kept OUT
   // of the sitemap on purpose - flooding a young domain with ~1,000 near-identical
   // templated pages previously produced "Discovered - currently not indexed" at
   // scale and diluted crawl budget. The B3 names are included deliberately to push
@@ -182,7 +183,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Ibovespa); revisit if they pile up as "discovered not indexed". Lowercase to
   // match the canonical URL on each stock page (page.tsx uses symbol.toLowerCase()).
   const topSet = new Set(TOP_STOCKS)
-  const sitemapStocks = Array.from(new Set([...TOP_STOCKS, ...STOCK_UNIVERSE.Brazil]))
+  const sitemapStocks = Array.from(new Set([...TOP_STOCKS, ...STOCK_UNIVERSE.Brazil, ...STOCK_UNIVERSE.Canada]))
   const stockUrls: MetadataRoute.Sitemap = sitemapStocks.map((symbol) => ({
     url: `${BASE}/stocks/${symbol.toLowerCase()}`,
     lastModified: now,

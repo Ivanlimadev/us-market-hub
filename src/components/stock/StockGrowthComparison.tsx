@@ -42,6 +42,10 @@ const INDEXES = [
 const BR_INDEXES = [
   { key: 'BOVA11.SA', label: 'Ibovespa', color: '#0ea5e9' },
 ]
+// Canadian benchmark for TSX (.TO) stocks: XIC tracks the S&P/TSX Composite.
+const CA_INDEXES = [
+  { key: 'XIC.TO', label: 'S&P/TSX', color: '#0ea5e9' },
+]
 const COMMODITIES = [
   { key: 'GLD',  label: 'Gold',   color: '#eab308' },
   { key: 'SLV',  label: 'Silver', color: '#94a3b8' },
@@ -82,6 +86,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   const symbol = data.symbol.toUpperCase()
   const sector = data.info?.sector ?? null
   const isBR = symbol.endsWith('.SA')
+  const isCA = symbol.endsWith('.TO')
   const [amount, setAmount] = useState('1000')
   const [periodKey, setPeriodKey] = useState('5y')
   const [reinvest, setReinvest] = useState(true)
@@ -125,11 +130,12 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   // Benchmarks + peers: fetch only the SELECTED period (default 5Y) instead of a
   // fixed 10y, AND only once the section is in view (see `inView` above), so the
   // default page load carries none of this until the user scrolls to it.
-  const { data: spyBars } = useHistoryBars('SPY', periodKey, inView && !isBR)
-  const { data: qqqBars } = useHistoryBars('QQQ', periodKey, inView && !isBR)
-  const { data: diaBars } = useHistoryBars('DIA', periodKey, inView && !isBR)
-  const { data: iwmBars } = useHistoryBars('IWM', periodKey, inView && !isBR)
+  const { data: spyBars } = useHistoryBars('SPY', periodKey, inView && !isBR && !isCA)
+  const { data: qqqBars } = useHistoryBars('QQQ', periodKey, inView && !isBR && !isCA)
+  const { data: diaBars } = useHistoryBars('DIA', periodKey, inView && !isBR && !isCA)
+  const { data: iwmBars } = useHistoryBars('IWM', periodKey, inView && !isBR && !isCA)
   const { data: bovaBars } = useHistoryBars('BOVA11.SA', periodKey, inView && isBR)
+  const { data: xicBars } = useHistoryBars('XIC.TO', periodKey, inView && isCA)
   const { data: gldBars } = useHistoryBars('GLD', periodKey, inView)
   const { data: slvBars } = useHistoryBars('SLV', periodKey, inView)
   const { data: usoBars } = useHistoryBars('USO', periodKey, inView)
@@ -148,12 +154,12 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
 
   const barsByKey: Record<string, Bar[] | undefined> = {
     [symbol]: stockBars, SPY: spyBars, QQQ: qqqBars, DIA: diaBars, IWM: iwmBars,
-    'BOVA11.SA': bovaBars,
+    'BOVA11.SA': bovaBars, 'XIC.TO': xicBars,
     GLD: gldBars, SLV: slvBars, USO: usoBars, CPER: cperBars, ...(peerBars ?? {}),
   }
 
   const assets = useMemo(() => {
-    const indexes = isBR ? BR_INDEXES : INDEXES
+    const indexes = isBR ? BR_INDEXES : isCA ? CA_INDEXES : INDEXES
     const list = [
       { key: symbol, label: symbol, color: STOCK_COLOR, width: 3, group: 'Similar Stocks', useLogo: true, fixed: true },
       ...peers.map((p, i) => ({ key: p, label: p, color: PEER_COLORS[i % PEER_COLORS.length], width: 2, group: 'Similar Stocks', useLogo: true, fixed: false })),
@@ -161,7 +167,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
       ...COMMODITIES.map((x) => ({ ...x, width: 2, group: 'Commodities', useLogo: false, fixed: false })),
     ]
     return list.filter((s, i) => list.findIndex((x) => x.key === s.key) === i)
-  }, [symbol, peers, isBR])
+  }, [symbol, peers, isBR, isCA])
 
   const [visible, setVisible] = useState<Record<string, boolean>>({ [symbol]: true })
   const isOn = (key: string) => key === symbol || !!visible[key]
@@ -189,8 +195,8 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   const compareRows = useMemo(() => rows.slice(0, 10), [rows])
 
   const stockRow = rows.find((r) => r.key === symbol)
-  const benchKey = isBR ? 'BOVA11.SA' : 'SPY'
-  const benchLabel = isBR ? 'Ibovespa' : 'S&P 500'
+  const benchKey = isBR ? 'BOVA11.SA' : isCA ? 'XIC.TO' : 'SPY'
+  const benchLabel = isBR ? 'Ibovespa' : isCA ? 'S&P/TSX' : 'S&P 500'
   const benchPct = rows.find((r) => r.key === benchKey)?.pct ?? null
   const outperf = stockRow?.pct != null && benchPct != null && symbol !== benchKey ? stockRow.pct - benchPct : null
 

@@ -41,11 +41,31 @@ export const BR_SECTOR_PEERS: Record<string, string[]> = {
 
 export const DEFAULT_BR_PEERS = ['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'ABEV3.SA', 'B3SA3.SA', 'WEGE3.SA', 'BBAS3.SA']
 
-// Pick the peer pool matching the asset's market: B3 `.SA` tickers get Brazilian
-// peers, everything else gets the US pool.
+// Canadian (TSX `.TO`) peers, keyed by Yahoo's sector strings.
+export const CA_SECTOR_PEERS: Record<string, string[]> = {
+  'Financial Services': ['RY.TO', 'TD.TO', 'BNS.TO', 'BMO.TO', 'CM.TO', 'NA.TO'],
+  Energy: ['ENB.TO', 'CNQ.TO', 'SU.TO', 'TRP.TO', 'CVE.TO', 'IMO.TO'],
+  'Basic Materials': ['ABX.TO', 'AEM.TO', 'WPM.TO', 'FNV.TO', 'NTR.TO', 'K.TO'],
+  Technology: ['SHOP.TO', 'CSU.TO', 'OTEX.TO', 'DSG.TO', 'KXS.TO'],
+  Industrials: ['CNR.TO', 'CP.TO', 'WSP.TO', 'TFII.TO', 'GFL.TO', 'WCN.TO'],
+  'Consumer Defensive': ['L.TO', 'ATD.TO', 'DOL.TO', 'MRU.TO', 'WN.TO'],
+  'Consumer Cyclical': ['QSR.TO', 'GOOS.TO', 'ATZ.TO', 'DOO.TO', 'MG.TO'],
+  Utilities: ['FTS.TO', 'EMA.TO', 'H.TO', 'CU.TO', 'AQN.TO'],
+  'Communication Services': ['BCE.TO', 'T.TO'],
+  Healthcare: ['BHC.TO', 'GUD.TO'],
+}
+
+export const DEFAULT_CA_PEERS = ['RY.TO', 'TD.TO', 'ENB.TO', 'CNQ.TO', 'SHOP.TO', 'BNS.TO', 'BAM.TO', 'CNR.TO']
+
+// Pick the peer pool matching the asset's market: B3 `.SA` and TSX `.TO` tickers
+// get local peers, everything else gets the US pool.
 export function getPeerPool(symbol: string, sector: string | null): string[] {
-  if (symbol.toUpperCase().endsWith('.SA')) {
+  const up = symbol.toUpperCase()
+  if (up.endsWith('.SA')) {
     return (sector ? BR_SECTOR_PEERS[sector] : undefined) ?? DEFAULT_BR_PEERS
+  }
+  if (up.endsWith('.TO')) {
+    return (sector ? CA_SECTOR_PEERS[sector] : undefined) ?? DEFAULT_CA_PEERS
   }
   return (sector ? SECTOR_PEERS[sector] : undefined) ?? DEFAULT_PEERS
 }

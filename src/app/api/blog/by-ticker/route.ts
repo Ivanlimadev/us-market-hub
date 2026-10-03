@@ -18,6 +18,11 @@ export async function GET(req: NextRequest) {
   // Brazil-cluster posts instead (tagged with the US-listed ADRs / the EWZ ETF),
   // so Brazilian stock pages show relevant Brazil coverage.
   const BR_PROXY = ['EWZ', 'PBR', 'PBR-A', 'VALE', 'ITUB', 'BBD', 'BSBR', 'NU', 'ABEV', 'ERJ', 'XP', 'STNE', 'PAGS', 'VIV', 'GGB', 'SBS', 'CIG', 'UGP']
+  // TSX (.TO) posts mix local tickers and US-listed Canadian tickers; surface the
+  // Canada cluster regardless of which form the post was tagged with.
+  const CA_PROXY = ['EWC', 'RY', 'TD', 'BNS', 'BMO', 'CM', 'NA', 'ENB', 'TRP', 'CNQ', 'SU', 'CNR', 'CP', 'SHOP',
+    'RY.TO', 'TD.TO', 'BNS.TO', 'BMO.TO', 'CM.TO', 'NA.TO', 'ENB.TO', 'TRP.TO', 'CNQ.TO', 'SU.TO', 'CNR.TO', 'CP.TO',
+    'SHOP.TO', 'ABX.TO', 'AEM.TO', 'WPM.TO', 'FNV.TO', 'K.TO', 'BCE.TO', 'T.TO', 'FTS.TO', 'BAM.TO']
 
   let q = supabase
     .from('blog_posts')
@@ -27,6 +32,8 @@ export async function GET(req: NextRequest) {
 
   q = ticker.endsWith('.SA')
     ? q.overlaps('tickers', BR_PROXY)
+    : ticker.endsWith('.TO')
+    ? q.overlaps('tickers', CA_PROXY)
     : q.contains('tickers', [ticker])
 
   const { data, error } = await q
