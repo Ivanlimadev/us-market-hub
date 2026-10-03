@@ -34,6 +34,7 @@ const STATIC_ROUTES = [
   { url: '/stocks/best-dividend-stocks', priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/undervalued-stocks',   priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/best-growth-stocks',   priority: 0.85, changeFrequency: 'monthly' },
+  { url: '/stocks/brazil',               priority: 0.85, changeFrequency: 'daily'   },
   // Comparison landing pages
   { url: '/compare/nvda-vs-amd',         priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/compare/aapl-vs-msft',        priority: 0.8,  changeFrequency: 'monthly' },

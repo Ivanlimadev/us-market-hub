@@ -14,12 +14,22 @@ export async function GET(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 
-  const { data, error } = await supabase
+  // B3 (.SA) listings have no posts tagged with their local ticker. Surface the
+  // Brazil-cluster posts instead (tagged with the US-listed ADRs / the EWZ ETF),
+  // so Brazilian stock pages show relevant Brazil coverage.
+  const BR_PROXY = ['EWZ', 'PBR', 'PBR-A', 'VALE', 'ITUB', 'BBD', 'BSBR', 'NU', 'ABEV', 'ERJ', 'XP', 'STNE', 'PAGS', 'VIV', 'GGB', 'SBS', 'CIG', 'UGP']
+
+  let q = supabase
     .from('blog_posts')
     .select('slug, title, excerpt, content, category, image_url, image_alt, published_at, tickers, author_slug')
     .eq('status', 'published')
     .lte('published_at', new Date().toISOString())
-    .contains('tickers', [ticker])
+
+  q = ticker.endsWith('.SA')
+    ? q.overlaps('tickers', BR_PROXY)
+    : q.contains('tickers', [ticker])
+
+  const { data, error } = await q
     .order('published_at', { ascending: false })
     .limit(limit)
 
