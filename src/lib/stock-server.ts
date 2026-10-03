@@ -1,7 +1,7 @@
 // Server-only: fetches stock data for SSR/ISR in page.tsx
 // Same logic as /api/stocks/[symbol]/route.ts - kept in sync manually.
 import { getLatestIntraday } from '@/lib/marketstack'
-import { getYFSummary, getYFDividends } from '@/lib/yahoo-finance'
+import { getYFSummary, getYFDividends, getYFChart } from '@/lib/yahoo-finance'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 
 const MS_KEY = process.env.MARKETSTACK_API_KEY!
@@ -44,12 +44,13 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
   // Map only for the Marketstack calls; Yahoo keeps `.TO`.
   const msSym = sym.endsWith('.TO') ? sym.slice(0, -3) + '.XTSE' : sym
   try {
-    const [intraday, tickerEod, dividends, splits, yfInfo] = await Promise.allSettled([
+    const [intraday, tickerEod, dividends, splits, yfInfo, yfChart] = await Promise.allSettled([
       msGet(`/tickers/${msSym}/intraday/latest`),
       msGet(`/tickers/${msSym}/eod`, { limit: 365 }),
       getYFDividends(sym),
       msGet(`/tickers/${msSym}/splits`, { limit: 20 }),
       getYFSummary(sym),
+      getYFChart(sym, '1y', '1d'),
     ])
 
     const eodData =
@@ -57,8 +58,15 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
         ? (tickerEod.value as { data?: { eod?: unknown[]; name?: string; stock_exchange?: { acronym?: string } } })?.data
         : null
 
-    const latestEod = eodData?.eod?.[0] ?? null
-    const prevEod   = eodData?.eod?.[1] ?? null
+    // History source: Marketstack EOD when present, otherwise the Yahoo chart.
+    // Yahoo covers tickers Marketstack lacks (e.g. B3 `.SA`) and rides out MS
+    // outages. Marketstack returns newest-first; getYFChart is oldest-first, so
+    // reverse it to keep the same ordering the client expects.
+    const msEod = (eodData?.eod as unknown[] | undefined) ?? []
+    const yfEod = yfChart.status === 'fulfilled' ? [...yfChart.value].reverse() : []
+    const eodList = (msEod.length > 0 ? msEod : yfEod) as StockDetailData['recentEod']
+    const latestEod = eodList[0] ?? null
+    const prevEod   = eodList[1] ?? null
     const intradayBar = intraday.status === 'fulfilled' ? intraday.value : null
     const yfPrice     = yfInfo.status === 'fulfilled' ? yfInfo.value : null
 
@@ -92,7 +100,7 @@ export async function fetchStockData(symbol: string): Promise<StockDetailData | 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       latestEod: latestEod as any,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recentEod: (eodData?.eod ?? []) as any[],
+      recentEod: eodList as any[],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       dividends: (dividends.status === 'fulfilled' ? dividends.value : []) as any[],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

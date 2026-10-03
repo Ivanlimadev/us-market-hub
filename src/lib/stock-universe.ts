@@ -165,9 +165,59 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'TFII.TO','TIH.TO','TOU.TO','TRP.TO','TVE.TO','WCN.TO','WCP.TO','WDO.TO',
     'WN.TO','WPM.TO','WSP.TO','X.TO',
   ],
+  // Brazil - B3 (Yahoo `.SA`). ~136 liquid names (Ibovespa + IBrX + mid-caps),
+  // validated against Yahoo. Data via Yahoo; Marketstack has no B3 coverage, so
+  // stock-server falls back to the Yahoo chart for history on these.
+  Brazil: [
+    // Financials
+    'ITUB4.SA','ITUB3.SA','BBDC4.SA','BBDC3.SA','BBAS3.SA','SANB11.SA','BPAC11.SA',
+    'B3SA3.SA','ITSA4.SA','ITSA3.SA','BBSE3.SA','PSSA3.SA','CXSE3.SA','ABCB4.SA',
+    'BRSR6.SA','BMGB4.SA','BPAN4.SA','IRBR3.SA','BRAP4.SA',
+    // Oil, gas & petrochem
+    'PETR4.SA','PETR3.SA','PRIO3.SA','RECV3.SA','VBBR3.SA','UGPA3.SA','CSAN3.SA',
+    'RAIZ4.SA','BRKM5.SA','UNIP6.SA',
+    // Mining & steel
+    'VALE3.SA','GGBR4.SA','GGBR3.SA','GOAU4.SA','CSNA3.SA','USIM5.SA','USIM3.SA','CMIN3.SA',
+    // Utilities & power
+    'ELET3.SA','ELET6.SA','EQTL3.SA','ENGI11.SA','CMIG4.SA','CMIG3.SA','CPLE6.SA',
+    'CPLE3.SA','CPFE3.SA','ENEV3.SA','EGIE3.SA','TAEE11.SA','NEOE3.SA','AURE3.SA',
+    'SBSP3.SA','SAPR11.SA','CSMG3.SA','ALUP11.SA',
+    // Retail & consumer
+    'MGLU3.SA','LREN3.SA','ASAI3.SA','CRFB3.SA','PCAR3.SA','PETZ3.SA','VIVA3.SA',
+    'AZZA3.SA','LWSA3.SA','CEAB3.SA','GMAT3.SA','SBFG3.SA','ALPA4.SA','GRND3.SA','AMER3.SA',
+    // Food & beverage
+    'ABEV3.SA','JBSS3.SA','BRFS3.SA','MRFG3.SA','BEEF3.SA','SMTO3.SA','CAML3.SA','MDIA3.SA',
+    // Healthcare
+    'HAPV3.SA','RDOR3.SA','FLRY3.SA','HYPE3.SA','QUAL3.SA','DASA3.SA','ONCO3.SA',
+    'RADL3.SA','PNVL3.SA',
+    // Industrials & transport
+    'WEGE3.SA','EMBR3.SA','RENT3.SA','RAIL3.SA','CCRO3.SA','ECOR3.SA','AZUL4.SA',
+    'GOLL4.SA','POMO4.SA','STBP3.SA','PORT3.SA','RAPT4.SA','FRAS3.SA','KEPL3.SA',
+    'MYPK3.SA','LEVE3.SA','TUPY3.SA','VAMO3.SA','MOVI3.SA','SIMH3.SA','TGMA3.SA',
+    // Real estate & construction
+    'MRVE3.SA','CYRE3.SA','EZTC3.SA','DIRR3.SA','CURY3.SA','TEND3.SA','JHSF3.SA',
+    'EVEN3.SA','MULT3.SA','IGTI11.SA','ALOS3.SA',
+    // Paper
+    'SUZB3.SA','KLBN11.SA','KLBN4.SA','DXCO3.SA',
+    // Tech & telecom
+    'TOTS3.SA','VIVT3.SA','TIMS3.SA','POSI3.SA','INTB3.SA','CASH3.SA',
+    // Agribusiness, education & others
+    'SLCE3.SA','AGRO3.SA','TTEN3.SA','NTCO3.SA','COGN3.SA','YDUQ3.SA','CVCB3.SA',
+  ],
 }
 
 export const STOCK_NAMES: Record<string, string> = {
+  // Brazil (B3 `.SA`)
+  'PETR4.SA':'Petrobras PN','PETR3.SA':'Petrobras ON','VALE3.SA':'Vale','ITUB4.SA':'Itaú Unibanco',
+  'BBDC4.SA':'Banco Bradesco','BBAS3.SA':'Banco do Brasil','ABEV3.SA':'Ambev','B3SA3.SA':'B3',
+  'WEGE3.SA':'WEG','ITSA4.SA':'Itaúsa','RENT3.SA':'Localiza','BPAC11.SA':'BTG Pactual',
+  'SUZB3.SA':'Suzano','PRIO3.SA':'PRIO','EQTL3.SA':'Equatorial Energia','RADL3.SA':'Raia Drogasil',
+  'GGBR4.SA':'Gerdau','ELET3.SA':'Eletrobras','SBSP3.SA':'Sabesp','CMIG4.SA':'Cemig',
+  'VIVT3.SA':'Telefônica Brasil (Vivo)','EGIE3.SA':'Engie Brasil','HAPV3.SA':'Hapvida','RDOR3.SA':"Rede D'Or",
+  'LREN3.SA':'Lojas Renner','MGLU3.SA':'Magazine Luiza','JBSS3.SA':'JBS','CSAN3.SA':'Cosan',
+  'UGPA3.SA':'Ultrapar','CPLE6.SA':'Copel','TOTS3.SA':'Totvs','ASAI3.SA':'Assaí',
+  'CRFB3.SA':'Carrefour Brasil','EMBR3.SA':'Embraer','AZUL4.SA':'Azul','CCRO3.SA':'CCR',
+  'KLBN11.SA':'Klabin','TIMS3.SA':'TIM Brasil','NTCO3.SA':'Natura','BRFS3.SA':'BRF',
   // International / ADRs
   NU:'Nu Holdings',PBR:'Petrobras',VALE:'Vale S.A.',ITUB:'Itaú Unibanco',
   BBD:'Banco Bradesco',ABEV:'Ambev S.A.',BSBR:'Banco Santander Brasil',
