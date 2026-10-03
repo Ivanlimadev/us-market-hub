@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { TOP_STOCKS } from '@/lib/stock-universe'
+import { TOP_STOCKS, STOCK_UNIVERSE } from '@/lib/stock-universe'
 import { GLOSSARY_SLUGS } from '@/lib/glossary'
 
 // The sitemap is backed by the Supabase blog_posts table, which changes daily.
@@ -172,21 +172,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }))
 
-  // Curated universe (real companies, organized by sector). TOP_STOCKS get the
-  // highest priority; the rest are indexed only when their page has real data
-  // (content-gated in generateMetadata), so listing them here just aids
-  // discovery of the newly-indexable pages without creating "scaled content".
-  // Only the curated TOP_STOCKS are submitted. The long-tail universe pages stay
-  // index,follow and discoverable via internal links, but flooding the sitemap
-  // with ~1,000 near-identical templated pages on a young domain just produced
-  // "Discovered - currently not indexed" at scale and diluted crawl budget. We
-  // focus the sitemap on the names that can actually rank. Lowercase to match
-  // the canonical URL on each stock page (page.tsx uses symbol.toLowerCase()).
-  const stockUrls: MetadataRoute.Sitemap = TOP_STOCKS.map((symbol) => ({
+  // Sitemap stock set: the curated US TOP_STOCKS (priority 0.8) plus the full
+  // Brazilian (B3 `.SA`) universe (priority 0.6). The US long-tail is kept OUT
+  // of the sitemap on purpose - flooding a young domain with ~1,000 near-identical
+  // templated pages previously produced "Discovered - currently not indexed" at
+  // scale and diluted crawl budget. The B3 names are included deliberately to push
+  // discovery of the new, localized Brazilian pages (real data, R$, BR peers,
+  // Ibovespa); revisit if they pile up as "discovered not indexed". Lowercase to
+  // match the canonical URL on each stock page (page.tsx uses symbol.toLowerCase()).
+  const topSet = new Set(TOP_STOCKS)
+  const sitemapStocks = Array.from(new Set([...TOP_STOCKS, ...STOCK_UNIVERSE.Brazil]))
+  const stockUrls: MetadataRoute.Sitemap = sitemapStocks.map((symbol) => ({
     url: `${BASE}/stocks/${symbol.toLowerCase()}`,
     lastModified: now,
     changeFrequency: 'daily',
-    priority: 0.8,
+    priority: topSet.has(symbol) ? 0.8 : 0.6,
   }))
 
   // Glossary term pages (evergreen definitions).
