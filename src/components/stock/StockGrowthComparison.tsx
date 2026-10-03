@@ -37,6 +37,11 @@ const INDEXES = [
   { key: 'DIA', label: 'Dow Jones',    color: '#f59e0b' },
   { key: 'IWM', label: 'Russell 2000', color: '#14b8a6' },
 ]
+// Brazilian benchmark for B3 (.SA) stocks: BOVA11 tracks the Ibovespa and works
+// through the same Yahoo `.SA` history path (no `^` index-symbol handling needed).
+const BR_INDEXES = [
+  { key: 'BOVA11.SA', label: 'Ibovespa', color: '#0ea5e9' },
+]
 const COMMODITIES = [
   { key: 'GLD',  label: 'Gold',   color: '#eab308' },
   { key: 'SLV',  label: 'Silver', color: '#94a3b8' },
@@ -76,6 +81,7 @@ function normalize(bars: Bar[] | undefined, days: number, reinvest: boolean): Po
 export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   const symbol = data.symbol.toUpperCase()
   const sector = data.info?.sector ?? null
+  const isBR = symbol.endsWith('.SA')
   const [amount, setAmount] = useState('1000')
   const [periodKey, setPeriodKey] = useState('5y')
   const [reinvest, setReinvest] = useState(true)
@@ -119,10 +125,11 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   // Benchmarks + peers: fetch only the SELECTED period (default 5Y) instead of a
   // fixed 10y, AND only once the section is in view (see `inView` above), so the
   // default page load carries none of this until the user scrolls to it.
-  const { data: spyBars } = useHistoryBars('SPY', periodKey, inView)
-  const { data: qqqBars } = useHistoryBars('QQQ', periodKey, inView)
-  const { data: diaBars } = useHistoryBars('DIA', periodKey, inView)
-  const { data: iwmBars } = useHistoryBars('IWM', periodKey, inView)
+  const { data: spyBars } = useHistoryBars('SPY', periodKey, inView && !isBR)
+  const { data: qqqBars } = useHistoryBars('QQQ', periodKey, inView && !isBR)
+  const { data: diaBars } = useHistoryBars('DIA', periodKey, inView && !isBR)
+  const { data: iwmBars } = useHistoryBars('IWM', periodKey, inView && !isBR)
+  const { data: bovaBars } = useHistoryBars('BOVA11.SA', periodKey, inView && isBR)
   const { data: gldBars } = useHistoryBars('GLD', periodKey, inView)
   const { data: slvBars } = useHistoryBars('SLV', periodKey, inView)
   const { data: usoBars } = useHistoryBars('USO', periodKey, inView)
@@ -141,18 +148,20 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
 
   const barsByKey: Record<string, Bar[] | undefined> = {
     [symbol]: stockBars, SPY: spyBars, QQQ: qqqBars, DIA: diaBars, IWM: iwmBars,
+    'BOVA11.SA': bovaBars,
     GLD: gldBars, SLV: slvBars, USO: usoBars, CPER: cperBars, ...(peerBars ?? {}),
   }
 
   const assets = useMemo(() => {
+    const indexes = isBR ? BR_INDEXES : INDEXES
     const list = [
       { key: symbol, label: symbol, color: STOCK_COLOR, width: 3, group: 'Similar Stocks', useLogo: true, fixed: true },
       ...peers.map((p, i) => ({ key: p, label: p, color: PEER_COLORS[i % PEER_COLORS.length], width: 2, group: 'Similar Stocks', useLogo: true, fixed: false })),
-      ...INDEXES.map((x) => ({ ...x, width: 2, group: 'Indexes', useLogo: false, fixed: false })),
+      ...indexes.map((x) => ({ ...x, width: 2, group: 'Indexes', useLogo: false, fixed: false })),
       ...COMMODITIES.map((x) => ({ ...x, width: 2, group: 'Commodities', useLogo: false, fixed: false })),
     ]
     return list.filter((s, i) => list.findIndex((x) => x.key === s.key) === i)
-  }, [symbol, peers])
+  }, [symbol, peers, isBR])
 
   const [visible, setVisible] = useState<Record<string, boolean>>({ [symbol]: true })
   const isOn = (key: string) => key === symbol || !!visible[key]
@@ -180,8 +189,10 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   const compareRows = useMemo(() => rows.slice(0, 10), [rows])
 
   const stockRow = rows.find((r) => r.key === symbol)
-  const spyPct = rows.find((r) => r.key === 'SPY')?.pct ?? null
-  const outperf = stockRow?.pct != null && spyPct != null && symbol !== 'SPY' ? stockRow.pct - spyPct : null
+  const benchKey = isBR ? 'BOVA11.SA' : 'SPY'
+  const benchLabel = isBR ? 'Ibovespa' : 'S&P 500'
+  const benchPct = rows.find((r) => r.key === benchKey)?.pct ?? null
+  const outperf = stockRow?.pct != null && benchPct != null && symbol !== benchKey ? stockRow.pct - benchPct : null
 
   // ── Chart ────────────────────────────────────────────────────────────────
   const containerRef = useRef<HTMLDivElement>(null)
@@ -378,7 +389,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
         {outperf != null && (
           <p className="mt-4 text-xs text-zinc-400">
             <span className="font-semibold text-white">{symbol}</span>{' '}
-            {outperf >= 0 ? 'outperformed' : 'lagged'} the S&amp;P 500 by{' '}
+            {outperf >= 0 ? 'outperformed' : 'lagged'} the {benchLabel} by{' '}
             <span className={`font-semibold ${outperf >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {Math.abs(outperf).toFixed(2)}%
             </span>{' '}over this period.
