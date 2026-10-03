@@ -22,11 +22,22 @@ interface CalcResult {
 const usd = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n)
 
+const fmtBRL = (n: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 }).format(n)
+
 const RATE_PRESETS: { label: string; desc: string; value: string; mode: RateMode }[] = [
   { label: 'S&P 500',      desc: 'Historical avg', value: '10', mode: 'annual' },
   { label: 'Growth',       desc: 'Balanced mix',   value: '7',  mode: 'annual' },
   { label: 'HYSA',         desc: 'High-yield sav', value: '5',  mode: 'annual' },
   { label: 'Bonds',        desc: 'Conservative',   value: '4',  mode: 'annual' },
+]
+
+// Brazilian presets for when the calculator is embedded on a B3 (.SA) stock page.
+const BR_RATE_PRESETS: { label: string; desc: string; value: string; mode: RateMode }[] = [
+  { label: 'Ibovespa', desc: 'Brazilian stocks (hist. avg)', value: '12', mode: 'annual' },
+  { label: 'CDI',      desc: 'Interest benchmark',           value: '11', mode: 'annual' },
+  { label: 'Savings',  desc: 'Poupança',                     value: '6',  mode: 'annual' },
+  { label: 'IPCA',     desc: 'Inflation',                    value: '5',  mode: 'annual' },
 ]
 
 function calcCompound(
@@ -129,9 +140,12 @@ function Toggle<T extends string>({ options, value, onChange }: {
   )
 }
 
-export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
+export function CompoundCalc({ embedded = false, brl = false }: { embedded?: boolean; brl?: boolean }) {
+  const money   = brl ? fmtBRL : usd
+  const cur     = brl ? 'R$' : '$'
+  const presets = brl ? BR_RATE_PRESETS : RATE_PRESETS
   const [principal,  setPrincipal]  = useState('10000')
-  const [rate,       setRate]       = useState('10')
+  const [rate,       setRate]       = useState(brl ? '12' : '10')
   const [rateMode,   setRateMode]   = useState<RateMode>('annual')
   const [period,     setPeriod]     = useState('20')
   const [periodMode, setPeriodMode] = useState<PeriodMode>('years')
@@ -151,7 +165,7 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
     : 0
 
   // Active preset detection
-  const activePreset = RATE_PRESETS.find(p => p.value === rate && p.mode === rateMode)?.label ?? null
+  const activePreset = presets.find(p => p.value === rate && p.mode === rateMode)?.label ?? null
 
   return (
     <div className={embedded ? '' : 'mx-auto max-w-4xl px-4 py-10'}>
@@ -176,8 +190,8 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
         <div className="space-y-5 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
           <h2 className="text-sm font-semibold text-zinc-300">Parameters</h2>
 
-          <NumInput label="Initial investment ($)" value={principal} onChange={setPrincipal} step={100} pre="$" />
-          <NumInput label="Monthly contribution ($)" value={pmt} onChange={setPmt} step={50} pre="$" />
+          <NumInput label={`Initial investment (${cur})`} value={principal} onChange={setPrincipal} step={100} pre={cur} />
+          <NumInput label={`Monthly contribution (${cur})`} value={pmt} onChange={setPmt} step={50} pre={cur} />
 
           {/* Rate with toggle */}
           <div className="flex flex-col gap-1.5">
@@ -198,7 +212,7 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
 
             {/* ── Rate presets ── */}
             <div className="mt-1 flex flex-wrap gap-1.5">
-              {RATE_PRESETS.map(p => (
+              {presets.map(p => (
                 <button
                   key={p.label}
                   type="button"
@@ -245,7 +259,7 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
                 ].map(c => (
                   <div key={c.label} className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
                     <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-zinc-500 sm:text-[10px]">{c.label}</p>
-                    <p className={`mt-1 truncate text-sm font-bold leading-tight tabular-nums sm:text-lg ${c.cls}`}>{usd(c.value)}</p>
+                    <p className={`mt-1 truncate text-sm font-bold leading-tight tabular-nums sm:text-lg ${c.cls}`}>{money(c.value)}</p>
                   </div>
                 ))}
               </div>
@@ -302,9 +316,9 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
                       {result.rows.map((row, i) => (
                         <tr key={i} className="transition-colors hover:bg-zinc-800/30">
                           <td className="px-3 py-2 text-zinc-400 sm:px-5">{row.label}</td>
-                          <td className="px-3 py-2 text-right font-medium tabular-nums text-zinc-200 sm:px-5">{usd(row.balance)}</td>
-                          <td className="px-3 py-2 text-right tabular-nums text-zinc-400 sm:px-5">{usd(row.invested)}</td>
-                          <td className="px-3 py-2 text-right tabular-nums text-emerald-400 sm:px-5">{usd(row.interest)}</td>
+                          <td className="px-3 py-2 text-right font-medium tabular-nums text-zinc-200 sm:px-5">{money(row.balance)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-zinc-400 sm:px-5">{money(row.invested)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-emerald-400 sm:px-5">{money(row.interest)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -329,14 +343,26 @@ export function CompoundCalc({ embedded = false }: { embedded?: boolean }) {
           the longer your time horizon, the more dramatic the effect.
         </p>
         <h2 className="text-base font-bold text-zinc-200">Which rate should I use?</h2>
-        <p>
-          The <strong className="text-zinc-300">S&P 500</strong> has historically returned ~10%/year
-          before inflation over long periods - use this for an all-equity US index fund scenario.
-          A <strong className="text-zinc-300">balanced growth</strong> portfolio (stocks + bonds) is
-          closer to 7%. <strong className="text-zinc-300">High-yield savings accounts (HYSA)</strong> are
-          currently paying around 4-5% with FDIC insurance and zero market risk.
-          <strong className="text-zinc-300"> Bonds</strong> historically return ~4% annualized.
-        </p>
+        {brl ? (
+          <p>
+            The <strong className="text-zinc-300">Ibovespa</strong>, Brazil&apos;s main stock index, has
+            historically returned roughly 12%/year in nominal terms over long periods. The{' '}
+            <strong className="text-zinc-300">CDI</strong>, the interbank interest benchmark, sits around
+            11% and tracks the Selic rate. The <strong className="text-zinc-300">poupança</strong> (savings)
+            pays about 6%, while inflation (<strong className="text-zinc-300">IPCA</strong>) has run near 5%.
+            Nominal Brazilian returns look high next to US figures mainly because inflation is higher, so
+            compare real (inflation-adjusted) returns when planning.
+          </p>
+        ) : (
+          <p>
+            The <strong className="text-zinc-300">S&P 500</strong> has historically returned ~10%/year
+            before inflation over long periods - use this for an all-equity US index fund scenario.
+            A <strong className="text-zinc-300">balanced growth</strong> portfolio (stocks + bonds) is
+            closer to 7%. <strong className="text-zinc-300">High-yield savings accounts (HYSA)</strong> are
+            currently paying around 4-5% with FDIC insurance and zero market risk.
+            <strong className="text-zinc-300"> Bonds</strong> historically return ~4% annualized.
+          </p>
+        )}
         <h2 className="text-base font-bold text-zinc-200">Formula used</h2>
         <p>
           <code className="mr-1 rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-emerald-300">

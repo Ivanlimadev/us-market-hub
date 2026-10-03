@@ -332,7 +332,7 @@ export function StockDetailClient({
           <StockGrowthComparison data={data} />
         </WidgetBoundary>
         <WidgetBoundary label="Compound Interest Projection">
-          <CompoundCalc embedded />
+          <CompoundCalc embedded brl={symbol.toUpperCase().endsWith('.SA')} />
         </WidgetBoundary>
       </Section>
 
