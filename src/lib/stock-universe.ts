@@ -203,6 +203,19 @@ export const STOCK_UNIVERSE: Record<string, string[]> = {
     'TOTS3.SA','VIVT3.SA','TIMS3.SA','POSI3.SA','INTB3.SA','CASH3.SA',
     // Agribusiness, education & others
     'SLCE3.SA','AGRO3.SA','TTEN3.SA','NTCO3.SA','COGN3.SA','YDUQ3.SA','CVCB3.SA',
+    // Additional mid-caps (validated against Yahoo)
+    'SANB3.SA','SANB4.SA','PINE4.SA','BMEB4.SA','WIZC3.SA','BRBI11.SA','RPAD3.SA',
+    'BRAV3.SA','LIGT3.SA','ORVR3.SA','AMBP3.SA','ISAE4.SA',
+    'FESA4.SA','PATI3.SA',
+    'VULC3.SA','TFCO4.SA','ESPA3.SA','GUAR3.SA','LJQQ3.SA','PGMN3.SA','SMFT3.SA',
+    'ENJU3.SA','ALLD3.SA','MLAS3.SA','DOTZ3.SA',
+    'JALL3.SA','SOJA3.SA','VITT3.SA','AGXY3.SA',
+    'BLAU3.SA','MATD3.SA','VVEO3.SA','ODPV3.SA',
+    'ROMI3.SA','SHUL4.SA','TASA4.SA','AERI3.SA','ARML3.SA','PRNR3.SA','INEP4.SA',
+    'BMOB3.SA','IFCM3.SA','DESK3.SA','FIQE3.SA',
+    'LAVV3.SA','MDNE3.SA','PLPL3.SA','HBOR3.SA','TRIS3.SA','SYNE3.SA','LOGG3.SA',
+    'SCAR3.SA','MELK3.SA','GFSA3.SA',
+    'EUCA4.SA','RANI3.SA',
   ],
 }
 
