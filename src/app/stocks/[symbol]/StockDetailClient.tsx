@@ -186,6 +186,11 @@ export function StockDetailClient({
                     🇨🇦 CAD
                   </span>
                 )}
+                {symbol.toUpperCase().endsWith('.SA') && (
+                  <span className="shrink-0 rounded-md bg-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-200" title="B3 (Brazil) - prices in Brazilian reais">
+                    🇧🇷 BRL
+                  </span>
+                )}
               </div>
               {(data.info?.sector || data.info?.industry) && (
                 <p className="truncate text-xs" style={{ color: '#a3a3a3' }}>

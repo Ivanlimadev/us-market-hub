@@ -73,8 +73,10 @@ export function KeyStatsStrip({
 
   if (!data) return null
 
-  // TSX tickers (`.TO`) are quoted in CAD - prefix their money values with C$.
-  const cur = symbol.toUpperCase().endsWith('.TO') ? 'C$' : '$'
+  // Foreign listings are quoted in their local currency: TSX (`.TO`) in CAD,
+  // B3 (`.SA`) in BRL. Prefix money values accordingly.
+  const up = symbol.toUpperCase()
+  const cur = up.endsWith('.TO') ? 'C$' : up.endsWith('.SA') ? 'R$' : '$'
   const info = data.info
 
   // 1Y change from the first vs. last close of the 1-year daily series.
