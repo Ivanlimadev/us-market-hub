@@ -23,6 +23,33 @@ export const SECTOR_PEERS: Record<string, string[]> = {
 
 export const DEFAULT_PEERS = ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'AMZN', 'META', 'TSLA', 'JPM']
 
+// Brazilian (B3 `.SA`) peers, keyed by Yahoo's sector strings, so a BR stock
+// shows BR peers instead of US ones.
+export const BR_SECTOR_PEERS: Record<string, string[]> = {
+  Energy: ['PETR4.SA', 'PRIO3.SA', 'VBBR3.SA', 'RECV3.SA', 'CSAN3.SA', 'UGPA3.SA'],
+  'Basic Materials': ['VALE3.SA', 'GGBR4.SA', 'CSNA3.SA', 'SUZB3.SA', 'KLBN11.SA', 'BRKM5.SA'],
+  'Financial Services': ['ITUB4.SA', 'BBDC4.SA', 'BBAS3.SA', 'BPAC11.SA', 'B3SA3.SA', 'SANB11.SA'],
+  Utilities: ['ELET3.SA', 'EQTL3.SA', 'ENGI11.SA', 'CMIG4.SA', 'SBSP3.SA', 'EGIE3.SA'],
+  'Consumer Defensive': ['ABEV3.SA', 'JBSS3.SA', 'BRFS3.SA', 'ASAI3.SA', 'PCAR3.SA', 'MRFG3.SA'],
+  'Consumer Cyclical': ['MGLU3.SA', 'LREN3.SA', 'RENT3.SA', 'VIVA3.SA', 'CRFB3.SA', 'AZZA3.SA'],
+  Healthcare: ['RDOR3.SA', 'HAPV3.SA', 'FLRY3.SA', 'HYPE3.SA', 'RADL3.SA', 'QUAL3.SA'],
+  Industrials: ['WEGE3.SA', 'EMBR3.SA', 'RAIL3.SA', 'CCRO3.SA', 'AZUL4.SA', 'POMO4.SA'],
+  Technology: ['TOTS3.SA', 'POSI3.SA', 'INTB3.SA', 'LWSA3.SA', 'CASH3.SA'],
+  'Communication Services': ['VIVT3.SA', 'TIMS3.SA'],
+  'Real Estate': ['MULT3.SA', 'IGTI11.SA', 'ALOS3.SA', 'CYRE3.SA', 'MRVE3.SA', 'EZTC3.SA'],
+}
+
+export const DEFAULT_BR_PEERS = ['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'ABEV3.SA', 'B3SA3.SA', 'WEGE3.SA', 'BBAS3.SA']
+
+// Pick the peer pool matching the asset's market: B3 `.SA` tickers get Brazilian
+// peers, everything else gets the US pool.
+export function getPeerPool(symbol: string, sector: string | null): string[] {
+  if (symbol.toUpperCase().endsWith('.SA')) {
+    return (sector ? BR_SECTOR_PEERS[sector] : undefined) ?? DEFAULT_BR_PEERS
+  }
+  return (sector ? SECTOR_PEERS[sector] : undefined) ?? DEFAULT_PEERS
+}
+
 interface Props {
   symbol: string
   sector: string | null
@@ -53,7 +80,7 @@ function StockLogo({ symbol }: { symbol: string }) {
 }
 
 export function RelatedAssets({ symbol, sector }: Props) {
-  const pool = sector ? (SECTOR_PEERS[sector] ?? DEFAULT_PEERS) : DEFAULT_PEERS
+  const pool = getPeerPool(symbol, sector)
   const related = pool.filter((s) => s !== symbol).slice(0, 6)
 
   const { data: quotes, isLoading } = useQuery<YFBatchQuote[]>({

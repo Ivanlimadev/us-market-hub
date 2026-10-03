@@ -9,7 +9,7 @@ import {
   type ISeriesApi,
   type UTCTimestamp,
 } from 'lightweight-charts'
-import { SECTOR_PEERS, DEFAULT_PEERS } from '@/components/stock/RelatedAssets'
+import { getPeerPool } from '@/components/stock/RelatedAssets'
 import type { StockDetailData } from '@/lib/hooks/useStockDetail'
 import { useHistoryBars, fetchHistoryBars, type RawBar } from '@/lib/hooks/useHistoryBars'
 
@@ -108,7 +108,7 @@ export function StockGrowthComparison({ data }: { data: StockDetailData }) {
   }, [inView])
 
   const peers = useMemo(
-    () => (sector ? SECTOR_PEERS[sector] ?? DEFAULT_PEERS : DEFAULT_PEERS).filter((s) => s !== symbol).slice(0, 3),
+    () => getPeerPool(symbol, sector).filter((s) => s !== symbol).slice(0, 3),
     [sector, symbol],
   )
 

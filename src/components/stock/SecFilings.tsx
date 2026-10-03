@@ -51,19 +51,26 @@ function FilingCard({ f }: { f: SecFiling }) {
 export function SecFilings({ symbol }: { symbol: string }) {
   const [expanded, setExpanded] = useState(false)
 
+  // Foreign listings (e.g. B3 `.SA`, TSX `.TO`) don't file with the US SEC/EDGAR,
+  // so skip the lookup and hide the section entirely rather than erroring.
+  const isForeign = symbol.includes('.')
+
   const { data, isLoading } = useQuery<SecFiling[]>({
     queryKey: ['sec-filings', symbol],
     queryFn:  () => fetch(`/api/stocks/filings?symbol=${symbol}`).then(r => r.json()),
     staleTime: 2 * 60 * 60_000,
     retry: 1,
+    enabled: !isForeign,
   })
 
-  const all = data ?? []
+  // Guard against error responses ({ error: ... }) so the section hides instead
+  // of crashing when the API returns a non-array payload.
+  const all = Array.isArray(data) ? data : []
   const filtered = expanded ? all : all.slice(0, 8)
   const hasMore = all.length > 8
 
-  // Don't render section if no filings found
-  if (!isLoading && all.length === 0) {
+  // Hide for foreign tickers or when no filings were found.
+  if (isForeign || (!isLoading && all.length === 0)) {
     return null
   }
 

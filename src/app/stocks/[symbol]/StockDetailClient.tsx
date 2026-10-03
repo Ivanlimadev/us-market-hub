@@ -136,6 +136,11 @@ export function StockDetailClient({
     data.info?.quoteType === 'MUTUALFUND' ||
     data.info?.quoteType === 'INDEX'
 
+  // Foreign listings (e.g. B3 `.SA`, TSX `.TO`) don't file with the US SEC, so
+  // the SEC/EDGAR-based blocks (filings, EDGAR earnings history, insider trades)
+  // have no data. Hide that whole section for them.
+  const isForeign = symbol.includes('.')
+
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-5">
       {/* Investidor10-style dark header band: identity + quick-nav (center) + actions.
@@ -290,18 +295,21 @@ export function StockDetailClient({
             </Pair>
           </Section>
 
-          {/* 4 - SEC Filings & Reported Financials (the two SEC blocks together) */}
-          <Section id="results" title="SEC Filings & Reported Financials">
-            <WidgetBoundary label="Earnings History">
-              <EarningsHistory symbol={symbol} />
-            </WidgetBoundary>
-            <WidgetBoundary label="SEC Filings">
-              <SecFilings symbol={symbol} />
-            </WidgetBoundary>
-            <WidgetBoundary label="Insider Transactions">
-              <InsiderTransactions symbol={symbol} />
-            </WidgetBoundary>
-          </Section>
+          {/* 4 - SEC Filings & Reported Financials (US SEC/EDGAR data). Hidden for
+              foreign listings (e.g. B3 .SA) that don't file with the US SEC. */}
+          {!isForeign && (
+            <Section id="results" title="SEC Filings & Reported Financials">
+              <WidgetBoundary label="Earnings History">
+                <EarningsHistory symbol={symbol} />
+              </WidgetBoundary>
+              <WidgetBoundary label="SEC Filings">
+                <SecFilings symbol={symbol} />
+              </WidgetBoundary>
+              <WidgetBoundary label="Insider Transactions">
+                <InsiderTransactions symbol={symbol} />
+              </WidgetBoundary>
+            </Section>
+          )}
         </>
       )}
 
