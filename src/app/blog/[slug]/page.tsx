@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import { PageTracker } from '@/components/PageTracker'
 import { fetchStockData } from '@/lib/stock-server'
@@ -43,11 +43,27 @@ interface RelatedPost {
   category: string
 }
 
+// ISR: serve blog posts from Next's cache and revalidate every 5 minutes instead
+// of querying Supabase on every request. Cuts the dynamic ~1s TTFB down to
+// CDN-cached speed; edits appear within the revalidate window.
+export const revalidate = 300
+
 function supabase() {
-  return createServerClient(
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => [], setAll: () => {} } },
+    {
+      auth: { persistSession: false },
+      // Cache public blog reads in Next's data cache so the page is ISR instead of
+      // forced dynamic. Strip any no-store the client sets, then tag revalidate.
+      global: {
+        fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+          const opts: RequestInit & { next?: { revalidate: number } } = { ...init, next: { revalidate: 300 } }
+          delete (opts as { cache?: unknown }).cache
+          return fetch(input, opts)
+        },
+      },
+    },
   )
 }
 

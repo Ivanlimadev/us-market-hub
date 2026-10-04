@@ -82,8 +82,12 @@ async function yfGet(url: string): Promise<Record<string, unknown>> {
     const result = await withRetry(async () => {
       const { crumb, cookie } = await getYFSession()
       const fullUrl = `${url}${url.includes('?') ? '&' : '?'}crumb=${encodeURIComponent(crumb)}`
+      // Cache responses for 60s (the site's quote-freshness target): lets pages
+      // that read Yahoo data be ISR-cached instead of forced dynamic, and cuts
+      // repeat calls that trigger Yahoo's rate limiting.
       const res = await fetch(fullUrl, {
         headers: { 'User-Agent': 'Mozilla/5.0', Cookie: cookie },
+        next: { revalidate: 60 },
       })
       if (!res.ok) {
         // 401 means crumb expired - invalidate session so next attempt refreshes
