@@ -112,10 +112,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           gtag('config', '${GA_ID}');
         `}</Script>
         {ADSENSE_CLIENT && (
-          <Script
-            id="adsense"
+          // Raw async tag (not next/script) so the exact adsbygoogle.js snippet
+          // Google's crawler looks for is present verbatim in the SSR <head> for
+          // AdSense site verification. React 19 hoists it to <head>; async keeps
+          // it off the critical render path. next/script emitted only a preload +
+          // client loader, which the verifier did not recognize as the snippet.
+          // eslint-disable-next-line @next/next/no-sync-scripts
+          <script
+            async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
-            strategy="lazyOnload"
             crossOrigin="anonymous"
           />
         )}
