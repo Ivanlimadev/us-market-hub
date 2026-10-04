@@ -14,7 +14,7 @@ import { UsEconomyCards } from '@/components/macro/UsEconomyCards'
 import { RelatedTabs } from './related-tabs'
 import { BlogSidebar } from './BlogSidebar'
 import AuthorByline from '@/components/blog/AuthorByline'
-import CommentsSection from '@/components/comments/CommentsSection'
+import { LazyComments } from './LazyComments'
 import AppDownloadCard from '@/components/blog/AppDownloadCard'
 import { NewsletterCta } from '@/components/NewsletterCta'
 
@@ -657,7 +657,7 @@ export default async function BlogPostPage({
       <AuthorByline author={author} />
 
       {/* Discussion - shared with the mobile app */}
-      <CommentsSection entityType="post" entityId={slug} />
+      <LazyComments entityType="post" entityId={slug} />
 
       <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center">
         <p className="mb-3 text-zinc-300">Track US stocks, crypto, and market data</p>
