@@ -36,6 +36,7 @@ const STATIC_ROUTES = [
   { url: '/stocks/best-growth-stocks',   priority: 0.85, changeFrequency: 'monthly' },
   { url: '/stocks/brazil',               priority: 0.85, changeFrequency: 'daily'   },
   { url: '/stocks/canada',               priority: 0.85, changeFrequency: 'daily'   },
+  { url: '/stocks/all',                  priority: 0.8,  changeFrequency: 'weekly'  },
   // Comparison landing pages
   { url: '/compare/nvda-vs-amd',         priority: 0.8,  changeFrequency: 'monthly' },
   { url: '/compare/aapl-vs-msft',        priority: 0.8,  changeFrequency: 'monthly' },
