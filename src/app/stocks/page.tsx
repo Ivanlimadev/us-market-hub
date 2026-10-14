@@ -1,7 +1,12 @@
 import Link from 'next/link'
 import { ScreenerView } from '@/app/screener/ScreenerView'
 
-export const metadata = { title: 'US Stocks - Live Quotes & Analysis' }
+export const metadata = {
+  title: 'US Stocks: Free Live Stock Quotes, Prices & Analysis',
+  description:
+    'Free live stock quotes for 100+ US stocks, with prices, fundamentals, dividends and charts. Browse the full A-Z list of tickers or filter with the screener.',
+  alternates: { canonical: 'https://stockmarketroi.com/stocks' },
+}
 
 export default function StocksPage() {
   return (
