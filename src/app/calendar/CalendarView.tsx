@@ -253,8 +253,8 @@ export default function CalendarView() {
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Calendar</h1>
-        <p className="text-sm text-zinc-400">Upcoming dividends and earnings reports</p>
+        <h1 className="text-2xl font-bold text-white">Earnings &amp; Dividends Calendar</h1>
+        <p className="text-sm text-zinc-400">Track upcoming US stock earnings reports and dividend ex-dividend dates</p>
       </div>
 
       {/* Tab bar */}
